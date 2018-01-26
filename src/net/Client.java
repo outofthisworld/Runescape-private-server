@@ -41,6 +41,9 @@ public class Client {
         CHUNKED
     }
 
+    /*
+        Flushes
+    */
     public int flush(FlushMode flushMode) {
         int bytesWritten;
         try {
@@ -153,6 +156,7 @@ public class Client {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             System.out.println(new String(packetBytes));
 
             new IncomingPacket(this, opCode, packetBytes);

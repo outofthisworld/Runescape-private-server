@@ -189,18 +189,6 @@ public final class Server {
     public InetSocketAddress getINetAddress() {
         return address;
     }
-
-    private static final class SocketGateway {
-
-        static {
-
-        }
-
-        public static void accept(SocketChannel socketChannel) {
-            //Close socketChannel if we don't accept it
-        }
-    }
-
 }
 
 

@@ -14,7 +14,8 @@ public class IncomingPacket implements Incoming {
         this.opcode = packetOpcode;
         this.messageBytes = messageBytes;
     }
-    //Decoder
+
+
     //OutputBuffer -
 
     @Override

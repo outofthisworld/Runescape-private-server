@@ -103,16 +103,16 @@ public class OutputBuffer {
         ByteOrder currentOrder = currentOutputBuffer.order();
 
         if(currentOrder == ByteOrder.BIG_ENDIAN){
-            start = numBytes-1;
+            start = numBytes;
             end = 0;
             increment = -1;
         }else{
             start = 0;
-            end = numBytes-1;
+            end = numBytes;
             increment = 1;
         }
 
-        for(int i = start;i!=end+1;i+=increment){
+        for(int i = start;i!=end;i+=increment){
             writeByte((byte) (value >> (i * 8)));
         }
 
