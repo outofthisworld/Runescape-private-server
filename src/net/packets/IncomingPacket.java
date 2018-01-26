@@ -15,7 +15,7 @@ public class IncomingPacket implements Incoming {
         this.messageBytes = messageBytes;
     }
     //Decoder
-    //Stream -
+    //OutputBuffer -
 
     @Override
     public Client getClient() {

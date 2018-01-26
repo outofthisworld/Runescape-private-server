@@ -19,7 +19,7 @@ public class Client {
     private final SelectionKey selectionKey;
     private final InetSocketAddress remoteAddress;
     private ByteBuffer inBuffer;
-    private ByteBuffer outBuffer;
+    private OutputBuffer outBuffer = OutputBuffer.create();
 
     public Client(SelectionKey selectionKey) throws IOException {
         this.socket = (SocketChannel) selectionKey.channel();
@@ -35,24 +35,21 @@ public class Client {
         return selectionKey;
     }
 
-    private int writeOutBuf() throws IOException, InvalidStateException {
-        outBuffer.flip();
-        int bytesWritten = getSocket().write(outBuffer);
-        outBuffer.compact();
-        return bytesWritten;
-    }
-
 
     public int flush() {
         int bytesWritten;
         try {
-            bytesWritten = writeOutBuf();
+            bytesWritten = outBuffer.pipeTo(this);
         } catch (Exception e) {
             e.printStackTrace();
             handleDisconnect();
             return -1;
         }
         return bytesWritten;
+    }
+
+    public OutputBuffer outBuffer(){
+        return this.outBuffer;
     }
 
     private int readInBuf() throws Exception {
