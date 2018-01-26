@@ -38,9 +38,9 @@ public class InputBuffer {
         }
 
         for (int i = start; i != end; i += increment) {
-            l = l | bytes[i] & 0xFF << (inBuffer.order() == ByteOrder.BIG_ENDIAN ? (end - 1 - i) * 8 : i * 8);
+            l |= ((bytes[i] & 0xFF) << (inBuffer.order() == ByteOrder.BIG_ENDIAN ? (end - 1 - i) * 8 : i * 8));
         }
-        inBuffer.compact();
+
         return l;
     }
 
