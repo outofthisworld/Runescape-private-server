@@ -2,6 +2,7 @@ package net;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.SocketChannel;
 
 public class OutputBuffer {
@@ -26,8 +27,12 @@ public class OutputBuffer {
         return new OutputBuffer();
     }
 
-    int pipeAllTo(SocketChannel c) {
-
+    int pipeAllTo(SocketChannel c) throws IOException {
+        int bytesWritten = 0;
+        int length = currentOutputBuffer.position();
+        while(bytesWritten != length)
+            bytesWritten += pipeTo(c);
+        return bytesWritten;
     }
 
     int pipeAllTo(Client c) throws IOException {
@@ -35,6 +40,7 @@ public class OutputBuffer {
     }
 
     int pipeTo(SocketChannel c) throws IOException {
+        currentOutputBuffer.flip();
         int bytesWritten = c.write(currentOutputBuffer);
         currentOutputBuffer.compact();
         return bytesWritten;
@@ -60,45 +66,61 @@ public class OutputBuffer {
         return this;
     }
 
-    public OutputBuffer writeBigDWORD(long x) {
-        for (int i = 3; i >= 0; i--) {
-            writeByte((byte) (x >> (i * 8)));
+    private OutputBuffer writeBytes(long value,int numBytes){
+
+        if(numBytes < 1 || numBytes > 8){
+            throw new RuntimeException("Invalid params, numBytes must be between 1-8 inclusive");
         }
+        int start;
+        int end;
+        int increment;
+
+        ByteOrder currentOrder = currentOutputBuffer.order();
+
+        if(currentOrder == ByteOrder.BIG_ENDIAN){
+            start = numBytes-1;
+            end = 0;
+            increment = -1;
+        }else{
+            start = 0;
+            end = numBytes-1;
+            increment = 1;
+        }
+
+        for(int i = start-1;i>=end;i+=increment){
+            writeByte((byte) (value >> (i * 8)));
+        }
+
         return this;
     }
 
-    public OutputBuffer writeBigQWORD(long x) {
-        for (int i = 3; i >= 0; i--) {
-            writeByte((byte) (x >> (i * 8)));
-        }
-        return this;
-    }
-
-    public OutputBuffer writeLittleQWORD(long x) {
-        for (int i = 3; i >= 0; i--) {
-            writeByte((byte) (x >> (i * 8)));
-        }
+    private OutputBuffer outOrder(ByteOrder order){
+        currentOutputBuffer.order(order);
         return this;
     }
 
     public OutputBuffer writeLittleDWORD(long x) {
-        for (int i = 0; i >= 3; i++) {
-            writeByte((byte) (x >> (i * 8)));
-        }
-        return this;
+        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x,4);
     }
 
+    public OutputBuffer writeBigDWORD(long x) {
+        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x,4);
+    }
+
+    public OutputBuffer writeBigQWORD(long x) {
+        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x,8);
+    }
+
+    public OutputBuffer writeLittleQWORD(long x) {
+        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x,8);
+    }
+
+
     public OutputBuffer writeBigWORD(int x) {
-        for (int i = 0; i >= 3; i++) {
-            writeByte((byte) (x >> (i * 8)));
-        }
-        return this;
+        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x,2);
     }
 
     public OutputBuffer writeLittleWORD(int x) {
-        for (int i = 0; i >= 3; i++) {
-            writeByte((byte) (x >> (i * 8)));
-        }
-        return this;
+        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x,2);
     }
 }

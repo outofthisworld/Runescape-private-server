@@ -36,10 +36,19 @@ public class Client {
     }
 
 
-    public int flush() {
+    public enum FlushMode{
+        ALL,
+        CHUNKED
+    }
+
+    public int flush(FlushMode flushMode) {
         int bytesWritten;
         try {
-            bytesWritten = outBuffer.pipeTo(this);
+            if(flushMode == FlushMode.CHUNKED) {
+                bytesWritten = outBuffer.pipeTo(this);
+            }else{
+                bytesWritten = outBuffer.pipeAllTo(this);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             handleDisconnect();
