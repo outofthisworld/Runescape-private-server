@@ -24,7 +24,7 @@ public class ConnectionHandler implements Runnable {
         }
 
         System.out.println("Registering socket channel with connection handler");
-        socketChannel.register(selector, SelectionKey.OP_READ);
+        socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
     }
 
     public void shutdown() {
@@ -54,19 +54,22 @@ public class ConnectionHandler implements Runnable {
             if (currentlySelected.isReadable()) {
                 System.out.println("readble selection");
                 if (currentlySelected.attachment() == null) {
-                    currentlySelected.attach(new Client(currentlySelected));
+                    try {
+                        currentlySelected.attach(new Client(currentlySelected));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
 
-                Client c = (Client) currentlySelected.attachment();
-                if (currentlySelected.isValid()) {
+
+                if (currentlySelected.attachment() !=  null && currentlySelected.isValid()) {
+                    Client c = (Client) currentlySelected.attachment();
                     try {
                         c.processRead();
                         //Read into read buffer...
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else {
-                    System.out.println("Invalid key");
                 }
             }
 

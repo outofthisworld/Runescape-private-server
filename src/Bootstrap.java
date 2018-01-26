@@ -31,36 +31,5 @@ public class Bootstrap {
             e.printStackTrace();
         });
         serverThread.start();
-
-        SocketChannel socketChannel = null;
-        try {
-            socketChannel = SocketChannel.open(server.getINetAddress());
-
-            socketChannel.finishConnect();
-
-            System.out.println(socketChannel.isConnected());
-
-            String sendString = "Hello world this is a messageHello world this is a messageHello world this is a messageHello world this is a message" +
-                    "Hello world this is a messageHello world this is a messageHello world this is a messageHello world this is a messageHello world this is a message" +
-                    "Hello world this is a messageHello world this is a messageHello world this is a messageHello world this is a message" +
-                    "Hello world this is a messageHello world this is a messageHello world this is a message";
-            byte[] bytesToSend = sendString.getBytes();
-            ByteBuffer b = ByteBuffer.allocate(5);
-            b.put((byte) 255);
-            b.putInt(bytesToSend.length);
-
-            b.flip();
-            int written = socketChannel.write(b);
-
-            b.clear();
-
-            b = ByteBuffer.allocate(bytesToSend.length);
-            b.put(bytesToSend);
-            b.flip();
-            socketChannel.write(b);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

@@ -1,23 +1,30 @@
 package net;
 
 import net.packets.IncomingPacket;
+import sun.plugin.dom.exception.InvalidStateException;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
+import java.util.logging.Logger;
 
 public class Client {
-    private final SocketChannel socket;
-    private final SelectionKey selectionKey;
-    private ByteBuffer inBuffer;
     private static final int MAX_IN_BUFFER_SIZE = 8500;
     private static final int INITIAL_IN_BUFFER_SIZE = 1024;
     private static final int HEADER_SIZE_BYTES = 5;
+    private static final Logger logger = Logger.getLogger(Client.class.getName());
+    private final SocketChannel socket;
+    private final SelectionKey selectionKey;
+    private final InetSocketAddress remoteAddress;
+    private ByteBuffer inBuffer;
+    private ByteBuffer outBuffer;
 
-    public Client(SelectionKey selectionKey) {
+    public Client(SelectionKey selectionKey) throws IOException {
         this.socket = (SocketChannel) selectionKey.channel();
         this.selectionKey = selectionKey;
+        this.remoteAddress = (InetSocketAddress) getSocket().getRemoteAddress();
     }
 
     public SocketChannel getSocket() {
@@ -28,13 +35,67 @@ public class Client {
         return selectionKey;
     }
 
-    void processRead() throws IOException {
+    private int writeOutBuf() throws IOException, InvalidStateException {
+        outBuffer.flip();
+        int bytesWritten = getSocket().write(outBuffer);
+        outBuffer.compact();
+        return bytesWritten;
+    }
+
+
+    public int flush() {
+        int bytesWritten;
+        try {
+            bytesWritten = writeOutBuf();
+        } catch (Exception e) {
+            e.printStackTrace();
+            handleDisconnect();
+            return -1;
+        }
+        return bytesWritten;
+    }
+
+    private int readInBuf() throws Exception {
+        int bytesRead = getSocket().read(inBuffer);
+        if (bytesRead == -1) {
+            throw new Exception("End of stream in read, is disconnected?");
+        }
+
+        return bytesRead;
+    }
+
+    private void handleDisconnect() {
+        //logger.log(Level.INFO, String.format("Client disconnect: $s : %d", this.remoteAddress.getHostString(), this.remoteAddress.getPort()));
+        try {
+            if (selectionKey != null)
+                selectionKey.cancel();
+            if (inBuffer != null)
+                inBuffer.clear();
+            if (outBuffer != null)
+                outBuffer.clear();
+            inBuffer = null;
+            outBuffer = null;
+            if (socket != null)
+                socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void processRead() {
         if (inBuffer == null) {
             inBuffer = ByteBuffer.allocate(INITIAL_IN_BUFFER_SIZE);
         }
 
-        int bytesRead = getSocket().read(inBuffer);
+        int bytesRead;
 
+        try {
+            bytesRead = readInBuf();
+        } catch (Exception e) {
+            e.printStackTrace();
+            handleDisconnect();
+            return;
+        }
         //1 byte opcode four byte for message length
         if (bytesRead <= HEADER_SIZE_BYTES) {
             //Here should be safe to just return because nothing has been taken from inBuffer
@@ -46,7 +107,7 @@ public class Client {
 
         //Read unsigned byte opcode
         int opCode = inBuffer.get() & 0xFF;
-        //Read unsigned int length
+        //Read  int length
         int len = inBuffer.getInt();
 
         //Malformed packet, clear the current input buffer
@@ -57,35 +118,42 @@ public class Client {
 
         //If the length of the packet is higher than current inBuffers capacity
         if (len > inBuffer.capacity()) {
-            //Allocate a new buffer at len bytes where 0 > lenBytes < MAX_IN_BUFFER_SIZE
-            ByteBuffer b = ByteBuffer.allocate(len + HEADER_SIZE_BYTES);
+            ByteBuffer newInBuffer = ByteBuffer.allocate(len);
             inBuffer.rewind();
-            //copy the bytes currently in the inBuffer to the new buffer
-            b.put(inBuffer);
-            //Clear the current in buffer.
+            //Put whatevers remaining
+            newInBuffer.put(inBuffer);
+
             inBuffer.clear();
-            //Set inBuffer to the newly created buffer
-            inBuffer = b;
-            //Attempt to read remaining len bytes required....
-            bytesRead += getSocket().read(inBuffer);
-            //Flip the buffer (set position zero and limit to position)
+            inBuffer = newInBuffer;
+
+            try {
+                readInBuf();
+            } catch (Exception e) {
+                e.printStackTrace();
+                handleDisconnect();
+                return;
+            }
+
             inBuffer.flip();
-            //Skip the header
-            inBuffer.position(HEADER_SIZE_BYTES);
         }
 
         //If we dont have len bytes to read required by this data
         if (inBuffer.limit() - HEADER_SIZE_BYTES < len) {
-            //Make the buffer ready for writing again
-            inBuffer.limit(inBuffer.capacity());
-            inBuffer.position(HEADER_SIZE_BYTES);
+            inBuffer.rewind();
         } else {
             byte[] packetBytes = new byte[len];
-            inBuffer.get(packetBytes, 0, packetBytes.length);
+            try {
+                inBuffer.get(packetBytes, 0, packetBytes.length);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             System.out.println(new String(packetBytes));
 
-            new IncomingPacket(this,opCode,packetBytes);
+            new IncomingPacket(this, opCode, packetBytes);
             inBuffer.limit(inBuffer.capacity());
         }
+
+        inBuffer.compact();
     }
+
 }

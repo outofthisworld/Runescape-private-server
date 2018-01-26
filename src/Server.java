@@ -4,7 +4,10 @@ import sun.plugin.dom.exception.InvalidStateException;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.channels.*;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -14,8 +17,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class Server {
-    private ServerSocketChannel serverSocketChannel;
     private static final Logger logger = Logger.getLogger(Server.class.getName());
+    private ServerSocketChannel serverSocketChannel;
     private InetSocketAddress address;
     private volatile boolean isRunning = false;
     private Selector onAcceptableSelector;
@@ -75,7 +78,6 @@ public final class Server {
         if (onAcceptableSelector != null && onAcceptableSelector.isOpen()) {
             onAcceptableSelector = null;
             onAcceptableSelector.close();
-            ;
         }
         onAcceptableSelector = Selector.open();
         serverSocketChannel.register(onAcceptableSelector, SelectionKey.OP_ACCEPT);
@@ -184,6 +186,10 @@ public final class Server {
         }
     }
 
+    public InetSocketAddress getINetAddress() {
+        return address;
+    }
+
     private static final class SocketGateway {
 
         static {
@@ -193,11 +199,6 @@ public final class Server {
         public static void accept(SocketChannel socketChannel) {
             //Close socketChannel if we don't accept it
         }
-    }
-
-
-    public InetSocketAddress getINetAddress() {
-        return address;
     }
 
 }
