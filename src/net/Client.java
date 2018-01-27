@@ -48,9 +48,9 @@ public class Client {
         int bytesWritten;
         try {
             if(flushMode == FlushMode.CHUNKED) {
-                bytesWritten = outBuffer.pipeTo(this);
+                bytesWritten = outBuffer.pipeTo(socket);
             }else{
-                bytesWritten = outBuffer.pipeAllTo(this);
+                bytesWritten = outBuffer.pipeAllTo(socket);
             }
         } catch (Exception e) {
             e.printStackTrace();

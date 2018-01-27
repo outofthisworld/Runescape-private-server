@@ -1,7 +1,4 @@
-package net.packets;
-
-import net.ChannelHandler;
-import net.IChannelHandler;
+package net;
 
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
@@ -11,30 +8,30 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class ChannelMananger {
+public class ChannelManager {
     private static ExecutorService executor = Executors.newCachedThreadPool();
     private static int MAX_HANDLER_CHANNELS = 1000;
     private ArrayList<IChannelHandler> socketHandlers = new ArrayList();
 
-    private ChannelMananger() {
+    private ChannelManager() {
 
     }
 
-    public static ChannelMananger create() throws IOException {
-        return new ChannelMananger();
+    public static ChannelManager create() {
+        return new ChannelManager();
     }
 
-    public static ChannelMananger create(int numHandlers) throws IOException {
-        ChannelMananger s = new ChannelMananger();
+    public static ChannelManager create(int numHandlers) throws IOException {
+        ChannelManager s = new ChannelManager();
         for (int i = 0; i < numHandlers; i++) {
             s.addSocketHandler(new ChannelHandler());
         }
         return s;
     }
 
-    public static ChannelMananger create(int numHandlers, int maxHandlerChannels) throws IOException {
+    public static ChannelManager create(int numHandlers, int maxHandlerChannels) throws IOException {
         MAX_HANDLER_CHANNELS = maxHandlerChannels;
-        return ChannelMananger.create(numHandlers);
+        return ChannelManager.create(numHandlers);
     }
 
     public void register(SocketChannel s) throws Exception {

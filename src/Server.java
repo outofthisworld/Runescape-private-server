@@ -1,7 +1,6 @@
 
-import net.ChannelHandler;
+import net.ChannelManager;
 import net.SocketGateway;
-import sun.plugin.dom.exception.InvalidStateException;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -11,9 +10,6 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,8 +19,8 @@ public final class Server {
     private InetSocketAddress address;
     private volatile boolean isRunning = false;
     private Selector onAcceptableSelector;
-    private ChannelHandler connectionHandlers[];
-    private ExecutorService service;
+    private ChannelManager channelManager = ChannelManager.create();
+
     private int numConnectionHandlers;
 
     public Server(String host, int port) {
@@ -39,31 +35,6 @@ public final class Server {
         this.numConnectionHandlers = numConnectionHandlers;
     }
 
-
-    private final void initConnectionHandlers() throws IOException {
-        if (connectionHandlers == null) {
-            connectionHandlers = new ChannelHandler[numConnectionHandlers];
-        } else {
-            throw new InvalidStateException("Connection handlers was set on start");
-        }
-
-        if (service == null) {
-            service = Executors.newFixedThreadPool(connectionHandlers.length);
-        } else {
-            throw new InvalidStateException("service already existed when attempting to start server");
-        }
-
-        for (int i = 0; i < connectionHandlers.length; i++) {
-
-            connectionHandlers[i] = new ChannelHandler();
-
-            if (service.isShutdown() || service.isTerminated()) {
-                throw new InvalidStateException("Connection handler executor service is shutdown");
-            }
-
-            service.submit(connectionHandlers[i]);
-        }
-    }
 
     private final void bindServerSocketChannel() throws IOException {
         if (serverSocketChannel != null && serverSocketChannel.isOpen()) {
@@ -104,7 +75,7 @@ public final class Server {
         //Register the serverSocketChannel with the servers selector
         registerServerSelector();
         //Init connection handlers to handle reading
-        initConnectionHandlers();
+
 
         isRunning = true;
 
@@ -135,7 +106,7 @@ public final class Server {
 
                         if (socketChannel != null && socketChannel.isConnected()) {
                             socketChannel.finishConnect();
-                            connectionHandlers[(int) Math.random() * connectionHandlers.length].handle(socketChannel);
+                            channelManager.register(socketChannel);
                         }
                     }
 
@@ -154,9 +125,6 @@ public final class Server {
 
         isRunning = false;
 
-        if (service != null && !service.isShutdown())
-            service.shutdown();
-
         try {
             serverSocketChannel.close();
         } catch (IOException e) {
@@ -171,20 +139,6 @@ public final class Server {
         }
 
         onAcceptableSelector = null;
-
-        for (int i = 0; i < connectionHandlers.length; i++) {
-            connectionHandlers[i] = null;
-        }
-
-        connectionHandlers = null;
-
-        try {
-            service.awaitTermination(5L, TimeUnit.SECONDS);
-            service = null;
-        } catch (InterruptedException e) {
-            service = null;
-            return;
-        }
     }
 
     public InetSocketAddress getINetAddress() {

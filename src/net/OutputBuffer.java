@@ -36,14 +36,6 @@ public class OutputBuffer {
         return bytesWritten;
     }
 
-    int pipeAllTo(Client c) throws IOException {
-        return pipeAllTo(c.getSocket());
-    }
-
-    int pipeTo(Client c) throws IOException {
-        return pipeTo(c.getSocket());
-    }
-
     int pipeTo(byte byteArr[]){
         currentOutputBuffer.flip();
         currentOutputBuffer.get(byteArr,0,byteArr.length);
