@@ -11,7 +11,7 @@ public class OutputBuffer {
     private ByteBuffer currentOutputBuffer;
 
     private OutputBuffer() {
-        this(INITIAL_SIZE_BYTES);
+        this(OutputBuffer.INITIAL_SIZE_BYTES);
     }
 
     private OutputBuffer(int initialSize) {
@@ -19,7 +19,7 @@ public class OutputBuffer {
     }
 
     private OutputBuffer(byte[] bytes) {
-        currentOutputBuffer = ByteBuffer.allocate(bytes.length + INITIAL_SIZE_BYTES);
+        currentOutputBuffer = ByteBuffer.allocate(bytes.length + OutputBuffer.INITIAL_SIZE_BYTES);
         currentOutputBuffer.put(bytes);
     }
 
@@ -30,15 +30,16 @@ public class OutputBuffer {
     int pipeAllTo(SocketChannel c) throws IOException {
         int bytesWritten = 0;
         int length = currentOutputBuffer.position();
-        while(bytesWritten != length)
+        while (bytesWritten != length) {
             bytesWritten += pipeTo(c);
+        }
 
         return bytesWritten;
     }
 
-    int pipeTo(byte byteArr[]){
+    int pipeTo(byte[] byteArr) {
         currentOutputBuffer.flip();
-        currentOutputBuffer.get(byteArr,0,byteArr.length);
+        currentOutputBuffer.get(byteArr, 0, byteArr.length);
         currentOutputBuffer.compact();
         return byteArr.length;
     }
@@ -52,11 +53,11 @@ public class OutputBuffer {
 
     public OutputBuffer pipeTo(ByteBuffer b) throws Exception {
         currentOutputBuffer.flip();
-        if(b.capacity() - b.position() < currentOutputBuffer.limit()){
+        if (b.capacity() - b.position() < currentOutputBuffer.limit()) {
             throw new Exception("Not enough room in buffer b");
         }
 
-        if(b.limit() != b.capacity()){
+        if (b.limit() != b.capacity()) {
             throw new Exception("Buffer may be in read mode");
         }
 
@@ -65,7 +66,7 @@ public class OutputBuffer {
         return this;
     }
 
-    public int size(){
+    public int size() {
         return currentOutputBuffer.position();
     }
 
@@ -76,7 +77,7 @@ public class OutputBuffer {
 
     public OutputBuffer writeByte(byte b) {
         if (currentOutputBuffer.position() + 1 >= currentOutputBuffer.capacity()) {
-            ByteBuffer x = ByteBuffer.allocate(currentOutputBuffer.capacity() + INCREASE_SIZE_BYTES);
+            ByteBuffer x = ByteBuffer.allocate(currentOutputBuffer.capacity() + OutputBuffer.INCREASE_SIZE_BYTES);
             currentOutputBuffer.flip();
             x.put(currentOutputBuffer);
             currentOutputBuffer.clear();
@@ -86,9 +87,19 @@ public class OutputBuffer {
         return this;
     }
 
-    private OutputBuffer writeBytes(long value,int numBytes){
+    public OutputBuffer writeBytes(int val, long repeat) {
+        if (repeat <= 0L) {
+            throw new IllegalArgumentException("repeat cannot be > 0");
+        }
+        for (long i = 0L; i < repeat; i++) {
+            writeByte((byte) val);
+        }
+        return this;
+    }
 
-        if(numBytes < 1 || numBytes > 8){
+    public OutputBuffer writeBytes(long value, int numBytes) {
+
+        if (numBytes < 1 || numBytes > 8) {
             throw new RuntimeException("Invalid params, numBytes must be between 1-8 inclusive");
         }
         int start;
@@ -97,50 +108,50 @@ public class OutputBuffer {
 
         ByteOrder currentOrder = currentOutputBuffer.order();
 
-        if(currentOrder == ByteOrder.BIG_ENDIAN){
+        if (currentOrder == ByteOrder.BIG_ENDIAN) {
             start = numBytes;
             end = 0;
             increment = -1;
-        }else{
+        } else {
             start = 0;
             end = numBytes;
             increment = 1;
         }
 
-        for(int i = start;i!=end;i+=increment){
+        for (int i = start; i != end; i += increment) {
             writeByte((byte) (value >> (i * 8)));
         }
 
         return this;
     }
 
-    private OutputBuffer outOrder(ByteOrder order){
+    private OutputBuffer outOrder(ByteOrder order) {
         currentOutputBuffer.order(order);
         return this;
     }
 
     public OutputBuffer writeLittleDWORD(long x) {
-        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x,4);
+        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 4);
     }
 
     public OutputBuffer writeBigDWORD(long x) {
-        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x,4);
+        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 4);
     }
 
     public OutputBuffer writeBigQWORD(long x) {
-        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x,8);
+        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 8);
     }
 
     public OutputBuffer writeLittleQWORD(long x) {
-        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x,8);
+        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 8);
     }
 
 
     public OutputBuffer writeBigWORD(int x) {
-        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x,2);
+        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 2);
     }
 
     public OutputBuffer writeLittleWORD(int x) {
-        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x,2);
+        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 2);
     }
 }

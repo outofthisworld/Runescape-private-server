@@ -1,11 +1,12 @@
 package net.packets;
 
 import net.Client;
-
-import java.nio.ByteBuffer;
+import net.InputBuffer;
 
 public interface Incoming {
     Client getClient();
+
     int getOpcode();
-    byte[] getPacketBytes();
+
+    InputBuffer getInputBuffer();
 }

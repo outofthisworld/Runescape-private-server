@@ -91,4 +91,8 @@ public class InputBuffer {
     public int readBigUnsignedWORD() {
         return (int) (inOrder(ByteOrder.BIG_ENDIAN).readBytes(2) & 0xFFFFL);
     }
+
+    public int remaining() {
+        return inBuffer.remaining();
+    }
 }

@@ -1,17 +1,16 @@
 package net.packets;
 
 import net.Client;
-
-import java.nio.ByteBuffer;
+import net.InputBuffer;
 
 public class IncomingPacket implements Incoming {
     private final byte[] messageBytes;
     private final Client c;
     private final int opcode;
 
-    public IncomingPacket(Client c, int packetOpcode, byte messageBytes[]){
+    public IncomingPacket(Client c, int packetOpcode, byte[] messageBytes) {
         this.c = c;
-        this.opcode = packetOpcode;
+        opcode = packetOpcode;
         this.messageBytes = messageBytes;
     }
 
@@ -29,7 +28,7 @@ public class IncomingPacket implements Incoming {
     }
 
     @Override
-    public byte[] getPacketBytes() {
-        return messageBytes;
+    public InputBuffer getInputBuffer() {
+        return new InputBuffer(messageBytes);
     }
 }
