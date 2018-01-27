@@ -1,22 +1,27 @@
 package net;
 
 import java.io.IOException;
+import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
-public class ConnectionHandler implements Runnable {
+public class SocketHandler implements ISocketHandler {
     private final Selector selector;
+    private volatile boolean isRunning = false;
+    private HashMap<SocketChannel,SelectionKey> sockets = new HashMap<>();
 
-    public ConnectionHandler() throws IOException {
+    public SocketHandler() throws IOException {
         this.selector = Selector.open();
     }
 
     public void handle(SocketChannel socketChannel) throws Exception {
         if (!socketChannel.isConnected()) {
-            throw new Exception("ConnectionHandler.java: Attempted to handle an unconnected socket channel");
+            throw new Exception("SocketHandler.java: Attempted to handle an unconnected socket channel");
         }
 
         if (socketChannel.isBlocking()) {
@@ -24,20 +29,40 @@ public class ConnectionHandler implements Runnable {
         }
 
         System.out.println("Registering socket channel with connection handler");
-        socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE);
+        sockets.put(socketChannel, socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE));
     }
 
-    public void shutdown() {
+    public void shutdown() throws IOException {
+        selector.close();
+        isRunning = false;
+    }
 
+    public boolean isRunning(){
+        return isRunning;
     }
 
     @Override
     public void run() {
+        isRunning = true;
         while (selector.isOpen()) {
             try {
                 selector.select(5000);
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+
+            for(SocketChannel chan: sockets.keySet()){
+                SelectionKey s = sockets.get(chan);
+
+                if(!s.isValid()){
+                    if(s.attachment() != null){
+                        Client c = (Client) s.attachment();
+                        c.handleDisconnect();
+                        s.attach(null);
+                        s.cancel();
+                        sockets.remove(chan);
+                    }
+                }
             }
             pollSelections();
         }
@@ -51,7 +76,7 @@ public class ConnectionHandler implements Runnable {
 
             currentlySelected = it.next();
 
-            if (currentlySelected.isReadable()) {
+            if (currentlySelected.isValid() && currentlySelected.isReadable()) {
                 System.out.println("readble selection");
                 if (currentlySelected.attachment() == null) {
                     try {

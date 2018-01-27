@@ -27,11 +27,11 @@ public class Client {
         this.remoteAddress = (InetSocketAddress) getSocket().getRemoteAddress();
     }
 
-    public SocketChannel getSocket() {
+    private SocketChannel getSocket() {
         return socket;
     }
 
-    public SelectionKey getSelectionKey() {
+    private SelectionKey getSelectionKey() {
         return selectionKey;
     }
 
@@ -73,7 +73,7 @@ public class Client {
         return bytesRead;
     }
 
-    private void handleDisconnect() {
+     void handleDisconnect() {
         //logger.log(Level.INFO, String.format("Client disconnect: $s : %d", this.remoteAddress.getHostString(), this.remoteAddress.getPort()));
         try {
             if (selectionKey != null)

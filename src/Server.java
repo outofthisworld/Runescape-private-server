@@ -1,5 +1,6 @@
-package net;
 
+import net.SocketHandler;
+import net.SocketGateway;
 import sun.plugin.dom.exception.InvalidStateException;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ public final class Server {
     private InetSocketAddress address;
     private volatile boolean isRunning = false;
     private Selector onAcceptableSelector;
-    private ConnectionHandler connectionHandlers[];
+    private SocketHandler connectionHandlers[];
     private ExecutorService service;
     private int numConnectionHandlers;
 
@@ -41,7 +42,7 @@ public final class Server {
 
     private final void initConnectionHandlers() throws IOException {
         if (connectionHandlers == null) {
-            connectionHandlers = new ConnectionHandler[numConnectionHandlers];
+            connectionHandlers = new SocketHandler[numConnectionHandlers];
         } else {
             throw new InvalidStateException("Connection handlers was set on start");
         }
@@ -54,7 +55,7 @@ public final class Server {
 
         for (int i = 0; i < connectionHandlers.length; i++) {
 
-            connectionHandlers[i] = new ConnectionHandler();
+            connectionHandlers[i] = new SocketHandler();
 
             if (service.isShutdown() || service.isTerminated()) {
                 throw new InvalidStateException("Connection handler executor service is shutdown");
