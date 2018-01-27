@@ -44,6 +44,13 @@ public class OutputBuffer {
         return pipeTo(c.getSocket());
     }
 
+    int pipeTo(byte byteArr[]){
+        currentOutputBuffer.flip();
+        currentOutputBuffer.get(byteArr,0,byteArr.length);
+        currentOutputBuffer.compact();
+        return byteArr.length;
+    }
+
     int pipeTo(SocketChannel c) throws IOException {
         currentOutputBuffer.flip();
         int bytesWritten = c.write(currentOutputBuffer);
@@ -51,12 +58,7 @@ public class OutputBuffer {
         return bytesWritten;
     }
 
-    public OutputBuffer pipeTo(ByteBuffer buffer, ByteOrder order) throws Exception {
-        return outOrder(order).pipeTo(buffer);
-    }
-
     public OutputBuffer pipeTo(ByteBuffer b) throws Exception {
-        outOrder(ByteOrder.BIG_ENDIAN);
         currentOutputBuffer.flip();
         if(b.capacity() - b.position() < currentOutputBuffer.limit()){
             throw new Exception("Not enough room in buffer b");
@@ -65,6 +67,7 @@ public class OutputBuffer {
         if(b.limit() != b.capacity()){
             throw new Exception("Buffer may be in read mode");
         }
+
         b.put(currentOutputBuffer);
         currentOutputBuffer.compact();
         return this;
