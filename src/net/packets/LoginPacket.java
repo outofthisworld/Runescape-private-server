@@ -64,7 +64,11 @@ import java.util.HashSet;
 
 public class LoginPacket extends Packet {
 
-    private final HashSet<Integer> opcodes = new HashSet<>(Arrays.asList(14, 16, 18));
+    private static final int LOGIN_REQUEST = 14;
+    private static final int UPDATE = 15;
+    private static final int NEW_SESSION = 16;
+    private static final int RECONNECT = 18;
+    private final HashSet<Integer> opcodes = new HashSet<>(Arrays.asList(LoginPacket.LOGIN_REQUEST, LoginPacket.UPDATE, LoginPacket.NEW_SESSION, LoginPacket.RECONNECT));
 
     @Override
     public void handle(Client c, int packetOpcode, InputBuffer in) throws Exception {
@@ -75,7 +79,7 @@ public class LoginPacket extends Packet {
         }
 
         switch (packetOpcode) {
-            case 14:
+            case LoginPacket.LOGIN_REQUEST:
                 System.out.println("in login stage one");
 
                 /*if (in.readUnsignedByte() != 14) {
@@ -92,8 +96,8 @@ public class LoginPacket extends Packet {
 
                 c.flush(Client.FlushMode.ALL);
                 break;
-            case 16:
-            case 18:
+            case LoginPacket.NEW_SESSION:
+            case LoginPacket.RECONNECT:
                 /*
                 int loginType = in.readUnsignedByte();
                 if (loginType != 16 && loginType != 18) {
@@ -211,10 +215,12 @@ public class LoginPacket extends Packet {
     @Override
     public int getOpcodePacketSize(int opcode) {
         switch (opcode) {
-            case 14:
+            case LoginPacket.LOGIN_REQUEST:
                 return 1;//2
-            case 16:
-            case 18:
+            case LoginPacket.UPDATE:
+                return -1; //??
+            case LoginPacket.NEW_SESSION:
+            case LoginPacket.RECONNECT:
                 return 75;//76
             default:
                 return -1; //Unknown packet size
