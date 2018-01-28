@@ -55,8 +55,10 @@
 
 package net;
 
+import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.function.Predicate;
 
 /**
  * The type Input buffer.
@@ -191,6 +193,24 @@ public class InputBuffer {
     }
 
     /**
+     * Read big signed qword long.
+     *
+     * @return the long
+     */
+    public long readBigSignedQWORD() {
+        return inOrder(ByteOrder.BIG_ENDIAN).readBytes(8);
+    }
+
+    /**
+     * Read little signed qword long.
+     *
+     * @return the long
+     */
+    public long readLittleSignedQWORD() {
+        return inOrder(ByteOrder.LITTLE_ENDIAN).readBytes(8);
+    }
+
+    /**
      * Read big signed dword int.
      *
      * @return the int
@@ -251,5 +271,34 @@ public class InputBuffer {
      */
     public int remaining() {
         return inBuffer.remaining();
+    }
+
+    public byte[] readUntil(Predicate<Byte> pred) {
+        return readUntil(pred, false);
+    }
+
+    public byte[] readUntil(Predicate<Byte> pred, boolean resetPosition) {
+        inBuffer.mark();
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        boolean found = false;
+
+        while (inBuffer.remaining() > 0) {
+            byte s = readSignedByte();
+            bos.write(s);
+            if (pred.test(s)) {
+                found = !found;
+                break;
+            }
+        }
+
+        if (resetPosition) {
+            inBuffer.reset();
+        }
+
+        if (!found) {
+            return null;
+        }
+
+        return bos.toByteArray();
     }
 }

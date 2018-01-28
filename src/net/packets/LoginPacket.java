@@ -139,8 +139,67 @@ public class LoginPacket extends Packet {
                     return;
                 }
 
-                //int packetId = inStream.readUnsignedByte()
 
+                if (in.readUnsignedByte() != 10) {
+                    System.out.println("byte wasnt 10");
+                    return;
+                }
+
+                long clientSessionKey = in.readBigSignedQWORD();
+                long serverSessionKey = in.readBigSignedQWORD();
+
+                int userID = in.readBigSignedDWORD();
+
+                byte[] usernameBytes = in.readUntil(b -> b.byteValue() == 10);
+
+                if (usernameBytes == null) {
+                    System.out.println("Username bytes null");
+                    return;
+                }
+
+                String username = new String(usernameBytes, 0, usernameBytes.length - 1);
+                if (username == null || username.length() == 0) {
+                    System.out.println("Blank username");
+                    return;
+                }
+
+                byte[] passwordBytes = in.readUntil(b -> b.byteValue() == 10);
+
+                if (passwordBytes == null) {
+                    System.out.println("password bytes null");
+                }
+
+                String password = new String(passwordBytes);
+
+                if (password == null || password.length() == 0) {
+                    System.out.println("invalid pass");
+                    return;
+                }
+
+                System.out.println(username);
+                System.out.println(password);
+
+                int[] sessionKey = new int[4];
+                sessionKey[0] = (int) (clientSessionKey >> 32);
+                sessionKey[1] = (int) clientSessionKey;
+                sessionKey[2] = (int) (serverSessionKey >> 32);
+                sessionKey[3] = (int) serverSessionKey;
+
+                //inStreamDecryption = new ISAACCipher(sessionKey);
+                //for(int i = 0; i < 4; i++) sessionKey[i] += 50;
+
+
+                //outStreamDecryption = new ISAACCipher(sessionKey);
+                //outStream.packetEncryption = outStreamDecryption;
+
+                int returnCode = 2;
+                //return code 7 = world full 5 = already logged in 2 = allgood
+
+                c.outBuffer().writeByte(returnCode);
+                c.outBuffer().writeByte(0);
+                c.outBuffer().writeByte(0);
+
+                c.flush(Client.FlushMode.ALL);
                 break;
             default:
                 throw new InvalidOpcodeException();
@@ -153,10 +212,10 @@ public class LoginPacket extends Packet {
     public int getOpcodePacketSize(int opcode) {
         switch (opcode) {
             case 14:
-                return 2;
+                return 1;//2
             case 16:
             case 18:
-                return 76;
+                return 75;//76
             default:
                 return -1; //Unknown packet size
         }

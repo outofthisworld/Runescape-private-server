@@ -1,4 +1,3 @@
-
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  License
  THE WORK (AS DEFINED BELOW) IS PROVIDED UNDER THE TERMS OF THIS CREATIVE COMMONS PUBLIC LICENSE ("CCPL" OR "LICENSE"). THE WORK IS PROTECTED BY COPYRIGHT AND/OR OTHER APPLICABLE LAW. ANY USE OF THE WORK OTHER THAN AS AUTHORIZED UNDER THIS LICENSE OR COPYRIGHT LAW IS PROHIBITED.
@@ -56,315 +55,274 @@
 
 package net;
 
-import net.packets.Packet;
-import net.packets.exceptions.InvalidOpcodeException;
-import net.packets.exceptions.InvalidPacketSizeException;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.SocketChannel;
-import java.util.Optional;
-import java.util.logging.Logger;
-
 
 /**
- * The type Client.
+ * <p>An implementation of an ISAAC cipher. See
+ * <a href="http://en.wikipedia.org/wiki/ISAAC_(cipher)">
+ * http://en.wikipedia.org/wiki/ISAAC_(cipher)</a> for more information.</p>
+ * <p>
+ * <p>This implementation is based on the one written by Bob Jenkins, which is
+ * available at <a href="http://www.burtleburtle.net/bob/java/rand/Rand.java">
+ * http://www.burtleburtle.net/bob/java/rand/Rand.java</a>.</p>
+ *
+ * @author Graham Edgecombe
  */
-public class Client {
-    private static final int MAX_IN_BUFFER_SIZE = 8500;
-    private static final int MAX_PACKET_SIZE = 512;
-    private static final int BUFFER_INCREASE_SIZE = 1024;
-    private static final int HEADER_SIZE_BYTES = 5;
-    private static final Logger logger = Logger.getLogger(Client.class.getName());
-    private final SocketChannel channel;
-    private final SelectionKey selectionKey;
-    private final InetSocketAddress remoteAddress;
-    private final long serverSessionKey;
-    private final long connectedAt;
-    private final LoginStage loginStage = LoginStage.STAGE_1;
-    private boolean isDisconnected = false;
-    private ByteBuffer inBuffer;
-    private OutputBuffer outBuffer = OutputBuffer.create();
+public class ISAACCipher {
 
     /**
-     * Instantiates a new Client.
-     *
-     * @param selectionKey the selection key
-     * @throws IOException the io exception
+     * The golden ratio.
      */
-    public Client(SelectionKey selectionKey) throws IOException {
-        channel = (SocketChannel) selectionKey.channel();
-        this.selectionKey = selectionKey;
-        remoteAddress = (InetSocketAddress) getChannel().getRemoteAddress();
-        serverSessionKey = ((long) (java.lang.Math.random() * 99999999D) << 32) + (long) (java.lang.Math.random() * 99999999D);
-        connectedAt = System.nanoTime();
-    }
+    public static final int RATIO = 0x9e3779b9;
 
-    private SocketChannel getChannel() {
-        return channel;
-    }
+    /**
+     * The log of the size of the results and memory arrays.
+     */
+    public static final int SIZE_LOG = 8;
 
-    private SelectionKey getSelectionKey() {
-        return selectionKey;
+    /**
+     * The size of the results and memory arrays.
+     */
+    public static final int SIZE = 1 << ISAACCipher.SIZE_LOG;
+
+    /**
+     * For pseudorandom lookup.
+     */
+    public static final int MASK = (ISAACCipher.SIZE - 1) << 2;
+    /**
+     * The results.
+     */
+    private final int[] results = new int[ISAACCipher.SIZE];
+    /**
+     * The internal memory state.
+     */
+    private final int[] memory = new int[ISAACCipher.SIZE];
+    /**
+     * The count through the results.
+     */
+    private int count = 0;
+    /**
+     * The accumulator.
+     */
+    private int a;
+
+    /**
+     * The last result.
+     */
+    private int b;
+
+    /**
+     * The counter.
+     */
+    private int c;
+
+    /**
+     * Creates the ISAAC cipher.
+     *
+     * @param seed The seed.
+     */
+    public ISAACCipher(int[] seed) {
+        for (int i = 0; i < seed.length; i++) {
+            results[i] = seed[i];
+        }
+        init(true);
     }
 
     /**
-     * Flushes the output buffer to the clients channel.
+     * Gets the next value.
      *
-     * @param flushMode the flush mode
-     * @return the amount of bytes written to the underlying channel.
+     * @return The next value.
      */
-    public int flush(FlushMode flushMode) {
-        int bytesWritten;
-        try {
-            if (flushMode == FlushMode.CHUNKED) {
-                bytesWritten = outBuffer.pipeTo(channel);
-            } else {
-                bytesWritten = outBuffer.pipeAllTo(channel);
+    public int getNextValue() {
+        if (count-- == 0) {
+            isaac();
+            count = ISAACCipher.SIZE - 1;
+        }
+        return results[count];
+    }
+
+    /**
+     * Generates 256 results.
+     */
+    public void isaac() {
+        int i, j, x, y;
+        b += ++c;
+        for (i = 0, j = ISAACCipher.SIZE / 2; i < ISAACCipher.SIZE / 2; ) {
+            x = memory[i];
+            a ^= a << 13;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
+
+            x = memory[i];
+            a ^= a >>> 6;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
+
+            x = memory[i];
+            a ^= a << 2;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
+
+            x = memory[i];
+            a ^= a >>> 16;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
+        }
+        for (j = 0; j < ISAACCipher.SIZE / 2; ) {
+            x = memory[i];
+            a ^= a << 13;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
+
+            x = memory[i];
+            a ^= a >>> 6;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
+
+            x = memory[i];
+            a ^= a << 2;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
+
+            x = memory[i];
+            a ^= a >>> 16;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
+        }
+    }
+
+    /**
+     * Initialises the ISAAC.
+     *
+     * @param flag Flag indicating if we should perform a second pass.
+     */
+    public void init(boolean flag) {
+        int i;
+        int a, b, c, d, e, f, g, h;
+        a = b = c = d = e = f = g = h = ISAACCipher.RATIO;
+        for (i = 0; i < 4; ++i) {
+            a ^= b << 11;
+            d += a;
+            b += c;
+            b ^= c >>> 2;
+            e += b;
+            c += d;
+            c ^= d << 8;
+            f += c;
+            d += e;
+            d ^= e >>> 16;
+            g += d;
+            e += f;
+            e ^= f << 10;
+            h += e;
+            f += g;
+            f ^= g >>> 4;
+            a += f;
+            g += h;
+            g ^= h << 8;
+            b += g;
+            h += a;
+            h ^= a >>> 9;
+            c += h;
+            a += b;
+        }
+        for (i = 0; i < ISAACCipher.SIZE; i += 8) {
+            if (flag) {
+                a += results[i];
+                b += results[i + 1];
+                c += results[i + 2];
+                d += results[i + 3];
+                e += results[i + 4];
+                f += results[i + 5];
+                g += results[i + 6];
+                h += results[i + 7];
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            handleDisconnect();
-            return -1;
+            a ^= b << 11;
+            d += a;
+            b += c;
+            b ^= c >>> 2;
+            e += b;
+            c += d;
+            c ^= d << 8;
+            f += c;
+            d += e;
+            d ^= e >>> 16;
+            g += d;
+            e += f;
+            e ^= f << 10;
+            h += e;
+            f += g;
+            f ^= g >>> 4;
+            a += f;
+            g += h;
+            g ^= h << 8;
+            b += g;
+            h += a;
+            h ^= a >>> 9;
+            c += h;
+            a += b;
+            memory[i] = a;
+            memory[i + 1] = b;
+            memory[i + 2] = c;
+            memory[i + 3] = d;
+            memory[i + 4] = e;
+            memory[i + 5] = f;
+            memory[i + 6] = g;
+            memory[i + 7] = h;
         }
-        return bytesWritten;
-    }
-
-    /**
-     * Gets server session key.
-     *
-     * @return the server session key
-     */
-    public long getServerSessionKey() {
-        return serverSessionKey;
-    }
-
-    /**
-     * Gets connected at.
-     *
-     * @return the connected at
-     */
-    public long getConnectedAt() {
-        return connectedAt;
-    }
-
-    /**
-     * Out buffer output buffer.
-     *
-     * @return the output buffer
-     */
-    public OutputBuffer outBuffer() {
-        return outBuffer;
-    }
-
-    private int readInBuf() throws Exception {
-
-        //Attempt to resize the input buffer so inBuffer.remaining() is always at-least max packet size.
-        //Throw an exception if inBuffer.capacity() + BUFFER_INCREASE_SIZE >= MAX_IN_BUFFER_SIZE.
-        if (inBuffer.remaining() < Client.MAX_PACKET_SIZE) {
-            if (inBuffer.capacity() + Client.BUFFER_INCREASE_SIZE >= Client.MAX_IN_BUFFER_SIZE) {
-                throw new Exception("InBuffer reached maximum");
-            } else {
-                ByteBuffer b = ByteBuffer.allocate(inBuffer.capacity() + Client.BUFFER_INCREASE_SIZE);
-                inBuffer.flip();
-                b.put(inBuffer);
-                inBuffer.clear();
-                inBuffer = b;
+        if (flag) {
+            for (i = 0; i < ISAACCipher.SIZE; i += 8) {
+                a += memory[i];
+                b += memory[i + 1];
+                c += memory[i + 2];
+                d += memory[i + 3];
+                e += memory[i + 4];
+                f += memory[i + 5];
+                g += memory[i + 6];
+                h += memory[i + 7];
+                a ^= b << 11;
+                d += a;
+                b += c;
+                b ^= c >>> 2;
+                e += b;
+                c += d;
+                c ^= d << 8;
+                f += c;
+                d += e;
+                d ^= e >>> 16;
+                g += d;
+                e += f;
+                e ^= f << 10;
+                h += e;
+                f += g;
+                f ^= g >>> 4;
+                a += f;
+                g += h;
+                g ^= h << 8;
+                b += g;
+                h += a;
+                h ^= a >>> 9;
+                c += h;
+                a += b;
+                memory[i] = a;
+                memory[i + 1] = b;
+                memory[i + 2] = c;
+                memory[i + 3] = d;
+                memory[i + 4] = e;
+                memory[i + 5] = f;
+                memory[i + 6] = g;
+                memory[i + 7] = h;
             }
         }
-
-        int bytesRead = getChannel().read(inBuffer);
-        if (bytesRead == -1) {
-            throw new Exception("end of stream reached");
-        }
-
-        return bytesRead;
+        isaac();
+        count = ISAACCipher.SIZE;
     }
 
-    /**
-     * Handle disconnect.
-     */
-    void handleDisconnect() {
-        if (isDisconnected) {
-            return;
-        }
-
-        //logger.log(Level.INFO, String.format("Client disconnect: $s : %d", this.remoteAddress.getHostString(), this.remoteAddress.getPort()));
-
-        if (selectionKey != null) {
-            selectionKey.cancel();
-        }
-        if (inBuffer != null) {
-            inBuffer.clear();
-        }
-        if (outBuffer != null) {
-            outBuffer.clear();
-        }
-        inBuffer = null;
-        outBuffer = null;
-        try {
-            if (channel != null) {
-                channel.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        isDisconnected = true;
-    }
-
-    /**
-     * Is disconnected boolean.
-     *
-     * @return the boolean
-     */
-    public boolean isDisconnected() {
-        return isDisconnected;
-    }
-
-    /**
-     * Is logged in boolean.
-     *
-     * @return the boolean
-     */
-    public boolean isLoggedIn() {
-        return loginStage == LoginStage.AUTHENTICATED;
-    }
-
-    /**
-     * Process read.
-     */
-    void processRead() {
-        if (inBuffer == null) {
-            inBuffer = ByteBuffer.allocate(Client.BUFFER_INCREASE_SIZE);
-        }
-
-        int bytesRead;
-
-        try {
-            bytesRead = readInBuf();
-        } catch (Exception e) {
-            e.printStackTrace();
-            handleDisconnect();
-            return;
-        }
-
-
-        //Make buffer readable
-        inBuffer.flip();
-
-        System.out.println("Currently in buffer = " + inBuffer.remaining());
-
-        if (inBuffer.remaining() < 1) {
-            return;
-        }
-
-
-        InputBuffer in = new InputBuffer(inBuffer);
-        int op = in.readUnsignedByte();
-
-
-        Optional<Packet> p = Packet.getForId(op);
-
-        if (p.isPresent()) {
-            try {
-                p.get().handle(this, op, in);
-            } catch (InvalidOpcodeException e) {
-                e.printStackTrace();
-            } catch (InvalidPacketSizeException e) {
-                inBuffer.rewind();
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        inBuffer.compact();
-    }
-
-    private enum LoginStage {
-        /**
-         * Stage 1 login stage.
-         */
-        STAGE_1, /**
-         * Stage 2 login stage.
-         */
-        STAGE_2, /**
-         * Stage 3 login stage.
-         */
-        STAGE_3, /**
-         * Authenticated login stage.
-         */
-        AUTHENTICATED
-    }
-
-
-    /**
-     * The enum Flush mode.
-     */
-    public enum FlushMode {
-        /**
-         * All flush mode.
-         */
-        ALL, /**
-         * Chunked flush mode.
-         */
-        CHUNKED
-    }
-/*
-
-        //1 byte opcode four byte for message length
-        if (bytesRead <= Client.HEADER_SIZE_BYTES) {
-            //Here should be safe to just return because nothing has been taken from inBuffer
-            return;
-        }
-        //Read unsigned byte opcode
-        int opCode = inBuffer.get() & 0xFF;
-        //Read  int length
-        int len = inBuffer.getInt();
-
-        //Malformed packet, clear the current input buffer
-        if (len <= 0 || len >= Client.MAX_IN_BUFFER_SIZE) {
-            inBuffer.clear();
-            return;
-        }
-
-        //If the length of the packet is higher than current inBuffers capacity
-        if (len > inBuffer.capacity()) {
-            ByteBuffer newInBuffer = ByteBuffer.allocate(len);
-            inBuffer.rewind();
-            //Put whatevers remaining
-            newInBuffer.put(inBuffer);
-
-            inBuffer.clear();
-            inBuffer = newInBuffer;
-
-            try {
-                readInBuf();
-            } catch (Exception e) {
-                e.printStackTrace();
-                handleDisconnect();
-                return;
-            }
-
-            inBuffer.flip();
-        }
-
-        //If we dont have len bytes to read required by this data
-        if (inBuffer.remaining() - Client.HEADER_SIZE_BYTES < len) {
-            inBuffer.rewind();
-        } else {
-            byte[] packetBytes = new byte[len];
-
-            try {
-                inBuffer.get(packetBytes, 0, packetBytes.length);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            new IncomingPacket(this, opCode, packetBytes);
-            inBuffer.compact();
-        }*/
 }
-
