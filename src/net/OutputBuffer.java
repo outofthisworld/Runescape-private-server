@@ -94,9 +94,7 @@ public class OutputBuffer {
      * Pipe all to int.
      *
      * @param c the c
-     *
      * @return the int
-     *
      * @throws IOException the io exception
      */
     int pipeAllTo(SocketChannel c) throws IOException {
@@ -115,7 +113,6 @@ public class OutputBuffer {
      * Pipe to int.
      *
      * @param byteArr the byte arr
-     *
      * @return the int
      */
     int pipeTo(byte[] byteArr) {
@@ -129,9 +126,7 @@ public class OutputBuffer {
      * Pipe to int.
      *
      * @param c the c
-     *
      * @return the int
-     *
      * @throws IOException the io exception
      */
     int pipeTo(SocketChannel c) throws IOException {
@@ -145,9 +140,7 @@ public class OutputBuffer {
      * Pipe to output buffer.
      *
      * @param b the b
-     *
      * @return the output buffer
-     *
      * @throws Exception the exception
      */
     public OutputBuffer pipeTo(ByteBuffer b) throws Exception {
@@ -186,7 +179,6 @@ public class OutputBuffer {
      * Write byte output buffer.
      *
      * @param b the b
-     *
      * @return the output buffer
      */
     public OutputBuffer writeByte(int b) {
@@ -206,7 +198,6 @@ public class OutputBuffer {
      *
      * @param val    the val
      * @param repeat the repeat
-     *
      * @return the output buffer
      */
     public OutputBuffer writeBytes(int val, int repeat) {
@@ -225,7 +216,6 @@ public class OutputBuffer {
      *
      * @param value    the value
      * @param numBytes the num bytes
-     *
      * @return the output buffer
      */
     public OutputBuffer writeBytes(long value, int numBytes) {
@@ -266,7 +256,6 @@ public class OutputBuffer {
      * Write little dword output buffer.
      *
      * @param x the x
-     *
      * @return the output buffer
      */
     public OutputBuffer writeLittleDWORD(long x) {
@@ -277,7 +266,6 @@ public class OutputBuffer {
      * Write big dword output buffer.
      *
      * @param x the x
-     *
      * @return the output buffer
      */
     public OutputBuffer writeBigDWORD(long x) {
@@ -288,7 +276,6 @@ public class OutputBuffer {
      * Write big qword output buffer.
      *
      * @param x the x
-     *
      * @return the output buffer
      */
     public OutputBuffer writeBigQWORD(long x) {
@@ -299,7 +286,6 @@ public class OutputBuffer {
      * Write little qword output buffer.
      *
      * @param x the x
-     *
      * @return the output buffer
      */
     public OutputBuffer writeLittleQWORD(long x) {
@@ -311,7 +297,6 @@ public class OutputBuffer {
      * Write big word output buffer.
      *
      * @param x the x
-     *
      * @return the output buffer
      */
     public OutputBuffer writeBigWORD(int x) {
@@ -322,7 +307,6 @@ public class OutputBuffer {
      * Write little word output buffer.
      *
      * @param x the x
-     *
      * @return the output buffer
      */
     public OutputBuffer writeLittleWORD(int x) {

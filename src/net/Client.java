@@ -56,12 +56,18 @@
 
 package net;
 
+import net.packets.Packet;
+import net.packets.exceptions.InvalidOpcodeException;
+import net.packets.exceptions.InvalidPacketSizeException;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
+import java.util.Optional;
 import java.util.logging.Logger;
+
 
 /**
  * The type Client.
@@ -77,8 +83,8 @@ public class Client {
     private final InetSocketAddress remoteAddress;
     private final long serverSessionKey;
     private final long connectedAt;
+    private final LoginStage loginStage = LoginStage.STAGE_1;
     private boolean isDisconnected = false;
-    private LoginStage loginStage = LoginStage.STAGE_1;
     private ByteBuffer inBuffer;
     private OutputBuffer outBuffer = OutputBuffer.create();
 
@@ -209,7 +215,6 @@ public class Client {
         isDisconnected = true;
     }
 
-
     /**
      * Is disconnected boolean.
      *
@@ -252,89 +257,61 @@ public class Client {
 
         System.out.println("Currently in buffer = " + inBuffer.remaining());
 
-        if (!isLoggedIn()) {
-            System.out.println("creating input buffer:");
-            InputBuffer in = new InputBuffer(inBuffer);
-            System.out.println(inBuffer.remaining());
-            switch (loginStage) {
-                case STAGE_1:
-                    System.out.println("in login stage one");
-                    if (in.remaining() < 2) {
-                        System.out.println("Not enough in buffer");
-                        return;
-                    }
-
-                    if (in.readUnsignedByte() != 14) {
-                        System.out.println("invalid login byte / supposed to be 14");
-                        return;
-                    }
-
-                    short namepart = in.readUnsignedByte();
-
-
-                    outBuffer().writeBytes(0, 8);
-                    outBuffer().writeByte(0);
-                    outBuffer().writeBigQWORD(serverSessionKey);
-
-                    flush(FlushMode.ALL);
-
-                    loginStage = LoginStage.STAGE_2;
-                    break;
-                case STAGE_2:
-                    System.out.println("in stage 2");
-
-                    System.out.println(in.remaining());
-                    int loginType = in.readUnsignedByte();
-                    if (loginType != 16 && loginType != 18) {
-                        System.out.println("Wrong login type");
-                        return;
-                    }
-                    short loginPacketSize = in.readUnsignedByte();
-                    System.out.println(loginPacketSize);
-                    System.out.println(in.remaining());
-
-                    if (in.remaining() != loginPacketSize) {
-                        System.out.println("Not enough data in buffer");
-                    }
-
-
-                    int loginEncryptedPacketSize = loginPacketSize - (36 + 1 + 1 + 2);
-                    System.out.println(loginEncryptedPacketSize);
-
-                    if (loginEncryptedPacketSize <= 0) {
-                        System.out.println("Zero RSA packet size");
-                        return;
-                    }
-
-                    System.out.println("Remaining in buffer after stage 2: " + in.remaining());
-
-                    int magicNum = in.readUnsignedByte();
-                    int revision = in.readBigUnsignedWORD();
-
-                    System.out.println(magicNum);
-                    System.out.println(revision);
-
-                    if (magicNum != 255 || revision != 317) {
-                        System.out.println("Invalid magic num or revision");
-                        return;
-                    }
-
-                    int lowMemoryVersion = in.readUnsignedByte();
-                    in.skip(4 * 9);
-
-                    loginEncryptedPacketSize--;
-                    if (in.readUnsignedByte() != loginEncryptedPacketSize) {
-                        System.out.println("inv");
-                        return;
-                    }
-
-                    //int packetId = inStream.readUnsignedByte()
-
-
-                    break;
-            }
-            inBuffer.compact();
+        if (inBuffer.remaining() < 1) {
+            inBuffer.clear();
+            return;
         }
+
+
+        InputBuffer in = new InputBuffer(inBuffer);
+        int op = in.readUnsignedByte();
+
+
+        Optional<Packet> p = Packet.getForId(op);
+
+        if (p.isPresent()) {
+            try {
+                p.get().handle(this, op, in);
+            } catch (InvalidOpcodeException e) {
+                e.printStackTrace();
+            } catch (InvalidPacketSizeException e) {
+                inBuffer.rewind();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        inBuffer.compact();
+    }
+
+    private enum LoginStage {
+        /**
+         * Stage 1 login stage.
+         */
+        STAGE_1, /**
+         * Stage 2 login stage.
+         */
+        STAGE_2, /**
+         * Stage 3 login stage.
+         */
+        STAGE_3, /**
+         * Authenticated login stage.
+         */
+        AUTHENTICATED
+    }
+
+
+    /**
+     * The enum Flush mode.
+     */
+    public enum FlushMode {
+        /**
+         * All flush mode.
+         */
+        ALL, /**
+         * Chunked flush mode.
+         */
+        CHUNKED
+    }
 /*
 
         //1 byte opcode four byte for message length
@@ -389,36 +366,5 @@ public class Client {
             new IncomingPacket(this, opCode, packetBytes);
             inBuffer.compact();
         }*/
-    }
-
-    private enum LoginStage {
-        /**
-         * Stage 1 login stage.
-         */
-        STAGE_1, /**
-         * Stage 2 login stage.
-         */
-        STAGE_2, /**
-         * Stage 3 login stage.
-         */
-        STAGE_3, /**
-         * Authenticated login stage.
-         */
-        AUTHENTICATED
-    }
-
-
-    /**
-     * The enum Flush mode.
-     */
-    public enum FlushMode {
-        /**
-         * All flush mode.
-         */
-        ALL, /**
-         * Chunked flush mode.
-         */
-        CHUNKED
-    }
-
 }
+

@@ -95,7 +95,23 @@ public class InputBuffer {
      * @param numBytes the num bytes
      */
     public void skip(int numBytes) {
-        inBuffer.position(numBytes);
+        inBuffer.position(inBuffer.position() + numBytes);
+    }
+
+    /**
+     * Rewind.
+     */
+    public void rewind() {
+        inBuffer.rewind();
+    }
+
+    /**
+     * Position int.
+     *
+     * @return the int
+     */
+    public int position() {
+        return inBuffer.position();
     }
 
     private long readBytes(int numBytes) {

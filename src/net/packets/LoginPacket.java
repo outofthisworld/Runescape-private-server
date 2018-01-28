@@ -57,29 +57,113 @@ package net.packets;
 
 import net.Client;
 import net.InputBuffer;
+import net.packets.exceptions.InvalidOpcodeException;
 
-/**
- * The interface Incoming.
- */
-public interface Incoming {
-    /**
-     * Gets client.
-     *
-     * @return the client
-     */
-    Client getClient();
+import java.util.Arrays;
+import java.util.HashSet;
 
-    /**
-     * Gets opcode.
-     *
-     * @return the opcode
-     */
-    int getOpcode();
+public class LoginPacket extends Packet {
 
-    /**
-     * Gets input buffer.
-     *
-     * @return the input buffer
-     */
-    InputBuffer getInputBuffer();
+    private final HashSet<Integer> opcodes = new HashSet<>(Arrays.asList(14, 16, 18));
+
+    @Override
+    public void handle(Client c, int packetOpcode, InputBuffer in) throws Exception {
+        validate(packetOpcode, in);
+
+        if (c.isLoggedIn()) {
+            return;
+        }
+
+        switch (packetOpcode) {
+            case 14:
+                System.out.println("in login stage one");
+
+                /*if (in.readUnsignedByte() != 14) {
+                    System.out.println("invalid login byte / supposed to be 14");
+                    return;
+                }*/
+
+                short namepart = in.readUnsignedByte();
+
+
+                c.outBuffer().writeBytes(0, 8);
+                c.outBuffer().writeByte(0);
+                c.outBuffer().writeBigQWORD(c.getServerSessionKey());
+
+                c.flush(Client.FlushMode.ALL);
+                break;
+            case 16:
+            case 18:
+                /*
+                int loginType = in.readUnsignedByte();
+                if (loginType != 16 && loginType != 18) {
+                    System.out.println("Wrong login type");
+                    return;
+                }*/
+                short loginPacketSize = in.readUnsignedByte();
+                System.out.println(loginPacketSize);
+                System.out.println(in.remaining());
+
+                if (in.remaining() != loginPacketSize) {
+                    System.out.println("Not enough data in buffer");
+                }
+
+
+                int loginEncryptedPacketSize = loginPacketSize - (36 + 1 + 1 + 2);
+                System.out.println(loginEncryptedPacketSize);
+
+                if (loginEncryptedPacketSize <= 0) {
+                    System.out.println("Zero RSA packet size");
+                    return;
+                }
+
+                System.out.println("Remaining in buffer after stage 2: " + in.remaining());
+
+                int magicNum = in.readUnsignedByte();
+                int revision = in.readBigUnsignedWORD();
+
+                System.out.println(magicNum);
+                System.out.println(revision);
+
+                if (magicNum != 255 || revision != 317) {
+                    System.out.println("Invalid magic num or revision");
+                    return;
+                }
+
+                int lowMemoryVersion = in.readUnsignedByte();
+                in.skip(4 * 9);
+
+                loginEncryptedPacketSize--;
+                if (in.readUnsignedByte() != loginEncryptedPacketSize) {
+                    System.out.println("inv");
+                    return;
+                }
+
+                //int packetId = inStream.readUnsignedByte()
+
+                break;
+            default:
+                throw new InvalidOpcodeException();
+        }
+
+
+    }
+
+    @Override
+    public int getOpcodePacketSize(int opcode) {
+        switch (opcode) {
+            case 14:
+                return 2;
+            case 16:
+            case 18:
+                return 76;
+            default:
+                return -1; //Unknown packet size
+        }
+    }
+
+    @Override
+    public boolean handlesOpcode(int opcode) {
+        return opcodes.contains(opcode);
+    }
 }

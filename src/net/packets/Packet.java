@@ -57,43 +57,45 @@ package net.packets;
 
 import net.Client;
 import net.InputBuffer;
+import net.packets.exceptions.InvalidOpcodeException;
+import net.packets.exceptions.InvalidPacketSizeException;
 
-/**
- * The type Incoming packet.
- */
-public class IncomingPacket implements Incoming {
-    private final byte[] messageBytes;
-    private final Client c;
-    private final int opcode;
+import java.util.Arrays;
+import java.util.Optional;
 
-    /**
-     * Instantiates a new Incoming packet.
-     *
-     * @param c            the c
-     * @param packetOpcode the packet opcode
-     * @param messageBytes the message bytes
-     */
-    public IncomingPacket(Client c, int packetOpcode, byte[] messageBytes) {
-        this.c = c;
-        opcode = packetOpcode;
-        this.messageBytes = messageBytes;
+public abstract class Packet {
+
+    private static final Packet[] packets = new Packet[]{
+            new LoginPacket()
+    };
+
+    public Packet() {
     }
 
-
-    //OutputBuffer -
-
-    @Override
-    public Client getClient() {
-        return c;
+    public static Optional<Packet> getForId(int id) {
+        return Arrays.stream(Packet.packets).filter(e -> e.handlesOpcode(id)).findAny();
     }
 
-    @Override
-    public int getOpcode() {
-        return opcode;
+    public abstract void handle(Client c, int packetOpcode, InputBuffer in) throws Exception;
+
+    public void validate(int packetOpcode, InputBuffer in) throws InvalidOpcodeException, InvalidPacketSizeException {
+        int packetSize = getOpcodePacketSize(packetOpcode);
+
+
+        if (!handlesOpcode(packetOpcode)) {
+            throw new InvalidOpcodeException();
+        }
+
+        if (packetSize == -1) {
+            return;
+        }
+
+        if (in.remaining() < packetSize) {
+            throw new InvalidPacketSizeException();
+        }
     }
 
-    @Override
-    public InputBuffer getInputBuffer() {
-        return new InputBuffer(messageBytes);
-    }
+    public abstract int getOpcodePacketSize(int opcode);
+
+    public abstract boolean handlesOpcode(int opcode);
 }

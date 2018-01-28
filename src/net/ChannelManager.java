@@ -88,9 +88,7 @@ public class ChannelManager {
      * Create channel manager.
      *
      * @param numHandlers the num handlers
-     *
      * @return the channel manager
-     *
      * @throws IOException the io exception
      */
     public static ChannelManager create(int numHandlers) throws IOException {
@@ -106,9 +104,7 @@ public class ChannelManager {
      *
      * @param numHandlers        the num handlers
      * @param maxHandlerChannels the max handler channels
-     *
      * @return the channel manager
-     *
      * @throws IOException the io exception
      */
     public static ChannelManager create(int numHandlers, int maxHandlerChannels) throws IOException {
@@ -120,7 +116,6 @@ public class ChannelManager {
      * Register.
      *
      * @param s the s
-     *
      * @throws Exception the exception
      */
     public void register(SocketChannel s) throws Exception {
