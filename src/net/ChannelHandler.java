@@ -6,18 +6,20 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 public class ChannelHandler implements IChannelHandler {
     private final Selector selector;
     private volatile boolean isRunning = false;
-    private HashMap<SocketChannel,SelectionKey> sockets;
+    private HashMap<SocketChannel, SelectionKey> sockets;
     private int numChannels = 0;
 
     public ChannelHandler() throws IOException {
-        this.selector = Selector.open();
+        selector = Selector.open();
     }
 
+    @Override
     public void handle(SocketChannel socketChannel) throws Exception {
         if (!socketChannel.isConnected()) {
             throw new Exception("ChannelHandler.java: Attempted to handle an unconnected socket channel");
@@ -29,12 +31,15 @@ public class ChannelHandler implements IChannelHandler {
 
         System.out.println("Registering socket channel with connection handler");
 
-        if(sockets == null) sockets = new HashMap<>();
+        if (sockets == null) {
+            sockets = new HashMap<>();
+        }
 
         sockets.put(socketChannel, socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE));
         numChannels++;
     }
 
+    @Override
     public void shutdown() throws IOException {
         selector.close();
         sockets.clear();
@@ -42,11 +47,13 @@ public class ChannelHandler implements IChannelHandler {
         isRunning = false;
     }
 
-    public int getChannelCount(){
+    @Override
+    public int getChannelCount() {
         return numChannels;
     }
 
-    public boolean isRunning(){
+    @Override
+    public boolean isRunning() {
         return isRunning;
     }
 
@@ -60,19 +67,23 @@ public class ChannelHandler implements IChannelHandler {
                 e.printStackTrace();
             }
 
-            for(SocketChannel chan: sockets.keySet()){
-                SelectionKey s = sockets.get(chan);
+            Set<Map.Entry<SocketChannel, SelectionKey>> set = sockets.entrySet();
+            for (Iterator<Map.Entry<SocketChannel, SelectionKey>> i = set.iterator(); i.hasNext(); ) {
+                Map.Entry<SocketChannel, SelectionKey> en = i.next();
 
-                if(!s.isValid()){
-                    if(s.attachment() != null){
+                SelectionKey s = en.getValue();
+
+                if (!s.isValid()) {
+                    if (s.attachment() != null) {
                         Client c = (Client) s.attachment();
                         c.handleDisconnect();
                         s.attach(null);
                         s.cancel();
-                        sockets.remove(chan);
+                        i.remove();
                     }
                 }
             }
+
             pollSelections();
         }
         isRunning = false;
@@ -97,9 +108,10 @@ public class ChannelHandler implements IChannelHandler {
                 }
 
 
-                if (currentlySelected.attachment() !=  null && currentlySelected.isValid()) {
+                if (currentlySelected.attachment() != null && currentlySelected.isValid()) {
                     Client c = (Client) currentlySelected.attachment();
                     try {
+                        System.out.println("processing read");
                         c.processRead();
                         //Read into read buffer...
                     } catch (Exception e) {

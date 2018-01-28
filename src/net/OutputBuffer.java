@@ -30,10 +30,12 @@ public class OutputBuffer {
     int pipeAllTo(SocketChannel c) throws IOException {
         int bytesWritten = 0;
         int length = currentOutputBuffer.position();
+        System.out.println("writing " + length + " bytes");
         while (bytesWritten != length) {
             bytesWritten += pipeTo(c);
         }
 
+        System.out.println("wrote : " + bytesWritten);
         return bytesWritten;
     }
 
@@ -75,7 +77,7 @@ public class OutputBuffer {
         currentOutputBuffer.clear();
     }
 
-    public OutputBuffer writeByte(byte b) {
+    public OutputBuffer writeByte(int b) {
         if (currentOutputBuffer.position() + 1 >= currentOutputBuffer.capacity()) {
             ByteBuffer x = ByteBuffer.allocate(currentOutputBuffer.capacity() + OutputBuffer.INCREASE_SIZE_BYTES);
             currentOutputBuffer.flip();
@@ -83,16 +85,17 @@ public class OutputBuffer {
             currentOutputBuffer.clear();
             currentOutputBuffer = x;
         }
-        currentOutputBuffer.put(b);
+        currentOutputBuffer.put((byte) b);
         return this;
     }
 
-    public OutputBuffer writeBytes(int val, long repeat) {
-        if (repeat <= 0L) {
+    public OutputBuffer writeBytes(int val, int repeat) {
+        if (repeat <= 0) {
             throw new IllegalArgumentException("repeat cannot be > 0");
         }
-        for (long i = 0L; i < repeat; i++) {
+        for (int i = 0; i < repeat; i++) {
             writeByte((byte) val);
+            System.out.println("writing byte");
         }
         return this;
     }
@@ -109,8 +112,8 @@ public class OutputBuffer {
         ByteOrder currentOrder = currentOutputBuffer.order();
 
         if (currentOrder == ByteOrder.BIG_ENDIAN) {
-            start = numBytes;
-            end = 0;
+            start = numBytes - 1;
+            end = -1;
             increment = -1;
         } else {
             start = 0;
@@ -119,6 +122,7 @@ public class OutputBuffer {
         }
 
         for (int i = start; i != end; i += increment) {
+            System.out.println(i * 8);
             writeByte((byte) (value >> (i * 8)));
         }
 
