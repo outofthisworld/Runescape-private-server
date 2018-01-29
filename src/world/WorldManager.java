@@ -55,18 +55,18 @@
 
 package world;
 
-import java.util.ArrayList;
+import sun.plugin.dom.exception.InvalidStateException;
+
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class WorldManager {
 
-    private final ArrayList<World> worlds = new ArrayList<World>() {
-        {
-            add(new World(worlds.size(), WorldManager.this));
-        }
-    };
+    private final CopyOnWriteArrayList<World> worlds = new CopyOnWriteArrayList<>(new World[]{
+            new World(0, WorldManager.this)
+    });
 
     private final HashMap<World, ConcurrentLinkedQueue<Player>> LOGIN_QUEUE = new HashMap() {
         {
@@ -84,7 +84,9 @@ public class WorldManager {
     }
 
     public int createWorld() {
-        worlds.add(new World(worlds.size(), this));
+        World w = new World(worlds.size(), this);
+        worlds.add(w);
+        LOGIN_QUEUE.put(w, new ConcurrentLinkedQueue<>());
         return worlds.size() - 1;
     }
 
@@ -93,10 +95,23 @@ public class WorldManager {
     }
 
     public ConcurrentLinkedQueue<Player> getLoginQueueForWorld(int worldId) {
-        return LOGIN_QUEUE.get(worlds.get(worldId));
+        World world = worlds.get(worldId);
+        return LOGIN_QUEUE.get(world);
     }
 
     public void queueLogin(int worldId, Player player) {
-        LOGIN_QUEUE.get(worlds.get(worldId)).add(player);
+        World world;
+        world = worlds.get(worldId);
+        queueLogin(world, player);
+    }
+
+    public void queueLogin(World world, Player player) {
+        ConcurrentLinkedQueue<Player> queue = LOGIN_QUEUE.get(world);
+
+        if (queue == null) {
+            throw new InvalidStateException("Login queue does not exist for world");
+        } else {
+            queue.add(player);
+        }
     }
 }
