@@ -171,10 +171,7 @@ public class ChannelHandler implements IChannelHandler {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }
-
-
-                if (currentlySelected.attachment() != null && currentlySelected.isValid()) {
+                } else {
                     Client c = (Client) currentlySelected.attachment();
                     try {
                         System.out.println("processing read");
@@ -185,7 +182,25 @@ public class ChannelHandler implements IChannelHandler {
                     }
                 }
             }
-
+            if (currentlySelected.isValid() && currentlySelected.isWritable()) {
+                System.out.println("writable selection");
+                if (currentlySelected.attachment() == null) {
+                    try {
+                        currentlySelected.attach(new Client(currentlySelected));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Client c = (Client) currentlySelected.attachment();
+                    try {
+                        System.out.println("processing write");
+                        c.processWrite();
+                        //Read into read buffer...
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             it.remove();
         }
     }

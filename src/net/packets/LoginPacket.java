@@ -58,10 +58,13 @@ package net.packets;
 import net.Client;
 import net.ISAACCipher;
 import net.InputBuffer;
+import net.OutputBuffer;
 import net.packets.exceptions.InvalidOpcodeException;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class LoginPacket extends Packet {
@@ -70,7 +73,8 @@ public class LoginPacket extends Packet {
     private static final int UPDATE = 15;
     private static final int NEW_SESSION = 16;
     private static final int RECONNECT = 18;
-    private final HashSet<Integer> opcodes = new HashSet<>(Arrays.asList(LoginPacket.LOGIN_REQUEST, LoginPacket.UPDATE, LoginPacket.NEW_SESSION, LoginPacket.RECONNECT));
+    private final Set<Integer> opcodes = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList(LoginPacket.LOGIN_REQUEST, LoginPacket.UPDATE, LoginPacket.NEW_SESSION, LoginPacket.RECONNECT)));
 
 
     @Override
@@ -93,13 +97,13 @@ public class LoginPacket extends Packet {
                 //Name hash
                 in.readUnsignedByte();
 
+                c.write(OutputBuffer
+                                .create(73, 10)
+                                .writeBytes(0, 8)// is being ignored by the Client
+                                .writeByte(0)// login response - 0 means exchange session key to establish encryption
+                                .writeBigQWORD(c.getServerSessionKey()),  // send the Server part of the session Id used (Client+Server part together are used as cryption key)Client.FlushMode.ALL);
+                        Client.FlushMode.ALL);
 
-                c.outBuffer()
-                        .writeBytes(0, 8)// is being ignored by the Client
-                        .writeByte(0)// login response - 0 means exchange session key to establish encryption
-                        .writeBigQWORD(c.getServerSessionKey());// send the Server part of the session Id used (Client+Server part together are used as cryption key)
-
-                c.flush(Client.FlushMode.ALL);
                 break;
             case LoginPacket.NEW_SESSION:
             case LoginPacket.RECONNECT:
@@ -202,6 +206,8 @@ public class LoginPacket extends Packet {
                 }
                 c.setOutCipher(new ISAACCipher(sessionKey));
 
+                System.out.println(in.remaining());
+
                 //outStreamDecryption = new ISAACCipher(sessionKey);
                 //outStream.packetEncryption = outStreamDecryption;
 
@@ -255,7 +261,7 @@ public class LoginPacket extends Packet {
                 .writeByte(playerRights)
                 .writeByte(0); //no log
 
-        c.flush(Client.FlushMode.ALL);
+        c.write(Client.FlushMode.ALL);
     }
 
     @Override

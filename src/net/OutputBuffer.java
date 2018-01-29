@@ -64,21 +64,31 @@ import java.nio.channels.SocketChannel;
  * The type Output buffer.
  */
 public class OutputBuffer {
-    private static final int INITIAL_SIZE_BYTES = 8500;
-    private static final int INCREASE_SIZE_BYTES = 4000;
+    private final int increaseSizeBytes;
     private ByteBuffer currentOutputBuffer;
 
     private OutputBuffer() {
-        this(OutputBuffer.INITIAL_SIZE_BYTES);
+        this(256, 256);
     }
 
-    private OutputBuffer(int initialSize) {
+    private OutputBuffer(int initialSize, int increaseSizeBytes) {
         currentOutputBuffer = ByteBuffer.allocate(initialSize);
+        this.increaseSizeBytes = increaseSizeBytes;
     }
 
-    private OutputBuffer(byte[] bytes) {
-        currentOutputBuffer = ByteBuffer.allocate(bytes.length + OutputBuffer.INITIAL_SIZE_BYTES);
+    private OutputBuffer(byte[] bytes, int increaseSizeBytes) {
+        currentOutputBuffer = ByteBuffer.allocate(bytes.length);
         currentOutputBuffer.put(bytes);
+        this.increaseSizeBytes = increaseSizeBytes;
+    }
+
+    /**
+     * Instantiates a new Output buffer.
+     *
+     * @param bytes the bytes
+     */
+    public OutputBuffer(byte[] bytes) {
+        this(bytes, 256);
     }
 
     /**
@@ -88,6 +98,38 @@ public class OutputBuffer {
      */
     public static OutputBuffer create() {
         return new OutputBuffer();
+    }
+
+    /**
+     * Create output buffer.
+     *
+     * @param initialSize       the initial size
+     * @param increaseSizeBytes the increase size bytes
+     * @return the output buffer
+     */
+    public static OutputBuffer create(int initialSize, int increaseSizeBytes) {
+        return new OutputBuffer(initialSize, increaseSizeBytes);
+    }
+
+    /**
+     * Wrap output buffer.
+     *
+     * @param bytes             the bytes
+     * @param increaseSizeBytes the increase size bytes
+     * @return the output buffer
+     */
+    public static OutputBuffer wrap(byte[] bytes, int increaseSizeBytes) {
+        return new OutputBuffer(bytes, increaseSizeBytes);
+    }
+
+    /**
+     * Wrap output buffer.
+     *
+     * @param bytes the bytes
+     * @return the output buffer
+     */
+    public static OutputBuffer wrap(byte[] bytes) {
+        return new OutputBuffer(bytes);
     }
 
     /**
@@ -183,7 +225,7 @@ public class OutputBuffer {
      */
     public OutputBuffer writeByte(int b) {
         if (currentOutputBuffer.position() + 1 >= currentOutputBuffer.capacity()) {
-            ByteBuffer x = ByteBuffer.allocate(currentOutputBuffer.capacity() + OutputBuffer.INCREASE_SIZE_BYTES);
+            ByteBuffer x = ByteBuffer.allocate(currentOutputBuffer.capacity() + increaseSizeBytes);
             currentOutputBuffer.flip();
             x.put(currentOutputBuffer);
             currentOutputBuffer.clear();

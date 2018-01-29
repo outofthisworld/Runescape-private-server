@@ -67,6 +67,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Logger;
 
 
@@ -84,11 +85,12 @@ public class Client {
     private final long serverSessionKey, connectedAt;
     private final Date lastConnectionDate = new Date();
     private final long disconnectedAt = -1;
+    private final ConcurrentLinkedDeque<OutputBuffer> outgoingBuffers = new ConcurrentLinkedDeque<>();
     private boolean isDisconnected = false;
     private ByteBuffer inBuffer;
-    private OutputBuffer outBuffer = OutputBuffer.create();
     private ISAACCipher inCipher;
     private ISAACCipher outCipher;
+    private boolean isLoggedIn;
 
     /**
      * Instantiates a new Client.
@@ -117,7 +119,7 @@ public class Client {
      *
      * @return the in cipher
      */
-    public ISAACCipher getInCipher() {
+    ISAACCipher getInCipher() {
         return inCipher;
     }
 
@@ -126,8 +128,26 @@ public class Client {
      *
      * @param cipher the cipher
      */
-    public void setInCipher(ISAACCipher cipher) {
+    void setInCipher(ISAACCipher cipher) {
         inCipher = cipher;
+    }
+
+    /**
+     * Is logged in boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isLoggedIn() {
+        return isLoggedIn;
+    }
+
+    /**
+     * Sets logged in.
+     *
+     * @param loggedIn the logged in
+     */
+    void setLoggedIn(boolean loggedIn) {
+        isLoggedIn = loggedIn;
     }
 
     /**
@@ -135,7 +155,7 @@ public class Client {
      *
      * @return the out cipher
      */
-    public ISAACCipher getOutCipher() {
+    ISAACCipher getOutCipher() {
         return outCipher;
     }
 
@@ -144,32 +164,84 @@ public class Client {
      *
      * @param cipher the cipher
      */
-    public void setOutCipher(ISAACCipher cipher) {
+    void setOutCipher(ISAACCipher cipher) {
         outCipher = cipher;
     }
 
+    /**
+     * Gets disconnected at.
+     *
+     * @return the disconnected at
+     */
     public long getDisconnectedAt() {
         return disconnectedAt;
     }
 
     /**
-     * Flush int.
+     * Process write.
+     */
+    void processWrite() {
+        OutputBuffer buf;
+        while ((buf = outgoingBuffers.poll()) != null) {
+            try {
+                int size = buf.size();
+                int bytesWritten = buf.pipeTo(channel);
+
+                if (bytesWritten != size) {
+                    outgoingBuffers.addFirst(buf);
+                    selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
+                    return;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                if (selectionKey.isValid()) {
+                    outgoingBuffers.addFirst(buf);
+                } else {
+                    return;
+                }
+            }
+        }
+        selectionKey.interestOps(selectionKey.interestOps() & (~SelectionKey.OP_WRITE));
+    }
+
+    /**
+     * Need to ensure that socket channels buffer is not full before doing the write.
      *
-     * @param flushMode the flush mode
+     * @param outBuffer the out buffer
+     * @param flushMode the write mode
      * @return the int
      */
-    public int flush(FlushMode flushMode) {
-        int bytesWritten;
-        try {
-            if (flushMode == FlushMode.CHUNKED) {
-                bytesWritten = outBuffer.pipeTo(channel);
-            } else {
-                bytesWritten = outBuffer.pipeAllTo(channel);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            handleDisconnect();
-            return -1;
+    public int write(OutputBuffer outBuffer, FlushMode flushMode) {
+        int bytesWritten = 0;
+
+        int outBufSize = outBuffer.size();
+        switch (flushMode) {
+            case CHUNKED:
+                if (outgoingBuffers.size() == 0) {
+                    try {
+                        bytesWritten = outBuffer.pipeTo(channel);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        handleDisconnect();
+                        return -1;
+                    }
+                    if (bytesWritten == 0 || bytesWritten != outBufSize) {
+                        outgoingBuffers.addLast(outBuffer);
+                        selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
+                    }
+                } else {
+                    outgoingBuffers.addLast(outBuffer);
+                }
+                break;
+            case ALL:
+                try {
+                    bytesWritten = outBuffer.pipeAllTo(channel);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    handleDisconnect();
+                    return -1;
+                }
+                break;
         }
         return bytesWritten;
     }
@@ -195,7 +267,7 @@ public class Client {
     /**
      * Out buffer output buffer.
      *
-     * @return the output buffer
+     * @return the output buffer <p> <p> Note this is not synchronized, so cannot be accessed by multiple threads. <p> Currently, packets are using it on the main cachedThreadPool thread from the executor service present in ChannelMananger. <p> This architecture may have to be changed such that a new OutputBuffer is passed to the client if the output buffer needs be accessed by multiple threads
      */
     public OutputBuffer outBuffer() {
         return outBuffer;
@@ -322,11 +394,11 @@ public class Client {
      */
     public enum FlushMode {
         /**
-         * All flush mode.
+         * All write mode.
          */
         ALL,
         /**
-         * Chunked flush mode.
+         * Chunked write mode.
          */
         CHUNKED
     }

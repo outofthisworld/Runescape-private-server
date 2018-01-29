@@ -55,5 +55,11 @@
 
 package world.player;
 
+import net.Client;
+
 public class Player {
+
+    public Player(Client c) {
+
+    }
 }

@@ -58,6 +58,7 @@ package world;
 import world.player.Player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -92,6 +93,12 @@ public class World {
         Player p = null;
         while ((p = loginQueue.poll()) != null) {
             players.add(p);
+        }
+
+
+        for (Iterator<Player> it = players.iterator(); it.hasNext(); ) {
+            Player player = it.next();
+            if (player.)
         }
 
 
