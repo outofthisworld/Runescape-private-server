@@ -68,7 +68,7 @@ import java.util.concurrent.*;
 public class WorldManager {
     private static final CopyOnWriteArrayList<World> WORLDS;
     private static final HashMap<World, ConcurrentLinkedQueue<Player>> LOGIN_QUEUE;
-    private static final ExecutorService WORLD_EXECUTOR_SERVICE;
+    private static final ScheduledExecutorService WORLD_EXECUTOR_SERVICE;
 
     static {
         WORLDS = new CopyOnWriteArrayList<>();
@@ -111,7 +111,8 @@ public class WorldManager {
         WorldManager.WORLDS.add(w);
         WorldManager.LOGIN_QUEUE.put(w, new ConcurrentLinkedQueue<>());
         //DOnt do anything with it for now, could be used later.
-        Future<?> f = WorldManager.WORLD_EXECUTOR_SERVICE.submit(() -> w.poll());
+        Future<?> f = WorldManager.WORLD_EXECUTOR_SERVICE.scheduleAtFixedRate(() ->
+                w.poll(), 0, WorldConfig.WORLD_TICK_RATE_MS, TimeUnit.MILLISECONDS);
         return WorldManager.WORLDS.size() - 1;
     }
 
@@ -199,6 +200,7 @@ public class WorldManager {
             Thread t = new Thread();
             t.setName("World " + count + " thread");
             t.setPriority(priority);
+            t.setUncaughtExceptionHandler((t1, e) -> e.printStackTrace());
             return t;
         }
     }

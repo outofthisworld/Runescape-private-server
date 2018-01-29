@@ -57,7 +57,8 @@ package world;
 
 public final class WorldConfig {
 
-    private static final int NUM_VIRTUAL_WORLDS = 1;
+    public static final int NUM_VIRTUAL_WORLDS = 1;
+    public static final int WORLD_TICK_RATE_MS = 500;
 
     private WorldConfig() {
     }
