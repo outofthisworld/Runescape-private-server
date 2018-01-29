@@ -61,14 +61,22 @@ import java.nio.ByteOrder;
 import java.nio.channels.SocketChannel;
 
 /**
- * The type Output buffer.
+ * <p>
+ * An unbounded buffer that can be written to and dynamically resized as it is written to.
+ * Built around a ByteBuffer, but makes them easier to work with as the buffer only can be written to.
+ * Reading from the @class ByteBuffer is done internally through one of its pipe methods.
+ * <p>
+ * This class is not thread safe, any attempts to use it from multiple threads will result
+ * in inconsistencies unless synchronized correctly from user level code.
  */
 public class OutputBuffer {
+    private static final int INITIAL_SIZE = 256;
+    private static final int INCREASE_SIZE_BYTES = 256;
     private final int increaseSizeBytes;
     private ByteBuffer currentOutputBuffer;
 
     private OutputBuffer() {
-        this(256, 256);
+        this(OutputBuffer.INITIAL_SIZE, OutputBuffer.INCREASE_SIZE_BYTES);
     }
 
     private OutputBuffer(int initialSize, int increaseSizeBytes) {
@@ -92,7 +100,8 @@ public class OutputBuffer {
     }
 
     /**
-     * Create output buffer.
+     * Creates a new OutputBuffer with an initial size of 256 bytes
+     * that is dynamically resized every 256 bytes.
      *
      * @return the output buffer
      */
@@ -104,7 +113,7 @@ public class OutputBuffer {
      * Create output buffer.
      *
      * @param initialSize       the initial size
-     * @param increaseSizeBytes the increase size bytes
+     * @param increaseSizeBytes the amount of bytes that the buffer should increase by if its capacity is reached.
      * @return the output buffer
      */
     public static OutputBuffer create(int initialSize, int increaseSizeBytes) {
@@ -112,7 +121,22 @@ public class OutputBuffer {
     }
 
     /**
-     * Wrap output buffer.
+     * Creates an output buffer of initial size. Dynamically resized every 256 bytes.
+     *
+     * @param initialSize the initial size
+     * @return the output buffer
+     */
+    public static OutputBuffer create(int initialSize) {
+        return new OutputBuffer(initialSize, OutputBuffer.INCREASE_SIZE_BYTES);
+    }
+
+
+    /**
+     * Wraps the specified byte array, creating an OutputBuffer with equal length as the byte array.
+     * Note that the first write operation to this output buffer after wrapping a byte array
+     * will cause the internal @class ByteBuffer to resize by @param increaseSizeBytes which may be costly in some situations.
+     * The intended use of this method is to turn byte array into an output buffer without subsequent
+     * writes to the OutputBuffer unless truly necessary.
      *
      * @param bytes             the bytes
      * @param increaseSizeBytes the increase size bytes

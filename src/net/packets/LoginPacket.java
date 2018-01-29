@@ -98,12 +98,10 @@ public class LoginPacket extends Packet {
                 in.readUnsignedByte();
 
                 c.write(OutputBuffer
-                                .create(73, 10)
-                                .writeBytes(0, 8)// is being ignored by the Client
-                                .writeByte(0)// login response - 0 means exchange session key to establish encryption
-                                .writeBigQWORD(c.getServerSessionKey()),  // send the Server part of the session Id used (Client+Server part together are used as cryption key)Client.FlushMode.ALL);
-                        Client.FlushMode.ALL);
-
+                        .create(73, 10)
+                        .writeBytes(0, 8)// is being ignored by the Client
+                        .writeByte(0)// login response - 0 means exchange session key to establish encryption
+                        .writeBigQWORD(c.getServerSessionKey()));// send the Server part of the session Id used (Client+Server part together are used as cryption key
                 break;
             case LoginPacket.NEW_SESSION:
             case LoginPacket.RECONNECT:
@@ -256,7 +254,7 @@ public class LoginPacket extends Packet {
     }
 
     private void sendResponse(Client c, int returnCode, int playerRights) {
-        c.outBuffer()
+        OutputBuffer.create(3)
                 .writeByte(returnCode)
                 .writeByte(playerRights)
                 .writeByte(0); //no log

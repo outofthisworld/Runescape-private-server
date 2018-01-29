@@ -197,6 +197,7 @@ public class Client {
                 if (selectionKey.isValid()) {
                     outgoingBuffers.addFirst(buf);
                 } else {
+                    handleDisconnect();
                     return;
                 }
             }
@@ -208,41 +209,30 @@ public class Client {
      * Need to ensure that socket channels buffer is not full before doing the write.
      *
      * @param outBuffer the out buffer
-     * @param flushMode the write mode
      * @return the int
      */
-    public int write(OutputBuffer outBuffer, FlushMode flushMode) {
+    public int write(OutputBuffer outBuffer) {
         int bytesWritten = 0;
 
         int outBufSize = outBuffer.size();
-        switch (flushMode) {
-            case CHUNKED:
-                if (outgoingBuffers.size() == 0) {
-                    try {
-                        bytesWritten = outBuffer.pipeTo(channel);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        handleDisconnect();
-                        return -1;
-                    }
-                    if (bytesWritten == 0 || bytesWritten != outBufSize) {
-                        outgoingBuffers.addLast(outBuffer);
-                        selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
-                    }
-                } else {
-                    outgoingBuffers.addLast(outBuffer);
-                }
-                break;
-            case ALL:
-                try {
-                    bytesWritten = outBuffer.pipeAllTo(channel);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    handleDisconnect();
-                    return -1;
-                }
-                break;
+
+        if (outgoingBuffers.size() == 0) {
+            try {
+                bytesWritten = outBuffer.pipeTo(channel);
+            } catch (IOException e) {
+                e.printStackTrace();
+                handleDisconnect();
+                return -1;
+            }
+            if (bytesWritten == 0 || bytesWritten != outBufSize) {
+                outgoingBuffers.addLast(outBuffer);
+                selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
+            }
+        } else {
+            selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE)
+            outgoingBuffers.addLast(outBuffer);
         }
+
         return bytesWritten;
     }
 
@@ -264,14 +254,6 @@ public class Client {
         return connectedAt;
     }
 
-    /**
-     * Out buffer output buffer.
-     *
-     * @return the output buffer <p> <p> Note this is not synchronized, so cannot be accessed by multiple threads. <p> Currently, packets are using it on the main cachedThreadPool thread from the executor service present in ChannelMananger. <p> This architecture may have to be changed such that a new OutputBuffer is passed to the client if the output buffer needs be accessed by multiple threads
-     */
-    public OutputBuffer outBuffer() {
-        return outBuffer;
-    }
 
     private int readInBuf() throws Exception {
 
@@ -389,19 +371,7 @@ public class Client {
         inBuffer.compact();
     }
 
-    /**
-     * The enum Flush mode.
-     */
-    public enum FlushMode {
-        /**
-         * All write mode.
-         */
-        ALL,
-        /**
-         * Chunked write mode.
-         */
-        CHUNKED
-    }
+
 /*
 
         //1 byte opcode four byte for message length
