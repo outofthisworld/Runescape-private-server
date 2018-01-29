@@ -58,8 +58,13 @@ package world.player;
 import net.Client;
 
 public class Player {
+    private final Client c;
 
     public Player(Client c) {
+        this.c = c;
+    }
 
+    public Client getClient() {
+        return c;
     }
 }

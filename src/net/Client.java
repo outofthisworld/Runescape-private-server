@@ -84,8 +84,8 @@ public class Client {
     private final InetSocketAddress remoteAddress;
     private final long serverSessionKey, connectedAt;
     private final Date lastConnectionDate = new Date();
-    private final long disconnectedAt = -1;
     private final ConcurrentLinkedDeque<OutputBuffer> outgoingBuffers = new ConcurrentLinkedDeque<>();
+    private long disconnectedAt = -1;
     private boolean isDisconnected = false;
     private ByteBuffer inBuffer;
     private ISAACCipher inCipher;
@@ -183,30 +183,30 @@ public class Client {
     void processWrite() {
         OutputBuffer buf;
         while ((buf = outgoingBuffers.poll()) != null) {
+            int size = buf.size();
+            int bytesWritten = 0;
             try {
-                int size = buf.size();
-                int bytesWritten = buf.pipeTo(channel);
-
-                if (bytesWritten != size) {
-                    outgoingBuffers.addFirst(buf);
-                    selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
-                    return;
-                }
+                bytesWritten = buf.pipeTo(channel);
             } catch (IOException e) {
                 e.printStackTrace();
-                if (selectionKey.isValid()) {
-                    outgoingBuffers.addFirst(buf);
-                } else {
-                    handleDisconnect();
+                if (!selectionKey.isValid()) {
+                    disconnect();
                     return;
                 }
+            }
+
+            if (bytesWritten == 0 || bytesWritten != size) {
+                outgoingBuffers.addFirst(buf);
+                selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
+                return;
             }
         }
         selectionKey.interestOps(selectionKey.interestOps() & (~SelectionKey.OP_WRITE));
     }
 
     /**
-     * Need to ensure that socket channels buffer is not full before doing the write.
+     * Thread safe, attempts to write the specified OutputBuffer to the client,
+     * if the socketchannels buffer is full, register OP_WRITE.
      *
      * @param outBuffer the out buffer
      * @return the int
@@ -221,7 +221,7 @@ public class Client {
                 bytesWritten = outBuffer.pipeTo(channel);
             } catch (IOException e) {
                 e.printStackTrace();
-                handleDisconnect();
+                disconnect();
                 return -1;
             }
             if (bytesWritten == 0 || bytesWritten != outBufSize) {
@@ -229,7 +229,7 @@ public class Client {
                 selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
             }
         } else {
-            selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE)
+            selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
             outgoingBuffers.addLast(outBuffer);
         }
 
@@ -282,7 +282,7 @@ public class Client {
     /**
      * Handle disconnect.
      */
-    void handleDisconnect() {
+    public void disconnect() {
         if (isDisconnected) {
             return;
         }
@@ -295,11 +295,7 @@ public class Client {
         if (inBuffer != null) {
             inBuffer.clear();
         }
-        if (outBuffer != null) {
-            outBuffer.clear();
-        }
         inBuffer = null;
-        outBuffer = null;
         try {
             if (channel != null) {
                 channel.close();
@@ -308,7 +304,9 @@ public class Client {
             e.printStackTrace();
         }
 
+        disconnectedAt = System.nanoTime();
         isDisconnected = true;
+        isLoggedIn = false;
     }
 
     /**
@@ -335,7 +333,7 @@ public class Client {
             bytesRead = readInBuf();
         } catch (Exception e) {
             e.printStackTrace();
-            handleDisconnect();
+            disconnect();
             return;
         }
 
@@ -404,7 +402,7 @@ public class Client {
                 readInBuf();
             } catch (Exception e) {
                 e.printStackTrace();
-                handleDisconnect();
+                disconnect();
                 return;
             }
 

@@ -53,78 +53,10 @@
  The rights granted under, and the subject matter referenced, in this License were drafted utilizing the terminology of the Berne Convention for the Protection of Literary and Artistic Works (as amended on September 28, 1979), the Rome Convention of 1961, the WIPO Copyright Treaty of 1996, the WIPO Performances and Phonograms Treaty of 1996 and the Universal Copyright Convention (as revised on July 24, 1971). These rights and subject matter take effect in the relevant jurisdiction in which the License terms are sought to be enforced according to the corresponding provisions of the implementation of those treaty provisions in the applicable national law. If the standard suite of rights granted under applicable copyright law includes additional rights not granted under this License, such additional rights are deemed to be included in the License; this License is not intended to restrict the license of any rights under applicable law.
  -----------------------------------------------------------------------------*/
 
-package world;
+package task;
 
-import world.player.Player;
+public interface Task {
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-/**
- * The type World.
- */
-public class World {
-
-    private final ArrayList<Player> players = new ArrayList<>();
-    private final int worldId;
-
-    /**
-     * Instantiates a new World.
-     *
-     * @param worldId the world id
-     */
-    public World(int worldId) {
-        this.worldId = worldId;
-    }
-
-
-    /**
-     * Poll.
-     */
-    void poll() {
-        /*
-            Adds players that are currently in the loginQueue for this world to this worlds players arraylist.
-         */
-        ConcurrentLinkedQueue<Player> loginQueue = WorldManager.getLoginQueueForWorld(this);
-        Player p = null;
-        while ((p = loginQueue.poll()) != null) {
-            players.add(p);
-        }
-
-        addPlayersToWorld();
-        handlePlayerDisconnects();
-    }
-
-    private void addPlayersToWorld() {
-        ConcurrentLinkedQueue<Player> loginQueue = WorldManager.getLoginQueueForWorld(this);
-        Player p = null;
-        while ((p = loginQueue.poll()) != null) {
-            players.add(p);
-        }
-    }
-
-    private void handlePlayerDisconnects() {
-        for (Iterator<Player> it = players.iterator(); it.hasNext(); ) {
-            Player player = it.next();
-            if (player.getClient().isDisconnected()) {
-                //handle player saving
-            }
-        }
-    }
-
-
-    /*
-        Queues a task to be executed by the worlds main thread.
-        This should be used anytime world state is changed from a different thread,
-        and wont take a overly long time to execute.
-
-        Anything that will block, or loop for an extended period of time should not be put
-        on the world thread for execution, but rather executed asynchronously on another thread.
-        Final state changes, if any, can then be posted here.
-    */
-    public void queueWorldTask() {
-
-    }
+    void execute();
 
 }

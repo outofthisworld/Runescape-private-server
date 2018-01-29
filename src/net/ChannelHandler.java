@@ -139,7 +139,7 @@ public class ChannelHandler implements IChannelHandler {
                 if (!s.isValid()) {
                     if (s.attachment() != null) {
                         Client c = (Client) s.attachment();
-                        c.handleDisconnect();
+                        c.disconnect();
                         s.attach(null);
                         s.cancel();
                         i.remove();

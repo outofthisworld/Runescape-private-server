@@ -130,7 +130,6 @@ public class OutputBuffer {
         return new OutputBuffer(initialSize, OutputBuffer.INCREASE_SIZE_BYTES);
     }
 
-
     /**
      * Wraps the specified byte array, creating an OutputBuffer with equal length as the byte array.
      * Note that the first write operation to this output buffer after wrapping a byte array
