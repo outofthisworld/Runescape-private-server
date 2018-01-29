@@ -65,6 +65,7 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
+import java.util.Date;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -81,6 +82,8 @@ public class Client {
     private final SelectionKey selectionKey;
     private final InetSocketAddress remoteAddress;
     private final long serverSessionKey, connectedAt;
+    private final Date lastConnectionDate = new Date();
+    private final long disconnectedAt = -1;
     private boolean isDisconnected = false;
     private ByteBuffer inBuffer;
     private OutputBuffer outBuffer = OutputBuffer.create();
@@ -143,6 +146,10 @@ public class Client {
      */
     public void setOutCipher(ISAACCipher cipher) {
         outCipher = cipher;
+    }
+
+    public long getDisconnectedAt() {
+        return disconnectedAt;
     }
 
     /**
@@ -259,14 +266,6 @@ public class Client {
         return isDisconnected;
     }
 
-    /**
-     * Is logged in boolean.
-     *
-     * @return the boolean
-     */
-    public boolean isLoggedIn() {
-        return loginStage == LoginStage.AUTHENTICATED;
-    }
 
     /**
      * Process read.

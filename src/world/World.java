@@ -56,6 +56,7 @@
 package world;
 
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * The type World.
@@ -63,7 +64,7 @@ import java.util.ArrayList;
 public class World {
 
     private final ArrayList<Player> players = new ArrayList<>();
-
+    private final int worldId;
 
     /**
      * Instantiates a new World.
@@ -72,7 +73,7 @@ public class World {
      * @param worldManager the world manager
      */
     public World(int worldId) {
-
+        this.worldId = worldId;
     }
 
 
@@ -80,6 +81,17 @@ public class World {
      * Poll.
      */
     void poll() {
+
+
+        /*
+            Adds players that are currently in the loginQueue for this world to this worlds players arraylist.
+         */
+        ConcurrentLinkedQueue<Player> loginQueue = WorldManager.getLoginQueueForWorld(this);
+        Player p = null;
+        while ((p = loginQueue.poll()) != null) {
+            players.add(p);
+        }
+
 
     }
 
