@@ -56,6 +56,7 @@
 package net.packets;
 
 import net.Client;
+import net.ISAACCipher;
 import net.InputBuffer;
 import net.packets.exceptions.InvalidOpcodeException;
 
@@ -193,9 +194,13 @@ public class LoginPacket extends Packet {
                 sessionKey[2] = (int) (serverSessionKey >> 32);
                 sessionKey[3] = (int) serverSessionKey;
 
-                //inStreamDecryption = new ISAACCipher(sessionKey);
-                //for(int i = 0; i < 4; i++) sessionKey[i] += 50;
 
+                c.setInCipher(new ISAACCipher(sessionKey));
+                //inStreamDecryption = new ISAACCipher(sessionKey);
+                for (int i = 0; i < 4; i++) {
+                    sessionKey[i] += 50;
+                }
+                c.setOutCipher(new ISAACCipher(sessionKey));
 
                 //outStreamDecryption = new ISAACCipher(sessionKey);
                 //outStream.packetEncryption = outStreamDecryption;

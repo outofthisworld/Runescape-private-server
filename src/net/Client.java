@@ -73,20 +73,19 @@ import java.util.logging.Logger;
  * The type Client.
  */
 public class Client {
-    private static final int MAX_IN_BUFFER_SIZE = 8500;
-    private static final int MAX_PACKET_SIZE = 512;
-    private static final int BUFFER_INCREASE_SIZE = 1024;
-    private static final int HEADER_SIZE_BYTES = 5;
+    private static final int MAX_IN_BUFFER_SIZE = 8500,
+            MAX_PACKET_SIZE = 512,
+            BUFFER_INCREASE_SIZE = 1024;
     private static final Logger logger = Logger.getLogger(Client.class.getName());
     private final SocketChannel channel;
     private final SelectionKey selectionKey;
     private final InetSocketAddress remoteAddress;
-    private final long serverSessionKey;
-    private final long connectedAt;
-    private final LoginStage loginStage = LoginStage.STAGE_1;
+    private final long serverSessionKey, connectedAt;
     private boolean isDisconnected = false;
     private ByteBuffer inBuffer;
     private OutputBuffer outBuffer = OutputBuffer.create();
+    private ISAACCipher inCipher;
+    private ISAACCipher outCipher;
 
     /**
      * Instantiates a new Client.
@@ -111,10 +110,46 @@ public class Client {
     }
 
     /**
-     * Flushes the output buffer to the clients channel.
+     * Gets in cipher.
+     *
+     * @return the in cipher
+     */
+    public ISAACCipher getInCipher() {
+        return inCipher;
+    }
+
+    /**
+     * Set in cipher.
+     *
+     * @param cipher the cipher
+     */
+    public void setInCipher(ISAACCipher cipher) {
+        inCipher = cipher;
+    }
+
+    /**
+     * Gets out cipher.
+     *
+     * @return the out cipher
+     */
+    public ISAACCipher getOutCipher() {
+        return outCipher;
+    }
+
+    /**
+     * Set out cipher.
+     *
+     * @param cipher the cipher
+     */
+    public void setOutCipher(ISAACCipher cipher) {
+        outCipher = cipher;
+    }
+
+    /**
+     * Flush int.
      *
      * @param flushMode the flush mode
-     * @return the amount of bytes written to the underlying channel.
+     * @return the int
      */
     public int flush(FlushMode flushMode) {
         int bytesWritten;
@@ -283,23 +318,6 @@ public class Client {
         inBuffer.compact();
     }
 
-    private enum LoginStage {
-        /**
-         * Stage 1 login stage.
-         */
-        STAGE_1, /**
-         * Stage 2 login stage.
-         */
-        STAGE_2, /**
-         * Stage 3 login stage.
-         */
-        STAGE_3, /**
-         * Authenticated login stage.
-         */
-        AUTHENTICATED
-    }
-
-
     /**
      * The enum Flush mode.
      */
@@ -307,7 +325,8 @@ public class Client {
         /**
          * All flush mode.
          */
-        ALL, /**
+        ALL,
+        /**
          * Chunked flush mode.
          */
         CHUNKED
