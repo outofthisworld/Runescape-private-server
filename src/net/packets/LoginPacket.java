@@ -232,6 +232,7 @@ public class LoginPacket extends Packet {
                     CompletableFuture.supplyAsync(() -> {
                         return "";
                     }).thenRun(() -> sendResponse(c, 2, 0));
+
                 }
 
 

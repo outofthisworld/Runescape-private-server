@@ -57,17 +57,29 @@ package world;
 
 import java.util.ArrayList;
 
+/**
+ * The type World.
+ */
 public class World {
 
-    private final ArrayList<Player> players = new ArrayList<Player>();
+    private final ArrayList<Player> players = new ArrayList<>();
 
 
-    public World(final int worldId, final WorldManager worldManager) {
+    /**
+     * Instantiates a new World.
+     *
+     * @param worldId      the world id
+     * @param worldManager the world manager
+     */
+    public World(int worldId) {
 
     }
 
 
-    void poll(){
+    /**
+     * Poll.
+     */
+    void poll() {
 
     }
 

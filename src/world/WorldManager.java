@@ -61,53 +61,110 @@ import java.util.HashMap;
 import java.util.concurrent.*;
 
 
+/**
+ * The type World manager.
+ */
 public class WorldManager {
+    private static final CopyOnWriteArrayList<World> WORLDS;
+    private static final HashMap<World, ConcurrentLinkedQueue<Player>> LOGIN_QUEUE;
+    private static final ExecutorService WORLD_EXECUTOR_SERVICE;
 
-    private final CopyOnWriteArrayList<World> worlds = new CopyOnWriteArrayList<>(new World[]{
-            new World(0, WorldManager.this)
-    });
+    static {
+        WORLDS = new CopyOnWriteArrayList<>(new World[]{
+                new World(0)
+        });
 
-    private final HashMap<World, ConcurrentLinkedQueue<Player>> LOGIN_QUEUE = new HashMap() {
-        {
-            worlds.forEach(e -> put(e, new ConcurrentLinkedQueue<Player>()));
-        }
-    };
-    private final ExecutorService worldExecutorService = Executors.newCachedThreadPool(new WorldThreadFactory(5));
+        LOGIN_QUEUE = new HashMap() {
+            {
+                WorldManager.WORLDS.forEach(e -> put(e, new ConcurrentLinkedQueue<Player>()));
+            }
+        };
 
+        WORLD_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(1, new WorldThreadFactory(10))
+    }
+
+    /**
+     * Instantiates a new World manager.
+     */
     public WorldManager() {
 
     }
 
-    public int getNumberOfWorlds() {
-        return worlds.size();
+    /**
+     * Gets number of WORLDS.
+     *
+     * @return the number of WORLDS
+     */
+    public static int getNumberOfWorlds() {
+        return WorldManager.WORLDS.size();
     }
 
-    public int createWorld() {
-        World w = new World(worlds.size(), this);
-        worlds.add(w);
-        LOGIN_QUEUE.put(w, new ConcurrentLinkedQueue<>());
+    /**
+     * Create world int.
+     *
+     * @return the int
+     */
+    public static int createWorld() {
+        World w = new World(WorldManager.WORLDS.size());
+        WorldManager.WORLDS.add(w);
+        WorldManager.LOGIN_QUEUE.put(w, new ConcurrentLinkedQueue<>());
         //DOnt do anything with it for now, could be used later.
-        Future<?> f = worldExecutorService.submit(() -> w.poll());
-        return worlds.size() - 1;
+        Future<?> f = WorldManager.WORLD_EXECUTOR_SERVICE.submit(() -> w.poll());
+        return WorldManager.WORLDS.size() - 1;
     }
 
-    public ConcurrentLinkedQueue<Player> getLoginQueueForWorld(World world) {
-        return LOGIN_QUEUE.get(world);
+
+    /**
+     * Get world world.
+     *
+     * @param worldId the world id
+     * @return the world
+     */
+    public static World getWorld(int worldId) {
+        return WorldManager.WORLDS.get(worldId);
     }
 
-    public ConcurrentLinkedQueue<Player> getLoginQueueForWorld(int worldId) {
-        World world = worlds.get(worldId);
-        return LOGIN_QUEUE.get(world);
+    /**
+     * Gets login queue for world.
+     *
+     * @param world the world
+     * @return the login queue for world
+     */
+    public static ConcurrentLinkedQueue<Player> getLoginQueueForWorld(World world) {
+        return WorldManager.LOGIN_QUEUE.get(world);
     }
 
-    public void queueLogin(int worldId, Player player) {
+    /**
+     * Gets login queue for world.
+     *
+     * @param worldId the world id
+     * @return the login queue for world
+     */
+    public static ConcurrentLinkedQueue<Player> getLoginQueueForWorld(int worldId) {
+        World world = WorldManager.WORLDS.get(worldId);
+        return WorldManager.LOGIN_QUEUE.get(world);
+    }
+
+    /**
+     * Queue login.
+     *
+     * @param worldId the world id
+     * @param player  the player
+     */
+    public static void queueLogin(int worldId, Player player) {
         World world;
-        world = worlds.get(worldId);
-        queueLogin(world, player);
+        world = WorldManager.WORLDS.get(worldId);
+        WorldManager.queueLogin(world, player);
     }
 
-    public void queueLogin(World world, Player player) {
-        ConcurrentLinkedQueue<Player> queue = LOGIN_QUEUE.get(world);
+    /**
+     * Queue login.
+     *
+     * @param world  the world
+     * @param player the player
+     */
+    public static void queueLogin(World world, Player player) {
+        ConcurrentLinkedQueue<Player> queue = WorldManager.LOGIN_QUEUE.get(world);
 
         if (queue == null) {
             throw new InvalidStateException("Login queue does not exist for world");
@@ -116,10 +173,15 @@ public class WorldManager {
         }
     }
 
-    private class WorldThreadFactory implements ThreadFactory {
+    private static class WorldThreadFactory implements ThreadFactory {
         private final int count = 0;
         private final int priority;
 
+        /**
+         * Instantiates a new World thread factory.
+         *
+         * @param priority the priority
+         */
         public WorldThreadFactory(int priority) {
 
             if (priority > Thread.MAX_PRIORITY || priority < Thread.MIN_PRIORITY) {
