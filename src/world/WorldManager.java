@@ -58,8 +58,7 @@ package world;
 import sun.plugin.dom.exception.InvalidStateException;
 
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.*;
 
 
 public class WorldManager {
@@ -73,7 +72,7 @@ public class WorldManager {
             worlds.forEach(e -> put(e, new ConcurrentLinkedQueue<Player>()));
         }
     };
-
+    private final ExecutorService worldExecutorService = Executors.newCachedThreadPool(new WorldThreadFactory(5));
 
     public WorldManager() {
 
@@ -87,6 +86,8 @@ public class WorldManager {
         World w = new World(worlds.size(), this);
         worlds.add(w);
         LOGIN_QUEUE.put(w, new ConcurrentLinkedQueue<>());
+        //DOnt do anything with it for now, could be used later.
+        Future<?> f = worldExecutorService.submit(() -> w.poll());
         return worlds.size() - 1;
     }
 
@@ -112,6 +113,29 @@ public class WorldManager {
             throw new InvalidStateException("Login queue does not exist for world");
         } else {
             queue.add(player);
+        }
+    }
+
+    private class WorldThreadFactory implements ThreadFactory {
+        private final int count = 0;
+        private final int priority;
+
+        public WorldThreadFactory(int priority) {
+
+            if (priority > Thread.MAX_PRIORITY || priority < Thread.MIN_PRIORITY) {
+                throw new InvalidStateException("Invalid priority for world thread.");
+            }
+
+            this.priority = priority;
+        }
+
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread();
+            t.setName("World " + count + " thread");
+            t.setPriority(priority);
+            return t;
         }
     }
 }

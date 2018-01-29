@@ -94,9 +94,9 @@ public class LoginPacket extends Packet {
 
 
                 c.outBuffer()
-                        .writeBytes(0, 8)
-                        .writeByte(0)
-                        .writeBigQWORD(c.getServerSessionKey());
+                        .writeBytes(0, 8)// is being ignored by the Client
+                        .writeByte(0)// login response - 0 means exchange session key to establish encryption
+                        .writeBigQWORD(c.getServerSessionKey());// send the Server part of the session Id used (Client+Server part together are used as cryption key)
 
                 c.flush(Client.FlushMode.ALL);
                 break;
@@ -231,22 +231,25 @@ public class LoginPacket extends Packet {
                 if (returnCode == 2) {
                     CompletableFuture.supplyAsync(() -> {
                         return "";
-                    }).thenApply(u -> u.);
+                    }).thenRun(() -> sendResponse(c, 2, 0));
                 }
 
 
-                c.outBuffer()
-                        .writeByte(returnCode)
-                        .writeByte(0)
-                        .writeByte(0); //no log
-
-                c.flush(Client.FlushMode.ALL);
                 break;
             default:
                 throw new InvalidOpcodeException();
         }
 
 
+    }
+
+    private void sendResponse(Client c, int returnCode, int playerRights) {
+        c.outBuffer()
+                .writeByte(returnCode)
+                .writeByte(playerRights)
+                .writeByte(0); //no log
+
+        c.flush(Client.FlushMode.ALL);
     }
 
     @Override

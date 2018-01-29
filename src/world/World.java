@@ -55,12 +55,20 @@
 
 package world;
 
+import java.util.ArrayList;
+
 public class World {
 
+    private final ArrayList<Player> players = new ArrayList<Player>();
 
-    public World(int worldId, WorldManager worldManager) {
+
+    public World(final int worldId, final WorldManager worldManager) {
 
     }
 
+
+    void poll(){
+
+    }
 
 }
