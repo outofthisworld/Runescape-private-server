@@ -56,4 +56,9 @@
 package world;
 
 public final class WorldConfig {
+
+    private static final int NUM_VIRTUAL_WORLDS = 1;
+
+    private WorldConfig() {
+    }
 }

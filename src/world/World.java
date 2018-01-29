@@ -55,6 +55,8 @@
 
 package world;
 
+import world.player.Player;
+
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -92,6 +94,20 @@ public class World {
             players.add(p);
         }
 
+
+    }
+
+
+    /*
+        Queues a task to be executed by the worlds main thread.
+        This should be used anytime world state is changed from a different thread,
+        and wont take a overly long time to execute.
+
+        Anything that will block, or loop for an extended period of time should not be put
+        on the world thread for execution, but rather executed asynchronously on another thread.
+        Final state changes, if any, can then be posted here.
+    */
+    public void queueWorldTask() {
 
     }
 
