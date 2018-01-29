@@ -70,9 +70,8 @@ public class WorldManager {
     private static final ExecutorService WORLD_EXECUTOR_SERVICE;
 
     static {
-        WORLDS = new CopyOnWriteArrayList<>(new World[]{
-                new World(0)
-        });
+        WORLDS = new CopyOnWriteArrayList<>();
+
 
         LOGIN_QUEUE = new HashMap() {
             {
@@ -80,7 +79,9 @@ public class WorldManager {
             }
         };
 
-        WORLD_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(1, new WorldThreadFactory(10))
+        WORLD_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(1, new WorldThreadFactory(10));
+
+        WorldManager.createWorld();
     }
 
     /**
