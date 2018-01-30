@@ -377,4 +377,33 @@ public class OutputBuffer {
     public OutputBuffer writeLittleWORD(int x) {
         return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 2);
     }
+
+    /**
+     * To array byte [ ].
+     * <p>
+     * Returns a byte array which backs this @class OutputBuffer.
+     * <p>
+     * Changes to the byte[] will affect the contents of this OutputBuffer.
+     *
+     * @return the byte [ ]
+     */
+    public byte[] toArray() {
+        return currentOutputBuffer.array();
+    }
+
+    /**
+     * Returns a new @class ByteBuffer with the contents of this @class OutputBuffer.
+     * Any operations on the ByteBuffer will not affect this @class OutputBuffer.
+     * <p>
+     * The returned @class ByteBuffer will have a position of 0 and limit/capacity of ByteBuffer.size().
+     * Writing to the returned ByteBuffer will overwrite the data stored within.
+     * <p>
+     * This method should be used when another library only accepts a ByteBuffer as a parameter
+     * and you don't intend on writing anymore data.
+     *
+     * @return the byte buffer
+     */
+    public ByteBuffer toByteBuffer() {
+        return ByteBuffer.wrap(toArray());
+    }
 }

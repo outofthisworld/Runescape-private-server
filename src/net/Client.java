@@ -224,13 +224,11 @@ public class Client {
                 disconnect();
                 return -1;
             }
-            if (bytesWritten == 0 || bytesWritten != outBufSize) {
-                outgoingBuffers.addLast(outBuffer);
-                selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
-            }
-        } else {
-            selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
+        }
+
+        if (bytesWritten == 0 || bytesWritten != outBufSize) {
             outgoingBuffers.addLast(outBuffer);
+            selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
         }
 
         return bytesWritten;
@@ -344,6 +342,7 @@ public class Client {
         System.out.println("Currently in buffer = " + inBuffer.remaining());
 
         if (inBuffer.remaining() < 1) {
+            inBuffer.compact();
             return;
         }
 
@@ -366,6 +365,7 @@ public class Client {
                 e.printStackTrace();
             }
         }
+
         inBuffer.compact();
     }
 
