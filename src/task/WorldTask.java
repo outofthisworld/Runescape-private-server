@@ -55,10 +55,31 @@
 
 package task;
 
-public interface Task {
-    boolean check();
+public abstract class WorldTask implements Task {
+    private final int numTicks;
+    private final int initialDelayTicks;
+    private final int repeatedDelayTicks;
+    private final int repeatTimes;
+    private final int numTicksCount;
 
-    void execute();
+    public WorldTask(int numTicks, int initialDelayTicks, int repeatedDelayTicks, int repeatTimes) {
+        this.numTicks = numTicks;
+        this.initialDelayTicks = initialDelayTicks;
+        this.repeatedDelayTicks = repeatedDelayTicks;
+        this.repeatTimes = repeatTimes;
+        numTicksCount = this.numTicks;
+    }
 
-    boolean isFinished();
+
+    @Override
+    public boolean check() {
+
+
+        return true;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return repeatTimes == 0;
+    }
 }
