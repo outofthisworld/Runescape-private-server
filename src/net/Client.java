@@ -369,7 +369,7 @@ public class Client {
         Optional<Packet> p = Packet.getForId(op);
 
         if (p.isPresent()) {
-            WorldManager.getWorld(0).submit(() -> {
+            WorldManager.submitTask(0, () -> {
                 try {
                     p.get().handle(this, op, in);
                 } catch (InvalidOpcodeException e) {

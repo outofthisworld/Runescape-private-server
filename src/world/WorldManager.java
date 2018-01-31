@@ -59,8 +59,10 @@ import sun.plugin.dom.exception.InvalidStateException;
 import world.player.Player;
 
 import java.util.HashMap;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Future;
 
 
 /**
@@ -158,5 +160,28 @@ public class WorldManager {
         } else {
             queue.add(player);
         }
+    }
+
+    /**
+     * Submit task future.
+     *
+     * @param worldID the world id
+     * @param r       the r
+     * @return the future
+     */
+    public static Future<?> submitTask(int worldID, Runnable r) {
+        return WorldManager.getWorld(worldID).submit(r);
+    }
+
+    /**
+     * Submit task future.
+     *
+     * @param <T>     the type parameter
+     * @param worldID the world id
+     * @param r       the r
+     * @return the future
+     */
+    public static <T> Future<T> submitTask(int worldID, Callable<T> r) {
+        return WorldManager.getWorld(worldID).submit(r);
     }
 }

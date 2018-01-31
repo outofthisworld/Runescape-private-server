@@ -92,6 +92,9 @@ public class World {
         return worldExecutorService.scheduleAtFixedRate(this::poll, 0, WorldConfig.WORLD_TICK_RATE_MS, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Stop.
+     */
     void stop() {
 
     }
@@ -147,32 +150,44 @@ public class World {
     }
 
 
-    /*
-        Queues a world.task to be executed by the worlds main thread.
-        This should be used anytime world state is changed from a different thread,
-        and wont take a overly long time to execute.
-
-        Anything that will block, or loop for an extended period of time should not be put
-        on the world thread for execution, but rather executed asynchronously on another thread.
-        Final state changes, if any, can then be posted here.
-
-        This task works in schedule with the main world thread.
-    */
+    /**
+     * Queues a @class world.task.Task to be executed by the worlds main thread.
+     * This should be used anytime world state is changed from a different thread,
+     * and wont take a overly long time to execute.
+     * <p>
+     * Anything that will block, or loop for an extended period of time should not be put
+     * on the world thread for execution, but rather executed asynchronously on another thread.
+     * Final state changes, if any, can then be posted here.
+     * <p>
+     * <p>
+     * This task works in unison with the main world thread.
+     *
+     * @param t the t
+     */
     public void queueWorldTask(Task t) {
         worldTasks.add(t);
     }
 
-    /*
-        Submits a task onto the world thread that is not in sequence.
-
-        The world thread runs @method poll every WorldConfig.WORLD_TICK_RATE_MS however this submitted task
-        will be run immediately even if poll has not been called.
-
-    */
+    /**
+     * Submits a task onto the world thread that is not in unison with main poll method.
+     * <p>
+     * The world thread runs @method poll every WorldConfig.WORLD_TICK_RATE_MS however this submitted task
+     * will be run immediately even if poll has not been called.
+     *
+     * @param r the r
+     * @return the future
+     */
     public Future<?> submit(Runnable r) {
         return worldExecutorService.submit(r);
     }
 
+    /**
+     * Submit future.
+     *
+     * @param <T> the type parameter
+     * @param r   the r
+     * @return the future
+     */
     public <T> Future<T> submit(Callable<T> r) {
         return worldExecutorService.submit(r);
     }
