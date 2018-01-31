@@ -56,9 +56,14 @@
 
 package net;
 
+import net.buffers.InputBuffer;
+import net.buffers.OutputBuffer;
+import net.enc.ISAACCipher;
 import net.packets.Packet;
 import net.packets.exceptions.InvalidOpcodeException;
 import net.packets.exceptions.InvalidPacketSizeException;
+import world.WorldManager;
+import world.player.Player;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -175,6 +180,10 @@ public class Client {
      */
     public long getDisconnectedAt() {
         return disconnectedAt;
+    }
+
+    void setPlayer(Player p) {
+
     }
 
     /**
@@ -339,31 +348,38 @@ public class Client {
         //Make buffer readable
         inBuffer.flip();
 
-        System.out.println("Currently in buffer = " + inBuffer.remaining());
-
         if (inBuffer.remaining() < 1) {
             inBuffer.compact();
             return;
         }
 
 
-        InputBuffer in = new InputBuffer(inBuffer);
-        int op = in.readUnsignedByte();
+        int op = inBuffer.get() & 0xFF;
+        int size = inBuffer.get() & 0xFF;
+
+        if (inBuffer.remaining() < packetSize) {
+            inBuffer.rewind();
+            inBuffer.compact();
+            return;
+        }
+
+        InputBuffer in = new InputBuffer(inBuffer, size);
 
 
         Optional<Packet> p = Packet.getForId(op);
 
         if (p.isPresent()) {
-            try {
-                p.get().handle(this, op, in);
-            } catch (InvalidOpcodeException e) {
-                e.printStackTrace();
-            } catch (InvalidPacketSizeException e) {
-                inBuffer.rewind();
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            WorldManager.getWorld(0).submit(() -> {
+                try {
+                    p.get().handle(this, op, in);
+                } catch (InvalidOpcodeException e) {
+                    e.printStackTrace();
+                } catch (InvalidPacketSizeException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
         }
 
         inBuffer.compact();

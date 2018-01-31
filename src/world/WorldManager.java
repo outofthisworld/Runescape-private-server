@@ -59,31 +59,16 @@ import sun.plugin.dom.exception.InvalidStateException;
 import world.player.Player;
 
 import java.util.HashMap;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 /**
  * The type World manager.
  */
 public class WorldManager {
-    private static final CopyOnWriteArrayList<World> WORLDS;
-    private static final HashMap<World, ConcurrentLinkedQueue<Player>> LOGIN_QUEUE;
-    private static final ScheduledExecutorService WORLD_EXECUTOR_SERVICE;
-
-    static {
-        WORLDS = new CopyOnWriteArrayList<>();
-
-
-        LOGIN_QUEUE = new HashMap() {
-            {
-                WorldManager.WORLDS.forEach(e -> put(e, new ConcurrentLinkedQueue<Player>()));
-            }
-        };
-
-        WORLD_EXECUTOR_SERVICE = Executors.newScheduledThreadPool(1, new WorldThreadFactory(10));
-
-        WorldManager.createWorld();
-    }
+    private static final CopyOnWriteArrayList<World> WORLDS = new CopyOnWriteArrayList<>();
+    private static final HashMap<World, ConcurrentLinkedQueue<Player>> LOGIN_QUEUE = new HashMap();
 
     /**
      * Instantiates a new World manager.
@@ -111,8 +96,7 @@ public class WorldManager {
         WorldManager.WORLDS.add(w);
         WorldManager.LOGIN_QUEUE.put(w, new ConcurrentLinkedQueue<>());
         //DOnt do anything with it for now, could be used later.
-        Future<?> f = WorldManager.WORLD_EXECUTOR_SERVICE.scheduleAtFixedRate(() ->
-                w.poll(), 0, WorldConfig.WORLD_TICK_RATE_MS, TimeUnit.MILLISECONDS);
+        w.start();
         return WorldManager.WORLDS.size() - 1;
     }
 
@@ -173,35 +157,6 @@ public class WorldManager {
             throw new InvalidStateException("Login queue does not exist for world");
         } else {
             queue.add(player);
-        }
-    }
-
-    private static class WorldThreadFactory implements ThreadFactory {
-        private final int count = 0;
-        private final int priority;
-
-        /**
-         * Instantiates a new World thread factory.
-         *
-         * @param priority the priority
-         */
-        public WorldThreadFactory(int priority) {
-
-            if (priority > Thread.MAX_PRIORITY || priority < Thread.MIN_PRIORITY) {
-                throw new InvalidStateException("Invalid priority for world thread.");
-            }
-
-            this.priority = priority;
-        }
-
-
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread();
-            t.setName("World " + count + " thread");
-            t.setPriority(priority);
-            t.setUncaughtExceptionHandler((t1, e) -> e.printStackTrace());
-            return t;
         }
     }
 }

@@ -56,9 +56,9 @@
 package net.packets;
 
 import net.Client;
-import net.ISAACCipher;
-import net.InputBuffer;
-import net.OutputBuffer;
+import net.buffers.InputBuffer;
+import net.buffers.OutputBuffer;
+import net.enc.ISAACCipher;
 import net.packets.exceptions.InvalidOpcodeException;
 
 import java.util.Arrays;
@@ -68,7 +68,6 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class LoginPacket extends Packet {
-
     private static final int LOGIN_REQUEST = 14;
     private static final int UPDATE = 15;
     private static final int NEW_SESSION = 16;
@@ -101,7 +100,7 @@ public class LoginPacket extends Packet {
                         .create(73, 10)
                         .writeBytes(0, 8)// is being ignored by the Client
                         .writeByte(0)// login response - 0 means exchange session key to establish encryption
-                        .writeBigQWORD(c.getServerSessionKey()));// send the Server part of the session Id used (Client+Server part together are used as cryption key
+                        .writeBigQWORD(c.getServerSessionKey()));// send the net.Server part of the session Id used (Client+net.Server part together are used as cryption key
                 break;
             case LoginPacket.NEW_SESSION:
             case LoginPacket.RECONNECT:

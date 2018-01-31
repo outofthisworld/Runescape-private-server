@@ -67,8 +67,8 @@ import java.util.concurrent.Executors;
  * The type Channel manager.
  */
 public class ChannelManager {
+    private static int MAX_HANDLER_CHANNELS = 300;
     private static ExecutorService executor = Executors.newCachedThreadPool();
-    private static int MAX_HANDLER_CHANNELS = 1000;
     private final ArrayList<IChannelHandler> socketHandlers = new ArrayList();
 
     private ChannelManager() {

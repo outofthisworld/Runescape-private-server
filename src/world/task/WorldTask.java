@@ -53,17 +53,93 @@
  The rights granted under, and the subject matter referenced, in this License were drafted utilizing the terminology of the Berne Convention for the Protection of Literary and Artistic Works (as amended on September 28, 1979), the Rome Convention of 1961, the WIPO Copyright Treaty of 1996, the WIPO Performances and Phonograms Treaty of 1996 and the Universal Copyright Convention (as revised on July 24, 1971). These rights and subject matter take effect in the relevant jurisdiction in which the License terms are sought to be enforced according to the corresponding provisions of the implementation of those treaty provisions in the applicable national law. If the standard suite of rights granted under applicable copyright law includes additional rights not granted under this License, such additional rights are deemed to be included in the License; this License is not intended to restrict the license of any rights under applicable law.
  -----------------------------------------------------------------------------*/
 
-/**
- * The type Server config.
- */
-public final class ServerConfig {
+package world.task;
 
-    /**
-     * The constant HOST.
+public abstract class WorldTask implements Task {
+
+    /* The number of times this world.task should execute */
+    private final int numExecutions;
+    /*
+        The successive number of ticks between each execution of this world.task
+    */
+    private final int repeatedDelayTicks;
+    /*
+        The number of ticks before this world.task first executes
+    */
+    private final int initialDelayTicks;
+    /*
+        If the initial delay should be
      */
-    public static final String HOST = "localhost";
-    /**
-     * The constant PORT.
-     */
-    public static final int PORT = 43595;
+    private final boolean repeatInitialDelay;
+    /*
+       The number of times this world.task should repeat
+
+       One time is the whole cycle e.g initial delay - execute n times - sucessive delay - execute n times
+    */
+    private int repeatTimes;
+    private int numExecutionsCount;
+    private int repeatedDelayCount;
+    private int initialDelayCount;
+
+    public WorldTask(int numExecutions, int initialDelayTicks, int repeatedDelayTicks, int repeatTimes, boolean repeatInitialDelay) {
+        this.numExecutions = numExecutions;
+        this.initialDelayTicks = initialDelayTicks;
+        this.repeatedDelayTicks = repeatedDelayTicks;
+        this.repeatTimes = repeatTimes;
+        this.repeatInitialDelay = repeatInitialDelay;
+        numExecutionsCount = numExecutions;
+        repeatedDelayCount = repeatedDelayTicks;
+        initialDelayCount = initialDelayTicks;
+    }
+
+    @Override
+    public boolean check() {
+
+        //Wait until the initial delay has finished
+        if (initialDelayCount > 0) {
+            initialDelayCount--;
+            return false;
+        }
+
+
+        if (initialDelayCount == 0 && numExecutionsCount > 0) {
+            numExecutionsCount--;
+            return true;
+        }
+
+        if (initialDelayCount == 0 && numExecutionsCount == 0) {
+            numExecutionsCount = numExecutions;
+        }
+
+        if (repeatedDelayCount > 0) {
+            repeatedDelayCount--;
+            return false;
+        }
+
+        if (repeatedDelayCount == 0 && numExecutionsCount > 0) {
+            numExecutionsCount--;
+            return true;
+        }
+
+        if (repeatedDelayCount == 0 && numExecutionsCount == 0) {
+            if (repeatTimes > 0) {
+                repeatTimes--;
+            }
+            if (repeatInitialDelay) {
+                initialDelayCount = initialDelayTicks;
+            }
+            numExecutionsCount = numExecutions;
+            repeatedDelayCount = repeatedDelayTicks;
+            if (repeatTimes != 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return repeatTimes == 0;
+    }
 }

@@ -163,42 +163,36 @@ public class ChannelHandler implements IChannelHandler {
 
             currentlySelected = it.next();
 
-            if (currentlySelected.isValid() && currentlySelected.isReadable()) {
-                System.out.println("readble selection");
-                if (currentlySelected.attachment() == null) {
-                    try {
-                        currentlySelected.attach(new Client(currentlySelected));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Client c = (Client) currentlySelected.attachment();
-                    try {
-                        System.out.println("processing read");
-                        c.processRead();
-                        //Read into read buffer...
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            if (currentlySelected.attachment() == null) {
+                try {
+                    currentlySelected.attach(new Client(currentlySelected));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    continue;
                 }
             }
+
+            if (currentlySelected.isValid() && currentlySelected.isReadable()) {
+                System.out.println("readble selection");
+                Client c = (Client) currentlySelected.attachment();
+                try {
+                    System.out.println("processing read");
+                    c.processRead();
+                    //Read into read buffer...
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
             if (currentlySelected.isValid() && currentlySelected.isWritable()) {
                 System.out.println("writable selection");
-                if (currentlySelected.attachment() == null) {
-                    try {
-                        currentlySelected.attach(new Client(currentlySelected));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Client c = (Client) currentlySelected.attachment();
-                    try {
-                        System.out.println("processing write");
-                        c.processWrite();
-                        //Read into read buffer...
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                Client c = (Client) currentlySelected.attachment();
+                try {
+                    System.out.println("processing write");
+                    c.processWrite();
+                    //Read into read buffer...
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
             it.remove();

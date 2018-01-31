@@ -55,11 +55,13 @@
 
 package world;
 
+import sun.plugin.dom.exception.InvalidStateException;
 import world.player.Player;
+import world.task.Task;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.*;
 
 /**
  * The type World.
@@ -67,6 +69,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class World {
 
     private final ArrayList<Player> players = new ArrayList<>();
+    private final ConcurrentLinkedQueue<Task> worldTasks = new ConcurrentLinkedQueue<>();
+    private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor(new WorldThreadFactory(10));
     private final int worldId;
 
     /**
@@ -80,9 +84,22 @@ public class World {
 
 
     /**
+     * Start scheduled future.
+     *
+     * @return the scheduled future
+     */
+    ScheduledFuture<?> start() {
+        return worldExecutorService.scheduleAtFixedRate(this::poll, 0, WorldConfig.WORLD_TICK_RATE_MS, TimeUnit.MILLISECONDS);
+    }
+
+    void stop() {
+
+    }
+
+    /**
      * Poll.
      */
-    void poll() {
+    private void poll() {
         /*
             Adds players that are currently in the loginQueue for this world to this worlds players arraylist.
          */
@@ -94,6 +111,7 @@ public class World {
 
         addPlayersToWorld();
         handlePlayerDisconnects();
+        doWorldTasks();
     }
 
     private void addPlayersToWorld() {
@@ -113,17 +131,78 @@ public class World {
         }
     }
 
+    private void doWorldTasks() {
+        Task t;
+        ArrayList<Task> incompleteTasks = new ArrayList<>();
+
+        while ((t = worldTasks.poll()) != null) {
+            if (!t.isFinished() && t.check()) {
+                t.execute();
+            }
+            if (!t.isFinished()) {
+                incompleteTasks.add(t);
+            }
+        }
+        worldTasks.addAll(incompleteTasks);
+    }
+
 
     /*
-        Queues a task to be executed by the worlds main thread.
+        Queues a world.task to be executed by the worlds main thread.
         This should be used anytime world state is changed from a different thread,
         and wont take a overly long time to execute.
 
         Anything that will block, or loop for an extended period of time should not be put
         on the world thread for execution, but rather executed asynchronously on another thread.
         Final state changes, if any, can then be posted here.
-    */
-    public void queueWorldTask() {
 
+        This task works in schedule with the main world thread.
+    */
+    public void queueWorldTask(Task t) {
+        worldTasks.add(t);
+    }
+
+    /*
+        Submits a task onto the world thread that is not in sequence.
+
+        The world thread runs @method poll every WorldConfig.WORLD_TICK_RATE_MS however this submitted task
+        will be run immediately even if poll has not been called.
+
+    */
+    public Future<?> submit(Runnable r) {
+        return worldExecutorService.submit(r);
+    }
+
+    public <T> Future<T> submit(Callable<T> r) {
+        return worldExecutorService.submit(r);
+    }
+
+    private static class WorldThreadFactory implements ThreadFactory {
+        private final int count = 0;
+        private final int priority;
+
+        /**
+         * Instantiates a new World thread factory.
+         *
+         * @param priority the priority
+         */
+        public WorldThreadFactory(int priority) {
+
+            if (priority > Thread.MAX_PRIORITY || priority < Thread.MIN_PRIORITY) {
+                throw new InvalidStateException("Invalid priority for world thread.");
+            }
+
+            this.priority = priority;
+        }
+
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread();
+            t.setName("World " + count + " thread");
+            t.setPriority(priority);
+            t.setUncaughtExceptionHandler((t1, e) -> e.printStackTrace());
+            return t;
+        }
     }
 }

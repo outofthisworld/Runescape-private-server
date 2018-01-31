@@ -56,7 +56,7 @@
 package net.packets;
 
 import net.Client;
-import net.InputBuffer;
+import net.buffers.InputBuffer;
 import net.packets.exceptions.InvalidOpcodeException;
 import net.packets.exceptions.InvalidPacketSizeException;
 

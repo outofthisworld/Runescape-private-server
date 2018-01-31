@@ -53,357 +53,276 @@
  The rights granted under, and the subject matter referenced, in this License were drafted utilizing the terminology of the Berne Convention for the Protection of Literary and Artistic Works (as amended on September 28, 1979), the Rome Convention of 1961, the WIPO Copyright Treaty of 1996, the WIPO Performances and Phonograms Treaty of 1996 and the Universal Copyright Convention (as revised on July 24, 1971). These rights and subject matter take effect in the relevant jurisdiction in which the License terms are sought to be enforced according to the corresponding provisions of the implementation of those treaty provisions in the applicable national law. If the standard suite of rights granted under applicable copyright law includes additional rights not granted under this License, such additional rights are deemed to be included in the License; this License is not intended to restrict the license of any rights under applicable law.
  -----------------------------------------------------------------------------*/
 
-package net;
+package net.enc;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.channels.SocketChannel;
 
 /**
+ * <p>An implementation of an ISAAC cipher. See
+ * <a href="http://en.wikipedia.org/wiki/ISAAC_(cipher)">
+ * http://en.wikipedia.org/wiki/ISAAC_(cipher)</a> for more information.</p>
  * <p>
- * An unbounded buffer that can be written to and dynamically resized as it is written to.
- * Built around a ByteBuffer, but makes them easier to work with as the buffer only can be written to.
- * Reading from the @class ByteBuffer is done internally through one of its pipe methods.
- * <p>
- * This class is not thread safe, any attempts to use it from multiple threads will result
- * in inconsistencies unless synchronized correctly from user level code.
+ * <p>This implementation is based on the one written by Bob Jenkins, which is
+ * available at <a href="http://www.burtleburtle.net/bob/java/rand/Rand.java">
+ * http://www.burtleburtle.net/bob/java/rand/Rand.java</a>.</p>
+ *
+ * @author Graham Edgecombe
  */
-public class OutputBuffer {
-    private static final int INITIAL_SIZE = 256;
-    private static final int INCREASE_SIZE_BYTES = 256;
-    private final int increaseSizeBytes;
-    private ByteBuffer currentOutputBuffer;
-
-    private OutputBuffer() {
-        this(OutputBuffer.INITIAL_SIZE, OutputBuffer.INCREASE_SIZE_BYTES);
-    }
-
-    private OutputBuffer(int initialSize, int increaseSizeBytes) {
-        currentOutputBuffer = ByteBuffer.allocate(initialSize);
-        this.increaseSizeBytes = increaseSizeBytes;
-    }
-
-    private OutputBuffer(byte[] bytes, int increaseSizeBytes) {
-        currentOutputBuffer = ByteBuffer.allocate(bytes.length);
-        currentOutputBuffer.put(bytes);
-        this.increaseSizeBytes = increaseSizeBytes;
-    }
+public class ISAACCipher {
 
     /**
-     * Instantiates a new Output buffer.
-     *
-     * @param bytes the bytes
+     * The golden ratio.
      */
-    public OutputBuffer(byte[] bytes) {
-        this(bytes, 256);
-    }
+    public static final int RATIO = 0x9e3779b9;
 
     /**
-     * Creates a new OutputBuffer with an initial size of 256 bytes
-     * that is dynamically resized every 256 bytes.
-     *
-     * @return the output buffer
+     * The log of the size of the results and memory arrays.
      */
-    public static OutputBuffer create() {
-        return new OutputBuffer();
-    }
+    public static final int SIZE_LOG = 8;
 
     /**
-     * Create output buffer.
-     *
-     * @param initialSize       the initial size
-     * @param increaseSizeBytes the amount of bytes that the buffer should increase by if its capacity is reached.
-     * @return the output buffer
+     * The size of the results and memory arrays.
      */
-    public static OutputBuffer create(int initialSize, int increaseSizeBytes) {
-        return new OutputBuffer(initialSize, increaseSizeBytes);
-    }
+    public static final int SIZE = 1 << ISAACCipher.SIZE_LOG;
 
     /**
-     * Creates an output buffer of initial size. Dynamically resized every 256 bytes.
-     *
-     * @param initialSize the initial size
-     * @return the output buffer
+     * For pseudorandom lookup.
      */
-    public static OutputBuffer create(int initialSize) {
-        return new OutputBuffer(initialSize, OutputBuffer.INCREASE_SIZE_BYTES);
-    }
+    public static final int MASK = (ISAACCipher.SIZE - 1) << 2;
+    /**
+     * The results.
+     */
+    private final int[] results = new int[ISAACCipher.SIZE];
+    /**
+     * The internal memory state.
+     */
+    private final int[] memory = new int[ISAACCipher.SIZE];
+    /**
+     * The count through the results.
+     */
+    private int count = 0;
+    /**
+     * The accumulator.
+     */
+    private int a;
 
     /**
-     * Wraps the specified byte array, creating an OutputBuffer with equal length as the byte array.
-     * Note that the first write operation to this output buffer after wrapping a byte array
-     * will cause the internal @class ByteBuffer to resize by @param increaseSizeBytes which may be costly in some situations.
-     * The intended use of this method is to turn byte array into an output buffer without subsequent
-     * writes to the OutputBuffer unless truly necessary.
-     *
-     * @param bytes             the bytes
-     * @param increaseSizeBytes the increase size bytes
-     * @return the output buffer
+     * The last result.
      */
-    public static OutputBuffer wrap(byte[] bytes, int increaseSizeBytes) {
-        return new OutputBuffer(bytes, increaseSizeBytes);
-    }
+    private int b;
 
     /**
-     * Wrap output buffer.
-     *
-     * @param bytes the bytes
-     * @return the output buffer
+     * The counter.
      */
-    public static OutputBuffer wrap(byte[] bytes) {
-        return new OutputBuffer(bytes);
-    }
+    private int c;
 
     /**
-     * Pipe all to int.
+     * Creates the ISAAC cipher.
      *
-     * @param c the c
-     * @return the int
-     * @throws IOException the io exception
+     * @param seed The seed.
      */
-    int pipeAllTo(SocketChannel c) throws IOException {
-        int bytesWritten = 0;
-        int length = currentOutputBuffer.position();
-        System.out.println("writing " + length + " bytes");
-        while (bytesWritten != length) {
-            bytesWritten += pipeTo(c);
+    public ISAACCipher(int[] seed) {
+        for (int i = 0; i < seed.length; i++) {
+            results[i] = seed[i];
         }
-
-        System.out.println("wrote : " + bytesWritten);
-        return bytesWritten;
+        init(true);
     }
 
     /**
-     * Pipe to int.
+     * Gets the next value.
      *
-     * @param byteArr the byte arr
-     * @return the int
+     * @return The next value.
      */
-    int pipeTo(byte[] byteArr) {
-        currentOutputBuffer.flip();
-        currentOutputBuffer.get(byteArr, 0, byteArr.length);
-        currentOutputBuffer.compact();
-        return byteArr.length;
-    }
-
-    /**
-     * Pipe to int.
-     *
-     * @param c the c
-     * @return the int
-     * @throws IOException the io exception
-     */
-    int pipeTo(SocketChannel c) throws IOException {
-        currentOutputBuffer.flip();
-        int bytesWritten = c.write(currentOutputBuffer);
-        currentOutputBuffer.compact();
-        return bytesWritten;
-    }
-
-    /**
-     * Pipe to output buffer.
-     *
-     * @param b the b
-     * @return the output buffer
-     * @throws Exception the exception
-     */
-    public OutputBuffer pipeTo(ByteBuffer b) throws Exception {
-        currentOutputBuffer.flip();
-        if (b.capacity() - b.position() < currentOutputBuffer.limit()) {
-            throw new Exception("Not enough room in buffer b");
+    public int getNextValue() {
+        if (count-- == 0) {
+            isaac();
+            count = ISAACCipher.SIZE - 1;
         }
+        return results[count];
+    }
 
-        if (b.limit() != b.capacity()) {
-            throw new Exception("Buffer may be in read mode");
+    /**
+     * Generates 256 results.
+     */
+    public void isaac() {
+        int i, j, x, y;
+        b += ++c;
+        for (i = 0, j = ISAACCipher.SIZE / 2; i < ISAACCipher.SIZE / 2; ) {
+            x = memory[i];
+            a ^= a << 13;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
+
+            x = memory[i];
+            a ^= a >>> 6;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
+
+            x = memory[i];
+            a ^= a << 2;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
+
+            x = memory[i];
+            a ^= a >>> 16;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
         }
+        for (j = 0; j < ISAACCipher.SIZE / 2; ) {
+            x = memory[i];
+            a ^= a << 13;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
 
-        b.put(currentOutputBuffer);
-        currentOutputBuffer.compact();
-        return this;
-    }
+            x = memory[i];
+            a ^= a >>> 6;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
 
-    /**
-     * Size int.
-     *
-     * @return the int
-     */
-    public int size() {
-        return currentOutputBuffer.position();
-    }
+            x = memory[i];
+            a ^= a << 2;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
 
-
-    /**
-     * Clear.
-     */
-    void clear() {
-        currentOutputBuffer.clear();
-    }
-
-    /**
-     * Write byte output buffer.
-     *
-     * @param b the b
-     * @return the output buffer
-     */
-    public OutputBuffer writeByte(int b) {
-        if (currentOutputBuffer.position() + 1 >= currentOutputBuffer.capacity()) {
-            ByteBuffer x = ByteBuffer.allocate(currentOutputBuffer.capacity() + increaseSizeBytes);
-            currentOutputBuffer.flip();
-            x.put(currentOutputBuffer);
-            currentOutputBuffer.clear();
-            currentOutputBuffer = x;
+            x = memory[i];
+            a ^= a >>> 16;
+            a += memory[j++];
+            memory[i] = y = memory[(x & ISAACCipher.MASK) >> 2] + a + b;
+            results[i++] = b = memory[((y >> ISAACCipher.SIZE_LOG) & ISAACCipher.MASK) >> 2] + x;
         }
-        currentOutputBuffer.put((byte) b);
-        return this;
     }
 
     /**
-     * Write bytes output buffer.
+     * Initialises the ISAAC.
      *
-     * @param val    the val
-     * @param repeat the repeat
-     * @return the output buffer
+     * @param flag Flag indicating if we should perform a second pass.
      */
-    public OutputBuffer writeBytes(int val, int repeat) {
-        if (repeat <= 0) {
-            throw new IllegalArgumentException("repeat cannot be > 0");
+    public void init(boolean flag) {
+        int i;
+        int a, b, c, d, e, f, g, h;
+        a = b = c = d = e = f = g = h = ISAACCipher.RATIO;
+        for (i = 0; i < 4; ++i) {
+            a ^= b << 11;
+            d += a;
+            b += c;
+            b ^= c >>> 2;
+            e += b;
+            c += d;
+            c ^= d << 8;
+            f += c;
+            d += e;
+            d ^= e >>> 16;
+            g += d;
+            e += f;
+            e ^= f << 10;
+            h += e;
+            f += g;
+            f ^= g >>> 4;
+            a += f;
+            g += h;
+            g ^= h << 8;
+            b += g;
+            h += a;
+            h ^= a >>> 9;
+            c += h;
+            a += b;
         }
-        for (int i = 0; i < repeat; i++) {
-            writeByte((byte) val);
-            System.out.println("writing byte");
+        for (i = 0; i < ISAACCipher.SIZE; i += 8) {
+            if (flag) {
+                a += results[i];
+                b += results[i + 1];
+                c += results[i + 2];
+                d += results[i + 3];
+                e += results[i + 4];
+                f += results[i + 5];
+                g += results[i + 6];
+                h += results[i + 7];
+            }
+            a ^= b << 11;
+            d += a;
+            b += c;
+            b ^= c >>> 2;
+            e += b;
+            c += d;
+            c ^= d << 8;
+            f += c;
+            d += e;
+            d ^= e >>> 16;
+            g += d;
+            e += f;
+            e ^= f << 10;
+            h += e;
+            f += g;
+            f ^= g >>> 4;
+            a += f;
+            g += h;
+            g ^= h << 8;
+            b += g;
+            h += a;
+            h ^= a >>> 9;
+            c += h;
+            a += b;
+            memory[i] = a;
+            memory[i + 1] = b;
+            memory[i + 2] = c;
+            memory[i + 3] = d;
+            memory[i + 4] = e;
+            memory[i + 5] = f;
+            memory[i + 6] = g;
+            memory[i + 7] = h;
         }
-        return this;
-    }
-
-    /**
-     * Write bytes output buffer.
-     *
-     * @param value    the value
-     * @param numBytes the num bytes
-     * @return the output buffer
-     */
-    public OutputBuffer writeBytes(long value, int numBytes) {
-
-        if (numBytes < 1 || numBytes > 8) {
-            throw new RuntimeException("Invalid params, numBytes must be between 1-8 inclusive");
+        if (flag) {
+            for (i = 0; i < ISAACCipher.SIZE; i += 8) {
+                a += memory[i];
+                b += memory[i + 1];
+                c += memory[i + 2];
+                d += memory[i + 3];
+                e += memory[i + 4];
+                f += memory[i + 5];
+                g += memory[i + 6];
+                h += memory[i + 7];
+                a ^= b << 11;
+                d += a;
+                b += c;
+                b ^= c >>> 2;
+                e += b;
+                c += d;
+                c ^= d << 8;
+                f += c;
+                d += e;
+                d ^= e >>> 16;
+                g += d;
+                e += f;
+                e ^= f << 10;
+                h += e;
+                f += g;
+                f ^= g >>> 4;
+                a += f;
+                g += h;
+                g ^= h << 8;
+                b += g;
+                h += a;
+                h ^= a >>> 9;
+                c += h;
+                a += b;
+                memory[i] = a;
+                memory[i + 1] = b;
+                memory[i + 2] = c;
+                memory[i + 3] = d;
+                memory[i + 4] = e;
+                memory[i + 5] = f;
+                memory[i + 6] = g;
+                memory[i + 7] = h;
+            }
         }
-        int start;
-        int end;
-        int increment;
-
-        ByteOrder currentOrder = currentOutputBuffer.order();
-
-        if (currentOrder == ByteOrder.BIG_ENDIAN) {
-            start = numBytes - 1;
-            end = -1;
-            increment = -1;
-        } else {
-            start = 0;
-            end = numBytes;
-            increment = 1;
-        }
-
-        for (int i = start; i != end; i += increment) {
-            System.out.println(i * 8);
-            writeByte((byte) (value >> (i * 8)));
-        }
-
-        return this;
+        isaac();
+        count = ISAACCipher.SIZE;
     }
 
-    private OutputBuffer outOrder(ByteOrder order) {
-        currentOutputBuffer.order(order);
-        return this;
-    }
-
-    /**
-     * Write little dword output buffer.
-     *
-     * @param x the x
-     * @return the output buffer
-     */
-    public OutputBuffer writeLittleDWORD(long x) {
-        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 4);
-    }
-
-    /**
-     * Write big dword output buffer.
-     *
-     * @param x the x
-     * @return the output buffer
-     */
-    public OutputBuffer writeBigDWORD(long x) {
-        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 4);
-    }
-
-    /**
-     * Write big qword output buffer.
-     *
-     * @param x the x
-     * @return the output buffer
-     */
-    public OutputBuffer writeBigQWORD(long x) {
-        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 8);
-    }
-
-    /**
-     * Write little qword output buffer.
-     *
-     * @param x the x
-     * @return the output buffer
-     */
-    public OutputBuffer writeLittleQWORD(long x) {
-        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 8);
-    }
-
-
-    /**
-     * Write big word output buffer.
-     *
-     * @param x the x
-     * @return the output buffer
-     */
-    public OutputBuffer writeBigWORD(int x) {
-        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 2);
-    }
-
-    /**
-     * Write little word output buffer.
-     *
-     * @param x the x
-     * @return the output buffer
-     */
-    public OutputBuffer writeLittleWORD(int x) {
-        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 2);
-    }
-
-    /**
-     * To array byte [ ].
-     * <p>
-     * Returns a byte array which backs this @class OutputBuffer.
-     * <p>
-     * Changes to the byte[] will affect the contents of this OutputBuffer.
-     *
-     * @return the byte [ ]
-     */
-    public byte[] toArray() {
-        return currentOutputBuffer.array();
-    }
-
-    /**
-     * Returns a new @class ByteBuffer with the contents of this @class OutputBuffer.
-     * Any operations on the ByteBuffer will not affect this @class OutputBuffer.
-     * <p>
-     * The returned @class ByteBuffer will have a position of 0 and limit/capacity of ByteBuffer.size().
-     * Writing to the returned ByteBuffer will overwrite the data stored within.
-     * <p>
-     * This method should be used when another library only accepts a ByteBuffer as a parameter
-     * and you don't intend on writing anymore data.
-     *
-     * @return the byte buffer
-     */
-    public ByteBuffer toByteBuffer() {
-        return ByteBuffer.wrap(toArray());
-    }
 }
