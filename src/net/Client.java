@@ -98,6 +98,7 @@ public class Client {
     private ISAACCipher inCipher;
     private ISAACCipher outCipher;
     private boolean isLoggedIn;
+    private Player player;
 
     /**
      * Instantiates a new Client.
@@ -136,6 +137,9 @@ public class Client {
      * @param cipher the cipher
      */
     void setInCipher(ISAACCipher cipher) {
+        if (inCipher != null) {
+            throw new IllegalStateException("Cipher for client already set");
+        }
         inCipher = cipher;
     }
 
@@ -153,7 +157,7 @@ public class Client {
      *
      * @param loggedIn the logged in
      */
-    void setLoggedIn(boolean loggedIn) {
+    public void setLoggedIn(boolean loggedIn) {
         isLoggedIn = loggedIn;
     }
 
@@ -171,7 +175,10 @@ public class Client {
      *
      * @param cipher the cipher
      */
-    void setOutCipher(ISAACCipher cipher) {
+    public void setOutCipher(ISAACCipher cipher) {
+        if (outCipher != null) {
+            throw new IllegalStateException("Cipher for client already set");
+        }
         outCipher = cipher;
     }
 
@@ -184,12 +191,28 @@ public class Client {
         return disconnectedAt;
     }
 
-    void setPlayer(Player p) {
+    /**
+     * Gets player.
+     *
+     * @return the player
+     */
+    Player getPlayer() {
+        return player;
+    }
 
+    /**
+     * Sets player.
+     *
+     * @param p the p
+     */
+    void setPlayer(Player p) {
+        player = p;
     }
 
     /**
      * Process write.
+     *
+     * @return the completable future
      */
     CompletableFuture processWrite() {
         return CompletableFuture.runAsync(() -> {
@@ -308,7 +331,6 @@ public class Client {
 
         disconnectedAt = System.nanoTime();
         isDisconnected = true;
-        isLoggedIn = false;
     }
 
     /**

@@ -57,28 +57,57 @@ import net.Server;
 import world.WorldManager;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
  * The type Engine.
  */
 public class Engine {
+    private final ExecutorService e = Executors.newSingleThreadExecutor();
+    private Server server;
+
     /**
      * The entry point of application.
      *
      * @param args the input arguments
      */
     public static void main(String[] args) {
-        WorldManager.createWorld();
-        Server server = new Server(EngineConfig.HOST, EngineConfig.PORT);
+        new Engine().start();
+    }
 
-        Thread serverThread = new Thread(() -> {
-            boolean serverStarted = false;
-            while (!serverStarted) {
-                try {
-                    server.start();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+
+    /**
+     * Start.
+     */
+    public void start() {
+        WorldManager.createWorld();
+        server = new Server(EngineConfig.HOST, EngineConfig.PORT);
+        e.submit(this::startServer);
+    }
+
+    /**
+     * Stop.
+     */
+    public void stop() {
+        server.stop();
+        WorldManager.shutdownWorlds();
+        e.shutdownNow();
+    }
+
+    private void startServer() {
+        int attempts = 0;
+        while (true) {
+            try {
+                server.start();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+                attempts++;
+                if (attempts == 5) {
+                    stop();
+                    break;
+                } else {
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException e2) {
@@ -86,14 +115,6 @@ public class Engine {
                     }
                 }
             }
-        });
-
-        serverThread.setName("");
-        serverThread.setPriority(Thread.MAX_PRIORITY);
-        serverThread.setUncaughtExceptionHandler((t, e) -> {
-            System.out.println("Uncaught exception : ");
-            e.printStackTrace();
-        });
-        serverThread.start();
+        }
     }
 }

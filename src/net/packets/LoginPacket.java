@@ -253,12 +253,10 @@ public class LoginPacket extends Packet {
     }
 
     private void sendResponse(Client c, int returnCode, int playerRights) {
-        OutputBuffer.create(3)
+        c.write(OutputBuffer.create(3)
                 .writeByte(returnCode)
                 .writeByte(playerRights)
-                .writeByte(0); //no log
-
-        c.write(Client.FlushMode.ALL);
+                .writeByte(0));
     }
 
     @Override

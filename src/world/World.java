@@ -73,6 +73,7 @@ public class World {
     private final ConcurrentLinkedQueue<Task> worldTasks = new ConcurrentLinkedQueue<>();
     private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor(new WorldThreadFactory(10));
     private final int worldId;
+    private ScheduledFuture<?> worldExecutionTask;
 
     /**
      * Instantiates a new World.
@@ -90,14 +91,15 @@ public class World {
      * @return the scheduled future
      */
     ScheduledFuture<?> start() {
-        return worldExecutorService.scheduleAtFixedRate(this::poll, 0, WorldConfig.WORLD_TICK_RATE_MS, TimeUnit.MILLISECONDS);
+        return worldExecutionTask = worldExecutorService.scheduleAtFixedRate(this::poll, 0, WorldConfig.WORLD_TICK_RATE_MS, TimeUnit.MILLISECONDS);
     }
 
     /**
      * Stop.
      */
     void stop() {
-
+        worldExecutionTask.cancel(true);
+        worldTasks.clear();
     }
 
     void addPlayer(Player p) {
@@ -141,6 +143,7 @@ public class World {
             Player player = it.next();
             if (player.getClient().isDisconnected()) {
                 //handle entity saving
+                player.getClient().setLoggedIn(false);
             }
         }
     }

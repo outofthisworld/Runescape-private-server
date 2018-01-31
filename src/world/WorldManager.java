@@ -102,6 +102,13 @@ public class WorldManager {
         return WorldManager.WORLDS.size() - 1;
     }
 
+    /**
+     * Shutdown worlds.
+     */
+    public static void shutdownWorlds() {
+        WorldManager.WORLDS.forEach(World::stop);
+    }
+
 
     /**
      * Get world world.
