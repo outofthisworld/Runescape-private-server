@@ -211,7 +211,7 @@ public class LoginPacket extends Packet {
 
                 /*-
                     1	Waits for 2000ms and tries again while counting failures.
-                    0	Exchanges session keys, player name, password, etc.
+                    0	Exchanges session keys, entity name, password, etc.
                     1	Waits for 2000ms and tries again.
                     2	Client made a successful login.
                     3	"Invalid username or password."

@@ -56,11 +56,12 @@
 package world;
 
 import sun.plugin.dom.exception.InvalidStateException;
-import world.player.Player;
+import world.entity.Player;
 import world.task.Task;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.*;
 
 /**
@@ -78,7 +79,7 @@ public class World {
      *
      * @param worldId the world id
      */
-    public World(int worldId) {
+    World(int worldId) {
         this.worldId = worldId;
     }
 
@@ -98,6 +99,16 @@ public class World {
     void stop() {
 
     }
+
+    void addPlayer(Player p) {
+        players.add(p);
+    }
+
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
 
     /**
      * Poll.
@@ -129,7 +140,7 @@ public class World {
         for (Iterator<Player> it = players.iterator(); it.hasNext(); ) {
             Player player = it.next();
             if (player.getClient().isDisconnected()) {
-                //handle player saving
+                //handle entity saving
             }
         }
     }

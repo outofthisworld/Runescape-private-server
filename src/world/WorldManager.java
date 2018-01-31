@@ -56,7 +56,7 @@
 package world;
 
 import sun.plugin.dom.exception.InvalidStateException;
-import world.player.Player;
+import world.entity.Player;
 
 import java.util.HashMap;
 import java.util.concurrent.Callable;
@@ -138,7 +138,7 @@ public class WorldManager {
      * Queue login.
      *
      * @param worldId the world id
-     * @param player  the player
+     * @param player  the entity
      */
     public static void queueLogin(int worldId, Player player) {
         World world;
@@ -150,7 +150,7 @@ public class WorldManager {
      * Queue login.
      *
      * @param world  the world
-     * @param player the player
+     * @param player the entity
      */
     public static void queueLogin(World world, Player player) {
         ConcurrentLinkedQueue<Player> queue = WorldManager.LOGIN_QUEUE.get(world);

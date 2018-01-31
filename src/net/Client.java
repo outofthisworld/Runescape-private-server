@@ -63,7 +63,7 @@ import net.packets.Packet;
 import net.packets.exceptions.InvalidOpcodeException;
 import net.packets.exceptions.InvalidPacketSizeException;
 import world.WorldManager;
-import world.player.Player;
+import world.entity.Player;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -384,61 +384,5 @@ public class Client {
 
         inBuffer.compact();
     }
-
-
-/*
-
-        //1 byte opcode four byte for message length
-        if (bytesRead <= Client.HEADER_SIZE_BYTES) {
-            //Here should be safe to just return because nothing has been taken from inBuffer
-            return;
-        }
-        //Read unsigned byte opcode
-        int opCode = inBuffer.get() & 0xFF;
-        //Read  int length
-        int len = inBuffer.getInt();
-
-        //Malformed packet, clear the current input buffer
-        if (len <= 0 || len >= Client.MAX_IN_BUFFER_SIZE) {
-            inBuffer.clear();
-            return;
-        }
-
-        //If the length of the packet is higher than current inBuffers capacity
-        if (len > inBuffer.capacity()) {
-            ByteBuffer newInBuffer = ByteBuffer.allocate(len);
-            inBuffer.rewind();
-            //Put whatevers remaining
-            newInBuffer.put(inBuffer);
-
-            inBuffer.clear();
-            inBuffer = newInBuffer;
-
-            try {
-                readInBuf();
-            } catch (Exception e) {
-                e.printStackTrace();
-                disconnect();
-                return;
-            }
-
-            inBuffer.flip();
-        }
-
-        //If we dont have len bytes to read required by this data
-        if (inBuffer.remaining() - Client.HEADER_SIZE_BYTES < len) {
-            inBuffer.rewind();
-        } else {
-            byte[] packetBytes = new byte[len];
-
-            try {
-                inBuffer.get(packetBytes, 0, packetBytes.length);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            new IncomingPacket(this, opCode, packetBytes);
-            inBuffer.compact();
-        }*/
 }
 
