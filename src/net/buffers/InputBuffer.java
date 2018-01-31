@@ -63,7 +63,7 @@ import java.util.function.Predicate;
 /**
  * The type Input buffer.
  */
-public class InputBuffer {
+public class InputBuffer extends AbstractBuffer {
     private final ByteBuffer inBuffer;
 
     /**
@@ -110,6 +110,7 @@ public class InputBuffer {
      *
      * @param numBytes the num bytes
      */
+    @Override
     public void skip(int numBytes) {
         inBuffer.position(inBuffer.position() + numBytes);
     }
@@ -117,8 +118,21 @@ public class InputBuffer {
     /**
      * Rewind.
      */
+    @Override
     public void rewind() {
         inBuffer.rewind();
+    }
+
+
+    @Override
+    public byte[] toArray() {
+        inBuffer.compact();
+        return inBuffer.array();
+    }
+
+    @Override
+    public ByteBuffer toByteBuffer() {
+        return ByteBuffer.wrap(toArray());
     }
 
     /**
@@ -126,6 +140,7 @@ public class InputBuffer {
      *
      * @return the int
      */
+    @Override
     public int position() {
         return inBuffer.position();
     }
@@ -283,8 +298,14 @@ public class InputBuffer {
      *
      * @return the int
      */
+    @Override
     public int remaining() {
         return inBuffer.remaining();
+    }
+
+    @Override
+    public int size() {
+        return inBuffer.capacity();
     }
 
     public byte[] readUntil(Predicate<Byte> pred) {
