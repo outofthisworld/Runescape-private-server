@@ -60,11 +60,8 @@ import java.nio.channels.SocketChannel;
 /**
  * The type Socket gateway.
  */
-public final class SocketGateway {
+public final class ChannelGateway {
 
-    static {
-
-    }
 
     /**
      * Accept.

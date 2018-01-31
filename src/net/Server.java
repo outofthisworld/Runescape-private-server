@@ -250,7 +250,7 @@ public final class Server {
                     SocketChannel socketChannel = serverSocketChannel.accept();
 
                     //Check we allow this connection
-                    SocketGateway.accept(socketChannel);
+                    ChannelGateway.accept(socketChannel);
 
                     if (socketChannel != null && socketChannel.isConnected()) {
                         socketChannel.finishConnect();

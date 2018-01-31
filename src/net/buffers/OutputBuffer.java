@@ -69,7 +69,7 @@ import java.nio.channels.SocketChannel;
  * This class is not thread safe, any attempts to use it from multiple threads will result
  * in inconsistencies unless synchronized correctly from user level code.
  */
-public class OutputBuffer extends AbstractBuffer{
+public class OutputBuffer extends AbstractBuffer {
     private static final int INITIAL_SIZE = 256;
     private static final int INCREASE_SIZE_BYTES = 256;
     private final int increaseSizeBytes;
@@ -79,14 +79,14 @@ public class OutputBuffer extends AbstractBuffer{
         this(OutputBuffer.INITIAL_SIZE, OutputBuffer.INCREASE_SIZE_BYTES);
     }
 
-    private OutputBuffer(final int initialSize, final int increaseSizeBytes) {
-        this.currentOutputBuffer = ByteBuffer.allocate(initialSize);
+    private OutputBuffer(int initialSize, int increaseSizeBytes) {
+        currentOutputBuffer = ByteBuffer.allocate(initialSize);
         this.increaseSizeBytes = increaseSizeBytes;
     }
 
-    private OutputBuffer(final byte[] bytes, final int increaseSizeBytes) {
-        this.currentOutputBuffer = ByteBuffer.allocate(bytes.length);
-        this.currentOutputBuffer.put(bytes);
+    private OutputBuffer(byte[] bytes, int increaseSizeBytes) {
+        currentOutputBuffer = ByteBuffer.allocate(bytes.length);
+        currentOutputBuffer.put(bytes);
         this.increaseSizeBytes = increaseSizeBytes;
     }
 
@@ -95,7 +95,7 @@ public class OutputBuffer extends AbstractBuffer{
      *
      * @param bytes the bytes
      */
-    public OutputBuffer(final byte[] bytes) {
+    public OutputBuffer(byte[] bytes) {
         this(bytes, 256);
     }
 
@@ -116,7 +116,7 @@ public class OutputBuffer extends AbstractBuffer{
      * @param increaseSizeBytes the amount of bytes that the buffer should increase by if its capacity is reached.
      * @return the output buffer
      */
-    public static OutputBuffer create(final int initialSize, final int increaseSizeBytes) {
+    public static OutputBuffer create(int initialSize, int increaseSizeBytes) {
         return new OutputBuffer(initialSize, increaseSizeBytes);
     }
 
@@ -126,7 +126,7 @@ public class OutputBuffer extends AbstractBuffer{
      * @param initialSize the initial size
      * @return the output buffer
      */
-    public static OutputBuffer create(final int initialSize) {
+    public static OutputBuffer create(int initialSize) {
         return new OutputBuffer(initialSize, OutputBuffer.INCREASE_SIZE_BYTES);
     }
 
@@ -141,7 +141,7 @@ public class OutputBuffer extends AbstractBuffer{
      * @param increaseSizeBytes the increase size bytes
      * @return the output buffer
      */
-    public static OutputBuffer wrap(final byte[] bytes, final int increaseSizeBytes) {
+    public static OutputBuffer wrap(byte[] bytes, int increaseSizeBytes) {
         return new OutputBuffer(bytes, increaseSizeBytes);
     }
 
@@ -151,7 +151,7 @@ public class OutputBuffer extends AbstractBuffer{
      * @param bytes the bytes
      * @return the output buffer
      */
-    public static OutputBuffer wrap(final byte[] bytes) {
+    public static OutputBuffer wrap(byte[] bytes) {
         return new OutputBuffer(bytes);
     }
 
@@ -162,12 +162,12 @@ public class OutputBuffer extends AbstractBuffer{
      * @return the int
      * @throws IOException the io exception
      */
-    public int pipeAllTo(final SocketChannel c) throws IOException {
+    public int pipeAllTo(SocketChannel c) throws IOException {
         int bytesWritten = 0;
-        final int length = this.currentOutputBuffer.position();
+        int length = currentOutputBuffer.position();
         System.out.println("writing " + length + " bytes");
         while (bytesWritten != length) {
-            bytesWritten += this.pipeTo(c);
+            bytesWritten += pipeTo(c);
         }
 
         System.out.println("wrote : " + bytesWritten);
@@ -180,10 +180,10 @@ public class OutputBuffer extends AbstractBuffer{
      * @param byteArr the byte arr
      * @return the int
      */
-    public int pipeTo(final byte[] byteArr) {
-        this.currentOutputBuffer.flip();
-        this.currentOutputBuffer.get(byteArr, 0, byteArr.length);
-        this.currentOutputBuffer.compact();
+    public int pipeTo(byte[] byteArr) {
+        currentOutputBuffer.flip();
+        currentOutputBuffer.get(byteArr, 0, byteArr.length);
+        currentOutputBuffer.compact();
         return byteArr.length;
     }
 
@@ -194,10 +194,10 @@ public class OutputBuffer extends AbstractBuffer{
      * @return the int
      * @throws IOException the io exception
      */
-    public int pipeTo(final SocketChannel c) throws IOException {
-        this.currentOutputBuffer.flip();
-        final int bytesWritten = c.write(this.currentOutputBuffer);
-        this.currentOutputBuffer.compact();
+    public int pipeTo(SocketChannel c) throws IOException {
+        currentOutputBuffer.flip();
+        int bytesWritten = c.write(currentOutputBuffer);
+        currentOutputBuffer.compact();
         return bytesWritten;
     }
 
@@ -208,9 +208,9 @@ public class OutputBuffer extends AbstractBuffer{
      * @return the output buffer
      * @throws Exception the exception
      */
-    public OutputBuffer pipeTo(final ByteBuffer b) throws Exception {
-        this.currentOutputBuffer.flip();
-        if (b.capacity() - b.position() < this.currentOutputBuffer.limit()) {
+    public OutputBuffer pipeTo(ByteBuffer b) throws Exception {
+        currentOutputBuffer.flip();
+        if (b.capacity() - b.position() < currentOutputBuffer.limit()) {
             throw new Exception("Not enough room in buffer b");
         }
 
@@ -218,8 +218,8 @@ public class OutputBuffer extends AbstractBuffer{
             throw new Exception("Buffer may be in read mode");
         }
 
-        b.put(this.currentOutputBuffer);
-        this.currentOutputBuffer.compact();
+        b.put(currentOutputBuffer);
+        currentOutputBuffer.compact();
         return this;
     }
 
@@ -228,8 +228,9 @@ public class OutputBuffer extends AbstractBuffer{
      *
      * @return the int
      */
+    @Override
     public int size() {
-        return this.currentOutputBuffer.position();
+        return currentOutputBuffer.position();
     }
 
 
@@ -237,7 +238,7 @@ public class OutputBuffer extends AbstractBuffer{
      * Clear.
      */
     void clear() {
-        this.currentOutputBuffer.clear();
+        currentOutputBuffer.clear();
     }
 
     /**
@@ -246,15 +247,15 @@ public class OutputBuffer extends AbstractBuffer{
      * @param b the b
      * @return the output buffer
      */
-    public OutputBuffer writeByte(final int b) {
-        if (this.currentOutputBuffer.position() + 1 >= this.currentOutputBuffer.capacity()) {
-            final ByteBuffer x = ByteBuffer.allocate(this.currentOutputBuffer.capacity() + this.increaseSizeBytes);
-            this.currentOutputBuffer.flip();
-            x.put(this.currentOutputBuffer);
-            this.currentOutputBuffer.clear();
-            this.currentOutputBuffer = x;
+    public OutputBuffer writeByte(int b) {
+        if (currentOutputBuffer.position() + 1 >= currentOutputBuffer.capacity()) {
+            ByteBuffer x = ByteBuffer.allocate(currentOutputBuffer.capacity() + increaseSizeBytes);
+            currentOutputBuffer.flip();
+            x.put(currentOutputBuffer);
+            currentOutputBuffer.clear();
+            currentOutputBuffer = x;
         }
-        this.currentOutputBuffer.put((byte) b);
+        currentOutputBuffer.put((byte) b);
         return this;
     }
 
@@ -265,12 +266,12 @@ public class OutputBuffer extends AbstractBuffer{
      * @param repeat the repeat
      * @return the output buffer
      */
-    public OutputBuffer writeBytes(final int val, final int repeat) {
+    public OutputBuffer writeBytes(int val, int repeat) {
         if (repeat <= 0) {
             throw new IllegalArgumentException("repeat cannot be > 0");
         }
         for (int i = 0; i < repeat; i++) {
-            this.writeByte((byte) val);
+            writeByte((byte) val);
             System.out.println("writing byte");
         }
         return this;
@@ -283,16 +284,16 @@ public class OutputBuffer extends AbstractBuffer{
      * @param numBytes the num bytes
      * @return the output buffer
      */
-    public OutputBuffer writeBytes(final long value, final int numBytes) {
+    public OutputBuffer writeBytes(long value, int numBytes) {
 
         if (numBytes < 1 || numBytes > 8) {
             throw new RuntimeException("Invalid params, numBytes must be between 1-8 inclusive");
         }
-        final int start;
-        final int end;
-        final int increment;
+        int start;
+        int end;
+        int increment;
 
-        final ByteOrder currentOrder = this.currentOutputBuffer.order();
+        ByteOrder currentOrder = currentOutputBuffer.order();
 
         if (currentOrder == ByteOrder.BIG_ENDIAN) {
             start = numBytes - 1;
@@ -306,14 +307,14 @@ public class OutputBuffer extends AbstractBuffer{
 
         for (int i = start; i != end; i += increment) {
             System.out.println(i * 8);
-            this.writeByte((byte) (value >> (i * 8)));
+            writeByte((byte) (value >> (i * 8)));
         }
 
         return this;
     }
 
-    private OutputBuffer outOrder(final ByteOrder order) {
-        this.currentOutputBuffer.order(order);
+    private OutputBuffer outOrder(ByteOrder order) {
+        currentOutputBuffer.order(order);
         return this;
     }
 
@@ -323,8 +324,8 @@ public class OutputBuffer extends AbstractBuffer{
      * @param x the x
      * @return the output buffer
      */
-    public OutputBuffer writeLittleDWORD(final long x) {
-        return this.outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 4);
+    public OutputBuffer writeLittleDWORD(long x) {
+        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 4);
     }
 
     /**
@@ -333,8 +334,8 @@ public class OutputBuffer extends AbstractBuffer{
      * @param x the x
      * @return the output buffer
      */
-    public OutputBuffer writeBigDWORD(final long x) {
-        return this.outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 4);
+    public OutputBuffer writeBigDWORD(long x) {
+        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 4);
     }
 
     /**
@@ -343,8 +344,8 @@ public class OutputBuffer extends AbstractBuffer{
      * @param x the x
      * @return the output buffer
      */
-    public OutputBuffer writeBigQWORD(final long x) {
-        return this.outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 8);
+    public OutputBuffer writeBigQWORD(long x) {
+        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 8);
     }
 
     /**
@@ -353,8 +354,8 @@ public class OutputBuffer extends AbstractBuffer{
      * @param x the x
      * @return the output buffer
      */
-    public OutputBuffer writeLittleQWORD(final long x) {
-        return this.outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 8);
+    public OutputBuffer writeLittleQWORD(long x) {
+        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 8);
     }
 
 
@@ -364,8 +365,8 @@ public class OutputBuffer extends AbstractBuffer{
      * @param x the x
      * @return the output buffer
      */
-    public OutputBuffer writeBigWORD(final int x) {
-        return this.outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 2);
+    public OutputBuffer writeBigWORD(int x) {
+        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 2);
     }
 
     /**
@@ -374,8 +375,8 @@ public class OutputBuffer extends AbstractBuffer{
      * @param x the x
      * @return the output buffer
      */
-    public OutputBuffer writeLittleWORD(final int x) {
-        return this.outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 2);
+    public OutputBuffer writeLittleWORD(int x) {
+        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 2);
     }
 
     /**
@@ -387,8 +388,9 @@ public class OutputBuffer extends AbstractBuffer{
      *
      * @return the byte [ ]
      */
+    @Override
     public byte[] toArray() {
-        return this.currentOutputBuffer.array();
+        return currentOutputBuffer.array();
     }
 
     /**
@@ -403,28 +405,29 @@ public class OutputBuffer extends AbstractBuffer{
      *
      * @return the byte buffer
      */
+    @Override
     public ByteBuffer toByteBuffer() {
-        return ByteBuffer.wrap(this.toArray());
+        return ByteBuffer.wrap(toArray());
     }
 
 
     @Override
     public int position() {
-        return this.currentOutputBuffer.position();
+        return currentOutputBuffer.position();
     }
 
     @Override
     public void rewind() {
-        this.currentOutputBuffer.rewind();
+        currentOutputBuffer.rewind();
     }
 
     @Override
-    public void skip(final int numBytes) {
-        this.currentOutputBuffer.position(this.currentOutputBuffer.position() + numBytes);
+    public void skip(int numBytes) {
+        currentOutputBuffer.position(currentOutputBuffer.position() + numBytes);
     }
 
     @Override
     public int remaining() {
-        return this.currentOutputBuffer.remaining();
+        return currentOutputBuffer.remaining();
     }
 }

@@ -70,8 +70,10 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.logging.Logger;
 
@@ -189,38 +191,21 @@ public class Client {
     /**
      * Process write.
      */
-    void processWrite() {
-        OutputBuffer buf;
-        while ((buf = outgoingBuffers.poll()) != null) {
-            int size = buf.size();
-            int bytesWritten = 0;
-            try {
-                bytesWritten = buf.pipeTo(channel);
-            } catch (IOException e) {
-                e.printStackTrace();
-                if (!selectionKey.isValid()) {
-                    disconnect();
-                    return;
-                }
+    CompletableFuture processWrite() {
+        return CompletableFuture.runAsync(() -> {
+            OutputBuffer buf;
+            ArrayList<CompletableFuture<Integer>> al = new ArrayList<>();
+            while ((buf = outgoingBuffers.poll()) != null) {
+                al.add(write(buf));
             }
-
-            if (bytesWritten == 0 || bytesWritten != size) {
-                outgoingBuffers.addFirst(buf);
-                selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
-                return;
-            }
-        }
-        selectionKey.interestOps(selectionKey.interestOps() & (~SelectionKey.OP_WRITE));
+            CompletableFuture.allOf(al.toArray(new CompletableFuture[]{})).thenRun(() -> {
+                selectionKey.interestOps(selectionKey.interestOps() & (~SelectionKey.OP_WRITE));
+            });
+        });
     }
 
-    /**
-     * Thread safe, attempts to write the specified OutputBuffer to the client,
-     * if the socketchannels buffer is full, register OP_WRITE.
-     *
-     * @param outBuffer the out buffer
-     * @return the int
-     */
-    public int write(OutputBuffer outBuffer) {
+
+    private int writeOutBuf(OutputBuffer outBuffer) {
         int bytesWritten = 0;
 
         int outBufSize = outBuffer.size();
@@ -231,7 +216,6 @@ public class Client {
             } catch (IOException e) {
                 e.printStackTrace();
                 disconnect();
-                return -1;
             }
         }
 
@@ -241,6 +225,17 @@ public class Client {
         }
 
         return bytesWritten;
+    }
+
+    /**
+     * Thread safe, attempts to write the specified OutputBuffer to the client,
+     * if the socketchannels buffer is full, register OP_WRITE.
+     *
+     * @param outBuffer the out buffer
+     * @return the int
+     */
+    public CompletableFuture<Integer> write(OutputBuffer outBuffer) {
+        return CompletableFuture.supplyAsync(() -> writeOutBuf(outBuffer));
     }
 
     /**
