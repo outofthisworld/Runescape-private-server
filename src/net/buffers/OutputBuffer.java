@@ -238,7 +238,7 @@ public class OutputBuffer extends AbstractBuffer {
      * Clear.
      */
     @Override
-    void clear() {
+    public void clear() {
         currentOutputBuffer.clear();
     }
 

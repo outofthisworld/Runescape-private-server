@@ -98,4 +98,14 @@ public abstract class Packet {
     public abstract int getOpcodePacketSize(int opcode);
 
     public abstract boolean handlesOpcode(int opcode);
+
+    public static class OutgoingPackets {
+        public static final int DISPLAY_GROUND_ITEM = 44;
+        public static final int UPDATE_PLAYER_XY = 85;
+        public static final int LOGOUT = 109;
+        public static final int INTERFACE_TEXT = 126;
+        public static final int REMOVE_GROUND_ITEM = 156;
+        public static final int SEND_MESSAGE = 253;
+    }
 }
+
