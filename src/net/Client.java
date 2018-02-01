@@ -60,6 +60,7 @@ import net.buffers.InputBuffer;
 import net.buffers.OutputBuffer;
 import net.enc.ISAACCipher;
 import net.packets.Packet;
+import net.packets.PacketBuilder;
 import net.packets.exceptions.InvalidOpcodeException;
 import net.packets.exceptions.InvalidPacketSizeException;
 import world.WorldManager;
@@ -70,13 +71,10 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 
@@ -94,6 +92,7 @@ public class Client {
     private final long serverSessionKey, connectedAt;
     private final Date lastConnectionDate = new Date();
     private final ConcurrentLinkedDeque<OutputBuffer> outgoingBuffers = new ConcurrentLinkedDeque<>();
+    private final PacketBuilder packetBuilder = new PacketBuilder(this);
     private long disconnectedAt = -1;
     private boolean isDisconnected = false;
     private ByteBuffer inBuffer;
@@ -101,6 +100,7 @@ public class Client {
     private ISAACCipher outCipher;
     private boolean isLoggedIn;
     private Player player;
+
 
     /**
      * Instantiates a new Client.
@@ -221,20 +221,13 @@ public class Client {
             OutputBuffer buf;
 
             while (( buf = outgoingBuffers.poll() ) != null) {
-                try {
-                    //Make sure the output buffers are written in order
-                    write(buf).get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
+                writeOutBuf(buf, false);
             }
         });
     }
 
 
-    private int writeOutBuf(OutputBuffer outBuffer) {
+    private int writeOutBuf(OutputBuffer outBuffer, boolean isNew) {
         int bytesWritten = 0;
 
         int outBufSize = outBuffer.size();
@@ -249,7 +242,11 @@ public class Client {
         }
 
         if (bytesWritten == 0 || bytesWritten != outBufSize) {
-            outgoingBuffers.addFirst(outBuffer);
+            if (isNew) {
+                outgoingBuffers.addLast(outBuffer);
+            } else {
+                outgoingBuffers.addFirst(outBuffer);
+            }
             selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
         }
 
@@ -264,8 +261,18 @@ public class Client {
      * @return the int
      */
     public CompletableFuture<Integer> write(OutputBuffer outBuffer) {
-        return CompletableFuture.supplyAsync(() ->  writeOutBuf(outBuffer));
+        return CompletableFuture.supplyAsync(() -> writeOutBuf(outBuffer, true));
     }
+
+    /**
+     * Gets packet builder.
+     *
+     * @return the packet builder
+     */
+    public PacketBuilder getPacketBuilder() {
+        return packetBuilder;
+    }
+
 
     /**
      * Gets server session key.

@@ -121,7 +121,7 @@ public class World {
          */
         ConcurrentLinkedQueue<Player> loginQueue = WorldManager.getLoginQueueForWorld(this);
         Player p = null;
-        while ((p = loginQueue.poll()) != null) {
+        while (( p = loginQueue.poll() ) != null) {
             players.add(p);
         }
 
@@ -133,7 +133,7 @@ public class World {
     private void addPlayersToWorld() {
         ConcurrentLinkedQueue<Player> loginQueue = WorldManager.getLoginQueueForWorld(this);
         Player p = null;
-        while ((p = loginQueue.poll()) != null) {
+        while (( p = loginQueue.poll() ) != null) {
             players.add(p);
         }
     }
@@ -142,8 +142,11 @@ public class World {
         for (Iterator<Player> it = players.iterator(); it.hasNext(); ) {
             Player player = it.next();
             if (player.getClient().isDisconnected()) {
-                //handle entity saving
-                player.getClient().setLoggedIn(false);
+                if (player.save()) {
+                    //handle entity saving
+                    player.getClient().setLoggedIn(false);
+                    it.remove();
+                }
             }
         }
     }
@@ -152,7 +155,7 @@ public class World {
         Task t;
         ArrayList<Task> incompleteTasks = new ArrayList<>();
 
-        while ((t = worldTasks.poll()) != null) {
+        while (( t = worldTasks.poll() ) != null) {
             if (!t.isFinished() && t.check()) {
                 t.execute();
             }

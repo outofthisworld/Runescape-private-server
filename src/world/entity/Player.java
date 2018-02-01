@@ -59,6 +59,8 @@ import net.Client;
 
 public class Player {
     private final Client c;
+    private final int[] skills = new int[ 25 ];
+    private final int[] skillExp = new int[ 25 ];
 
     public Player(Client c) {
         this.c = c;
@@ -72,4 +74,56 @@ public class Player {
     public boolean save() {
         return true;
     }
+
+    public int getSkillLevel(int skillId) {
+        if (skillId < 0 || skillId >= skills.length) {
+            throw new IllegalArgumentException("Invalid skill id");
+        }
+
+        return skills[ skillId ];
+    }
+
+    public int getSkillExp(int skillId) {
+        if (skillId < 0 || skillId >= skillExp.length) {
+            throw new IllegalArgumentException("Invalid skill id");
+        }
+
+        return skillExp[ skillId ];
+    }
+
+    public static class Skills {
+        public static final int ATTACK = 0;
+        public static final int DEFENCE = 1;
+        public static final int STRENGTH = 2;
+        public static final int HITPOINTS = 3;
+
+        public static int getExpUntilLevel(int level) {
+            int points = 0;
+            int output = 0;
+
+            for (int lvl = 1; lvl <= level; lvl++) {
+                points += Math.floor((double) lvl + 300.0 * Math.pow(2.0, (double) lvl / 7.0));
+                if (lvl >= level) {
+                    return output;
+                }
+                output = (int) Math.floor(points / 4);
+            }
+            return 0;
+        }
+
+        public static int getLevelFromExp(int currentExp) {
+            int exp = currentExp;
+            int points = 0;
+            int output = 0;
+            for (int lvl = 1; lvl < 100; lvl++) {
+                points += Math.floor((double) lvl + 300.0 * Math.pow(2.0, (double) lvl / 7.0));
+                output = (int) Math.floor(points / 4);
+                if (( output - 1 ) >= exp) {
+                    return lvl;
+                }
+            }
+            return 99;
+        }
+    }
+
 }

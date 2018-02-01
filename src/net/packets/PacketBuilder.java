@@ -5,8 +5,8 @@ import net.buffers.OutputBuffer;
 
 public class PacketBuilder {
 
-    private final OutputBuffer outputBuffer = OutputBuffer.create();
     private final Client c;
+    private OutputBuffer outputBuffer = OutputBuffer.create();
 
     public PacketBuilder(Client c) {
         this.c = c;
@@ -21,11 +21,21 @@ public class PacketBuilder {
     }
 
 
-    public void clear() {
+    public PacketBuilder sendMessage(String s) {
+        outputBuffer.writeByte(253);
+        byte[] sBytes = s.getBytes();
+        outputBuffer.writeByte(sBytes.length);
+        outputBuffer.writeBytes(sBytes);
+        return this;
+    }
 
+    public OutputBuffer build() {
+        OutputBuffer current = outputBuffer;
+        outputBuffer = OutputBuffer.create();
+        return current;
     }
 
     public void send() {
-        c.write(outputBuffer);
+        c.write(build());
     }
 }

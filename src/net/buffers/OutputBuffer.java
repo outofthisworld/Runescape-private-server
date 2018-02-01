@@ -237,6 +237,7 @@ public class OutputBuffer extends AbstractBuffer {
     /**
      * Clear.
      */
+    @Override
     void clear() {
         currentOutputBuffer.clear();
     }
@@ -256,6 +257,23 @@ public class OutputBuffer extends AbstractBuffer {
             currentOutputBuffer = x;
         }
         currentOutputBuffer.put((byte) b);
+        return this;
+    }
+
+    /**
+     * Write bytes output buffer.
+     *
+     * @param bytes the bytes
+     * @return the output buffer
+     */
+    public OutputBuffer writeBytes(byte[] bytes) {
+        if (bytes == null) {
+            throw new IllegalArgumentException("bytes cannot be null");
+        }
+
+        for (int i = 0; i < bytes.length; i++) {
+            writeByte(bytes[ i ]);
+        }
         return this;
     }
 
@@ -307,7 +325,7 @@ public class OutputBuffer extends AbstractBuffer {
 
         for (int i = start; i != end; i += increment) {
             System.out.println(i * 8);
-            writeByte((byte) (value >> (i * 8)));
+            writeByte((byte) ( value >> ( i * 8 ) ));
         }
 
         return this;
