@@ -100,7 +100,10 @@ public class Player {
             throw new IllegalArgumentException("Skill level must be between one and 99");
         }
 
+
         skills[ skillId ] = skillLevel;
+        skillExp[ skillId ] = Skills.getExpFromLevel(skillLevel);
+        c.getPacketBuilder().updateSkill(skillId, skills[ skillId ], skillExp[ skillId ]);
     }
 
     public void setSkillExp(int skillId, int exp) {
@@ -108,7 +111,9 @@ public class Player {
             throw new IllegalArgumentException("Invalid skill id");
         }
 
+        skills[ skillId ] = Skills.getLevelFromExp(exp);
         skillExp[ skillId ] = exp;
+        c.getPacketBuilder().updateSkill(skillId, skills[ skillId ], skillExp[ skillId ]);
     }
 
     public static class Skills {
@@ -141,6 +146,21 @@ public class Player {
 
             for (int lvl = 1; lvl <= level; lvl++) {
                 points += Math.floor((double) lvl + 300.0 * Math.pow(2.0, (double) lvl / 7.0));
+                if (lvl >= level) {
+                    return output;
+                }
+                output = (int) Math.floor(points / 4);
+            }
+            return 0;
+        }
+
+        public static int getExpFromLevel(int level) {
+            int points = 0;
+            int output = 0;
+
+            for (int lvl = 1; lvl <= level; lvl++) {
+                points += Math.floor((double) lvl + 300.0
+                        * Math.pow(2.0, (double) lvl / 7.0));
                 if (lvl >= level) {
                     return output;
                 }
