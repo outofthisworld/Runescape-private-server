@@ -91,11 +91,49 @@ public class Player {
         return skillExp[ skillId ];
     }
 
+    public void setSkillLevel(int skillId, int skillLevel) {
+        if (skillId < 0 || skillId >= skills.length) {
+            throw new IllegalArgumentException("Invalid skill id");
+        }
+
+        if (skillLevel < 1 || skillLevel > 99) {
+            throw new IllegalArgumentException("Skill level must be between one and 99");
+        }
+
+        skills[ skillId ] = skillLevel;
+    }
+
+    public void setSkillExp(int skillId, int exp) {
+        if (skillId < 0 || skillId >= skillExp.length) {
+            throw new IllegalArgumentException("Invalid skill id");
+        }
+
+        skillExp[ skillId ] = exp;
+    }
+
     public static class Skills {
         public static final int ATTACK = 0;
         public static final int DEFENCE = 1;
         public static final int STRENGTH = 2;
         public static final int HITPOINTS = 3;
+        public static final int RANGED = 4;
+        public static final int PRAYER = 5;
+        public static final int MAGIC = 6;
+        public static final int COOKING = 7;
+        public static final int WOODCUTTING = 8;
+        public static final int FLETCHING = 9;
+        public static final int FISHING = 10;
+        public static final int FIREMAKING = 11;
+        public static final int CRAFTING = 12;
+        public static final int SMITHING = 13;
+        public static final int MINING = 14;
+        public static final int HERBLORE = 15;
+        public static final int AGILITY = 16;
+        public static final int THIEVING = 17;
+        public static final int SLAYER = 18;
+        public static final int FARMING = 19;
+        public static final int RUNECRAFTING = 20;
+
 
         public static int getExpUntilLevel(int level) {
             int points = 0;
