@@ -57,4 +57,6 @@ public abstract class AbstractBuffer {
      * @return the int
      */
     public abstract int size();
+
+    public abstract void clear();
 }

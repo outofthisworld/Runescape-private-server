@@ -67,4 +67,9 @@ public class Player {
     public Client getClient() {
         return c;
     }
+
+
+    public boolean save() {
+        return true;
+    }
 }

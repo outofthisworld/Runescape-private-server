@@ -75,6 +75,8 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
 
@@ -110,7 +112,7 @@ public class Client {
         channel = (SocketChannel) selectionKey.channel();
         this.selectionKey = selectionKey;
         remoteAddress = (InetSocketAddress) getChannel().getRemoteAddress();
-        serverSessionKey = ((long) (java.lang.Math.random() * 99999999D) << 32) + (long) (java.lang.Math.random() * 99999999D);
+        serverSessionKey = ( (long) ( java.lang.Math.random() * 99999999D ) << 32 ) + (long) ( java.lang.Math.random() * 99999999D );
         connectedAt = System.nanoTime();
     }
 
@@ -127,7 +129,7 @@ public class Client {
      *
      * @return the in cipher
      */
-    ISAACCipher getInCipher() {
+    public ISAACCipher getInCipher() {
         return inCipher;
     }
 
@@ -136,7 +138,7 @@ public class Client {
      *
      * @param cipher the cipher
      */
-    void setInCipher(ISAACCipher cipher) {
+    public void setInCipher(ISAACCipher cipher) {
         if (inCipher != null) {
             throw new IllegalStateException("Cipher for client already set");
         }
@@ -166,7 +168,7 @@ public class Client {
      *
      * @return the out cipher
      */
-    ISAACCipher getOutCipher() {
+    public ISAACCipher getOutCipher() {
         return outCipher;
     }
 
@@ -196,7 +198,7 @@ public class Client {
      *
      * @return the player
      */
-    Player getPlayer() {
+    public Player getPlayer() {
         return player;
     }
 
@@ -205,7 +207,7 @@ public class Client {
      *
      * @param p the p
      */
-    void setPlayer(Player p) {
+    public void setPlayer(Player p) {
         player = p;
     }
 
@@ -217,13 +219,17 @@ public class Client {
     CompletableFuture processWrite() {
         return CompletableFuture.runAsync(() -> {
             OutputBuffer buf;
-            ArrayList<CompletableFuture<Integer>> al = new ArrayList<>();
-            while ((buf = outgoingBuffers.poll()) != null) {
-                al.add(write(buf));
+
+            while (( buf = outgoingBuffers.poll() ) != null) {
+                try {
+                    //Make sure the output buffers are written in order
+                    write(buf).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
             }
-            CompletableFuture.allOf(al.toArray(new CompletableFuture[]{})).thenRun(() -> {
-                selectionKey.interestOps(selectionKey.interestOps() & (~SelectionKey.OP_WRITE));
-            });
         });
     }
 
@@ -243,7 +249,7 @@ public class Client {
         }
 
         if (bytesWritten == 0 || bytesWritten != outBufSize) {
-            outgoingBuffers.addLast(outBuffer);
+            outgoingBuffers.addFirst(outBuffer);
             selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
         }
 
@@ -258,7 +264,7 @@ public class Client {
      * @return the int
      */
     public CompletableFuture<Integer> write(OutputBuffer outBuffer) {
-        return CompletableFuture.supplyAsync(() -> writeOutBuf(outBuffer));
+        return CompletableFuture.supplyAsync(() ->  writeOutBuf(outBuffer));
     }
 
     /**

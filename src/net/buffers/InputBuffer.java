@@ -151,7 +151,7 @@ public class InputBuffer extends AbstractBuffer {
             throw new RuntimeException("Invalid params, numBytes must be between 1-8 inclusive");
         }
 
-        byte[] bytes = new byte[numBytes];
+        byte[] bytes = new byte[ numBytes ];
         inBuffer.get(bytes, 0, bytes.length);
 
         long l = 0L;
@@ -171,7 +171,7 @@ public class InputBuffer extends AbstractBuffer {
         }
 
         for (int i = start; i != end; i += increment) {
-            l |= ((bytes[i] & 0xFF) << (inBuffer.order() == ByteOrder.BIG_ENDIAN ? (end - 1 - i) * 8 : i * 8));
+            l |= ( ( bytes[ i ] & 0xFF ) << ( inBuffer.order() == ByteOrder.BIG_ENDIAN ? ( end - 1 - i ) * 8 : i * 8 ) );
         }
 
         return l;
@@ -197,7 +197,7 @@ public class InputBuffer extends AbstractBuffer {
      * @return the short
      */
     public short readUnsignedByte() {
-        return (short) (inBuffer.get() & 0xFF);
+        return (short) ( inBuffer.get() & 0xFF );
     }
 
 
@@ -281,7 +281,7 @@ public class InputBuffer extends AbstractBuffer {
      * @return the int
      */
     public int readLittleUnsignedWORD() {
-        return (int) (inOrder(ByteOrder.LITTLE_ENDIAN).readBytes(2) & 0xFFFFL);
+        return (int) ( inOrder(ByteOrder.LITTLE_ENDIAN).readBytes(2) & 0xFFFFL );
     }
 
     /**
@@ -290,7 +290,7 @@ public class InputBuffer extends AbstractBuffer {
      * @return the int
      */
     public int readBigUnsignedWORD() {
-        return (int) (inOrder(ByteOrder.BIG_ENDIAN).readBytes(2) & 0xFFFFL);
+        return (int) ( inOrder(ByteOrder.BIG_ENDIAN).readBytes(2) & 0xFFFFL );
     }
 
     /**
@@ -306,6 +306,11 @@ public class InputBuffer extends AbstractBuffer {
     @Override
     public int size() {
         return inBuffer.capacity();
+    }
+
+    @Override
+    public void clear() {
+        inBuffer.clear();
     }
 
     public byte[] readUntil(Predicate<Byte> pred) {
