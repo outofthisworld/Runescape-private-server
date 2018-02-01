@@ -278,6 +278,23 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
+     * Writes the bytes in reverse.
+     *
+     * @param bytes the bytes
+     * @return the output buffer
+     */
+    public OutputBuffer writeBytesReverse(byte[] bytes) {
+        if (bytes == null) {
+            throw new IllegalArgumentException("bytes cannot be null");
+        }
+
+        for (int i = bytes.length - 1; i >= 0; i--) {
+            writeByte(bytes[ i ]);
+        }
+        return this;
+    }
+
+    /**
      * Write bytes output buffer.
      *
      * @param val    the val
@@ -302,7 +319,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @param numBytes the num bytes
      * @return the output buffer
      */
-    public OutputBuffer writeBytes(long value, int numBytes) {
+    public OutputBuffer writeBytes(long value, int numBytes, ByteTransformationType type) {
 
         if (numBytes < 1 || numBytes > 8) {
             throw new RuntimeException("Invalid params, numBytes must be between 1-8 inclusive");
@@ -317,15 +334,33 @@ public class OutputBuffer extends AbstractBuffer {
             start = numBytes - 1;
             end = -1;
             increment = -1;
+
         } else {
             start = 0;
             end = numBytes;
             increment = 1;
+
         }
 
         for (int i = start; i != end; i += increment) {
-            System.out.println(i * 8);
-            writeByte((byte) ( value >> ( i * 8 ) ));
+            if (i == 0) {
+                switch (type) {
+                    case A:
+                        writeByte((byte) ( value + 128 ));
+                        break;
+                    case S:
+                        writeByte((byte) ( 128 - value ));
+                        break;
+                    case C:
+                        writeByte((byte) ( -value ));
+                        break;
+                    default:
+                        writeByte((byte) ( value >> ( i * 8 ) ));
+                        break;
+                }
+            } else {
+                writeByte((byte) ( value >> ( i * 8 ) ));
+            }
         }
 
         return this;
@@ -343,7 +378,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeLittleDWORD(long x) {
-        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 4);
+        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 4, ByteTransformationType.NONE);
     }
 
     /**
@@ -353,7 +388,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeBigDWORD(long x) {
-        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 4);
+        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 4, ByteTransformationType.NONE);
     }
 
     /**
@@ -363,7 +398,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeBigQWORD(long x) {
-        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 8);
+        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 8, ByteTransformationType.NONE);
     }
 
     /**
@@ -373,9 +408,8 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeLittleQWORD(long x) {
-        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 8);
+        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 8, ByteTransformationType.NONE);
     }
-
 
     /**
      * Write big word output buffer.
@@ -384,7 +418,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeBigWORD(int x) {
-        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 2);
+        return outOrder(ByteOrder.BIG_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
     }
 
     /**
@@ -394,7 +428,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeLittleWORD(int x) {
-        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 2);
+        return outOrder(ByteOrder.LITTLE_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
     }
 
     /**
@@ -428,7 +462,6 @@ public class OutputBuffer extends AbstractBuffer {
         return ByteBuffer.wrap(toArray());
     }
 
-
     @Override
     public int position() {
         return currentOutputBuffer.position();
@@ -447,5 +480,12 @@ public class OutputBuffer extends AbstractBuffer {
     @Override
     public int remaining() {
         return currentOutputBuffer.remaining();
+    }
+
+    public enum ByteTransformationType {
+        A,
+        C,
+        S,
+        NONE
     }
 }

@@ -66,11 +66,12 @@ public class PacketBuilder {
      * @return the packet builder
      */
     public PacketBuilder sendInterfaceText(String s, int id) {
-        client.getOutStream().createFrameVarSizeWord(126);
-        client.getOutStream().writeString(s);
+        createFrame(126);
+        byte[] strBytes = s.getBytes();
+        outputBuffer.writeBigWORD(strBytes.length + 1 + 2);
+        outputBuffer.writeBytes(s.getBytes());
+        outputBuffer.writeByte(10); //End string
         client.getOutStream().writeWordA(id);
-        client.getOutStream().endFrameVarSizeWord();
-        client.flushOutStream();
     }
 
 
@@ -166,7 +167,7 @@ public class PacketBuilder {
     }
 
     /**
-     * Sets a sidebar interface.
+     * 71: Assigns an interface to one of the tabs in the game sidebar.
      *
      * @param menuId The sidebar.
      * @param form   The interface.
@@ -180,7 +181,7 @@ public class PacketBuilder {
     }
 
     /**
-     * Sets the skill level.
+     * 134: Updates a players skill of current lvl and experience
      *
      * @param skillNum     The skill id.
      * @param currentLevel The level.
@@ -196,7 +197,7 @@ public class PacketBuilder {
     }
 
     /**
-     * Sets the chat options.
+     * 206: Sends the chat privacy settings.
      *
      * @param publicChat  The public chat option.
      * @param privateChat The private chat option.
@@ -216,22 +217,9 @@ public class PacketBuilder {
         return this;
     }
 
-    /**
-     * Sets xp of a skill.
-     *
-     * @param skillNum The skill.
-     * @param XP       The xp.
-     * @return The action.
-     */
-    public PacketBuilder setXpSkill(int skillNum, int XP) {
-        client.getOutStream().createFrame(134);
-        client.getOutStream().writeByte(skillNum);
-        client.getOutStream().writeDWord_v1(XP);
-        return this;
-    }
 
     /**
-     * Shows an interface.
+     * 97: Displays a normal interface.
      *
      * @param id The interface id.
      * @return The action.
@@ -243,7 +231,7 @@ public class PacketBuilder {
     }
 
     /**
-     * Shows an interface.
+     * 164: Shows an interface in the chat box.
      *
      * @param id The interface id.
      * @return The action.
