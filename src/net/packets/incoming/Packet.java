@@ -99,24 +99,35 @@ public abstract class Packet {
          */
         public static final int ITEM_ON_PLAYER = 14;
         /**
+         * Sent when a player uses an item with another item.
+         * Length: 4
+         */
+        public static final int ITEM_ON_ITEM = 53;
+        /**
+         * Sent when a player uses an item on an NPC.
+         * Length: 4
+         */
+        public static final int ITEM_ON_NPC = 57;
+        /**
+         * Sent when a player uses an item with another item on the floor.
+         * Length: 10
+         */
+        public static final int ITEM_ON_FLOOR = 25;
+        /**
          * Sent when a player uses an item. This is an alternate item option.
          * Length: 1
          */
         public static final int ALTERNATE_ITEM_OPTION = 16;
 
         /**
+         * Sent when a player clicks first option of an NPC, such as "Talk."
          * Actions on NPCS, when they click an option.
          * Length: 2
          */
+        public static final int NPC_ACTION_1 = 155;
         public static final int NPC_ACTION_2 = 17;
         public static final int NPC_ACTION_4 = 18;
         public static final int NPC_ACTION_3 = 21;
-
-        /**
-         * Sent when a player uses an item with another item on the floor.
-         * Length: 10
-         */
-        public static final int USE_WITH_ITEM_ON_FLOOR = 25;
 
         /**
          * Sent when a player uses magic on an object.
@@ -153,20 +164,15 @@ public abstract class Packet {
          */
         public static final int BANK_10 = 43;
         /**
+         * Sent when a player banks 5 of a certain item.
+         * Length: 6
+         */
+        public static final int BANK_5 = 117;
+        /**
          * Sent when a players account is flagged.
          * Length: 1
          */
         public static final int FLAG_PLAYER = 45;
-        /**
-         * Sent when a player uses an item with another item.
-         * Length: 4
-         */
-        public static final int ITEM_ON_ITEM = 53;
-        /**
-         * Sent when a player uses an item on an NPC.
-         * Length: 4
-         */
-        public static final int ITEM_ON_NPC = 57;
         /**
          * Sent while typing onto an interface.
          * Length: 1
@@ -209,8 +215,11 @@ public abstract class Packet {
          */
         public static final int ITEM_ACTION_1 = 122;
         public static final int ITEM_ACTION_3 = 75;
-
-
+        /**
+         * Sent when a player wants to drop an item onto the ground.
+         * Length:6
+         */
+        public static final int DROP_ITEM_GROUND = 87;
         /**
          * Sent when a player attempts to light logs on fire.
          * Length:6
@@ -222,10 +231,156 @@ public abstract class Packet {
          */
         public static final int VALIDATE_NPC_OPTION_4 = 85;
         /**
-         * Sent when a player selects the attack option on another player..
+         * Sent when the player moves the camera.
+         * Length:4
+         */
+        public static final int CAMERA_MOVEMENT = 86;
+        /**
+         * Sent when a player changes their privacy options (i.e. public chat).
+         * Length:3
+         */
+        public static final int PRIVACY_OPTIONS = 95;
+        /**
+         * Sent when the player should walk somewhere according to a certain action performed, such as clicking an
+         * object.
+         * Length: var
+         */
+        public static final int WALK_ON = 98;
+        /**
+         * Sent when a player is choosing their character design options.
+         * Length: 13
+         */
+        public static final int DESIGN_SCREEN = 101;
+        /**
+         * Sent when the player enters a command in the chat box (e.g. "::command")
+         * Length: VARIABLE_BYTE
+         */
+        public static final int PLAYER_COMMAND = 103;
+        /**
+         * Sent when the client finishes loading a map region.
+         * Length: 0
+         */
+        public static final int LOADING_FINISHED = 121;
+        /**
+         * Sent when a player sends a private message to another player.
+         * Length: VARIABLE BYTE
+         */
+        public static final int PRIVATE_MESSAGE = 126;
+        /**
+         * Sent when a player accepts another players duel request.
          * Length: 2
          */
-        public static final int DROP_ITEM_PACKET = 87;
+        public static final int ACCEPT_CHALLENGE = 128;
+        /**
+         * Sent when a player banks all of a certain item that they have in their inventory.
+         * Length: 6
+         */
+        public static final int BANK_ALL_ITEMS = 129;
+        /**
+         * Sent when a player presses the close, exit or cancel button on an interface.
+         * Length: 0
+         */
+        public static final int CLOSE_INTERFACE = 130;
+        /**
+         * Sent when a player uses magic on an npc.
+         * Length: 4
+         */
+        public static final int MAGIC_ON_NPC = 131;
+        /**
+         * Sent when a player adds a player to their ignore list.
+         * Length: 8
+         */
+        public static final int ADD_IGNORE = 133;
+        /**
+         * Sent when a player requests to bank an X amount of items
+         * Length: 6
+         */
+        public static final int BANK_X_ITEMS_1 = 135;
+        /**
+         * Send with client action 561, 6 has to do with player option 1
+         * Length: 0
+         **/
+        public static final int PLAYER_OPTION_1_ANTI_CHEAT = 136;
+        /**
+         * Sent when a player Requests a trade from another player. (e.g. "Sending Trade Request...")
+         * Length: 2
+         **/
+        public static final int TRADE_REQUEST = 139;
+        /**
+         * Sent when a player unequips an item.
+         * Length: 6
+         **/
+        public static final int UNEQUIP_ITEM = 145;
+        /**
+         * Send to validate npc option 3 (client action 965)
+         * Length: 1
+         **/
+        public static final int NPC_OPTION_3_ANTI_CHEAT = 152;
+        /**
+         * Sent when a moderator or administrator selects the second option of a player.
+         * Length: 2
+         */
+        public static final int REPORT_ABUSE = 153;
+        /**
+         * Sent when a player enters an X amount of items they want to bank.
+         * Length: 4
+         */
+        public static final int BANK_X_ITEMS_2 = 208;
+        /**
+         * Sent when the player walks regularly.
+         * Length: VARIABLE_BYTE
+         */
+        public static final int PLAYER_WALK = 164;
+        /**
+         * Send when a player uses a spell on a ground item.
+         * Length: 8
+         */
+        public static final int MAGIC_ON_GROUND_ITEM = 181;
+        /**
+         * Validates clicking object option 4
+         * Length: 4
+         */
+        public static final int OBJECT_OPTION_4_ANTI_CHEAT = 183;
+        /**
+         * Sent when a player clicks an in-game button.
+         * Length: 2
+         */
+        public static final int GAME_BUTTON_CLICK = 185;
+        /**
+         * Sent when a player adds a friend to their friend list.
+         * Length: 8
+         */
+        public static final int ADD_FRIEND = 188;
+        /**
+         * Validates player option 2
+         * Length: 1
+         */
+        public static final int PLAYER_OPTION_2_ANTI_CHEAT = 189;
+        /**
+         * Sent when a a player uses an item on an object.
+         * Length: 12
+         */
+        public static final int ITEM_ON_OBJECT = 192;
+        /**
+         * Validates banking options
+         * Length: 2
+         */
+        public static final int VALIDATE_BANKING_ANTI_CHEAT = 200;
+        /**
+         * Sent when the player has become idle and should be logged out.
+         * Length: 0
+         */
+        public static final int IDLE_LOGOUT = 202;
+        /**
+         * Sent when a player enters a new map region.
+         * Length: 0
+         */
+        public static final int REGION_CHANGE = 210;
+        /**
+         * Sent when a player moves an item from one slot to another.
+         * Length: 0
+         */
+        public static final int REGION_CHANGE = 214;
 
         public static final int CHAT_OPTIONS = 95;
         public static final int COMMAND_PACKET = 103;
