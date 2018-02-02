@@ -1,12 +1,13 @@
-package net.packets;
+package net.packets.outgoing;
 
 import net.Client;
 import net.buffers.OutputBuffer;
+import net.packets.incoming.Packet;
 
 /**
  * The type Packet builder.
  */
-public class PacketBuilder {
+public class OutgoingPacketBuilder {
     private final Client c;
     private OutputBuffer outputBuffer = OutputBuffer.create();
 
@@ -15,7 +16,7 @@ public class PacketBuilder {
      *
      * @param c the c
      */
-    public PacketBuilder(Client c) {
+    public OutgoingPacketBuilder(Client c) {
         this.c = c;
     }
 
@@ -31,7 +32,7 @@ public class PacketBuilder {
 /*
         109: Disconnects the client from the server.
      */
-    public PacketBuilder logout() {
+    public OutgoingPacketBuilder logout() {
         if (c.getPlayer().save()) {
             createFrame(Packet.OutgoingPackets.LOGOUT);
         }
@@ -43,16 +44,18 @@ public class PacketBuilder {
      * Send message packet builder.
      *
      * @param s the s
+     *
      * @return the packet builder
      */
 /*
         253: Sends a server message (e.g. 'Welcome to RuneScape') or trade/duel request.
     */
-    public PacketBuilder sendMessage(String s) {
+    public OutgoingPacketBuilder sendMessage(String s) {
         createFrame(Packet.OutgoingPackets.SEND_MESSAGE);
         byte[] sBytes = s.getBytes();
-        outputBuffer.writeByte(sBytes.length);
+        outputBuffer.writeByte(sBytes.length + 1);
         outputBuffer.writeBytes(sBytes);
+        outputBuffer.writeByte(10);
         return this;
     }
 
@@ -63,15 +66,17 @@ public class PacketBuilder {
      *
      * @param s  the s
      * @param id the id
+     *
      * @return the packet builder
      */
-    public PacketBuilder sendInterfaceText(String s, int id) {
+    public OutgoingPacketBuilder sendInterfaceText(String s, int id) {
         createFrame(126);
         byte[] strBytes = s.getBytes();
         outputBuffer.writeBigWORD(strBytes.length + 1 + 2);
         outputBuffer.writeBytes(s.getBytes());
         outputBuffer.writeByte(10); //End string
-        client.getOutStream().writeWordA(id);
+        outputBuffer.writeBigWORDA(id);
+        return this;
     }
 
 
@@ -83,16 +88,17 @@ public class PacketBuilder {
      * @param itemId the item id
      * @param x      the x
      * @param y      the y
+     *
      * @return the packet builder
      */
-    public PacketBuilder createGroundItem(int itemId, int x, int y) {
-        client.getOutStream().createFrame(85);
-        client.getOutStream().writeByteC(x);
-        client.getOutStream().writeByteC(y);
-        client.getOutStream().createFrame(44);
-        client.getOutStream().writeWordBigEndianA(itemId); // itemId
-        client.getOutStream().writeWord(1); // amount
-        client.getOutStream().writeByte(0); // x(4 MSB) y(LSB) coords
+    public OutgoingPacketBuilder createGroundItem(int itemId, int x, int y) {
+        createFrame(85);
+        outputBuffer.writeByte(x, OutputBuffer.ByteTransformationType.C);
+        outputBuffer.writeByte(y, OutputBuffer.ByteTransformationType.C);
+        createFrame(44);
+        outputBuffer.writeLittleWORDA(itemId);
+        outputBuffer.writeBigWORD(1);
+        outputBuffer.writeByte(0);
         return this;
     }
 
@@ -106,14 +112,14 @@ public class PacketBuilder {
      * @param itemX      The x coord.
      * @param itemY      The y coord.
      * @param itemAmount The amount.
+     *
      * @return The action.
      */
-    public PacketBuilder createGroundItem(int itemID, int itemX, int itemY,
-            int itemAmount) {// Phate: Omg fucking sexy! creates item at
+    public OutgoingPacketBuilder createGroundItem(int itemID, int itemX, int itemY, int itemAmount) {// Phate: Omg fucking sexy! creates item at
         // absolute X and Y
         client.getOutStream().createFrame(85); // Phate: Spawn ground item
-        client.getOutStream().writeByteC(( itemY - 8 * client.mapRegionY ));
-        client.getOutStream().writeByteC(( itemX - 8 * client.mapRegionX ));
+        client.getOutStream().writeByteC((itemY - 8 * client.mapRegionY));
+        client.getOutStream().writeByteC((itemX - 8 * client.mapRegionX));
         client.getOutStream().createFrame(44);
         client.getOutStream().writeWordBigEndianA(itemID);
         client.getOutStream().writeWord(itemAmount);
@@ -130,12 +136,13 @@ public class PacketBuilder {
      * @param itemX  The x coord.
      * @param itemY  The y coord.
      * @param itemID The id.
+     *
      * @return The action.
      */
-    public PacketBuilder removeGroundItem(int itemX, int itemY, int itemID) {
+    public OutgoingPacketBuilder removeGroundItem(int itemX, int itemY, int itemID) {
         client.getOutStream().createFrame(85); // Phate: Item Position Frame
-        client.getOutStream().writeByteC(( itemY - 8 * client.mapRegionY ));
-        client.getOutStream().writeByteC(( itemX - 8 * client.mapRegionX ));
+        client.getOutStream().writeByteC((itemY - 8 * client.mapRegionY));
+        client.getOutStream().writeByteC((itemX - 8 * client.mapRegionX));
         client.getOutStream().createFrame(156); // Phate: Item Action: Delete
         client.getOutStream().writeByteS(0); // x(4 MSB) y(LSB) coords
         client.getOutStream().writeWord(itemID); // Phate: Item ID
@@ -151,10 +158,10 @@ public class PacketBuilder {
      * @param messages       the messages
      * @param lastLoginIP    the last login ip
      * @param lastLogin      the last login
+     *
      * @return the packet builder
      */
-    public PacketBuilder openWelcomeScreen(int recoveryChange,
-            boolean memberWarning, int messages, int lastLoginIP, int lastLogin) {
+    public OutgoingPacketBuilder openWelcomeScreen(int recoveryChange, boolean memberWarning, int messages, int lastLoginIP, int lastLogin) {
         client.getOutStream().createFrame(176);
         client.getOutStream().writeByteC(recoveryChange);
         client.getOutStream().writeWordA(messages); // # of unread messages
@@ -171,9 +178,10 @@ public class PacketBuilder {
      *
      * @param menuId The sidebar.
      * @param form   The interface.
+     *
      * @return The action.
      */
-    public PacketBuilder setSidebarInterface(int menuId, int form) {
+    public OutgoingPacketBuilder setSidebarInterface(int menuId, int form) {
         client.getOutStream().createFrame(71);
         client.getOutStream().writeWord(form);
         client.getOutStream().writeByteA(menuId);
@@ -186,9 +194,10 @@ public class PacketBuilder {
      * @param skillNum     The skill id.
      * @param currentLevel The level.
      * @param XP           The xp.
+     *
      * @return The action.
      */
-    public PacketBuilder setSkillLevel(int skillNum, int currentLevel, int XP) {
+    public OutgoingPacketBuilder setSkillLevel(int skillNum, int currentLevel, int XP) {
         client.getOutStream().createFrame(134);
         client.getOutStream().writeByte(skillNum);
         client.getOutStream().writeDWord_v1(XP);
@@ -202,10 +211,10 @@ public class PacketBuilder {
      * @param publicChat  The public chat option.
      * @param privateChat The private chat option.
      * @param tradeBlock  The trade block option.
+     *
      * @return chat options
      */
-    public PacketBuilder setChatOptions(int publicChat, int privateChat,
-            int tradeBlock) {
+    public OutgoingPacketBuilder setChatOptions(int publicChat, int privateChat, int tradeBlock) {
         client.getOutStream().createFrame(206);
         client.getOutStream().writeByte(publicChat); // On = 0, Friends = 1, Off
         // = 2, Hide =
@@ -222,9 +231,10 @@ public class PacketBuilder {
      * 97: Displays a normal interface.
      *
      * @param id The interface id.
+     *
      * @return The action.
      */
-    public PacketBuilder sendInterface(int id) {
+    public OutgoingPacketBuilder sendInterface(int id) {
         client.getOutStream().createFrame(97);
         client.getOutStream().writeWord(id);
         return this;
@@ -234,9 +244,10 @@ public class PacketBuilder {
      * 164: Shows an interface in the chat box.
      *
      * @param id The interface id.
+     *
      * @return The action.
      */
-    public PacketBuilder sendChatInterface(int id) {
+    public OutgoingPacketBuilder sendChatInterface(int id) {
         client.getOutStream().createFrame(164);
         client.getOutStream().writeWordBigEndian(id);
         return this;
@@ -247,19 +258,14 @@ public class PacketBuilder {
      * Sends the level up.
      *
      * @param skillId The skill id.
+     *
      * @return The action.
      */
-    public PacketBuilder sendLevelUp(int skillId) {
-        sendMessage("Congratulations! You are now level "
-                            + client.playerLevel[ skillId ] + " "
-                            + Skills.SKILL_NAME[ skillId ][ 1 ] + ".");
-        sendChatInterface(client.getLevelUpInterfaces()[ skillId ][ 0 ]);
-        sendString("@dbl@Congratulations, you just advanced "
-                           + Skills.SKILL_NAME[ skillId ][ 0 ] + " level.",
-                   client.getLevelUpInterfaces()[ skillId ][ 1 ]);
-        sendString("Your " + Skills.SKILL_NAME[ skillId ][ 1 ] + " level is now "
-                           + client.playerLevel[ skillId ] + ".",
-                   client.getLevelUpInterfaces()[ skillId ][ 2 ]);
+    public OutgoingPacketBuilder sendLevelUp(int skillId) {
+        sendMessage("Congratulations! You are now level " + client.playerLevel[skillId] + " " + Skills.SKILL_NAME[skillId][1] + ".");
+        sendChatInterface(client.getLevelUpInterfaces()[skillId][0]);
+        sendString("@dbl@Congratulations, you just advanced " + Skills.SKILL_NAME[skillId][0] + " level.", client.getLevelUpInterfaces()[skillId][1]);
+        sendString("Your " + Skills.SKILL_NAME[skillId][1] + " level is now " + client.playerLevel[skillId] + ".", client.getLevelUpInterfaces()[skillId][2]);
         return this;
     }
 
@@ -268,7 +274,7 @@ public class PacketBuilder {
      *
      * @return The action.
      */
-    public PacketBuilder closeInterfaces() {
+    public OutgoingPacketBuilder closeInterfaces() {
         client.getOutStream().createFrame(219);
         return this;
     }

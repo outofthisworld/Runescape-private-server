@@ -1,4 +1,3 @@
-
 /*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  License
  THE WORK (AS DEFINED BELOW) IS PROVIDED UNDER THE TERMS OF THIS CREATIVE COMMONS PUBLIC LICENSE ("CCPL" OR "LICENSE"). THE WORK IS PROTECTED BY COPYRIGHT AND/OR OTHER APPLICABLE LAW. ANY USE OF THE WORK OTHER THAN AS AUTHORIZED UNDER THIS LICENSE OR COPYRIGHT LAW IS PROHIBITED.
@@ -59,10 +58,10 @@ package net;
 import net.buffers.InputBuffer;
 import net.buffers.OutputBuffer;
 import net.enc.ISAACCipher;
-import net.packets.Packet;
-import net.packets.PacketBuilder;
 import net.packets.exceptions.InvalidOpcodeException;
 import net.packets.exceptions.InvalidPacketSizeException;
+import net.packets.incoming.Packet;
+import net.packets.outgoing.OutgoingPacketBuilder;
 import world.WorldManager;
 import world.entity.Player;
 
@@ -82,9 +81,7 @@ import java.util.logging.Logger;
  * The type Client.
  */
 public class Client {
-    private static final int MAX_IN_BUFFER_SIZE = 8500,
-            MAX_PACKET_SIZE = 512,
-            BUFFER_INCREASE_SIZE = 1024;
+    private static final int MAX_IN_BUFFER_SIZE = 8500, MAX_PACKET_SIZE = 512, BUFFER_INCREASE_SIZE = 1024;
     private static final Logger logger = Logger.getLogger(Client.class.getName());
     private final SocketChannel channel;
     private final SelectionKey selectionKey;
@@ -92,7 +89,7 @@ public class Client {
     private final long serverSessionKey, connectedAt;
     private final Date lastConnectionDate = new Date();
     private final ConcurrentLinkedDeque<OutputBuffer> outgoingBuffers = new ConcurrentLinkedDeque<>();
-    private final PacketBuilder packetBuilder = new PacketBuilder(this);
+    private final OutgoingPacketBuilder outgoingPacketBuilder = new OutgoingPacketBuilder(this);
     private long disconnectedAt = -1;
     private boolean isDisconnected = false;
     private ByteBuffer inBuffer;
@@ -106,13 +103,14 @@ public class Client {
      * Instantiates a new Client.
      *
      * @param selectionKey the selection key
+     *
      * @throws IOException the io exception
      */
     public Client(SelectionKey selectionKey) throws IOException {
         channel = (SocketChannel) selectionKey.channel();
         this.selectionKey = selectionKey;
         remoteAddress = (InetSocketAddress) getChannel().getRemoteAddress();
-        serverSessionKey = ( (long) ( java.lang.Math.random() * 99999999D ) << 32 ) + (long) ( java.lang.Math.random() * 99999999D );
+        serverSessionKey = ((long) (java.lang.Math.random() * 99999999D) << 32) + (long) (java.lang.Math.random() * 99999999D);
         connectedAt = System.nanoTime();
     }
 
@@ -220,7 +218,7 @@ public class Client {
         return CompletableFuture.runAsync(() -> {
             OutputBuffer buf;
 
-            while (( buf = outgoingBuffers.poll() ) != null) {
+            while ((buf = outgoingBuffers.poll()) != null) {
                 writeOutBuf(buf, false);
             }
         });
@@ -258,6 +256,7 @@ public class Client {
      * if the socketchannels buffer is full, register OP_WRITE.
      *
      * @param outBuffer the out buffer
+     *
      * @return the int
      */
     public CompletableFuture<Integer> write(OutputBuffer outBuffer) {
@@ -269,8 +268,8 @@ public class Client {
      *
      * @return the packet builder
      */
-    public PacketBuilder getPacketBuilder() {
-        return packetBuilder;
+    public OutgoingPacketBuilder getOutgoingPacketBuilder() {
+        return outgoingPacketBuilder;
     }
 
 

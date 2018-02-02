@@ -53,7 +53,7 @@
  The rights granted under, and the subject matter referenced, in this License were drafted utilizing the terminology of the Berne Convention for the Protection of Literary and Artistic Works (as amended on September 28, 1979), the Rome Convention of 1961, the WIPO Copyright Treaty of 1996, the WIPO Performances and Phonograms Treaty of 1996 and the Universal Copyright Convention (as revised on July 24, 1971). These rights and subject matter take effect in the relevant jurisdiction in which the License terms are sought to be enforced according to the corresponding provisions of the implementation of those treaty provisions in the applicable national law. If the standard suite of rights granted under applicable copyright law includes additional rights not granted under this License, such additional rights are deemed to be included in the License; this License is not intended to restrict the license of any rights under applicable law.
  -----------------------------------------------------------------------------*/
 
-package net.packets;
+package net.packets.incoming;
 
 import net.Client;
 import net.buffers.InputBuffer;
@@ -72,14 +72,11 @@ public class LoginPacket extends Packet {
     private static final int UPDATE = 15;
     private static final int NEW_SESSION = 16;
     private static final int RECONNECT = 18;
-    private final Set<Integer> opcodes = Collections.unmodifiableSet(
-            new HashSet<>(Arrays.asList(LoginPacket.LOGIN_REQUEST, LoginPacket.UPDATE, LoginPacket.NEW_SESSION, LoginPacket.RECONNECT)));
+    private final Set<Integer> opcodes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(Packet.IncomingPackets.LOGIN_REQUEST, Packet.IncomingPackets.UPDATE, Packet.IncomingPackets.NEW_SESSION, Packet.IncomingPackets.RECONNECT)));
 
 
     @Override
     public void handle(Client c, int packetOpcode, InputBuffer in) throws Exception {
-        validate(packetOpcode, in);
-
         if (c.isLoggedIn()) {
             return;
         }
@@ -96,9 +93,7 @@ public class LoginPacket extends Packet {
                 //Name hash
                 in.readUnsignedByte();
 
-                c.write(OutputBuffer
-                        .create(73, 10)
-                        .writeBytes(0, 8)// is being ignored by the Client
+                c.write(OutputBuffer.create(73, 10).writeBytes(0, 8)// is being ignored by the Client
                         .writeByte(0)// login response - 0 means exchange session key to establish encryption
                         .writeBigQWORD(c.getServerSessionKey()));// send the net.Server part of the session Id used (Client+net.Server part together are used as cryption key
                 break;
@@ -253,26 +248,9 @@ public class LoginPacket extends Packet {
     }
 
     private void sendResponse(Client c, int returnCode, int playerRights) {
-        c.write(OutputBuffer.create(3)
-                .writeByte(returnCode)
-                .writeByte(playerRights)
-                .writeByte(0));
+        c.write(OutputBuffer.create(3).writeByte(returnCode).writeByte(playerRights).writeByte(0));
     }
 
-    @Override
-    public int getOpcodePacketSize(int opcode) {
-        switch (opcode) {
-            case LoginPacket.LOGIN_REQUEST:
-                return 1;//2
-            case LoginPacket.UPDATE:
-                return -1; //??
-            case LoginPacket.NEW_SESSION:
-            case LoginPacket.RECONNECT:
-                return 75;//76
-            default:
-                return -1; //Unknown packet size
-        }
-    }
 
     @Override
     public boolean handlesOpcode(int opcode) {

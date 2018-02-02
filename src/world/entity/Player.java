@@ -59,8 +59,8 @@ import net.Client;
 
 public class Player {
     private final Client c;
-    private final int[] skills = new int[ 25 ];
-    private final int[] skillExp = new int[ 25 ];
+    private final int[] skills = new int[25];
+    private final int[] skillExp = new int[25];
 
     public Player(Client c) {
         this.c = c;
@@ -80,7 +80,7 @@ public class Player {
             throw new IllegalArgumentException("Invalid skill id");
         }
 
-        return skills[ skillId ];
+        return skills[skillId];
     }
 
     public int getSkillExp(int skillId) {
@@ -88,7 +88,7 @@ public class Player {
             throw new IllegalArgumentException("Invalid skill id");
         }
 
-        return skillExp[ skillId ];
+        return skillExp[skillId];
     }
 
     public void setSkillLevel(int skillId, int skillLevel) {
@@ -101,9 +101,9 @@ public class Player {
         }
 
 
-        skills[ skillId ] = skillLevel;
-        skillExp[ skillId ] = Skills.getExpFromLevel(skillLevel);
-        c.getPacketBuilder().updateSkill(skillId, skills[ skillId ], skillExp[ skillId ]);
+        skills[skillId] = skillLevel;
+        skillExp[skillId] = Skills.getExpFromLevel(skillLevel);
+        c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
     }
 
     public void setSkillExp(int skillId, int exp) {
@@ -111,9 +111,9 @@ public class Player {
             throw new IllegalArgumentException("Invalid skill id");
         }
 
-        skills[ skillId ] = Skills.getLevelFromExp(exp);
-        skillExp[ skillId ] = exp;
-        c.getPacketBuilder().updateSkill(skillId, skills[ skillId ], skillExp[ skillId ]);
+        skills[skillId] = Skills.getLevelFromExp(exp);
+        skillExp[skillId] = exp;
+        c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
     }
 
     public static class Skills {
@@ -159,8 +159,7 @@ public class Player {
             int output = 0;
 
             for (int lvl = 1; lvl <= level; lvl++) {
-                points += Math.floor((double) lvl + 300.0
-                        * Math.pow(2.0, (double) lvl / 7.0));
+                points += Math.floor((double) lvl + 300.0 * Math.pow(2.0, (double) lvl / 7.0));
                 if (lvl >= level) {
                     return output;
                 }
@@ -176,7 +175,7 @@ public class Player {
             for (int lvl = 1; lvl < 100; lvl++) {
                 points += Math.floor((double) lvl + 300.0 * Math.pow(2.0, (double) lvl / 7.0));
                 output = (int) Math.floor(points / 4);
-                if (( output - 1 ) >= exp) {
+                if ((output - 1) >= exp) {
                     return lvl;
                 }
             }

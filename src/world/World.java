@@ -60,8 +60,9 @@ import world.entity.Player;
 import world.task.Task;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.concurrent.*;
 
 /**
@@ -107,8 +108,12 @@ public class World {
     }
 
 
-    public List<Player> getPlayers() {
-        return players;
+    public Player getPlayer(int index) {
+        return players.get(index);
+    }
+
+    public Collection<Player> getPlayers() {
+        return Collections.unmodifiableCollection(players);
     }
 
 
@@ -121,7 +126,7 @@ public class World {
          */
         ConcurrentLinkedQueue<Player> loginQueue = WorldManager.getLoginQueueForWorld(this);
         Player p = null;
-        while (( p = loginQueue.poll() ) != null) {
+        while ((p = loginQueue.poll()) != null) {
             players.add(p);
         }
 
@@ -133,7 +138,7 @@ public class World {
     private void addPlayersToWorld() {
         ConcurrentLinkedQueue<Player> loginQueue = WorldManager.getLoginQueueForWorld(this);
         Player p = null;
-        while (( p = loginQueue.poll() ) != null) {
+        while ((p = loginQueue.poll()) != null) {
             players.add(p);
         }
     }
@@ -155,7 +160,7 @@ public class World {
         Task t;
         ArrayList<Task> incompleteTasks = new ArrayList<>();
 
-        while (( t = worldTasks.poll() ) != null) {
+        while ((t = worldTasks.poll()) != null) {
             if (!t.isFinished() && t.check()) {
                 t.execute();
             }
@@ -192,6 +197,7 @@ public class World {
      * will be run immediately even if poll has not been called.
      *
      * @param r the r
+     *
      * @return the future
      */
     public Future<?> submit(Runnable r) {
@@ -203,6 +209,7 @@ public class World {
      *
      * @param <T> the type parameter
      * @param r   the r
+     *
      * @return the future
      */
     public <T> Future<T> submit(Callable<T> r) {

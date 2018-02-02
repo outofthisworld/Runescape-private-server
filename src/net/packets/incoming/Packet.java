@@ -53,21 +53,17 @@
  The rights granted under, and the subject matter referenced, in this License were drafted utilizing the terminology of the Berne Convention for the Protection of Literary and Artistic Works (as amended on September 28, 1979), the Rome Convention of 1961, the WIPO Copyright Treaty of 1996, the WIPO Performances and Phonograms Treaty of 1996 and the Universal Copyright Convention (as revised on July 24, 1971). These rights and subject matter take effect in the relevant jurisdiction in which the License terms are sought to be enforced according to the corresponding provisions of the implementation of those treaty provisions in the applicable national law. If the standard suite of rights granted under applicable copyright law includes additional rights not granted under this License, such additional rights are deemed to be included in the License; this License is not intended to restrict the license of any rights under applicable law.
  -----------------------------------------------------------------------------*/
 
-package net.packets;
+package net.packets.incoming;
 
 import net.Client;
 import net.buffers.InputBuffer;
-import net.packets.exceptions.InvalidOpcodeException;
-import net.packets.exceptions.InvalidPacketSizeException;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 public abstract class Packet {
 
-    private static final Packet[] packets = new Packet[]{
-            new LoginPacket()
-    };
+    private static final Packet[] packets = new Packet[]{new LoginPacket()};
 
     public Packet() {
     }
@@ -78,26 +74,19 @@ public abstract class Packet {
 
     public abstract void handle(Client c, int packetOpcode, InputBuffer in) throws Exception;
 
-    public void validate(int packetOpcode, InputBuffer in) throws InvalidOpcodeException, InvalidPacketSizeException {
-        int packetSize = getOpcodePacketSize(packetOpcode);
-
-
-        if (!handlesOpcode(packetOpcode)) {
-            throw new InvalidOpcodeException();
-        }
-
-        if (packetSize == -1) {
-            return;
-        }
-
-        if (in.remaining() < packetSize) {
-            throw new InvalidPacketSizeException();
-        }
-    }
-
-    public abstract int getOpcodePacketSize(int opcode);
-
     public abstract boolean handlesOpcode(int opcode);
+
+
+    public static class IncomingPackets {
+        public static final int ATTACK_PLAYER = 73;
+        public static final int CHAT_OPTIONS = 95;
+
+        /*Login*/
+        public static final int LOGIN_REQUEST = 14;
+        public static final int UPDATE = 15;
+        public static final int NEW_SESSION = 16;
+        public static final int RECONNECT = 18;
+    }
 
     public static class OutgoingPackets {
         public static final int DISPLAY_GROUND_ITEM = 44;
