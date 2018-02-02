@@ -192,6 +192,17 @@ public abstract class Packet {
         public static final int OBJECT_ACTION_3 = 70;
 
         /**
+         * Sent when a player uses the 4th option of an object.
+         * Length: 6
+         */
+        public static final int OBJECT_OPTION_4 = 228;
+        /**
+         * Send when a player uses the 2nd option of an object
+         * Length: 6
+         */
+        public static final int OBJECT_OPTION_2 = 234;
+
+        /**
          * Sent when a player attacks an NPC.
          * Length: 2
          */
@@ -378,17 +389,60 @@ public abstract class Packet {
         public static final int REGION_CHANGE = 210;
         /**
          * Sent when a player moves an item from one slot to another.
-         * Length: 0
+         * Length: 7
          */
-        public static final int REGION_CHANGE = 214;
-
-        public static final int CHAT_OPTIONS = 95;
-        public static final int COMMAND_PACKET = 103;
-        public static final int CLICK_ITEM_PACKET = 122;
-        public static final int CLICK_INTERFACE_PACKET = 130;
-        public static final int CLICK_BUTTON_PACKET = 185;
-        public static final int CLICK_SCREEN_PACKET = 241;
-
+        public static final int MOVE_ITEM = 214;
+        /**
+         * Sent when a player removes a friend from their friend list.
+         * Length: 8
+         */
+        public static final int REMOVE_FRIEND = 215;
+        /**
+         * Sent when a player reports another player.
+         * Length: 8
+         */
+        public static final int REPORT_PLAYER = 218;
+        /**
+         * Validates NPC option 2
+         * Length: 1
+         */
+        public static final int NPC_OPTION_2_ANTI_CHEAT = 230;
+        /**
+         * Sent when the player picks up an item from the ground.
+         * Length: 6
+         */
+        public static final int PICKUP_GROUND_ITEM = 236;
+        /**
+         * Sent when a player casts magic on the items in their inventory.
+         * Length: 8
+         */
+        public static final int MAGIC_ON_ITEM = 237;
+        /**
+         * Sent when the player clicks somewhere on the game screen.
+         * Length: 4
+         */
+        public static final int MOUSE_CLICK = 241;
+        /**
+         * Unk
+         * Length: 15
+         */
+        public static final int UNKNOWN = 246;
+        /**
+         * Sent when the player walks using the map. Has 14 additional (assumed to be anticheat) bytes added to the end
+         * of it that are ignored.
+         * Length: VARIABLE_BYTE
+         */
+        public static final int MAP_WALK = 248;
+        /**
+         * Sent when a player attempts to cast magic on another player.
+         * Length: 4
+         */
+        public static final int MAGIC_ON_PLAYER = 249;
+        /**
+         * Sent when the player clicks the first option for a ground item (I.E. 'Light Logs')
+         * Length: 6
+         */
+        public static final int GROUND_ITEM_ACTION_1 = 253;
     }
 
     public static class OutgoingPackets {
