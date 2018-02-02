@@ -17,6 +17,7 @@ public class InterfaceClickPacket extends Packet {
         player.getPacketBuilder().closeWindows();*/
     }
 
+
     @Override
     public boolean handlesOpcode(int opcode) {
         return opcode == 130;

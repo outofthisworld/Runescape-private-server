@@ -78,85 +78,232 @@ public abstract class Packet {
 
 
     public static class IncomingPackets {
-        public static final int ATTACK_PLAYER = 73;
-        public static final int CHAT_OPTIONS = 95;
+        /**
+         * Sent when the player has no actions for this cycle.
+         * Length: 0
+         */
+        public static final int IDLE = 0;
+        /**
+         * Sent went the player leaves the client window.
+         * Length: 1
+         */
+        public static final int WINDOW_FOCUS_CHANGE = 3;
+        /**
+         * Sent when the player enters a chat message
+         * Length: Var
+         */
+        public static final int CHAT_PACKET = 4;
+        /**
+         * Sent when the player uses an item on another player.
+         * Length: 8
+         */
+        public static final int ITEM_ON_PLAYER = 14;
+        /**
+         * Sent when a player uses an item. This is an alternate item option.
+         * Length: 1
+         */
+        public static final int ALTERNATE_ITEM_OPTION = 16;
 
-        /*Login*/
-        public static final int LOGIN_REQUEST = 14;
-        public static final int UPDATE = 15;
-        public static final int NEW_SESSION = 16;
-        public static final int RECONNECT = 18;
+        /**
+         * Actions on NPCS, when they click an option.
+         * Length: 2
+         */
+        public static final int NPC_ACTION_2 = 17;
+        public static final int NPC_ACTION_4 = 18;
+        public static final int NPC_ACTION_3 = 21;
+
+        /**
+         * Sent when a player uses an item with another item on the floor.
+         * Length: 10
+         */
+        public static final int USE_WITH_ITEM_ON_FLOOR = 25;
+
+        /**
+         * Sent when a player uses magic on an object.
+         * Length: 4
+         */
+        public static final int MAGIC_ON_OBJECT = 35;
+        /**
+         * Send to validate walking.
+         * Length: 4
+         */
+        public static final int ANTI_CHEAT = 36;
+
+        /**
+         * Sent when a player follows another player.
+         * Length: 2
+         */
+        public static final int FOLLOW_PLAYER = 39;
+
+        /**
+         * Send when a player continues a dialogue.
+         * Length: 2
+         */
+        public static final int FORWARD_DIALOGUE = 40;
+
+        /**
+         * Sent when a player equips an item.
+         * Length: 6
+         */
+        public static final int EQUIP_ITEM = 41;
+
+        /**
+         * Sent when a player equips an item.
+         * Length: 6
+         */
+        public static final int BANK_10 = 43;
+        /**
+         * Sent when a players account is flagged.
+         * Length: 1
+         */
+        public static final int FLAG_PLAYER = 45;
+        /**
+         * Sent when a player uses an item with another item.
+         * Length: 4
+         */
+        public static final int ITEM_ON_ITEM = 53;
+        /**
+         * Sent when a player uses an item on an NPC.
+         * Length: 4
+         */
+        public static final int ITEM_ON_NPC = 57;
+        /**
+         * Sent while typing onto an interface.
+         * Length: 1
+         */
+        public static final int TYPING_INTO_INTERFACE = 60;
+
+        /**
+         * This is for interacting with objects in the world
+         * <p>
+         * Sent when the player clicks the first option of an object, such as "Cut" for trees.
+         * Sent when the player clicks the second option available for an object.
+         * Sent when the player clicks the third action available for an object
+         * Length: 6
+         */
+        public static final int OBJECT_ACTION_1 = 132;
+        public static final int OBJECT_ACTION_2 = 252;
+        public static final int OBJECT_ACTION_3 = 70;
+
+        /**
+         * Sent when a player attacks an NPC.
+         * Length: 2
+         */
+        public static final int ATTACK_NPC = 72;
+        /**
+         * Sent when a player selects the attack option on another player..
+         * Length: 2
+         */
+        public static final int ATTACK_PLAYER = 73;
+        /**
+         * Sent when a player removes a player from their ignore list.
+         * Length: 8
+         */
+        public static final int REMOVE_IGNORE = 74;
+
+        /**
+         * Item actions
+         * Sent when the player clicks the first option of an item, such as "Bury" for bones.
+         * <p>
+         * Length:6
+         */
+        public static final int ITEM_ACTION_1 = 122;
+        public static final int ITEM_ACTION_3 = 75;
+
+
+        /**
+         * Sent when a player attempts to light logs on fire.
+         * Length:6
+         */
+        public static final int LIGHT_ITEM = 79;
+        /**
+         * Sent to validate npc option 4. (client action 478).
+         * Length:1
+         */
+        public static final int VALIDATE_NPC_OPTION_4 = 85;
+        /**
+         * Sent when a player selects the attack option on another player..
+         * Length: 2
+         */
+        public static final int DROP_ITEM_PACKET = 87;
+
+        public static final int CHAT_OPTIONS = 95;
+        public static final int COMMAND_PACKET = 103;
+        public static final int CLICK_ITEM_PACKET = 122;
+        public static final int CLICK_INTERFACE_PACKET = 130;
+        public static final int CLICK_BUTTON_PACKET = 185;
+        public static final int CLICK_SCREEN_PACKET = 241;
+
     }
 
     public static class OutgoingPackets {
-        /*
-            The opcode the display an item on the ground.
-        */
+        /**
+         * The opcode the display an item on the ground.
+         */
         public static final int DISPLAY_GROUND_ITEM = 44;
-        /*
-            Assigns an interface to one of the menu tabs in-game.
-        */
+        /**
+         * Assigns an interface to one of the menu tabs in-game.
+         */
         public static final int SET_SIDEBAR_INTERFACE = 71;
-        /*
-          Updates the players XY coordinates.
-
-          Structure:
-                x - 1 byte - the players x coordinate. Transformation type C.
-                y - 1 byte - the players y coordinate. Transformation type C.
-        */
+        /**
+         * Updates the players XY coordinates.
+         * <p>
+         * Structure:
+         * x - 1 byte - the players x coordinate. Transformation type C.
+         * y - 1 byte - the players y coordinate. Transformation type C.
+         */
         public static final int UPDATE_PLAYER_XY = 85;
-        /*
-          Displays an interface.
-
-          Structure:
-            id - Big endian word (2 bytes)
-        */
+        /**
+         * Displays an interface.
+         * <p>
+         * Structure:
+         * id - Big endian word (2 bytes)
+         */
         public static final int SEND_INTERFACE = 97;
-        /*
-         The logout packet
-        */
+        /**
+         * The logout packet
+         */
         public static final int LOGOUT = 109;
-        /*
-        * Attaches text to an interface, e.g when hovering skills.
-        *
-        *  Structure:
-        *     MessageLength - 4 bytes - big endian - length of the message
-        *     Message - the message bytes
-        *     EndOfMessage - 1 byte - the end of message placeholder (10)
-        *     InterfaceId -  2 bytes - The id of the interface
-        *
-        */
+        /**
+         * Attaches text to an interface, e.g when hovering skills.
+         * <p>
+         * Structure:
+         * MessageLength - 4 bytes - big endian - length of the message
+         * Message - the message bytes
+         * EndOfMessage - 1 byte - the end of message placeholder (10)
+         * InterfaceId -  2 bytes - The id of the interface
+         */
         public static final int INTERFACE_TEXT = 126;
-        /*
-          Sends new level and exp of skills to the client.
-        */
+        /**
+         * Sends new level and exp of skills to the client.
+         */
         public static final int UPDATE_SKILL = 134;
-        /*
-          Removes an item from the ground
-        */
+        /**
+         * Removes an item from the ground
+         */
         public static final int REMOVE_GROUND_ITEM = 156;
-        /*
-         Sends an interface in the chatbox.
-
-         Structure:
-            id - Little endian word (2 bytes) - The chat interface to open
-        */
+        /**
+         * Sends an interface in the chatbox.
+         * <p>
+         * Structure:
+         * id - Little endian word (2 bytes) - The chat interface to open
+         */
         public static final int SEND_CHAT_INTERFACE = 164;
-        /*
-         Updates the players XY coordinates.
-        */
+        /**
+         * Updates the players XY coordinates.
+         */
         public static final int SEND_MESSAGE = 253;
-        /*
-          Updates the players XY coordinates.
-        */
+        /**
+         * Updates the players XY coordinates.
+         */
         public static final int OPEN_WELCOME_INTERFACE = 176;
-        /*
-         Updates the players XY coordinates.
-        */
+        /**
+         * Updates the players XY coordinates.
+         */
         public static final int CHAT_PRIVACY_SETTINGS = 206;
-        /*
-         Updates the players XY coordinates.
-        */
+        /**
+         * Updates the players XY coordinates.
+         */
         public static final int CLOSE_ALL_INTERFACES = 219;
     }
 }

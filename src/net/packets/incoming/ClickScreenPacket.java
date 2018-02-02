@@ -16,6 +16,7 @@ public class ClickScreenPacket extends Packet {
 
     }
 
+
     @Override
     public boolean handlesOpcode(int opcode) {
         return opcode == 241;

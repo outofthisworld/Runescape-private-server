@@ -72,7 +72,7 @@ public class LoginPacket extends Packet {
     private static final int UPDATE = 15;
     private static final int NEW_SESSION = 16;
     private static final int RECONNECT = 18;
-    private final Set<Integer> opcodes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(Packet.IncomingPackets.LOGIN_REQUEST, Packet.IncomingPackets.UPDATE, Packet.IncomingPackets.NEW_SESSION, Packet.IncomingPackets.RECONNECT)));
+    private final Set<Integer> opcodes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(LoginPacket.LOGIN_REQUEST, LoginPacket.UPDATE, LoginPacket.NEW_SESSION, LoginPacket.RECONNECT)));
 
 
     @Override

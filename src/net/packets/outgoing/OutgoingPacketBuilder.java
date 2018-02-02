@@ -26,12 +26,9 @@ public class OutgoingPacketBuilder {
     }
 
     /**
-     * Logout packet builder.
+     * 109: Logout packet builder.
      *
      * @return the packet builder
-     */
-/*
-        109: Disconnects the client from the server.
      */
     public OutgoingPacketBuilder logout() {
         if (c.getPlayer().save()) {
