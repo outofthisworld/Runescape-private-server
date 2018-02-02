@@ -5,7 +5,10 @@ import net.buffers.InputBuffer;
 import world.WorldManager;
 import world.entity.Player;
 
+import java.util.logging.Logger;
+
 public class AttackPlayerPacket extends Packet {
+    private static final Logger logger = Logger.getLogger(AttackPlayerPacket.class.getName());
 
     @Override
     public void handle(Client c, int packetOpcode, InputBuffer in) throws Exception {

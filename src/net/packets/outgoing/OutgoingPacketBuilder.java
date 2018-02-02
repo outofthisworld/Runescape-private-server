@@ -20,8 +20,9 @@ public class OutgoingPacketBuilder {
         this.c = c;
     }
 
-    private void createFrame(int packetId) {
+    private OutputBuffer createFrame(int packetId) {
         outputBuffer.writeByte(packetId + c.getOutCipher().getNextValue());
+        return outputBuffer;
     }
 
     /**
@@ -41,21 +42,15 @@ public class OutgoingPacketBuilder {
 
 
     /**
-     * Send message packet builder.
+     * 253: Send message packet builder.
      *
      * @param s the s
      *
      * @return the packet builder
      */
-/*
-        253: Sends a server message (e.g. 'Welcome to RuneScape') or trade/duel request.
-    */
     public OutgoingPacketBuilder sendMessage(String s) {
-        createFrame(Packet.OutgoingPackets.SEND_MESSAGE);
         byte[] sBytes = s.getBytes();
-        outputBuffer.writeByte(sBytes.length + 1);
-        outputBuffer.writeBytes(sBytes);
-        outputBuffer.writeByte(10);
+        createFrame(Packet.OutgoingPackets.SEND_MESSAGE).writeByte(sBytes.length + 1).writeBytes(sBytes).writeByte(10);
         return this;
     }
 
@@ -92,10 +87,10 @@ public class OutgoingPacketBuilder {
      * @return the packet builder
      */
     public OutgoingPacketBuilder createGroundItem(int itemId, int x, int y) {
-        createFrame(85);
+        createFrame(Packet.OutgoingPackets.UPDATE_PLAYER_XY);
         outputBuffer.writeByte(x, OutputBuffer.ByteTransformationType.C);
         outputBuffer.writeByte(y, OutputBuffer.ByteTransformationType.C);
-        createFrame(44);
+        createFrame(Packet.OutgoingPackets.DISPLAY_GROUND_ITEM);
         outputBuffer.writeLittleWORDA(itemId);
         outputBuffer.writeBigWORD(1);
         outputBuffer.writeByte(0);
@@ -116,6 +111,7 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder createGroundItem(int itemID, int itemX, int itemY, int itemAmount) {// Phate: Omg fucking sexy! creates item at
+        /*
         // absolute X and Y
         client.getOutStream().createFrame(85); // Phate: Spawn ground item
         client.getOutStream().writeByteC((itemY - 8 * client.mapRegionY));
@@ -123,7 +119,7 @@ public class OutgoingPacketBuilder {
         client.getOutStream().createFrame(44);
         client.getOutStream().writeWordBigEndianA(itemID);
         client.getOutStream().writeWord(itemAmount);
-        client.getOutStream().writeByte(0); // x(4 MSB) y(LSB) coords
+        client.getOutStream().writeByte(0); // x(4 MSB) y(LSB) coords*/
         return this;
     }
 
@@ -140,12 +136,12 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder removeGroundItem(int itemX, int itemY, int itemID) {
-        client.getOutStream().createFrame(85); // Phate: Item Position Frame
+        /*client.getOutStream().createFrame(85); // Phate: Item Position Frame
         client.getOutStream().writeByteC((itemY - 8 * client.mapRegionY));
         client.getOutStream().writeByteC((itemX - 8 * client.mapRegionX));
         client.getOutStream().createFrame(156); // Phate: Item Action: Delete
         client.getOutStream().writeByteS(0); // x(4 MSB) y(LSB) coords
-        client.getOutStream().writeWord(itemID); // Phate: Item ID
+        client.getOutStream().writeWord(itemID); // Phate: Item ID*/
         return this;
     }
 
@@ -162,14 +158,14 @@ public class OutgoingPacketBuilder {
      * @return the packet builder
      */
     public OutgoingPacketBuilder openWelcomeScreen(int recoveryChange, boolean memberWarning, int messages, int lastLoginIP, int lastLogin) {
-        client.getOutStream().createFrame(176);
+        /*client.getOutStream().createFrame(176);
         client.getOutStream().writeByteC(recoveryChange);
         client.getOutStream().writeWordA(messages); // # of unread messages
         client.getOutStream().writeByte(memberWarning ? 1 : 0); // 1 for member
         // on
         // non-members world warning
         client.getOutStream().writeDWord_v2(lastLoginIP); // ip of last login
-        client.getOutStream().writeWord(lastLogin); // days
+        client.getOutStream().writeWord(lastLogin); // days*/
         return this;
     }
 
@@ -182,11 +178,12 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder setSidebarInterface(int menuId, int form) {
-        client.getOutStream().createFrame(71);
+        /*client.getOutStream().createFrame(71);
         client.getOutStream().writeWord(form);
-        client.getOutStream().writeByteA(menuId);
+        client.getOutStream().writeByteA(menuId);*/
         return this;
     }
+
 
     /**
      * 134: Updates a players skill of current lvl and experience
@@ -198,10 +195,10 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder setSkillLevel(int skillNum, int currentLevel, int XP) {
-        client.getOutStream().createFrame(134);
+        /*client.getOutStream().createFrame(134);
         client.getOutStream().writeByte(skillNum);
         client.getOutStream().writeDWord_v1(XP);
-        client.getOutStream().writeByte(currentLevel);
+        client.getOutStream().writeByte(currentLevel);*/
         return this;
     }
 
@@ -215,17 +212,16 @@ public class OutgoingPacketBuilder {
      * @return chat options
      */
     public OutgoingPacketBuilder setChatOptions(int publicChat, int privateChat, int tradeBlock) {
-        client.getOutStream().createFrame(206);
+        /*client.getOutStream().createFrame(206);
         client.getOutStream().writeByte(publicChat); // On = 0, Friends = 1, Off
         // = 2, Hide =
         // 3
         client.getOutStream().writeByte(privateChat); // On = 0, Friends = 1,
         // Off = 2
         client.getOutStream().writeByte(tradeBlock); // On = 0, Friends = 1, Off
-        // = 2
+        // = 2*/
         return this;
     }
-
 
     /**
      * 97: Displays a normal interface.
@@ -235,8 +231,8 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder sendInterface(int id) {
-        client.getOutStream().createFrame(97);
-        client.getOutStream().writeWord(id);
+        /*client.getOutStream().createFrame(97);
+        client.getOutStream().writeWord(id);*/
         return this;
     }
 
@@ -248,8 +244,8 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder sendChatInterface(int id) {
-        client.getOutStream().createFrame(164);
-        client.getOutStream().writeWordBigEndian(id);
+        /*client.getOutStream().createFrame(164);
+        client.getOutStream().writeWordLittleEndian(id);*/
         return this;
     }
 
@@ -262,10 +258,10 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder sendLevelUp(int skillId) {
-        sendMessage("Congratulations! You are now level " + client.playerLevel[skillId] + " " + Skills.SKILL_NAME[skillId][1] + ".");
+        /*sendMessage("Congratulations! You are now level " + client.playerLevel[skillId] + " " + Skills.SKILL_NAME[skillId][1] + ".");
         sendChatInterface(client.getLevelUpInterfaces()[skillId][0]);
         sendString("@dbl@Congratulations, you just advanced " + Skills.SKILL_NAME[skillId][0] + " level.", client.getLevelUpInterfaces()[skillId][1]);
-        sendString("Your " + Skills.SKILL_NAME[skillId][1] + " level is now " + client.playerLevel[skillId] + ".", client.getLevelUpInterfaces()[skillId][2]);
+        sendString("Your " + Skills.SKILL_NAME[skillId][1] + " level is now " + client.playerLevel[skillId] + ".", client.getLevelUpInterfaces()[skillId][2]);*/
         return this;
     }
 
@@ -275,7 +271,7 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder closeInterfaces() {
-        client.getOutStream().createFrame(219);
+        createFrame(219);
         return this;
     }
 

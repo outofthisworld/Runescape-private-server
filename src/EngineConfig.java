@@ -66,4 +66,12 @@ public final class EngineConfig {
      * The constant PORT.
      */
     public static final int PORT = 43595;
+
+
+    /**
+     * Disable all logging
+     */
+    static {
+        //LogManager.getLogManager().reset();
+    }
 }
