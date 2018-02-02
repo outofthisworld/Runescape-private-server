@@ -5,8 +5,8 @@ import net.buffers.InputBuffer;
 
 import java.util.logging.Logger;
 
-public class ChatOptionsPacket extends IncomingPacket {
-    private static final Logger logger = Logger.getLogger(ChatOptionsPacket.class.getName());
+public class ChatPrivacyPacket extends IncomingPacket {
+    private static final Logger logger = Logger.getLogger(BankPacket.class.getName());
 
     @Override
     public void handle(Client c, int packetOpcode, InputBuffer in) throws Exception {
@@ -15,6 +15,6 @@ public class ChatOptionsPacket extends IncomingPacket {
 
     @Override
     public boolean handlesOpcode(int opcode) {
-        return opcode == Opcodes.CHAT_OPTIONS;
+        return opcode == Opcodes.PRIVACY_OPTIONS;
     }
 }

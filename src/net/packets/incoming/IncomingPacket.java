@@ -85,11 +85,6 @@ public abstract class IncomingPacket {
          */
         public static final int WINDOW_FOCUS_CHANGE = 3;
         /**
-         * Sent when a player attacks an NPC.
-         * Length: 2
-         */
-        public static final int ATTACK_NPC = 72;
-        /**
          * Send when a player continues a dialogue.
          * Length: 2
          */
@@ -157,11 +152,6 @@ public abstract class IncomingPacket {
          * Length: 12
          */
         public static final int ITEM_ON_OBJECT = 192;
-        /**
-         * Sent when a player uses an item. This is an alternate item option.
-         * Length: 1
-         */
-        public static final int ALTERNATE_ITEM_OPTION = 16;
         /********************* END ITEM ON PACKET************************/
         /********************* START NPC ACTION PACKET************************/
         /**
@@ -177,7 +167,7 @@ public abstract class IncomingPacket {
          * Sent to validate npc option 4. (client action 478).
          * Length:1
          */
-        public static final int VALIDATE_NPC_OPTION_4 = 85;
+        public static final int NPC_OPTION_4_ANTI_CHEAT = 85;
         /**
          * Send to validate npc option 3 (client action 965)
          * Length: 1
@@ -188,6 +178,11 @@ public abstract class IncomingPacket {
          * Length: 1
          */
         public static final int NPC_OPTION_2_ANTI_CHEAT = 230;
+        /**
+         * Sent when a player attacks an NPC.
+         * Length: 2
+         */
+        public static final int ATTACK_NPC = 72;
         /********************* END NPC ACTION PACKET************************/
         /********************* START MAGIC ON PACKET************************/
         /**
@@ -309,7 +304,7 @@ public abstract class IncomingPacket {
          * Sent when a player follows another player.
          * Length: 2
          */
-        public static final int FOLLOW_PLAYER = 39;
+        public static final int FOLLOW_PLAYER = 39; //could be 139
         /**
          * Sent when a player selects the attack option on another player..
          * Length: 2
@@ -334,6 +329,12 @@ public abstract class IncomingPacket {
          * Length:6
          */
         public static final int ITEM_ACTION_1 = 122;
+        /**
+         * Sent when a player uses an item. This is an alternate item option.
+         * This packet is sent when a player clicks the alternate second option of an item.
+         * Length: 1
+         */
+        public static final int ALTERNATE_ITEM_OPTION = 16;
         /**
          * Item actions
          * Sent when the player clicks the first option of an item, such as "Bury" for bones.
@@ -421,7 +422,7 @@ public abstract class IncomingPacket {
          * Sent when a player Requests a trade from another player. (e.g. "Sending Trade Request...")
          * Length: 2
          **/
-        public static final int TRADE_REQUEST = 139;
+        public static final int TRADE_REQUEST = 139; // could be 39
         /*********************  END PLAYER REQUEST PACKET ***********************/
 
         /*********************  INTERFACE OPTION PACKET ***********************/

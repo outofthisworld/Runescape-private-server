@@ -5,20 +5,16 @@ import net.buffers.InputBuffer;
 
 import java.util.logging.Logger;
 
-/*
-    Sent when the player clicks anywhere on the game screen.
-*/
-public class ClickScreenPacket extends IncomingPacket {
-    private static final Logger logger = Logger.getLogger(ClickScreenPacket.class.getName());
+public class WindowFocusChangedPacket extends IncomingPacket {
+    private static final Logger logger = Logger.getLogger(BankPacket.class.getName());
 
     @Override
     public void handle(Client c, int packetOpcode, InputBuffer in) throws Exception {
 
     }
 
-
     @Override
     public boolean handlesOpcode(int opcode) {
-        return opcode == 241;
+        return opcode == Opcodes.WINDOW_FOCUS_CHANGE;
     }
 }

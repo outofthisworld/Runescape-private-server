@@ -5,7 +5,7 @@ import net.buffers.InputBuffer;
 
 import java.util.logging.Logger;
 
-public class ChatPacket extends IncomingPacket {
+public class UnknownPacket extends IncomingPacket {
     private static final Logger logger = Logger.getLogger(BankPacket.class.getName());
 
     @Override
@@ -15,6 +15,6 @@ public class ChatPacket extends IncomingPacket {
 
     @Override
     public boolean handlesOpcode(int opcode) {
-        return opcode == Opcodes.CHAT_PACKET;
+        return opcode == Opcodes.UNKNOWN;
     }
 }
