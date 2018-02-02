@@ -625,6 +625,7 @@ public class OutputBuffer extends AbstractBuffer {
     /**
      * Returns a new @class ByteBuffer with the contents of this @class OutputBuffer.
      * Any operations on the ByteBuffer will not affect this @class OutputBuffer.
+     * (Changes to the buffers contents will affect, however this OutputBuffer pos/limit/capcity etc will not be)
      * <p>
      * The returned @class ByteBuffer will have a position of 0 and limit/capacity of ByteBuffer.size().
      * Writing to the returned ByteBuffer will overwrite the data stored within.

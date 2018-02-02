@@ -5,7 +5,7 @@ import net.buffers.InputBuffer;
 
 import java.util.logging.Logger;
 
-public class ChatOptionsPacket extends Packet {
+public class ChatOptionsPacket extends IncomingPacket {
     private static final Logger logger = Logger.getLogger(ChatOptionsPacket.class.getName());
 
     @Override
@@ -15,6 +15,6 @@ public class ChatOptionsPacket extends Packet {
 
     @Override
     public boolean handlesOpcode(int opcode) {
-        return opcode == IncomingPackets.CHAT_OPTIONS;
+        return opcode == Opcodes.CHAT_OPTIONS;
     }
 }

@@ -5,7 +5,7 @@ import net.buffers.InputBuffer;
 
 import java.util.logging.Logger;
 
-public class ChatPacket extends Packet {
+public class ChatPacket extends IncomingPacket {
     private static final Logger logger = Logger.getLogger(ChatPacket.class.getName());
 
     @Override

@@ -7,7 +7,7 @@ import world.entity.Player;
 
 import java.util.logging.Logger;
 
-public class AttackPlayerPacket extends Packet {
+public class AttackPlayerPacket extends IncomingPacket {
     private static final Logger logger = Logger.getLogger(AttackPlayerPacket.class.getName());
 
     @Override
@@ -35,6 +35,6 @@ public class AttackPlayerPacket extends Packet {
 
     @Override
     public boolean handlesOpcode(int opcode) {
-        return opcode == IncomingPackets.ATTACK_PLAYER;
+        return opcode == Opcodes.ATTACK_PLAYER;
     }
 }

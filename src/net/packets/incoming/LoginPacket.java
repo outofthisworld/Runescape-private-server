@@ -67,7 +67,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class LoginPacket extends Packet {
+public class LoginPacket extends IncomingPacket {
     private static final int LOGIN_REQUEST = 14;
     private static final int UPDATE = 15;
     private static final int NEW_SESSION = 16;

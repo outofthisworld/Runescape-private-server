@@ -9,7 +9,7 @@ import java.util.logging.Logger;
  * Sent when the player clicks on the "Click this to continue" link to forward a
  * dialogue.
  */
-public class ForwardDialoguePacket extends Packet {
+public class ForwardDialoguePacket extends IncomingPacket {
     private static final Logger logger = Logger.getLogger(ForwardDialoguePacket.class.getName());
 
     @Override

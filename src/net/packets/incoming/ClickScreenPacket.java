@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 /*
     Sent when the player clicks anywhere on the game screen.
 */
-public class ClickScreenPacket extends Packet {
+public class ClickScreenPacket extends IncomingPacket {
     private static final Logger logger = Logger.getLogger(ClickScreenPacket.class.getName());
 
     @Override

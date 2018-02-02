@@ -61,15 +61,15 @@ import net.buffers.InputBuffer;
 import java.util.Arrays;
 import java.util.Optional;
 
-public abstract class Packet {
+public abstract class IncomingPacket {
 
-    private static final Packet[] packets = new Packet[]{new LoginPacket()};
+    private static final IncomingPacket[] packets = new IncomingPacket[]{new LoginPacket()};
 
-    public Packet() {
+    public IncomingPacket() {
     }
 
-    public static Optional<Packet> getForId(int id) {
-        return Arrays.stream(Packet.packets).filter(e -> e.handlesOpcode(id)).findAny();
+    public static Optional<IncomingPacket> getForId(int id) {
+        return Arrays.stream(IncomingPacket.packets).filter(e -> e.handlesOpcode(id)).findAny();
     }
 
     public abstract void handle(Client c, int packetOpcode, InputBuffer in) throws Exception;
@@ -77,7 +77,7 @@ public abstract class Packet {
     public abstract boolean handlesOpcode(int opcode);
 
 
-    public static class IncomingPackets {
+    public static class Opcodes {
 
         /**
          * Sent went the player leaves the client window.
@@ -480,77 +480,6 @@ public abstract class Packet {
         public static final int REGION_CHANGE = 210;
 
         /********************* END REGION PACKETS ***********************/
-    }
-
-    public static class OutgoingPackets {
-        /**
-         * The opcode the display an item on the ground.
-         */
-        public static final int DISPLAY_GROUND_ITEM = 44;
-        /**
-         * Assigns an interface to one of the menu tabs in-game.
-         */
-        public static final int SET_SIDEBAR_INTERFACE = 71;
-        /**
-         * Updates the players XY coordinates.
-         * <p>
-         * Structure:
-         * x - 1 byte - the players x coordinate. Transformation type C.
-         * y - 1 byte - the players y coordinate. Transformation type C.
-         */
-        public static final int UPDATE_PLAYER_XY = 85;
-        /**
-         * Displays an interface.
-         * <p>
-         * Structure:
-         * id - Big endian word (2 bytes)
-         */
-        public static final int SEND_INTERFACE = 97;
-        /**
-         * The logout packet
-         */
-        public static final int LOGOUT = 109;
-        /**
-         * Attaches text to an interface, e.g when hovering skills.
-         * <p>
-         * Structure:
-         * MessageLength - 4 bytes - big endian - length of the message
-         * Message - the message bytes
-         * EndOfMessage - 1 byte - the end of message placeholder (10)
-         * InterfaceId -  2 bytes - The id of the interface
-         */
-        public static final int INTERFACE_TEXT = 126;
-        /**
-         * Sends new level and exp of skills to the client.
-         */
-        public static final int UPDATE_SKILL = 134;
-        /**
-         * Removes an item from the ground
-         */
-        public static final int REMOVE_GROUND_ITEM = 156;
-        /**
-         * Sends an interface in the chatbox.
-         * <p>
-         * Structure:
-         * id - Little endian word (2 bytes) - The chat interface to open
-         */
-        public static final int SEND_CHAT_INTERFACE = 164;
-        /**
-         * Updates the players XY coordinates.
-         */
-        public static final int SEND_MESSAGE = 253;
-        /**
-         * Updates the players XY coordinates.
-         */
-        public static final int OPEN_WELCOME_INTERFACE = 176;
-        /**
-         * Updates the players XY coordinates.
-         */
-        public static final int CHAT_PRIVACY_SETTINGS = 206;
-        /**
-         * Updates the players XY coordinates.
-         */
-        public static final int CLOSE_ALL_INTERFACES = 219;
     }
 }
 

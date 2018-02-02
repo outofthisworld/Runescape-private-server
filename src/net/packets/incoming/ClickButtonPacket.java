@@ -5,7 +5,7 @@ import net.buffers.InputBuffer;
 
 import java.util.logging.Logger;
 
-public class ClickButtonPacket extends Packet {
+public class ClickButtonPacket extends IncomingPacket {
     private static final Logger logger = Logger.getLogger(ClickButtonPacket.class.getName());
 
     @Override

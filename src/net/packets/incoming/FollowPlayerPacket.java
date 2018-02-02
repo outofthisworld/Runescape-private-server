@@ -6,7 +6,7 @@ import net.buffers.InputBuffer;
 import java.util.logging.Logger;
 
 
-public class FollowPlayerPacket extends Packet {
+public class FollowPlayerPacket extends IncomingPacket {
     private static final Logger logger = Logger.getLogger(FollowPlayerPacket.class.getName());
 
     @Override
