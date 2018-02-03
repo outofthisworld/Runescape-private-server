@@ -19,7 +19,13 @@ public class IdlePacket extends IncomingPacket {
 
     @Override
     public void handle(Client c, int packetOpcode, InputBuffer in) throws Exception {
-
+        switch (packetOpcode) {
+        //Sent when the player is idle for the current cycle, and acts as a "ping" packet.
+        case Opcodes.IDLE:
+            break;
+        case Opcodes.IDLE_LOGOUT:
+            break;
+        }
     }
 
     @Override
