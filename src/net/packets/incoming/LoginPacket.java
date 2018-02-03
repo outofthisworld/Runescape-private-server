@@ -60,6 +60,7 @@ import net.buffers.InputBuffer;
 import net.buffers.OutputBuffer;
 import net.enc.ISAACCipher;
 import net.packets.exceptions.InvalidOpcodeException;
+import net.packets.exceptions.InvalidPacketSizeException;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -94,10 +95,9 @@ public class LoginPacket extends IncomingPacket {
                 in.readUnsignedByte();
 
                 c.write(OutputBuffer.create(73, 10).writeBytes(0, 8)// is being ignored by the Client
-                        .writeByte(0)// login response - 0 means exchange session key to establish encryption
-                        .writeBigQWORD(c.getServerSessionKey()));// send the net.Server part of the session Id used (Client+net.Server part together are used as cryption key
-                break;
-            case LoginPacket.NEW_SESSION:
+                                .writeByte(0)// login response - 0 means exchange session key to establish encryption
+                                .writeBigQWORD(c.getServerSessionKey()));// send the net.Server part of the session Id used (Client+net.Server part together are used as cryption key
+                break; case LoginPacket.NEW_SESSION:
             case LoginPacket.RECONNECT:
                 /*
                 int loginType = in.readUnsignedByte();
@@ -105,68 +105,58 @@ public class LoginPacket extends IncomingPacket {
                     System.out.println("Wrong login type");
                     return;
                 }*/
-                short loginPacketSize = in.readUnsignedByte();
-                System.out.println(loginPacketSize);
-                System.out.println(in.remaining());
+
+                if (in.remaining() < 1) {
+                    throw new InvalidPacketSizeException(packetOpcode, "Invalid packet size for opcode: " + packetOpcode + "in " + getClass().getName());
+                }
+
+                short loginPacketSize = in.readUnsignedByte(); System.out.println(loginPacketSize); System.out.println(in.remaining());
 
                 if (in.remaining() != loginPacketSize) {
                     System.out.println("Not enough data in buffer");
                 }
 
 
-                int loginEncryptedPacketSize = loginPacketSize - (36 + 1 + 1 + 2);
-                System.out.println(loginEncryptedPacketSize);
+                int loginEncryptedPacketSize = loginPacketSize - (36 + 1 + 1 + 2); System.out.println(loginEncryptedPacketSize);
 
                 if (loginEncryptedPacketSize <= 0) {
-                    System.out.println("Zero RSA packet size");
-                    return;
+                    System.out.println("Zero RSA packet size"); return;
                 }
 
                 System.out.println("Remaining in buffer after stage 2: " + in.remaining());
 
-                int magicNum = in.readUnsignedByte();
-                int revision = in.readBigUnsignedWORD();
+                int magicNum = in.readUnsignedByte(); int revision = in.readBigUnsignedWORD();
 
-                System.out.println(magicNum);
-                System.out.println(revision);
+                System.out.println(magicNum); System.out.println(revision);
 
                 if (magicNum != 255 || revision != 317) {
-                    System.out.println("Invalid magic num or revision");
-                    return;
+                    System.out.println("Invalid magic num or revision"); return;
                 }
 
-                int lowMemoryVersion = in.readUnsignedByte();
-                in.skip(4 * 9);
+                int lowMemoryVersion = in.readUnsignedByte(); in.skip(4 * 9);
 
-                loginEncryptedPacketSize--;
-                if (in.readUnsignedByte() != loginEncryptedPacketSize) {
-                    System.out.println("inv");
-                    return;
-                }
+                loginEncryptedPacketSize--; if (in.readUnsignedByte() != loginEncryptedPacketSize) {
+                System.out.println("inv"); return;
+            }
 
 
                 if (in.readUnsignedByte() != 10) {
-                    System.out.println("byte wasnt 10");
-                    return;
+                    System.out.println("byte wasnt 10"); return;
                 }
 
-                long clientSessionKey = in.readBigSignedQWORD();
-                long serverSessionKey = in.readBigSignedQWORD();
+                long clientSessionKey = in.readBigSignedQWORD(); long serverSessionKey = in.readBigSignedQWORD();
 
                 int userID = in.readBigSignedDWORD();
 
                 byte[] usernameBytes = in.readUntil(b -> b.byteValue() == 10);
 
                 if (usernameBytes == null) {
-                    System.out.println("Username bytes null");
-                    return;
+                    System.out.println("Username bytes null"); return;
                 }
 
-                String username = new String(usernameBytes, 0, usernameBytes.length - 1);
-                if (username == null || username.length() == 0) {
-                    System.out.println("Blank username");
-                    return;
-                }
+                String username = new String(usernameBytes, 0, usernameBytes.length - 1); if (username == null || username.length() == 0) {
+                System.out.println("Blank username"); return;
+            }
 
                 byte[] passwordBytes = in.readUntil(b -> b.byteValue() == 10);
 
@@ -177,26 +167,19 @@ public class LoginPacket extends IncomingPacket {
                 String password = new String(passwordBytes);
 
                 if (password == null || password.length() == 0) {
-                    System.out.println("invalid pass");
-                    return;
+                    System.out.println("invalid pass"); return;
                 }
 
-                System.out.println(username);
-                System.out.println(password);
+                System.out.println(username); System.out.println(password);
 
-                int[] sessionKey = new int[4];
-                sessionKey[0] = (int) (clientSessionKey >> 32);
-                sessionKey[1] = (int) clientSessionKey;
-                sessionKey[2] = (int) (serverSessionKey >> 32);
-                sessionKey[3] = (int) serverSessionKey;
+                int[] sessionKey = new int[4]; sessionKey[0] = (int) (clientSessionKey >> 32); sessionKey[1] = (int) clientSessionKey; sessionKey[2] = (int) (serverSessionKey >> 32); sessionKey[3] = (int) serverSessionKey;
 
 
                 c.setInCipher(new ISAACCipher(sessionKey));
                 //inStreamDecryption = new ISAACCipher(sessionKey);
                 for (int i = 0; i < 4; i++) {
                     sessionKey[i] += 50;
-                }
-                c.setOutCipher(new ISAACCipher(sessionKey));
+                } c.setOutCipher(new ISAACCipher(sessionKey));
 
                 System.out.println(in.remaining());
 
@@ -239,9 +222,8 @@ public class LoginPacket extends IncomingPacket {
                 }
 
 
-                break;
-            default:
-                throw new InvalidOpcodeException();
+                break; default:
+                throw new InvalidOpcodeException(packetOpcode, "Invalid packet opcode being handled by " + getClass().getName());
         }
 
 

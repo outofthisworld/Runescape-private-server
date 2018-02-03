@@ -60,7 +60,8 @@ import net.buffers.OutputBuffer;
 import net.enc.ISAACCipher;
 import net.packets.exceptions.InvalidOpcodeException;
 import net.packets.exceptions.InvalidPacketSizeException;
-import net.packets.incoming.Packet;
+import net.packets.incoming.IncomingPacket;
+import net.packets.incoming.LoginPacket;
 import net.packets.outgoing.OutgoingPacketBuilder;
 import world.WorldManager;
 import world.entity.Player;
@@ -74,6 +75,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -382,25 +384,39 @@ public class Client {
             return;
         }
 
-
         int op = inBuffer.get() & 0xFF;
-        int size = inBuffer.get() & 0xFF;
+        if (!isLoggedIn()) {
+            handleLogin(op);
+        } else {
+            handlePacket(op);
+        }
 
-        if (inBuffer.remaining() < packetSize) {
+        inBuffer.compact();
+    }
+
+    private void handlePacket(int op) {
+        if (inCipher == null || inBuffer == null) {
+            throw new IllegalStateException("Invalid state,inBuffer or inCipher null when handling packet");
+        }
+
+        int dOp = op - inCipher.getNextValue();
+        int packetSize = IncomingPacket.getPacketSizeForId(op);
+
+
+        if (packetSize != -1 && inBuffer.remaining() < packetSize) {
             inBuffer.rewind();
-            inBuffer.compact();
             return;
         }
 
-        InputBuffer in = new InputBuffer(inBuffer, size);
+        InputBuffer in = new InputBuffer(inBuffer, packetSize);
 
 
-        Optional<Packet> p = Packet.getForId(op);
+        Optional<IncomingPacket> p = IncomingPacket.getForId(op);
 
         if (p.isPresent()) {
             WorldManager.submitTask(0, () -> {
                 try {
-                    p.get().handle(this, op, in);
+                    p.get().handle(this, dOp, in);
                 } catch (InvalidOpcodeException e) {
                     e.printStackTrace();
                 } catch (InvalidPacketSizeException e) {
@@ -409,9 +425,25 @@ public class Client {
                     e.printStackTrace();
                 }
             });
+        } else {
+            Client.logger.log(Level.INFO, "Unhandled packet received : " + op + " from client: " + remoteAddress.getHostName());
         }
+    }
 
-        inBuffer.compact();
+    private void handleLogin(int op) {
+        try {
+            new LoginPacket().handle(this, op, new InputBuffer(inBuffer));
+        } catch (InvalidOpcodeException e) {
+            Client.logger.log(Level.WARNING, String.valueOf(e.getOpcode()));
+            Client.logger.log(Level.WARNING, e.getMessage());
+            e.printStackTrace();
+        } catch (InvalidPacketSizeException e) {
+            Client.logger.log(Level.WARNING, String.valueOf(e.getOpcode()));
+            Client.logger.log(Level.WARNING, e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
 
