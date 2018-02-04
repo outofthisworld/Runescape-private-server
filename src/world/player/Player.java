@@ -53,189 +53,145 @@
  The rights granted under, and the subject matter referenced, in this License were drafted utilizing the terminology of the Berne Convention for the Protection of Literary and Artistic Works (as amended on September 28, 1979), the Rome Convention of 1961, the WIPO Copyright Treaty of 1996, the WIPO Performances and Phonograms Treaty of 1996 and the Universal Copyright Convention (as revised on July 24, 1971). These rights and subject matter take effect in the relevant jurisdiction in which the License terms are sought to be enforced according to the corresponding provisions of the implementation of those treaty provisions in the applicable national law. If the standard suite of rights granted under applicable copyright law includes additional rights not granted under this License, such additional rights are deemed to be included in the License; this License is not intended to restrict the license of any rights under applicable law.
  -----------------------------------------------------------------------------*/
 
-package net.packets.incoming;
+package world.player;
 
 import net.Client;
-import net.buffers.InputBuffer;
-import net.buffers.OutputBuffer;
-import net.enc.ISAACCipher;
-import net.packets.exceptions.InvalidOpcodeException;
-import net.packets.exceptions.InvalidPacketSizeException;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class LoginPacket extends IncomingPacket {
-    private static final int LOGIN_REQUEST = 14;
-    private static final int UPDATE = 15;
-    private static final int NEW_SESSION = 16;
-    private static final int RECONNECT = 18;
-    private final Set<Integer> opcodes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(LoginPacket.LOGIN_REQUEST, LoginPacket.UPDATE, LoginPacket.NEW_SESSION, LoginPacket.RECONNECT)));
+public class Player {
+    private final Client c;
+    private final int[] skills = new int[25];
+    private final int[] skillExp = new int[25];
+    private String username;
+
+    public Player(Client c) {
+        this.c = c;
+    }
+
+    public Client getClient() {
+        return c;
+    }
+
+    public String getUsername() {
+        return username;
+    }
 
 
-    @Override
-    public void handle(Client c, int packetOpcode, InputBuffer in) throws Exception {
-        if (c.isLoggedIn()) {
-            return;
+    public CompletableFuture<?> load() {
+
+    }
+
+    public boolean save() {
+        return true;
+    }
+
+    public int getSkillLevel(int skillId) {
+        if (skillId < 0 || skillId >= skills.length) {
+            throw new IllegalArgumentException("Invalid skill id");
         }
 
-        switch (packetOpcode) {
-            case LoginPacket.LOGIN_REQUEST:
-                System.out.println("in login stage one");
+        return skills[skillId];
+    }
 
-                /*if (in.readUnsignedByte() != 14) {
-                    System.out.println("invalid login byte / supposed to be 14");
-                    return;
-                }*/
+    public int getSkillExp(int skillId) {
+        if (skillId < 0 || skillId >= skillExp.length) {
+            throw new IllegalArgumentException("Invalid skill id");
+        }
 
-                //Name hash
-                in.readUnsignedByte();
+        return skillExp[skillId];
+    }
 
-                c.write(OutputBuffer.create(73, 10).writeBytes(0, 8)// is being ignored by the Client
-                                .writeByte(0)// login response - 0 means exchange session key to establish encryption
-                                .writeBigQWORD(c.getServerSessionKey()));// send the net.Server part of the session Id used (Client+net.Server part together are used as cryption key
-                break; case LoginPacket.NEW_SESSION:
-            case LoginPacket.RECONNECT:
-                /*
-                int loginType = in.readUnsignedByte();
-                if (loginType != 16 && loginType != 18) {
-                    System.out.println("Wrong login type");
-                    return;
-                }*/
+    public void setSkillLevel(int skillId, int skillLevel) {
+        if (skillId < 0 || skillId >= skills.length) {
+            throw new IllegalArgumentException("Invalid skill id");
+        }
 
-                if (in.remaining() < 1) {
-                    throw new InvalidPacketSizeException(packetOpcode, "Invalid packet size for opcode: " + packetOpcode + "in " + getClass().getName());
-                }
-
-                short loginPacketSize = in.readUnsignedByte(); System.out.println(loginPacketSize); System.out.println(in.remaining());
-
-                if (in.remaining() != loginPacketSize) {
-                    System.out.println("Not enough data in buffer");
-                }
-
-
-                int loginEncryptedPacketSize = loginPacketSize - (36 + 1 + 1 + 2); System.out.println(loginEncryptedPacketSize);
-
-                if (loginEncryptedPacketSize <= 0) {
-                    System.out.println("Zero RSA packet size"); return;
-                }
-
-                System.out.println("Remaining in buffer after stage 2: " + in.remaining());
-
-                int magicNum = in.readUnsignedByte(); int revision = in.readBigUnsignedWORD();
-
-                System.out.println(magicNum); System.out.println(revision);
-
-                if (magicNum != 255 || revision != 317) {
-                    System.out.println("Invalid magic num or revision"); return;
-                }
-
-                int lowMemoryVersion = in.readUnsignedByte(); in.skip(4 * 9);
-
-                loginEncryptedPacketSize--; if (in.readUnsignedByte() != loginEncryptedPacketSize) {
-                System.out.println("inv"); return;
-            }
-
-
-                if (in.readUnsignedByte() != 10) {
-                    System.out.println("byte wasnt 10"); return;
-                }
-
-                long clientSessionKey = in.readBigSignedQWORD(); long serverSessionKey = in.readBigSignedQWORD();
-
-                int userID = in.readBigSignedDWORD();
-
-                byte[] usernameBytes = in.readUntil(b -> b.byteValue() == 10);
-
-                if (usernameBytes == null) {
-                    System.out.println("Username bytes null"); return;
-                }
-
-                String username = new String(usernameBytes, 0, usernameBytes.length - 1); if (username == null || username.length() == 0) {
-                System.out.println("Blank username"); return;
-            }
-
-                byte[] passwordBytes = in.readUntil(b -> b.byteValue() == 10);
-
-                if (passwordBytes == null) {
-                    System.out.println("password bytes null");
-                }
-
-                String password = new String(passwordBytes);
-
-                if (password == null || password.length() == 0) {
-                    System.out.println("invalid pass"); return;
-                }
-
-                System.out.println(username); System.out.println(password);
-
-                int[] sessionKey = new int[4]; sessionKey[0] = (int) (clientSessionKey >> 32); sessionKey[1] = (int) clientSessionKey; sessionKey[2] = (int) (serverSessionKey >> 32); sessionKey[3] = (int) serverSessionKey;
-
-
-                c.setInCipher(new ISAACCipher(sessionKey));
-                //inStreamDecryption = new ISAACCipher(sessionKey);
-                for (int i = 0; i < 4; i++) {
-                    sessionKey[i] += 50;
-                } c.setOutCipher(new ISAACCipher(sessionKey));
-
-                System.out.println(in.remaining());
-
-                //outStreamDecryption = new ISAACCipher(sessionKey);
-                //outStream.packetEncryption = outStreamDecryption;
-
-
-                /*-
-                    1	Waits for 2000ms and tries again while counting failures.
-                    0	Exchanges session keys, entity name, password, etc.
-                    1	Waits for 2000ms and tries again.
-                    2	Client made a successful login.
-                    3	"Invalid username or password."
-                    4	"Your account has been disabled. Please check your message-center for details."
-                    5	"Your account is already logged in. Try again in 60 secs..."
-                    6	"RuneScape has been updated! Please reload this page."
-                    7	"This world is full. Please use a different world."
-                    8	"Unable to connect. Login server offline."
-                    9	"Login limit exceeded. Too many connections from your address."
-                    10	"Unable to connect. Bad session id."
-                    11	"Login server rejected session. Please try again."
-                    12	"You need a members account to login to this world. Please subscribe, or use a different world."
-                    13	"Could not complete login. Please try using a different world."
-                    14	"The server is being updated. Please wait 1 minute and try again."
-                    15	See the notes below.
-                    16	"Login attempts exceeded. Please wait 1 minute and try again."
-                    17	"You are standing in a members-only area. To play on this world move to a free area first."
-                    20	"Invalid loginserver requested. Please try using a different world."
-                    21	"You have only just left another world. Your profile will be transferred in: (number) seconds."
-                    None of the above	"Unexpected server response. Please try using a different world."
-                */
-                int returnCode = 2;
-
-
-                if (returnCode == 2) {
-                    CompletableFuture.supplyAsync(() -> {
-                        return "";
-                    }).thenRun(() -> sendResponse(c, 2, 0));
-
-                }
-
-
-                break; default:
-                throw new InvalidOpcodeException(packetOpcode, "Invalid packet opcode being handled by " + getClass().getName());
+        if (skillLevel < 1 || skillLevel > 99) {
+            throw new IllegalArgumentException("Skill level must be between one and 99");
         }
 
 
+        skills[skillId] = skillLevel;
+        skillExp[skillId] = Skills.getExpFromLevel(skillLevel);
+        c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
     }
 
-    private void sendResponse(Client c, int returnCode, int playerRights) {
-        c.write(OutputBuffer.create(3).writeByte(returnCode).writeByte(playerRights).writeByte(0));
+    public void setSkillExp(int skillId, int exp) {
+        if (skillId < 0 || skillId >= skillExp.length) {
+            throw new IllegalArgumentException("Invalid skill id");
+        }
+
+        skills[skillId] = Skills.getLevelFromExp(exp);
+        skillExp[skillId] = exp;
+        c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
     }
 
+    public static class Skills {
+        public static final int ATTACK = 0;
+        public static final int DEFENCE = 1;
+        public static final int STRENGTH = 2;
+        public static final int HITPOINTS = 3;
+        public static final int RANGED = 4;
+        public static final int PRAYER = 5;
+        public static final int MAGIC = 6;
+        public static final int COOKING = 7;
+        public static final int WOODCUTTING = 8;
+        public static final int FLETCHING = 9;
+        public static final int FISHING = 10;
+        public static final int FIREMAKING = 11;
+        public static final int CRAFTING = 12;
+        public static final int SMITHING = 13;
+        public static final int MINING = 14;
+        public static final int HERBLORE = 15;
+        public static final int AGILITY = 16;
+        public static final int THIEVING = 17;
+        public static final int SLAYER = 18;
+        public static final int FARMING = 19;
+        public static final int RUNECRAFTING = 20;
 
-    @Override
-    public boolean handlesOpcode(int opcode) {
-        return opcodes.contains(opcode);
+
+        public static int getExpUntilLevel(int level) {
+            int points = 0;
+            int output = 0;
+
+            for (int lvl = 1; lvl <= level; lvl++) {
+                points += Math.floor((double) lvl + 300.0 * Math.pow(2.0, (double) lvl / 7.0));
+                if (lvl >= level) {
+                    return output;
+                }
+                output = (int) Math.floor(points / 4);
+            }
+            return 0;
+        }
+
+        public static int getExpFromLevel(int level) {
+            int points = 0;
+            int output = 0;
+
+            for (int lvl = 1; lvl <= level; lvl++) {
+                points += Math.floor((double) lvl + 300.0 * Math.pow(2.0, (double) lvl / 7.0));
+                if (lvl >= level) {
+                    return output;
+                }
+                output = (int) Math.floor(points / 4);
+            }
+            return 0;
+        }
+
+        public static int getLevelFromExp(int currentExp) {
+            int exp = currentExp;
+            int points = 0;
+            int output = 0;
+            for (int lvl = 1; lvl < 100; lvl++) {
+                points += Math.floor((double) lvl + 300.0 * Math.pow(2.0, (double) lvl / 7.0));
+                output = (int) Math.floor(points / 4);
+                if ((output - 1) >= exp) {
+                    return lvl;
+                }
+            }
+            return 99;
+        }
     }
+
 }

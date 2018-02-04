@@ -56,13 +56,13 @@
 package world;
 
 import sun.plugin.dom.exception.InvalidStateException;
-import world.entity.Player;
+import world.player.Player;
 import world.task.Task;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.concurrent.*;
 
 /**
@@ -70,11 +70,13 @@ import java.util.concurrent.*;
  */
 public class World {
 
-    private final ArrayList<Player> players = new ArrayList<>();
+    private final Player players[] = new Player[WorldConfig.MAX_PLAYERS_IN_WORLD];
     private final ConcurrentLinkedQueue<Task> worldTasks = new ConcurrentLinkedQueue<>();
     private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor(new WorldThreadFactory(10));
     private final int worldId;
+    private final HashSet<Integer> freePlayerSlots = new HashSet<>();
     private ScheduledFuture<?> worldExecutionTask;
+    private int playersCount = 0;
 
     /**
      * Instantiates a new World.
@@ -103,19 +105,36 @@ public class World {
         worldTasks.clear();
     }
 
-    void addPlayer(Player p) {
-        players.add(p);
+    private boolean addPlayer(Player p) {
+        if (!(playersCount < players.length)) {
+            return false;
+        }
+
+        Optional<Integer> freeSlot = freePlayerSlots.stream().findFirst();
+        if (freeSlot.isPresent()) {
+            players[freeSlot.get()] = p;
+        } else {
+            players[playersCount++] = p;
+        }
+
+        return true;
     }
 
+    public Optional<Player> getPlayerByName(String name) {
+        return Arrays.stream(players).filter((p) -> p.getUsername().equals(name)).findFirst();
+    }
 
     public Player getPlayer(int index) {
-        return players.get(index);
+        return players[index];
     }
 
-    public Collection<Player> getPlayers() {
-        return Collections.unmodifiableCollection(players);
+    public int getTotalPlayers() {
+        return playersCount - freePlayerSlots.size();
     }
 
+    public int getFreeSlots() {
+        return players.length - playersCount + freePlayerSlots.size() - WorldManager.getLoginQueueForWorld(this).size();
+    }
 
     /**
      * Poll.
@@ -124,12 +143,6 @@ public class World {
         /*
             Adds players that are currently in the loginQueue for this world to this worlds players arraylist.
          */
-        ConcurrentLinkedQueue<Player> loginQueue = WorldManager.getLoginQueueForWorld(this);
-        Player p = null;
-        while ((p = loginQueue.poll()) != null) {
-            players.add(p);
-        }
-
         addPlayersToWorld();
         handlePlayerDisconnects();
         doWorldTasks();
@@ -139,18 +152,24 @@ public class World {
         ConcurrentLinkedQueue<Player> loginQueue = WorldManager.getLoginQueueForWorld(this);
         Player p = null;
         while ((p = loginQueue.poll()) != null) {
-            players.add(p);
+            if (p.getClient().isDisconnected()) {
+                p.getClient().setLoggedIn(false);
+                continue;
+            }
+            //
+            addPlayer(p);
         }
     }
 
     private void handlePlayerDisconnects() {
-        for (Iterator<Player> it = players.iterator(); it.hasNext(); ) {
-            Player player = it.next();
-            if (player.getClient().isDisconnected()) {
+        for (int i = 0; i < players.length; i++) {
+            Player player = players[i];
+            if (player != null && player.getClient().isDisconnected()) {
                 if (player.save()) {
-                    //handle entity saving
+                    //login entity saving
                     player.getClient().setLoggedIn(false);
-                    it.remove();
+                    players[i] = null;
+                    freePlayerSlots.add(i);
                 }
             }
         }

@@ -85,7 +85,7 @@ public class ChannelHandler implements IChannelHandler {
     @Override
     public void handle(SocketChannel socketChannel) throws Exception {
         if (!socketChannel.isConnected()) {
-            throw new Exception("ChannelHandler.java: Attempted to handle an unconnected socket channel");
+            throw new Exception("ChannelHandler.java: Attempted to login an unconnected socket channel");
         }
 
         if (socketChannel.isBlocking()) {

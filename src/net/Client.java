@@ -61,10 +61,9 @@ import net.enc.ISAACCipher;
 import net.packets.exceptions.InvalidOpcodeException;
 import net.packets.exceptions.InvalidPacketSizeException;
 import net.packets.incoming.IncomingPacket;
-import net.packets.incoming.LoginPacket;
 import net.packets.outgoing.OutgoingPacketBuilder;
 import world.WorldManager;
-import world.entity.Player;
+import world.player.Player;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -97,7 +96,7 @@ public class Client {
     private ByteBuffer inBuffer;
     private ISAACCipher inCipher;
     private ISAACCipher outCipher;
-    private boolean isLoggedIn;
+    private volatile boolean isLoggedIn;
     private Player player;
 
 
@@ -375,7 +374,6 @@ public class Client {
             return;
         }
 
-
         //Make buffer readable
         inBuffer.flip();
 
@@ -385,65 +383,50 @@ public class Client {
         }
 
         int op = inBuffer.get() & 0xFF;
+
+        Client c = this;
         if (!isLoggedIn()) {
-            handleLogin(op);
-        } else {
-            handlePacket(op);
-        }
 
+            try {
+                LoginHandler.login(c, op, new InputBuffer(inBuffer));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else {
+            int decodedOp = op - inCipher.getNextValue();
+            int packetSize = IncomingPacket.getPacketSizeForId(decodedOp);
+
+            if (packetSize != -1 && inBuffer.remaining() < packetSize) {
+                inBuffer.rewind();
+                inBuffer.compact();
+                return;
+            }
+
+            InputBuffer in = new InputBuffer(inBuffer, packetSize);
+            Optional<IncomingPacket> p = IncomingPacket.getForId(op);
+
+            if (p.isPresent()) {
+                WorldManager.submitTask(0, () -> {
+                    try {
+                        p.get().handle(this, decodedOp, in);
+                    } catch (InvalidOpcodeException e) {
+                        Client.logger.log(Level.WARNING, String.valueOf(e.getOpcode()));
+                        Client.logger.log(Level.WARNING, e.getMessage());
+                        e.printStackTrace();
+                    } catch (InvalidPacketSizeException e) {
+                        Client.logger.log(Level.WARNING, String.valueOf(e.getOpcode()));
+                        Client.logger.log(Level.WARNING, e.getMessage());
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            } else {
+                Client.logger.log(Level.INFO, "Unhandled packet received : " + op + " from client: " + remoteAddress.getHostName());
+            }
+        }
         inBuffer.compact();
-    }
-
-    private void handlePacket(int op) {
-        if (inCipher == null || inBuffer == null) {
-            throw new IllegalStateException("Invalid state,inBuffer or inCipher null when handling packet");
-        }
-
-        int dOp = op - inCipher.getNextValue();
-        int packetSize = IncomingPacket.getPacketSizeForId(op);
-
-
-        if (packetSize != -1 && inBuffer.remaining() < packetSize) {
-            inBuffer.rewind();
-            return;
-        }
-
-        InputBuffer in = new InputBuffer(inBuffer, packetSize);
-
-
-        Optional<IncomingPacket> p = IncomingPacket.getForId(op);
-
-        if (p.isPresent()) {
-            WorldManager.submitTask(0, () -> {
-                try {
-                    p.get().handle(this, dOp, in);
-                } catch (InvalidOpcodeException e) {
-                    e.printStackTrace();
-                } catch (InvalidPacketSizeException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-        } else {
-            Client.logger.log(Level.INFO, "Unhandled packet received : " + op + " from client: " + remoteAddress.getHostName());
-        }
-    }
-
-    private void handleLogin(int op) {
-        try {
-            new LoginPacket().handle(this, op, new InputBuffer(inBuffer));
-        } catch (InvalidOpcodeException e) {
-            Client.logger.log(Level.WARNING, String.valueOf(e.getOpcode()));
-            Client.logger.log(Level.WARNING, e.getMessage());
-            e.printStackTrace();
-        } catch (InvalidPacketSizeException e) {
-            Client.logger.log(Level.WARNING, String.valueOf(e.getOpcode()));
-            Client.logger.log(Level.WARNING, e.getMessage());
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
 

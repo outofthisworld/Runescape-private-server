@@ -65,9 +65,10 @@ public interface IChannelHandler extends Runnable {
      * Handle.
      *
      * @param socketChannel the socket channel
+     *
      * @throws Exception the exception
      */
-/* Tell the socket handler to handle this socket channel */
+/* Tell the socket handler to login this socket channel */
     void handle(SocketChannel socketChannel) throws Exception;
 
     /**
