@@ -191,8 +191,8 @@ import java.nio.channels.SocketChannel;
  * in inconsistencies unless synchronized correctly from user level code.
  */
 public class OutputBuffer extends AbstractBuffer {
-    private static final int INITIAL_SIZE = 256;
-    private static final int INCREASE_SIZE_BYTES = 256;
+    private static final int INITIAL_SIZE = 512;
+    private static final int INCREASE_SIZE_BYTES = 512;
     private final int increaseSizeBytes;
     /**
      * The Write big middle.
@@ -322,7 +322,13 @@ public class OutputBuffer extends AbstractBuffer {
      */
     public int pipeTo(SocketChannel c) throws IOException {
         currentOutputBuffer.flip();
-        int bytesWritten = c.write(currentOutputBuffer);
+        int bytesWritten;
+        try {
+            bytesWritten = c.write(currentOutputBuffer);
+        } catch (Exception e) {
+            e.printStackTrace();
+            bytesWritten = -1;
+        }
         currentOutputBuffer.compact();
         return bytesWritten;
     }

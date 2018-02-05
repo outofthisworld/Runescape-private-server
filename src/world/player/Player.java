@@ -66,8 +66,8 @@ public class Player {
     private static final AsyncPlayerStore asyncPlayerStore = new AsyncPlayerStore(
             new CollectionAccessor<>("Players", "Evolution",
                     Player.class, fieldAttributes -> fieldAttributes.getName().equals("c")));
-    private final int[] skills = new int[25];
-    private final int[] skillExp = new int[25];
+    private final int[] skills = new int[Skill.values().length];
+    private final int[] skillExp = new int[Skill.values().length];
     /**
      * The Rights.
      */
@@ -188,6 +188,29 @@ public class Player {
         return skills[skillId];
     }
 
+
+    /**
+     * Gets skill level.
+     *
+     * @param skill the skill
+     * @return the skill level
+     */
+    public int getSkillLevel(Skill skill) {
+        return skills[skill.ordinal()];
+    }
+
+
+    /**
+     * Gets skill exp.
+     *
+     * @param skill the skill
+     * @return the skill exp
+     */
+    public int getSkillExp(Skill skill) {
+        return skillExp[skill.ordinal()];
+    }
+
+
     /**
      * Gets skill exp.
      *
@@ -208,6 +231,22 @@ public class Player {
      * @param skillId    the skill id
      * @param skillLevel the skill level
      */
+    public void setSkillLevel(Skill skill, int skillLevel) {
+        if (skillLevel < 1 || skillLevel > 99) {
+            throw new IllegalArgumentException("Skill level must be between one and 99");
+        }
+
+        skills[skill.ordinal()] = skillLevel;
+        skillExp[skill.ordinal()] = Skill.getExpFromLevel(skillLevel);
+        c.getOutgoingPacketBuilder().updateSkill(skill.ordinal(), skills[skill.ordinal()], skillExp[skill.ordinal()]);
+    }
+
+    /**
+     * Sets skill level.
+     *
+     * @param skillId    the skill id
+     * @param skillLevel the skill level
+     */
     public void setSkillLevel(int skillId, int skillLevel) {
         if (skillId < 0 || skillId >= skills.length) {
             throw new IllegalArgumentException("Invalid skill id");
@@ -219,8 +258,20 @@ public class Player {
 
 
         skills[skillId] = skillLevel;
-        skillExp[skillId] = Skills.getExpFromLevel(skillLevel);
+        skillExp[skillId] = Skill.getExpFromLevel(skillLevel);
         c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
+    }
+
+    /**
+     * Sets skill exp.
+     *
+     * @param skillId the skill id
+     * @param exp     the exp
+     */
+    public void setSkillExp(Skill skill, int exp) {
+        skills[skill.ordinal()] = Skill.getLevelFromExp(exp);
+        skillExp[skill.ordinal()] = exp;
+        c.getOutgoingPacketBuilder().updateSkill(skill.ordinal(), skills[skill.ordinal()], skillExp[skill.ordinal()]);
     }
 
     /**
@@ -234,120 +285,99 @@ public class Player {
             throw new IllegalArgumentException("Invalid skill id");
         }
 
-        skills[skillId] = Skills.getLevelFromExp(exp);
+        skills[skillId] = Skill.getLevelFromExp(exp);
         skillExp[skillId] = exp;
         c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
     }
 
     /**
-     * The type Skills.
+     * The enum Skill.
      */
-    public static class Skills {
+    public enum Skill {
         /**
          * The constant ATTACK.
          */
-        public static final int ATTACK = 0;
+        ATTACK,
         /**
          * The constant DEFENCE.
          */
-        public static final int DEFENCE = 1;
+        DEFENCE,
         /**
          * The constant STRENGTH.
          */
-        public static final int STRENGTH = 2;
+        STRENGTH,
         /**
          * The constant HITPOINTS.
          */
-        public static final int HITPOINTS = 3;
+        HITPOINTS,
         /**
          * The constant RANGED.
          */
-        public static final int RANGED = 4;
+        RANGED,
         /**
          * The constant PRAYER.
          */
-        public static final int PRAYER = 5;
+        PRAYER,
         /**
          * The constant MAGIC.
          */
-        public static final int MAGIC = 6;
+        MAGIC,
         /**
          * The constant COOKING.
          */
-        public static final int COOKING = 7;
+        COOKING,
         /**
          * The constant WOODCUTTING.
          */
-        public static final int WOODCUTTING = 8;
+        WOODCUTTING,
         /**
          * The constant FLETCHING.
          */
-        public static final int FLETCHING = 9;
+        FLETCHING,
         /**
          * The constant FISHING.
          */
-        public static final int FISHING = 10;
+        FISHING,
         /**
          * The constant FIREMAKING.
          */
-        public static final int FIREMAKING = 11;
+        FIREMAKING,
         /**
          * The constant CRAFTING.
          */
-        public static final int CRAFTING = 12;
+        CRAFTING,
         /**
          * The constant SMITHING.
          */
-        public static final int SMITHING = 13;
+        SMITHING,
         /**
          * The constant MINING.
          */
-        public static final int MINING = 14;
+        MINING,
         /**
          * The constant HERBLORE.
          */
-        public static final int HERBLORE = 15;
+        HERBLORE,
         /**
          * The constant AGILITY.
          */
-        public static final int AGILITY = 16;
+        AGILITY,
         /**
          * The constant THIEVING.
          */
-        public static final int THIEVING = 17;
+        THIEVING,
         /**
          * The constant SLAYER.
          */
-        public static final int SLAYER = 18;
+        SLAYER,
         /**
          * The constant FARMING.
          */
-        public static final int FARMING = 19;
+        FARMING,
         /**
          * The constant RUNECRAFTING.
          */
-        public static final int RUNECRAFTING = 20;
-
-
-        /**
-         * Gets exp until level.
-         *
-         * @param level the level
-         * @return the exp until level
-         */
-        public static int getExpUntilLevel(int level) {
-            int points = 0;
-            int output = 0;
-
-            for (int lvl = 1; lvl <= level; lvl++) {
-                points += Math.floor((double) lvl + 300.0 * Math.pow(2.0, (double) lvl / 7.0));
-                if (lvl >= level) {
-                    return output;
-                }
-                output = (int) Math.floor(points / 4);
-            }
-            return 0;
-        }
+        RUNECRAFTING;
 
         /**
          * Gets exp from level.
@@ -389,5 +419,4 @@ public class Player {
             return 99;
         }
     }
-
 }

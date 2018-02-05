@@ -55,7 +55,9 @@
 
 package world;
 
+import net.packets.outgoing.OutgoingPacketBuilder;
 import sun.plugin.dom.exception.InvalidStateException;
+import world.interfaces.SidebarInterface;
 import world.player.Player;
 import world.task.Task;
 
@@ -168,14 +170,23 @@ public class World {
             int playerIndex = addPlayer(p);
 
             if (playerIndex != -1) {
+                OutgoingPacketBuilder out = p.getClient().getOutgoingPacketBuilder();
                 p.getClient().setLoggedIn(true);
 
-                p.getClient().getOutgoingPacketBuilder()
-                        .initPlayer(1, playerIndex)
-                        .setChatOptions(0, 0, 0)
-                        .;
+                out.initPlayer(1, playerIndex)
+                        .setChatOptions(0, 0, 0);
 
+                for (Player.Skill s : Player.Skill.values()) {
+                    out.setSkillLevel(s.ordinal(), p.getSkillLevel(s), p.getSkillExp(s));
+                }
 
+                for (SidebarInterface sidebarInterface : SidebarInterface.values()) {
+                    out.setSidebarInterface(sidebarInterface.ordinal(), sidebarInterface.getInterfaceId());
+                }
+
+                out.addPlayerOptions(3, 0, new String[]{"Attack", "Trade with"});
+                out.sendMessage("Welcome to EvolutionRS");
+                out.send();
             }
         }
     }

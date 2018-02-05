@@ -3,6 +3,11 @@ package net.packets.outgoing;
 import net.Client;
 import net.buffers.OutputBuffer;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 /**
  * The type Packet builder.
  */
@@ -44,6 +49,25 @@ public class OutgoingPacketBuilder {
     public OutgoingPacketBuilder sendMessage(String s) {
         byte[] sBytes = s.getBytes();
         createFrame(OutgoingPacket.Opcodes.SEND_MESSAGE).writeByte(sBytes.length + 1).writeBytes(sBytes).writeByte(10);
+        return this;
+    }
+
+    public OutgoingPacketBuilder addPlayerOptions(int optionPosition, int flag, String[] actions) {
+
+        List<byte[]> list = Arrays.stream(actions).map(String::getBytes).collect(Collectors.toList());
+        Optional<Integer> totalBytes = list.stream().map(b -> b.length).reduce((integer, integer2) -> integer + integer2);
+
+        int total;
+        if (totalBytes.isPresent()) {
+            total = totalBytes.get();
+        } else {
+            total = 0;
+        }
+
+        createFrame(OutgoingPacket.Opcodes.ADD_PLAYER_OPTION).writeByte(total + 2)
+                .writeByte(optionPosition, OutputBuffer.ByteTransformationType.C)
+                .writeByte(flag, OutputBuffer.ByteTransformationType.A);
+
         return this;
     }
 
@@ -241,10 +265,10 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder sendLevelUp(int skillId) {
-        /*sendMessage("Congratulations! You are now level " + client.playerLevel[skillId] + " " + Skills.SKILL_NAME[skillId][1] + ".");
+        /*sendMessage("Congratulations! You are now level " + client.playerLevel[skillId] + " " + Skill.SKILL_NAME[skillId][1] + ".");
         sendChatInterface(client.getLevelUpInterfaces()[skillId][0]);
-        sendString("@dbl@Congratulations, you just advanced " + Skills.SKILL_NAME[skillId][0] + " level.", client.getLevelUpInterfaces()[skillId][1]);
-        sendString("Your " + Skills.SKILL_NAME[skillId][1] + " level is now " + client.playerLevel[skillId] + ".", client.getLevelUpInterfaces()[skillId][2]);*/
+        sendString("@dbl@Congratulations, you just advanced " + Skill.SKILL_NAME[skillId][0] + " level.", client.getLevelUpInterfaces()[skillId][1]);
+        sendString("Your " + Skill.SKILL_NAME[skillId][1] + " level is now " + client.playerLevel[skillId] + ".", client.getLevelUpInterfaces()[skillId][2]);*/
         return this;
     }
 

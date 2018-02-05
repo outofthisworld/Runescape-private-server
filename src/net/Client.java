@@ -104,7 +104,6 @@ public class Client {
      * Instantiates a new Client.
      *
      * @param selectionKey the selection key
-     *
      * @throws IOException the io exception
      */
     public Client(SelectionKey selectionKey) throws IOException {
@@ -240,6 +239,11 @@ public class Client {
             }
         }
 
+        if (bytesWritten == -1) {
+            disconnect();
+            return -1;
+        }
+
         if (bytesWritten == 0 || bytesWritten != outBufSize) {
             if (isNew) {
                 outgoingBuffers.addLast(outBuffer);
@@ -257,7 +261,6 @@ public class Client {
      * if the socketchannels buffer is full, register OP_WRITE.
      *
      * @param outBuffer the out buffer
-     *
      * @return the int
      */
     public CompletableFuture<Integer> write(OutputBuffer outBuffer) {
@@ -324,6 +327,8 @@ public class Client {
         if (isDisconnected) {
             return;
         }
+
+        outgoingBuffers.clear();
 
         //logger.log(Level.INFO, String.format("Client disconnect: $s : %d", this.remoteAddress.getHostString(), this.remoteAddress.getPort()));
 
