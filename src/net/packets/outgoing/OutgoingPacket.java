@@ -775,6 +775,8 @@ public class OutgoingPacket {
          * Byte	Public chat setting.
          * Byte	Private chat setting.
          * Byte	Trade setting.
+         * <p>
+         * // On = 0, Friends = 1, Off = 2, Hide =
          */
         public static final int CHAT_PRIVACY_SETTINGS = 206;
         /**

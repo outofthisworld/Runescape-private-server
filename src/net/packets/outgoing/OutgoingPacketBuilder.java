@@ -2,7 +2,6 @@ package net.packets.outgoing;
 
 import net.Client;
 import net.buffers.OutputBuffer;
-import net.packets.incoming.Packet;
 
 /**
  * The type Packet builder.
@@ -31,9 +30,7 @@ public class OutgoingPacketBuilder {
      * @return the packet builder
      */
     public OutgoingPacketBuilder logout() {
-        if (c.getPlayer().save()) {
-            createFrame(Packet.OutgoingPackets.LOGOUT);
-        }
+        createFrame(OutgoingPacket.Opcodes.LOGOUT);
         return this;
     }
 
@@ -42,12 +39,11 @@ public class OutgoingPacketBuilder {
      * 253: Send message packet builder.
      *
      * @param s the s
-     *
      * @return the packet builder
      */
     public OutgoingPacketBuilder sendMessage(String s) {
         byte[] sBytes = s.getBytes();
-        createFrame(Packet.OutgoingPackets.SEND_MESSAGE).writeByte(sBytes.length + 1).writeBytes(sBytes).writeByte(10);
+        createFrame(OutgoingPacket.Opcodes.SEND_MESSAGE).writeByte(sBytes.length + 1).writeBytes(sBytes).writeByte(10);
         return this;
     }
 
@@ -58,7 +54,6 @@ public class OutgoingPacketBuilder {
      *
      * @param s  the s
      * @param id the id
-     *
      * @return the packet builder
      */
     public OutgoingPacketBuilder sendInterfaceText(String s, int id) {
@@ -80,14 +75,13 @@ public class OutgoingPacketBuilder {
      * @param itemId the item id
      * @param x      the x
      * @param y      the y
-     *
      * @return the packet builder
      */
     public OutgoingPacketBuilder createGroundItem(int itemId, int x, int y) {
-        createFrame(Packet.OutgoingPackets.UPDATE_PLAYER_XY);
+        createFrame(OutgoingPacket.Opcodes.UPDATE_PLAYER_XY);
         outputBuffer.writeByte(x, OutputBuffer.ByteTransformationType.C);
         outputBuffer.writeByte(y, OutputBuffer.ByteTransformationType.C);
-        createFrame(Packet.OutgoingPackets.DISPLAY_GROUND_ITEM);
+        createFrame(OutgoingPacket.Opcodes.DISPLAY_GROUND_ITEM);
         outputBuffer.writeLittleWORDA(itemId);
         outputBuffer.writeBigWORD(1);
         outputBuffer.writeByte(0);
@@ -104,7 +98,6 @@ public class OutgoingPacketBuilder {
      * @param itemX      The x coord.
      * @param itemY      The y coord.
      * @param itemAmount The amount.
-     *
      * @return The action.
      */
     public OutgoingPacketBuilder createGroundItem(int itemID, int itemX, int itemY, int itemAmount) {// Phate: Omg fucking sexy! creates item at
@@ -129,7 +122,6 @@ public class OutgoingPacketBuilder {
      * @param itemX  The x coord.
      * @param itemY  The y coord.
      * @param itemID The id.
-     *
      * @return The action.
      */
     public OutgoingPacketBuilder removeGroundItem(int itemX, int itemY, int itemID) {
@@ -142,6 +134,13 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
+    public OutgoingPacketBuilder initPlayer(int membership, int playerIndex) {
+        createFrame(OutgoingPacket.Opcodes.INIT_PLAYER)
+                .writeByte(membership, OutputBuffer.ByteTransformationType.A)
+                .writeLittleWORDA(playerIndex);
+        return this;
+    }
+
 
     /**
      * Open welcome screen packet builder.
@@ -151,7 +150,6 @@ public class OutgoingPacketBuilder {
      * @param messages       the messages
      * @param lastLoginIP    the last login ip
      * @param lastLogin      the last login
-     *
      * @return the packet builder
      */
     public OutgoingPacketBuilder openWelcomeScreen(int recoveryChange, boolean memberWarning, int messages, int lastLoginIP, int lastLogin) {
@@ -171,7 +169,6 @@ public class OutgoingPacketBuilder {
      *
      * @param menuId The sidebar.
      * @param form   The interface.
-     *
      * @return The action.
      */
     public OutgoingPacketBuilder setSidebarInterface(int menuId, int form) {
@@ -188,7 +185,6 @@ public class OutgoingPacketBuilder {
      * @param skillNum     The skill id.
      * @param currentLevel The level.
      * @param XP           The xp.
-     *
      * @return The action.
      */
     public OutgoingPacketBuilder setSkillLevel(int skillNum, int currentLevel, int XP) {
@@ -205,18 +201,11 @@ public class OutgoingPacketBuilder {
      * @param publicChat  The public chat option.
      * @param privateChat The private chat option.
      * @param tradeBlock  The trade block option.
-     *
      * @return chat options
      */
     public OutgoingPacketBuilder setChatOptions(int publicChat, int privateChat, int tradeBlock) {
-        /*client.getOutStream().createFrame(206);
-        client.getOutStream().writeByte(publicChat); // On = 0, Friends = 1, Off
-        // = 2, Hide =
-        // 3
-        client.getOutStream().writeByte(privateChat); // On = 0, Friends = 1,
-        // Off = 2
-        client.getOutStream().writeByte(tradeBlock); // On = 0, Friends = 1, Off
-        // = 2*/
+        createFrame(OutgoingPacket.Opcodes.CHAT_PRIVACY_SETTINGS)
+                .writeByte(publicChat).writeByte(privateChat).writeByte(tradeBlock);
         return this;
     }
 
@@ -224,7 +213,6 @@ public class OutgoingPacketBuilder {
      * 97: Displays a normal interface.
      *
      * @param id The interface id.
-     *
      * @return The action.
      */
     public OutgoingPacketBuilder sendInterface(int id) {
@@ -237,7 +225,6 @@ public class OutgoingPacketBuilder {
      * 164: Shows an interface in the chat box.
      *
      * @param id The interface id.
-     *
      * @return The action.
      */
     public OutgoingPacketBuilder sendChatInterface(int id) {
@@ -251,7 +238,6 @@ public class OutgoingPacketBuilder {
      * Sends the level up.
      *
      * @param skillId The skill id.
-     *
      * @return The action.
      */
     public OutgoingPacketBuilder sendLevelUp(int skillId) {

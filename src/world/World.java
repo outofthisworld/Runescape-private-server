@@ -169,6 +169,13 @@ public class World {
 
             if (playerIndex != -1) {
                 p.getClient().setLoggedIn(true);
+
+                p.getClient().getOutgoingPacketBuilder()
+                        .initPlayer(1, playerIndex)
+                        .setChatOptions(0, 0, 0)
+                        .;
+
+
             }
         }
     }
