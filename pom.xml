@@ -1,16 +1,25 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.evolution.rs</groupId>
-    <artifactId>my-app</artifactId>
+    <artifactId>evolution</artifactId>
     <version>1</version>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifac1.8>maven-compiler-p1.8in</artifactId>
+                <artifactId/>
+                <artifac1.8>maven-compiler-p1.8in</artifac1.8>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
         </plugins>
