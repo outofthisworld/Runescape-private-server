@@ -59,31 +59,127 @@ import database.AsyncPlayerStore;
 import database.CollectionAccessor;
 import net.Client;
 
+/**
+ * The type Player.
+ */
 public class Player {
     private static final AsyncPlayerStore asyncPlayerStore = new AsyncPlayerStore(
             new CollectionAccessor<>("Players", "Evolution",
                     Player.class, fieldAttributes -> fieldAttributes.getName().equals("c")));
-    private final Client c;
     private final int[] skills = new int[25];
     private final int[] skillExp = new int[25];
+    /**
+     * The Rights.
+     */
+    public int rights;
+    private Client c;
     private String username;
+    private String password;
+    private boolean isDisabled = false;
 
-    public Player(Client c) {
-        this.c = c;
+    /**
+     * Instantiates a new Player.
+     */
+    public Player() {
+
     }
 
+    /**
+     * Async player store async player store.
+     *
+     * @return the async player store
+     */
     public static AsyncPlayerStore asyncPlayerStore() {
         return Player.asyncPlayerStore;
     }
 
+    /**
+     * Is disabled boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isDisabled() {
+        return isDisabled;
+    }
+
+    /**
+     * Sets disabled.
+     *
+     * @param disabled the disabled
+     */
+    public void setDisabled(boolean disabled) {
+        isDisabled = disabled;
+    }
+
+    /**
+     * Gets password.
+     *
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Sets password.
+     *
+     * @param password the password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
+     * Gets rights.
+     *
+     * @return the rights
+     */
+    public int getRights() {
+        return rights;
+    }
+
+    /**
+     * Gets client.
+     *
+     * @return the client
+     */
     public Client getClient() {
         return c;
     }
 
+    /**
+     * Sets client.
+     *
+     * @param c the c
+     */
+    public void setClient(Client c) {
+        this.c = c;
+    }
+
+    /**
+     * Gets username.
+     *
+     * @return the username
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Sets username.
+     *
+     * @param username the username
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    /**
+     * Gets skill level.
+     *
+     * @param skillId the skill id
+     * @return the skill level
+     */
     public int getSkillLevel(int skillId) {
         if (skillId < 0 || skillId >= skills.length) {
             throw new IllegalArgumentException("Invalid skill id");
@@ -92,6 +188,12 @@ public class Player {
         return skills[skillId];
     }
 
+    /**
+     * Gets skill exp.
+     *
+     * @param skillId the skill id
+     * @return the skill exp
+     */
     public int getSkillExp(int skillId) {
         if (skillId < 0 || skillId >= skillExp.length) {
             throw new IllegalArgumentException("Invalid skill id");
@@ -100,6 +202,12 @@ public class Player {
         return skillExp[skillId];
     }
 
+    /**
+     * Sets skill level.
+     *
+     * @param skillId    the skill id
+     * @param skillLevel the skill level
+     */
     public void setSkillLevel(int skillId, int skillLevel) {
         if (skillId < 0 || skillId >= skills.length) {
             throw new IllegalArgumentException("Invalid skill id");
@@ -115,6 +223,12 @@ public class Player {
         c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
     }
 
+    /**
+     * Sets skill exp.
+     *
+     * @param skillId the skill id
+     * @param exp     the exp
+     */
     public void setSkillExp(int skillId, int exp) {
         if (skillId < 0 || skillId >= skillExp.length) {
             throw new IllegalArgumentException("Invalid skill id");
@@ -125,30 +239,102 @@ public class Player {
         c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
     }
 
+    /**
+     * The type Skills.
+     */
     public static class Skills {
+        /**
+         * The constant ATTACK.
+         */
         public static final int ATTACK = 0;
+        /**
+         * The constant DEFENCE.
+         */
         public static final int DEFENCE = 1;
+        /**
+         * The constant STRENGTH.
+         */
         public static final int STRENGTH = 2;
+        /**
+         * The constant HITPOINTS.
+         */
         public static final int HITPOINTS = 3;
+        /**
+         * The constant RANGED.
+         */
         public static final int RANGED = 4;
+        /**
+         * The constant PRAYER.
+         */
         public static final int PRAYER = 5;
+        /**
+         * The constant MAGIC.
+         */
         public static final int MAGIC = 6;
+        /**
+         * The constant COOKING.
+         */
         public static final int COOKING = 7;
+        /**
+         * The constant WOODCUTTING.
+         */
         public static final int WOODCUTTING = 8;
+        /**
+         * The constant FLETCHING.
+         */
         public static final int FLETCHING = 9;
+        /**
+         * The constant FISHING.
+         */
         public static final int FISHING = 10;
+        /**
+         * The constant FIREMAKING.
+         */
         public static final int FIREMAKING = 11;
+        /**
+         * The constant CRAFTING.
+         */
         public static final int CRAFTING = 12;
+        /**
+         * The constant SMITHING.
+         */
         public static final int SMITHING = 13;
+        /**
+         * The constant MINING.
+         */
         public static final int MINING = 14;
+        /**
+         * The constant HERBLORE.
+         */
         public static final int HERBLORE = 15;
+        /**
+         * The constant AGILITY.
+         */
         public static final int AGILITY = 16;
+        /**
+         * The constant THIEVING.
+         */
         public static final int THIEVING = 17;
+        /**
+         * The constant SLAYER.
+         */
         public static final int SLAYER = 18;
+        /**
+         * The constant FARMING.
+         */
         public static final int FARMING = 19;
+        /**
+         * The constant RUNECRAFTING.
+         */
         public static final int RUNECRAFTING = 20;
 
 
+        /**
+         * Gets exp until level.
+         *
+         * @param level the level
+         * @return the exp until level
+         */
         public static int getExpUntilLevel(int level) {
             int points = 0;
             int output = 0;
@@ -163,6 +349,12 @@ public class Player {
             return 0;
         }
 
+        /**
+         * Gets exp from level.
+         *
+         * @param level the level
+         * @return the exp from level
+         */
         public static int getExpFromLevel(int level) {
             int points = 0;
             int output = 0;
@@ -177,6 +369,12 @@ public class Player {
             return 0;
         }
 
+        /**
+         * Gets level from exp.
+         *
+         * @param currentExp the current exp
+         * @return the level from exp
+         */
         public static int getLevelFromExp(int currentExp) {
             int exp = currentExp;
             int points = 0;

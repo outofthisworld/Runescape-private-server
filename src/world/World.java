@@ -105,19 +105,22 @@ public class World {
         worldTasks.clear();
     }
 
-    private boolean addPlayer(Player p) {
+    private int addPlayer(Player p) {
         if (!(playersCount < players.length)) {
-            return false;
+            return -1;
         }
 
         Optional<Integer> freeSlot = freePlayerSlots.stream().findFirst();
+        int playerIndex = -1;
         if (freeSlot.isPresent()) {
-            players[freeSlot.get()] = p;
+            playerIndex = freeSlot.get();
         } else {
-            players[playersCount++] = p;
+            playerIndex = playersCount;
+            playersCount++;
         }
 
-        return true;
+        players[playerIndex] = p;
+        return playerIndex;
     }
 
     public Optional<Player> getPlayerByName(String name) {
@@ -152,25 +155,40 @@ public class World {
         ConcurrentLinkedQueue<Player> loginQueue = WorldManager.getLoginQueueForWorld(this);
         Player p = null;
         while ((p = loginQueue.poll()) != null) {
+
+            if (p.getClient() == null) {
+                throw new InvalidStateException("Player client was null after being added to login queue");
+            }
+
             if (p.getClient().isDisconnected()) {
                 p.getClient().setLoggedIn(false);
                 continue;
             }
             //
-            addPlayer(p);
+            int playerIndex = addPlayer(p);
+
+            if (playerIndex != -1) {
+                p.getClient().setLoggedIn(true);
+            }
         }
     }
 
     private void handlePlayerDisconnects() {
         for (int i = 0; i < players.length; i++) {
+            int index = i;
             Player player = players[i];
             if (player != null && player.getClient().isDisconnected()) {
-                if (player.save()) {
+                Player.asyncPlayerStore().store(player.getUsername(), player).whenCompleteAsync((aBoolean, throwable) -> {
+                    if (!aBoolean || throwable != null) {
+                        throwable.printStackTrace();
+                        return;
+                    }
+
                     //login entity saving
                     player.getClient().setLoggedIn(false);
-                    players[i] = null;
-                    freePlayerSlots.add(i);
-                }
+                    players[index] = null;
+                    freePlayerSlots.add(index);
+                }, worldExecutorService);
             }
         }
     }
@@ -216,7 +234,6 @@ public class World {
      * will be run immediately even if poll has not been called.
      *
      * @param r the r
-     *
      * @return the future
      */
     public Future<?> submit(Runnable r) {
@@ -228,7 +245,6 @@ public class World {
      *
      * @param <T> the type parameter
      * @param r   the r
-     *
      * @return the future
      */
     public <T> Future<T> submit(Callable<T> r) {
