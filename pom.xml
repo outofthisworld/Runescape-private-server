@@ -16,7 +16,7 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <artifactId>maven-comp1.8r-plugin</artifac1.8>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>

@@ -27,6 +27,7 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
 
     @Override
     public boolean update(T obj) {
+
         return false;
     }
 
