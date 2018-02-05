@@ -47,6 +47,7 @@ public class OutgoingPacket {
 
         /**
          * The constant RESET_ANIMATIONS.
+         * Resets all animations for players and npcs in the surrounding area.
          */
         public static final int RESET_ANIMATIONS = 1;
         /**

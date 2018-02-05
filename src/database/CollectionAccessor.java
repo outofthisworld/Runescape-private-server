@@ -1,6 +1,8 @@
 package database;
 
+import com.google.gson.ExclusionStrategy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCursor;
 import org.bson.Document;
 
@@ -9,7 +11,7 @@ import java.util.List;
 
 public class CollectionAccessor<T> implements IDBAccessor<T> {
 
-    private static final Gson gson = new Gson();
+    private final Gson gson;
     private final String collectionName;
     private final Class<T> mappingClass;
     private String dbName;
@@ -17,23 +19,31 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
     public CollectionAccessor(String collectionName, Class<T> mappingClass) {
         this.collectionName = collectionName;
         this.mappingClass = mappingClass;
+        gson = new Gson();
     }
 
     public CollectionAccessor(String dbName, String collectionName, Class<T> mappingClass) {
-        this.dbName = DatabaseConfig.DB_NAME;
+        this.dbName = dbName;
         this.collectionName = collectionName;
         this.mappingClass = mappingClass;
+        gson = new Gson();
+    }
+
+    public CollectionAccessor(String dbName, String collectionName, Class<T> mappingClass, SkipFieldPolicy policy) {
+        this.dbName = dbName;
+        this.collectionName = collectionName;
+        this.mappingClass = mappingClass;
+        gson = new GsonBuilder().addSerializationExclusionStrategy(policy).create();
     }
 
     @Override
     public boolean update(T obj) {
-
         return false;
     }
 
     @Override
     public boolean insert(T obj) {
-        Database.getClient().getDatabase(DatabaseConfig.DB_NAME).getCollection(collectionName).insertOne(Document.parse(CollectionAccessor.gson.toJson(obj)));
+        Database.getClient().getDatabase(DatabaseConfig.DB_NAME).getCollection(collectionName).insertOne(Document.parse(gson.toJson(obj)));
         return true;
     }
 
@@ -51,7 +61,7 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
             return null;
         }
 
-        return CollectionAccessor.gson.fromJson(found.toJson(), mappingClass);
+        return gson.fromJson(found.toJson(), mappingClass);
     }
 
     @Override
@@ -61,9 +71,17 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
         List<T> found = new ArrayList<>();
         while (cursor.hasNext()) {
             Document d = cursor.next();
-            found.add(CollectionAccessor.gson.fromJson(d.toJson(), mappingClass));
+            found.add(gson.fromJson(d.toJson(), mappingClass));
         }
 
         return found;
+    }
+
+    public interface SkipFieldPolicy extends ExclusionStrategy {
+
+        @Override
+        default boolean shouldSkipClass(Class<?> aClass) {
+            return false;
+        }
     }
 }

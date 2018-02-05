@@ -55,11 +55,14 @@
 
 package world.player;
 
+import database.AsyncPlayerStore;
+import database.CollectionAccessor;
 import net.Client;
 
-import java.util.concurrent.CompletableFuture;
-
 public class Player {
+    private static final AsyncPlayerStore asyncPlayerStore = new AsyncPlayerStore(
+            new CollectionAccessor<>("Players", "Evolution",
+                    Player.class, fieldAttributes -> fieldAttributes.getName().equals("c")));
     private final Client c;
     private final int[] skills = new int[25];
     private final int[] skillExp = new int[25];
@@ -69,21 +72,16 @@ public class Player {
         this.c = c;
     }
 
+    public static AsyncPlayerStore asyncPlayerStore() {
+        return Player.asyncPlayerStore;
+    }
+
     public Client getClient() {
         return c;
     }
 
     public String getUsername() {
         return username;
-    }
-
-
-    public CompletableFuture<?> load() {
-
-    }
-
-    public boolean save() {
-        return true;
     }
 
     public int getSkillLevel(int skillId) {
