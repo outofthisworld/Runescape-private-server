@@ -194,6 +194,10 @@ public class OutputBuffer extends AbstractBuffer {
     private static final int INITIAL_SIZE = 256;
     private static final int INCREASE_SIZE_BYTES = 256;
     private final int increaseSizeBytes;
+    /**
+     * The Write big middle.
+     */
+    public OutputBuffer writeBigMiddle
     private ByteBuffer currentOutputBuffer;
     private Order currentByteOrder = Order.BIG_ENDIAN;
 
@@ -522,7 +526,13 @@ public class OutputBuffer extends AbstractBuffer {
         return this;
     }
 
-    private OutputBuffer outOrder(Order order) {
+    /**
+     * Out order output buffer.
+     *
+     * @param order the order
+     * @return the output buffer
+     */
+    public OutputBuffer outOrder(Order order) {
         currentByteOrder = order;
         return this;
     }
@@ -612,6 +622,47 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
+     * Write big middle dword output buffer.
+     *
+     * @param x the x
+     * @return the output buffer
+     */
+    public OutputBuffer writeBigMiddleDWORD(long x) {
+        return outOrder(Order.BIG_MIDDLE_ENDIAN).writeBytes(x, 4, ByteTransformationType.NONE);
+    }
+
+    /**
+     * Write little middle dword output buffer.
+     *
+     * @param x the x
+     * @return the output buffer
+     */
+    public OutputBuffer writeLittleMiddleDWORD(long x) {
+        return outOrder(Order.LITTLE_MIDDLE_ENDIAN).writeBytes(x, 4, ByteTransformationType.NONE);
+    }
+
+    /**
+     * Write little middle word output buffer.
+     *
+     * @param x the x
+     * @return the output buffer
+     */
+    public OutputBuffer writeLittleMiddleWORD(int x) {
+        return outOrder(Order.LITTLE_MIDDLE_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
+    }
+
+    /**
+     * Write big middle word output buffer.
+     *
+     * @param x the x
+     * @return the output buffer
+     */
+    public OutputBuffer writeBigMiddleWORD(int x) {
+        return outOrder(Order.BIG_MIDDLE_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
+    }
+
+
+    /**
      * To array byte [ ].
      * <p>
      * Returns a byte array which backs this @class OutputBuffer.
@@ -663,10 +714,25 @@ public class OutputBuffer extends AbstractBuffer {
         return currentOutputBuffer.remaining();
     }
 
-    private enum Order {
+    /**
+     * The enum Order.
+     */
+    public enum Order {
+        /**
+         * Big endian order.
+         */
         BIG_ENDIAN,
+        /**
+         * Little endian order.
+         */
         LITTLE_ENDIAN,
+        /**
+         * Big middle endian order.
+         */
         BIG_MIDDLE_ENDIAN,
+        /**
+         * Little middle endian order.
+         */
         LITTLE_MIDDLE_ENDIAN
     }
 
