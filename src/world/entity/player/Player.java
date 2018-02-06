@@ -53,14 +53,14 @@
  The rights granted under, and the subject matter referenced, in this License were drafted utilizing the terminology of the Berne Convention for the Protection of Literary and Artistic Works (as amended on September 28, 1979), the Rome Convention of 1961, the WIPO Copyright Treaty of 1996, the WIPO Performances and Phonograms Treaty of 1996 and the Universal Copyright Convention (as revised on July 24, 1971). These rights and subject matter take effect in the relevant jurisdiction in which the License terms are sought to be enforced according to the corresponding provisions of the implementation of those treaty provisions in the applicable national law. If the standard suite of rights granted under applicable copyright law includes additional rights not granted under this License, such additional rights are deemed to be included in the License; this License is not intended to restrict the license of any rights under applicable law.
  -----------------------------------------------------------------------------*/
 
-package world.player;
+package world.entity.player;
 
 import database.AsyncPlayerStore;
 import database.CollectionAccessor;
 import net.Client;
-import world.player.containers.Bank;
-import world.player.containers.Equipment;
-import world.player.containers.Inventory;
+import world.containers.Bank;
+import world.containers.Equipment;
+import world.containers.Inventory;
 
 /**
  * The type Player.
@@ -69,8 +69,8 @@ public class Player {
     private static final AsyncPlayerStore asyncPlayerStore = new AsyncPlayerStore(
             new CollectionAccessor<>("Players", "Evolution",
                     Player.class, fieldAttributes -> fieldAttributes.getName().equals("c")));
-    private final int[] skills = new int[world.player.Skill.values().length];
-    private final int[] skillExp = new int[world.player.Skill.values().length];
+    private final int[] skills = new int[world.entity.player.Skill.values().length];
+    private final int[] skillExp = new int[world.entity.player.Skill.values().length];
     private final Bank bank = new Bank(this);
     private final Inventory inventory = new Inventory(this);
     private final Equipment equipment = new Equipment(this);
@@ -267,7 +267,7 @@ public class Player {
         }
 
         skills[skill.ordinal()] = skillLevel;
-        skillExp[skill.ordinal()] = world.player.Skill.getExpFromLevel(skillLevel);
+        skillExp[skill.ordinal()] = world.entity.player.Skill.getExpFromLevel(skillLevel);
         c.getOutgoingPacketBuilder().updateSkill(skill.ordinal(), skills[skill.ordinal()], skillExp[skill.ordinal()]);
     }
 
@@ -288,7 +288,7 @@ public class Player {
 
 
         skills[skillId] = skillLevel;
-        skillExp[skillId] = world.player.Skill.getExpFromLevel(skillLevel);
+        skillExp[skillId] = world.entity.player.Skill.getExpFromLevel(skillLevel);
         c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
     }
 
@@ -299,7 +299,7 @@ public class Player {
      * @param exp     the exp
      */
     public void setSkillExp(Skill skill, int exp) {
-        skills[skill.ordinal()] = world.player.Skill.getLevelFromExp(exp);
+        skills[skill.ordinal()] = world.entity.player.Skill.getLevelFromExp(exp);
         skillExp[skill.ordinal()] = exp;
         c.getOutgoingPacketBuilder().updateSkill(skill.ordinal(), skills[skill.ordinal()], skillExp[skill.ordinal()]);
     }
@@ -315,7 +315,7 @@ public class Player {
             throw new IllegalArgumentException("Invalid skill id");
         }
 
-        skills[skillId] = world.player.Skill.getLevelFromExp(exp);
+        skills[skillId] = world.entity.player.Skill.getLevelFromExp(exp);
         skillExp[skillId] = exp;
         c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
     }

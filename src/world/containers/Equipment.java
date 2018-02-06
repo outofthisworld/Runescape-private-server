@@ -1,8 +1,8 @@
-package world.player.containers;
+package world.containers;
 
+import world.entity.player.EquipmentSlot;
+import world.entity.player.Player;
 import world.item.Item;
-import world.player.EquipmentSlot;
-import world.player.Player;
 
 public class Equipment {
     private final Player p;
@@ -19,7 +19,7 @@ public class Equipment {
     }
 
     public void equip(int slotId, int itemId) {
-        equip(EquipmentSlot.fromIndex(slotId),itemId);
+        equip(EquipmentSlot.fromIndex(slotId), itemId);
     }
 
     public void equip(EquipmentSlot e, int itemId) {
@@ -27,12 +27,12 @@ public class Equipment {
     }
 
     public void unEquip(EquipmentSlot e, int itemId) {
-        if(p.getInventory().remaining() == 0){
+        if (p.getInventory().remaining() == 0) {
             p.getClient().getOutgoingPacketBuilder().sendMessage("Your inventory is currently full");
         }
     }
 
-    public void refresh(){
+    public void refresh() {
 
     }
 }

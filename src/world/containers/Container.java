@@ -1,4 +1,4 @@
-package world.player.containers;
+package world.containers;
 
 import sun.plugin.dom.exception.InvalidStateException;
 

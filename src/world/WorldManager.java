@@ -56,7 +56,7 @@
 package world;
 
 import sun.plugin.dom.exception.InvalidStateException;
-import world.player.Player;
+import world.entity.player.Player;
 
 import java.util.HashMap;
 import java.util.concurrent.Callable;

@@ -1,7 +1,7 @@
 package database;
 
 
-import world.player.Player;
+import world.entity.player.Player;
 
 import java.util.concurrent.CompletableFuture;
 

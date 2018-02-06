@@ -62,7 +62,7 @@ import net.packets.exceptions.InvalidOpcodeException;
 import net.packets.exceptions.InvalidPacketSizeException;
 import world.World;
 import world.WorldManager;
-import world.player.Player;
+import world.entity.player.Player;
 
 import java.util.Arrays;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package world.player;
+package world.entity.player;
 
 
 /**

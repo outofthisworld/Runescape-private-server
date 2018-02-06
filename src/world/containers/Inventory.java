@@ -1,7 +1,7 @@
-package world.player.containers;
+package world.containers;
 
+import world.entity.player.Player;
 import world.item.Item;
-import world.player.Player;
 
 public class Inventory {
     private static final int INVENTORY_SIZE = 28;
@@ -15,7 +15,7 @@ public class Inventory {
     }
 
 
-    public int remaining(){
+    public int remaining() {
         return bankItems.remaining();
     }
 

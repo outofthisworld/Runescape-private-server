@@ -63,7 +63,7 @@ import net.packets.exceptions.InvalidPacketSizeException;
 import net.packets.incoming.IncomingPacket;
 import net.packets.outgoing.OutgoingPacketBuilder;
 import world.WorldManager;
-import world.player.Player;
+import world.entity.player.Player;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

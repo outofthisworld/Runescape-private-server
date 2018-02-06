@@ -1,7 +1,7 @@
-package world.player.containers;
+package world.containers;
 
+import world.entity.player.Player;
 import world.item.Item;
-import world.player.Player;
 
 public class Bank {
     private static final int BANK_SIZE = 200;

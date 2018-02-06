@@ -1,6 +1,6 @@
 package database;
 
-import world.player.Player;
+import world.entity.player.Player;
 
 public class PlayerStore implements DataAccessor<Player>, DataStore<Boolean, Player> {
     private final IDBAccessor<Player> playerDb;

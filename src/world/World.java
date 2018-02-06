@@ -58,8 +58,8 @@ package world;
 import net.packets.outgoing.OutgoingPacketBuilder;
 import sun.plugin.dom.exception.InvalidStateException;
 import world.interfaces.SidebarInterface;
-import world.player.Player;
-import world.player.Skill;
+import world.entity.player.Player;
+import world.entity.player.Skill;
 import world.task.Task;
 
 import java.util.ArrayList;
