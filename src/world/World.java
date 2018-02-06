@@ -59,6 +59,7 @@ import net.packets.outgoing.OutgoingPacketBuilder;
 import sun.plugin.dom.exception.InvalidStateException;
 import world.interfaces.SidebarInterface;
 import world.player.Player;
+import world.player.Skill;
 import world.task.Task;
 
 import java.util.ArrayList;
@@ -107,22 +108,30 @@ public class World {
         worldTasks.clear();
     }
 
-    private int addPlayer(Player p) {
+    private int getSlot() {
         if (!(playersCount < players.length)) {
             return -1;
         }
 
         Optional<Integer> freeSlot = freePlayerSlots.stream().findFirst();
-        int playerIndex = -1;
+        int playerIndex;
         if (freeSlot.isPresent()) {
             playerIndex = freeSlot.get();
+            freePlayerSlots.remove(playerIndex);
         } else {
             playerIndex = playersCount;
             playersCount++;
         }
 
-        players[playerIndex] = p;
         return playerIndex;
+    }
+
+    private void addPlayerToWorld(int slot, Player p) {
+        if (players[slot] != null) {
+            throw new IllegalArgumentException("Player slot was not null");
+        }
+
+        players[slot] = p;
     }
 
     public Optional<Player> getPlayerByName(String name) {
@@ -162,12 +171,13 @@ public class World {
                 throw new InvalidStateException("Player client was null after being added to login queue");
             }
 
+            //Disconnected before being added to the world
             if (p.getClient().isDisconnected()) {
                 p.getClient().setLoggedIn(false);
                 continue;
             }
             //
-            int playerIndex = addPlayer(p);
+            int playerIndex = getSlot();
 
             if (playerIndex != -1) {
                 OutgoingPacketBuilder out = p.getClient().getOutgoingPacketBuilder();
@@ -176,7 +186,7 @@ public class World {
                 out.initPlayer(1, playerIndex)
                         .setChatOptions(0, 0, 0);
 
-                for (Player.Skill s : Player.Skill.values()) {
+                for (Skill.Skill s : Skill.Skill.values()) {
                     out.setSkillLevel(s.ordinal(), p.getSkillLevel(s), p.getSkillExp(s));
                 }
 
@@ -187,6 +197,10 @@ public class World {
                 out.addPlayerOptions(3, 0, new String[]{"Attack", "Trade with"});
                 out.sendMessage("Welcome to EvolutionRS");
                 out.send();
+
+                addPlayerToWorld(playerIndex, p);
+            } else {
+                loginQueue.add(p);
             }
         }
     }

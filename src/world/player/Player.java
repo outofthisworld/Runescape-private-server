@@ -58,6 +58,9 @@ package world.player;
 import database.AsyncPlayerStore;
 import database.CollectionAccessor;
 import net.Client;
+import world.player.containers.Bank;
+import world.player.containers.Equipment;
+import world.player.containers.Inventory;
 
 /**
  * The type Player.
@@ -66,12 +69,12 @@ public class Player {
     private static final AsyncPlayerStore asyncPlayerStore = new AsyncPlayerStore(
             new CollectionAccessor<>("Players", "Evolution",
                     Player.class, fieldAttributes -> fieldAttributes.getName().equals("c")));
-    private final int[] skills = new int[Skill.values().length];
-    private final int[] skillExp = new int[Skill.values().length];
-    /**
-     * The Rights.
-     */
-    public int rights;
+    private final int[] skills = new int[world.player.Skill.values().length];
+    private final int[] skillExp = new int[world.player.Skill.values().length];
+    private final Bank bank = new Bank(this);
+    private final Inventory inventory = new Inventory(this);
+    private final Equipment equipment = new Equipment(this);
+    private int rights;
     private Client c;
     private String username;
     private String password;
@@ -91,6 +94,33 @@ public class Player {
      */
     public static AsyncPlayerStore asyncPlayerStore() {
         return Player.asyncPlayerStore;
+    }
+
+    /**
+     * Gets bank.
+     *
+     * @return the bank
+     */
+    public Bank getBank() {
+        return bank;
+    }
+
+    /**
+     * Get inventory inventory.
+     *
+     * @return the inventory
+     */
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    /**
+     * Get equipment equipment.
+     *
+     * @return the equipment
+     */
+    public Equipment getEquipment() {
+        return equipment;
     }
 
     /**
@@ -237,7 +267,7 @@ public class Player {
         }
 
         skills[skill.ordinal()] = skillLevel;
-        skillExp[skill.ordinal()] = Skill.getExpFromLevel(skillLevel);
+        skillExp[skill.ordinal()] = world.player.Skill.getExpFromLevel(skillLevel);
         c.getOutgoingPacketBuilder().updateSkill(skill.ordinal(), skills[skill.ordinal()], skillExp[skill.ordinal()]);
     }
 
@@ -258,7 +288,7 @@ public class Player {
 
 
         skills[skillId] = skillLevel;
-        skillExp[skillId] = Skill.getExpFromLevel(skillLevel);
+        skillExp[skillId] = world.player.Skill.getExpFromLevel(skillLevel);
         c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
     }
 
@@ -269,7 +299,7 @@ public class Player {
      * @param exp     the exp
      */
     public void setSkillExp(Skill skill, int exp) {
-        skills[skill.ordinal()] = Skill.getLevelFromExp(exp);
+        skills[skill.ordinal()] = world.player.Skill.getLevelFromExp(exp);
         skillExp[skill.ordinal()] = exp;
         c.getOutgoingPacketBuilder().updateSkill(skill.ordinal(), skills[skill.ordinal()], skillExp[skill.ordinal()]);
     }
@@ -285,138 +315,9 @@ public class Player {
             throw new IllegalArgumentException("Invalid skill id");
         }
 
-        skills[skillId] = Skill.getLevelFromExp(exp);
+        skills[skillId] = world.player.Skill.getLevelFromExp(exp);
         skillExp[skillId] = exp;
         c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
     }
 
-    /**
-     * The enum Skill.
-     */
-    public enum Skill {
-        /**
-         * The constant ATTACK.
-         */
-        ATTACK,
-        /**
-         * The constant DEFENCE.
-         */
-        DEFENCE,
-        /**
-         * The constant STRENGTH.
-         */
-        STRENGTH,
-        /**
-         * The constant HITPOINTS.
-         */
-        HITPOINTS,
-        /**
-         * The constant RANGED.
-         */
-        RANGED,
-        /**
-         * The constant PRAYER.
-         */
-        PRAYER,
-        /**
-         * The constant MAGIC.
-         */
-        MAGIC,
-        /**
-         * The constant COOKING.
-         */
-        COOKING,
-        /**
-         * The constant WOODCUTTING.
-         */
-        WOODCUTTING,
-        /**
-         * The constant FLETCHING.
-         */
-        FLETCHING,
-        /**
-         * The constant FISHING.
-         */
-        FISHING,
-        /**
-         * The constant FIREMAKING.
-         */
-        FIREMAKING,
-        /**
-         * The constant CRAFTING.
-         */
-        CRAFTING,
-        /**
-         * The constant SMITHING.
-         */
-        SMITHING,
-        /**
-         * The constant MINING.
-         */
-        MINING,
-        /**
-         * The constant HERBLORE.
-         */
-        HERBLORE,
-        /**
-         * The constant AGILITY.
-         */
-        AGILITY,
-        /**
-         * The constant THIEVING.
-         */
-        THIEVING,
-        /**
-         * The constant SLAYER.
-         */
-        SLAYER,
-        /**
-         * The constant FARMING.
-         */
-        FARMING,
-        /**
-         * The constant RUNECRAFTING.
-         */
-        RUNECRAFTING;
-
-        /**
-         * Gets exp from level.
-         *
-         * @param level the level
-         * @return the exp from level
-         */
-        public static int getExpFromLevel(int level) {
-            int points = 0;
-            int output = 0;
-
-            for (int lvl = 1; lvl <= level; lvl++) {
-                points += Math.floor((double) lvl + 300.0 * Math.pow(2.0, (double) lvl / 7.0));
-                if (lvl >= level) {
-                    return output;
-                }
-                output = (int) Math.floor(points / 4);
-            }
-            return 0;
-        }
-
-        /**
-         * Gets level from exp.
-         *
-         * @param currentExp the current exp
-         * @return the level from exp
-         */
-        public static int getLevelFromExp(int currentExp) {
-            int exp = currentExp;
-            int points = 0;
-            int output = 0;
-            for (int lvl = 1; lvl < 100; lvl++) {
-                points += Math.floor((double) lvl + 300.0 * Math.pow(2.0, (double) lvl / 7.0));
-                output = (int) Math.floor(points / 4);
-                if ((output - 1) >= exp) {
-                    return lvl;
-                }
-            }
-            return 99;
-        }
-    }
 }
