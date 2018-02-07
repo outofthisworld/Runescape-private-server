@@ -4,54 +4,46 @@ import java.util.logging.Logger;
 
 public class DatabaseConfig {
 
-    public static final String DB_HOST;
-    public static final int DB_PORT;
-    public static final String DB_NAME;
-    public static final String DB_PASS;
-    public static final String DB_USER;
     public static final String ITEMS_COLLECTION = "Items";
     public static final String NPC_COLLECTION = "Npcs";
-
     private static final Logger logger = Logger.getLogger(DatabaseConfig.class.getName());
+    public static String DB_HOST = "127.0.0.1";
+    public static int DB_PORT = 27017;
+    public static String DB_NAME = "Evolution";
+    public static String DB_PASS = "Mongo";
+    public static String DB_USER = "Mongo";
 
     static {
-        if (System.getenv("DB_URL") == null) {
-            System.getenv().put("DB_HOST", "localhost");
+
+        if (System.getenv("DB_HOST") != null) {
+            DatabaseConfig.DB_HOST = System.getenv("DB_HOST");
         }
 
-        DB_HOST = System.getenv("DB_URL");
 
-
-        if (System.getenv("DB_PORT") == null) {
-            System.getenv().put("DB_PORT", "27017");
+        if (System.getenv("DB_PORT") != null) {
+            int DB_PORT1;
+            try {
+                DB_PORT1 = Integer.valueOf(System.getenv("DB_PORT"));
+            } catch (Exception e) {
+                DB_PORT1 = 27017;
+            }
+            DatabaseConfig.DB_PORT = DB_PORT1;
         }
 
-        int DB_PORT1;
-        try {
-            DB_PORT1 = Integer.valueOf(System.getenv("DB_PORT"));
-        } catch (Exception e) {
-            DB_PORT1 = 27017;
+
+        if (System.getenv("DB_NAME") != null) {
+            DatabaseConfig.DB_NAME = System.getenv("DB_NAME");
         }
 
-        DB_PORT = DB_PORT1;
-        if (System.getenv("DB_NAME") == null) {
-            System.getenv().put("DB_NAME", "evolution");
+
+        if (System.getenv("DB_USER") != null) {
+            DatabaseConfig.DB_USER = System.getenv("DB_USER");
         }
 
-        DB_NAME = System.getenv("DB_NAME");
 
-
-        if (System.getenv("DB_USER") == null) {
-            System.getenv().put("DB_USER", "mongo");
+        if (System.getenv("DB_PASS") != null) {
+            DatabaseConfig.DB_PASS = System.getenv("DB_PASS");
         }
-
-        DB_USER = System.getenv("DB_USER");
-
-        if (System.getenv("DB_PASS") == null) {
-            System.getenv().put("DB_PASS", "mongo");
-        }
-
-        DB_PASS = System.getenv("DB_PASS");
 
     }
 }

@@ -56,7 +56,6 @@
 package net.packets.incoming;
 
 import net.Client;
-import net.LoginHandler;
 import net.buffers.InputBuffer;
 
 import java.util.Arrays;
@@ -64,7 +63,7 @@ import java.util.Optional;
 
 public abstract class IncomingPacket {
 
-    private static final IncomingPacket[] packets = new IncomingPacket[]{new LoginHandler()};
+    private static final IncomingPacket[] packets = new IncomingPacket[]{};
     private static final int packetSizes[] = {0, 0, 0, 1, -1, 0, 0, 0, 0, 0, // 0
             0, 0, 0, 0, 8, 0, 6, 2, 2, 0, // 10
             0, 2, 0, 6, 0, 12, 0, 0, 0, 0, // 20

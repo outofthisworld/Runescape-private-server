@@ -57,9 +57,9 @@ package world;
 
 import net.packets.outgoing.OutgoingPacketBuilder;
 import sun.plugin.dom.exception.InvalidStateException;
-import world.interfaces.SidebarInterface;
 import world.entity.player.Player;
 import world.entity.player.Skill;
+import world.interfaces.SidebarInterface;
 import world.task.Task;
 
 import java.util.ArrayList;
@@ -186,7 +186,7 @@ public class World {
                 out.initPlayer(1, playerIndex)
                         .setChatOptions(0, 0, 0);
 
-                for (Skill.Skill s : Skill.Skill.values()) {
+                for (Skill s : Skill.values()) {
                     out.setSkillLevel(s.ordinal(), p.getSkillLevel(s), p.getSkillExp(s));
                 }
 

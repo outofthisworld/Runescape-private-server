@@ -16,6 +16,6 @@ public class PlayerStore implements DataAccessor<Player>, DataStore<Boolean, Pla
 
     @Override
     public Boolean store(String key, Player o) {
-        return null;
+        return playerDb.insert(o);
     }
 }

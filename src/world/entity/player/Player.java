@@ -268,7 +268,7 @@ public class Player {
 
         skills[skill.ordinal()] = skillLevel;
         skillExp[skill.ordinal()] = world.entity.player.Skill.getExpFromLevel(skillLevel);
-        c.getOutgoingPacketBuilder().updateSkill(skill.ordinal(), skills[skill.ordinal()], skillExp[skill.ordinal()]);
+        //c.getOutgoingPacketBuilder().updateSkill(skill.ordinal(), skills[skill.ordinal()], skillExp[skill.ordinal()]);
     }
 
     /**
@@ -289,7 +289,7 @@ public class Player {
 
         skills[skillId] = skillLevel;
         skillExp[skillId] = world.entity.player.Skill.getExpFromLevel(skillLevel);
-        c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
+        //c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
     }
 
     /**
@@ -301,7 +301,7 @@ public class Player {
     public void setSkillExp(Skill skill, int exp) {
         skills[skill.ordinal()] = world.entity.player.Skill.getLevelFromExp(exp);
         skillExp[skill.ordinal()] = exp;
-        c.getOutgoingPacketBuilder().updateSkill(skill.ordinal(), skills[skill.ordinal()], skillExp[skill.ordinal()]);
+        //c.getOutgoingPacketBuilder().updateSkill(skill.ordinal(), skills[skill.ordinal()], skillExp[skill.ordinal()]);
     }
 
     /**
@@ -317,7 +317,7 @@ public class Player {
 
         skills[skillId] = world.entity.player.Skill.getLevelFromExp(exp);
         skillExp[skillId] = exp;
-        c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
+        //c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
     }
 
 }

@@ -12,5 +12,7 @@ public interface IDBAccessor<T> {
 
     <U> T findOne(U id);
 
-    <U> List<T> find(U obj, int limit, int skip);
+    List<T> findAll();
+
+    List<T> find(int limit, int skip);
 }

@@ -197,7 +197,7 @@ public class OutputBuffer extends AbstractBuffer {
     /**
      * The Write big middle.
      */
-    public OutputBuffer writeBigMiddle
+    public OutputBuffer writeBigMiddle;
     private ByteBuffer currentOutputBuffer;
     private Order currentByteOrder = Order.BIG_ENDIAN;
 

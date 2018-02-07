@@ -65,7 +65,20 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
     }
 
     @Override
-    public <U> List<T> find(U obj, int limit, int skip) {
+    public List<T> findAll() {
+        MongoCursor<Document> cursor = Database.getClient().getDatabase(DatabaseConfig.DB_NAME).getCollection(collectionName).find().returnKey(true).showRecordId(true).iterator();
+
+        List<T> found = new ArrayList<>();
+        while (cursor.hasNext()) {
+            Document d = cursor.next();
+            found.add(gson.fromJson(d.toJson(), mappingClass));
+        }
+
+        return found;
+    }
+
+    @Override
+    public List<T> find(int limit, int skip) {
         MongoCursor<Document> cursor = Database.getClient().getDatabase(DatabaseConfig.DB_NAME).getCollection(collectionName).find().limit(limit).skip(skip).returnKey(true).showRecordId(true).iterator();
 
         List<T> found = new ArrayList<>();

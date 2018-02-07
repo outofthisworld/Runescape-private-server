@@ -111,7 +111,7 @@ public final class LoginHandler {
                 }*/
 
                 if (in.remaining() < 1) {
-                    throw new InvalidPacketSizeException(packetOpcode, "Invalid packet size for opcode: " + packetOpcode + "in " + getClass().getName());
+                    throw new InvalidPacketSizeException(packetOpcode, "Invalid packet size for opcode: " + packetOpcode + "in " + LoginHandler.class.getName());
                 }
 
                 short loginPacketSize = in.readUnsignedByte();
