@@ -9,6 +9,9 @@ public class DatabaseConfig {
     public static final String DB_NAME;
     public static final String DB_PASS;
     public static final String DB_USER;
+    public static final String ITEMS_COLLECTION = "Items";
+    public static final String NPC_COLLECTION = "Npcs";
+
     private static final Logger logger = Logger.getLogger(DatabaseConfig.class.getName());
 
     static {
