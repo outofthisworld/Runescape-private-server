@@ -67,7 +67,7 @@ import java.util.concurrent.Executors;
  */
 public class Engine {
     private final ExecutorService e = Executors.newSingleThreadExecutor();
-    private Server server;
+    private final Server server = new Server(EngineConfig.HOST, EngineConfig.PORT);
 
     /**
      * The entry point of application.
@@ -85,7 +85,6 @@ public class Engine {
     public void start() {
         WorldManager.createWorld();
         Database.init();
-        server = new Server(EngineConfig.HOST, EngineConfig.PORT);
         e.submit(this::startServer);
     }
 

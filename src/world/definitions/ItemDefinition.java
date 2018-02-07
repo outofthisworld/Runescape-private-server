@@ -6,7 +6,7 @@ import database.IDBAccessor;
 import java.util.Collections;
 import java.util.List;
 
-public class ItemDefinition extends Definition<ItemDefinition> {
+public final class ItemDefinition {
 
     private static final IDBAccessor<ItemDefinition> itemDB = new CollectionAccessor<>("Items", ItemDefinition.class);
     private static List<ItemDefinition> itemDefinitions = null;
@@ -32,6 +32,24 @@ public class ItemDefinition extends Definition<ItemDefinition> {
     private boolean equipable;
     private int slotId;
 
+    private ItemDefinition() {
+    }
+
+    public static ItemDefinition getForId(int id) {
+        if (ItemDefinition.itemDefinitions == null || id < 0 || id >= ItemDefinition.itemDefinitions.size()) {
+            return null;
+        }
+
+        return ItemDefinition.itemDefinitions.get(id);
+    }
+
+    public static void load() {
+        if (ItemDefinition.itemDefinitions != null) {
+            return;
+        }
+        ItemDefinition.itemDefinitions = Collections.unmodifiableList(ItemDefinition.itemDB.findAll());
+    }
+
     public int getId() {
         return id;
     }
@@ -54,6 +72,10 @@ public class ItemDefinition extends Definition<ItemDefinition> {
 
     public boolean isNoted() {
         return noted;
+    }
+
+    public boolean isNotable() {
+        return noteId != -1;
     }
 
     public int getNoteId() {
@@ -114,22 +136,5 @@ public class ItemDefinition extends Definition<ItemDefinition> {
 
     public int getSlotId() {
         return slotId;
-    }
-
-    @Override
-    public ItemDefinition getForId(int id) {
-        if (id < 0 || id >= ItemDefinition.itemDefinitions.size()) {
-            return null;
-        }
-
-        return ItemDefinition.itemDefinitions.get(id);
-    }
-
-    @Override
-    public void load() {
-        if (ItemDefinition.itemDefinitions != null) {
-            return;
-        }
-        ItemDefinition.itemDefinitions = Collections.unmodifiableList(ItemDefinition.itemDB.findAll());
     }
 }

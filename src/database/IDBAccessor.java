@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface IDBAccessor<T> {
 
-    boolean update(T t);
+    boolean update(Object id, T obj);
 
     boolean insert(T t);
 

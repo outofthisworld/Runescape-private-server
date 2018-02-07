@@ -70,7 +70,6 @@ import java.util.concurrent.Future;
  */
 public class WorldManager {
     private static final CopyOnWriteArrayList<World> WORLDS = new CopyOnWriteArrayList<>();
-    private static final HashMap<World, ConcurrentLinkedQueue<Player>> LOGIN_QUEUE = new HashMap();
 
     /**
      * Instantiates a new World manager.
@@ -96,7 +95,6 @@ public class WorldManager {
     public static int createWorld() {
         World w = new World(WorldManager.WORLDS.size());
         WorldManager.WORLDS.add(w);
-        WorldManager.LOGIN_QUEUE.put(w, new ConcurrentLinkedQueue<>());
         //DOnt do anything with it for now, could be used later.
         w.start();
         return WorldManager.WORLDS.size() - 1;
@@ -121,56 +119,6 @@ public class WorldManager {
         return WorldManager.WORLDS.get(worldId);
     }
 
-    /**
-     * Gets login queue for world.
-     *
-     * @param world the world
-     *
-     * @return the login queue for world
-     */
-    public static ConcurrentLinkedQueue<Player> getLoginQueueForWorld(World world) {
-        return WorldManager.LOGIN_QUEUE.get(world);
-    }
-
-    /**
-     * Gets login queue for world.
-     *
-     * @param worldId the world id
-     *
-     * @return the login queue for world
-     */
-    public static ConcurrentLinkedQueue<Player> getLoginQueueForWorld(int worldId) {
-        World world = WorldManager.WORLDS.get(worldId);
-        return WorldManager.LOGIN_QUEUE.get(world);
-    }
-
-    /**
-     * Queue login.
-     *
-     * @param worldId the world id
-     * @param player  the entity
-     */
-    public static void queueLogin(int worldId, Player player) {
-        World world;
-        world = WorldManager.WORLDS.get(worldId);
-        WorldManager.queueLogin(world, player);
-    }
-
-    /**
-     * Queue login.
-     *
-     * @param world  the world
-     * @param player the entity
-     */
-    public static void queueLogin(World world, Player player) {
-        ConcurrentLinkedQueue<Player> queue = WorldManager.LOGIN_QUEUE.get(world);
-
-        if (queue == null) {
-            throw new InvalidStateException("Login queue does not exist for world");
-        } else {
-            queue.add(player);
-        }
-    }
 
     /**
      * Submit task future.

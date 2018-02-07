@@ -63,6 +63,7 @@ import net.packets.exceptions.InvalidPacketSizeException;
 import world.World;
 import world.WorldManager;
 import world.entity.player.Player;
+import world.event.impl.PlayerLoginEvent;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -209,7 +210,7 @@ public final class LoginHandler {
 
                 World world = WorldManager.getWorld(0);
 
-
+                world.getEventBus().fire(new PlayerLoginEvent(username,password,c));
                 /**
                  1	Waits for 2000ms and tries again while counting failures.
                  0	Exchanges session keys, entity name, password, etc.

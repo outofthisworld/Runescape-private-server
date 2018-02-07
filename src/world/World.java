@@ -55,10 +55,14 @@
 
 package world;
 
+import net.buffers.OutputBuffer;
 import net.packets.outgoing.OutgoingPacketBuilder;
 import sun.plugin.dom.exception.InvalidStateException;
 import world.entity.player.Player;
 import world.entity.player.Skill;
+import world.event.Event;
+import world.event.EventBus;
+import world.event.impl.PlayerLoginEvent;
 import world.interfaces.SidebarInterface;
 import world.task.Task;
 
@@ -78,6 +82,7 @@ public class World {
     private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor(new WorldThreadFactory(10));
     private final int worldId;
     private final HashSet<Integer> freePlayerSlots = new HashSet<>();
+    private final EventBus eventBus = new EventBus();
     private ScheduledFuture<?> worldExecutionTask;
     private int playersCount = 0;
 
@@ -98,6 +103,10 @@ public class World {
      */
     ScheduledFuture<?> start() {
         return worldExecutionTask = worldExecutorService.scheduleAtFixedRate(this::poll, 0, WorldConfig.WORLD_TICK_RATE_MS, TimeUnit.MILLISECONDS);
+    }
+
+    public EventBus getEventBus(){
+        return eventBus;
     }
 
     /**
@@ -157,26 +166,53 @@ public class World {
         /*
             Adds players that are currently in the loginQueue for this world to this worlds players arraylist.
          */
-        addPlayersToWorld();
         handlePlayerDisconnects();
         doWorldTasks();
     }
 
-    private void addPlayersToWorld() {
-        ConcurrentLinkedQueue<Player> loginQueue = WorldManager.getLoginQueueForWorld(this);
-        Player p = null;
-        while ((p = loginQueue.poll()) != null) {
+    @Event
+    private void handlePlayerLogin(PlayerLoginEvent p){
+        submit(()->{
+            int responseCode = 2;
 
-            if (p.getClient() == null) {
-                throw new InvalidStateException("Player client was null after being added to login queue");
+            if (getFreeSlots() <= 0) {
+
+                //world full
+                responseCode = 7;
             }
 
-            //Disconnected before being added to the world
-            if (p.getClient().isDisconnected()) {
-                p.getClient().setLoggedIn(false);
-                continue;
+            if (getPlayerByName(p.getUsername()).isPresent()) {
+                //already logged in
+                responseCode = 5;
             }
-            //
+
+            Player.asyncPlayerStore().load(p.getUsername()).thenAcceptAsync((p) -> {
+
+                int rCode = 2;
+
+                if (p == null) {
+                    p = new Player();
+                    p.setUsername(p.getUsername());
+                    p.setPassword(p.getPassword());
+                    Player.asyncPlayerStore().store(username, p);
+                    //Initialize anything
+                }
+
+                if (!p.getPassword().equals(password)) {
+                    //invalid password
+                    rCode = 3;
+                } else if (p.isDisabled()) {
+                    //account disabled
+                    rCode = 4;
+                } else {
+                    p.setClient(c);
+                }
+
+                c.write(OutputBuffer.create(3).writeByte(rCode).writeByte(p.getRights()).writeByte(0));
+                WorldManager.queueLogin(0, p);
+            })
+
+
             int playerIndex = getSlot();
 
             if (playerIndex != -1) {
@@ -196,13 +232,13 @@ public class World {
 
                 out.addPlayerOptions(3, 0, new String[]{"Attack", "Trade with"});
                 out.sendMessage("Welcome to EvolutionRS");
+
+
                 out.send();
 
                 addPlayerToWorld(playerIndex, p);
-            } else {
-                loginQueue.add(p);
             }
-        }
+        });
     }
 
     private void handlePlayerDisconnects() {

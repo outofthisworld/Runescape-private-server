@@ -58,8 +58,6 @@ package net;
 import net.buffers.InputBuffer;
 import net.buffers.OutputBuffer;
 import net.enc.ISAACCipher;
-import net.packets.exceptions.InvalidOpcodeException;
-import net.packets.exceptions.InvalidPacketSizeException;
 import net.packets.incoming.IncomingPacket;
 import net.packets.outgoing.OutgoingPacketBuilder;
 import world.WorldManager;
@@ -415,14 +413,6 @@ public class Client {
                 WorldManager.submitTask(0, () -> {
                     try {
                         p.get().handle(this, decodedOp, in);
-                    } catch (InvalidOpcodeException e) {
-                        Client.logger.log(Level.WARNING, String.valueOf(e.getOpcode()));
-                        Client.logger.log(Level.WARNING, e.getMessage());
-                        e.printStackTrace();
-                    } catch (InvalidPacketSizeException e) {
-                        Client.logger.log(Level.WARNING, String.valueOf(e.getOpcode()));
-                        Client.logger.log(Level.WARNING, e.getMessage());
-                        e.printStackTrace();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -1,6 +1,14 @@
 package world.definitions;
 
-public class NpcDefinition {
+import database.CollectionAccessor;
+import database.IDBAccessor;
+
+import java.util.Collections;
+import java.util.List;
+
+public final class NpcDefinition {
+    private static final IDBAccessor<NpcDefinition> npcDB = new CollectionAccessor<>("Items", NpcDefinition.class);
+    private static List<NpcDefinition> npcsDefinitions = null;
     private final boolean attackable = false;
     private final boolean retreats = false;
     private final boolean aggressive = false;
@@ -22,6 +30,24 @@ public class NpcDefinition {
     private int combatLevel;
     private int slayerLevel;
     private int combatFollowDistance;
+
+    private NpcDefinition() {
+    }
+
+    public static NpcDefinition getForId(int id) {
+        if (NpcDefinition.npcsDefinitions == null || id < 0 || id >= NpcDefinition.npcsDefinitions.size()) {
+            return null;
+        }
+
+        return NpcDefinition.npcsDefinitions.get(id);
+    }
+
+    public static void load() {
+        if (NpcDefinition.npcsDefinitions != null) {
+            return;
+        }
+        NpcDefinition.npcsDefinitions = Collections.unmodifiableList(NpcDefinition.npcDB.findAll());
+    }
 
     public int getId() {
         return id;
@@ -106,5 +132,4 @@ public class NpcDefinition {
     public String[] getCombatTypes() {
         return combatTypes;
     }
-
 }

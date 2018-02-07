@@ -4,8 +4,12 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.result.UpdateResult;
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.bson.Document;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,12 +41,46 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
     }
 
     @Override
-    public boolean update(T obj) {
-        return false;
+    public boolean update(Object id, T obj) {
+        UpdateResult r = Database.getClient().getDatabase(DatabaseConfig.DB_NAME).getCollection(collectionName).updateOne(Filters.eq("_id", id), Document.parse(gson.toJson(obj)));
+        return r.wasAcknowledged();
+    }
+
+    public boolean update(T obj) throws InvalidArgumentException, IllegalAccessException {
+        Field f = null;
+        Object id;
+
+        if (f == null) {
+            try {
+                f = mappingClass.getDeclaredField("_id");
+            } catch (NoSuchFieldException e) {
+            }
+        }
+
+        if (f == null) {
+            try {
+                f = mappingClass.getDeclaredField("id");
+
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (f == null) {
+            throw new InvalidArgumentException(new String[]{"Missing _id or id fields on obect"});
+        }
+
+        f.setAccessible(true);
+        id = f.get(obj);
+
+
+        UpdateResult r = Database.getClient().getDatabase(DatabaseConfig.DB_NAME).getCollection(collectionName).updateOne(Filters.eq("_id", id), Document.parse(gson.toJson(obj)));
+        return r.wasAcknowledged();
     }
 
     @Override
     public boolean insert(T obj) {
+
         Database.getClient().getDatabase(DatabaseConfig.DB_NAME).getCollection(collectionName).insertOne(Document.parse(gson.toJson(obj)));
         return true;
     }
