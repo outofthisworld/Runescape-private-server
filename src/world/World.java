@@ -62,6 +62,7 @@ import world.entity.player.Player;
 import world.entity.player.Skill;
 import world.event.Event;
 import world.event.EventBus;
+import world.event.WorldEventBus;
 import world.event.impl.PlayerLoginEvent;
 import world.interfaces.SidebarInterface;
 import world.task.Task;
@@ -82,7 +83,7 @@ public class World {
     private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor(new WorldThreadFactory(10));
     private final int worldId;
     private final HashSet<Integer> freePlayerSlots = new HashSet<>();
-    private final EventBus eventBus = new EventBus();
+    private final EventBus eventBus = new WorldEventBus(this);
     private ScheduledFuture<?> worldExecutionTask;
     private int playersCount = 0;
 
@@ -105,7 +106,7 @@ public class World {
         return worldExecutionTask = worldExecutorService.scheduleAtFixedRate(this::poll, 0, WorldConfig.WORLD_TICK_RATE_MS, TimeUnit.MILLISECONDS);
     }
 
-    public EventBus getEventBus(){
+    public EventBus getEventBus() {
         return eventBus;
     }
 
@@ -171,8 +172,8 @@ public class World {
     }
 
     @Event
-    private void handlePlayerLogin(PlayerLoginEvent p){
-        submit(()->{
+    private void handlePlayerLogin(PlayerLoginEvent p) {
+        submit(() -> {
             int responseCode = 2;
 
             if (getFreeSlots() <= 0) {

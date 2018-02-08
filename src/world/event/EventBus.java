@@ -1,19 +1,11 @@
 package world.event;
 
-
 import world.event.impl.Event;
 
-import java.util.HashMap;
+public interface EventBus {
+    <T extends world.event.impl.Event> void register(Class<T> klazz, EventHandler<? super T> handler);
 
-public class EventBus {
+    <T extends Event> void fire(T event);
 
-    private final HashMap<Class<?>, EventHandler> hm = new HashMap<>();
-
-    public <T extends Event> void register(Class<T> klazz, EventHandler<? super T> handler) {
-        hm.put(klazz, handler);
-    }
-
-    public <T extends Event> void fire(T event) {
-        hm.get(event.getClass()).handle(event);
-    }
+    void register(Object obj);
 }

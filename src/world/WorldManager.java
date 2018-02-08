@@ -55,12 +55,7 @@
 
 package world;
 
-import sun.plugin.dom.exception.InvalidStateException;
-import world.entity.player.Player;
-
-import java.util.HashMap;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Future;
 
@@ -112,7 +107,6 @@ public class WorldManager {
      * Get world world.
      *
      * @param worldId the world id
-     *
      * @return the world
      */
     public static World getWorld(int worldId) {
@@ -125,7 +119,6 @@ public class WorldManager {
      *
      * @param worldID the world id
      * @param r       the r
-     *
      * @return the future
      */
     public static Future<?> submitTask(int worldID, Runnable r) {
@@ -138,7 +131,6 @@ public class WorldManager {
      * @param <T>     the type parameter
      * @param worldID the world id
      * @param r       the r
-     *
      * @return the future
      */
     public static <T> Future<T> submitTask(int worldID, Callable<T> r) {

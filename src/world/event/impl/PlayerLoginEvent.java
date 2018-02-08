@@ -2,14 +2,14 @@ package world.event.impl;
 
 import net.Client;
 
-public class PlayerLoginEvent extends Event{
+public class PlayerLoginEvent extends Event {
     private final String username;
     private final String password;
     private final Client c;
 
-    public PlayerLoginEvent(String username,String pass, Client c){
+    public PlayerLoginEvent(String username, String pass, Client c) {
         this.username = username;
-        this.password = pass;
+        password = pass;
         this.c = c;
     }
 
