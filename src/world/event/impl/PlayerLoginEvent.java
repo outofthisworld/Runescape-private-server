@@ -1,16 +1,22 @@
 package world.event.impl;
 
 import net.Client;
+import net.LoginDecoder;
+import world.World;
 
 public class PlayerLoginEvent extends Event {
+    private final World world;
     private final String username;
     private final String password;
     private final Client c;
+    private final LoginDecoder decoder;
 
-    public PlayerLoginEvent(String username, String pass, Client c) {
+    public PlayerLoginEvent(World world, LoginDecoder decoder, String username, String pass, Client c) {
+        this.world = world;
         this.username = username;
         password = pass;
         this.c = c;
+        this.decoder = decoder;
     }
 
     public String getUsername() {
@@ -25,8 +31,12 @@ public class PlayerLoginEvent extends Event {
         return c;
     }
 
+    public World getWorld() {
+        return world;
+    }
+
     @Override
-    public Client getSender() {
-        return c;
+    public LoginDecoder getSender() {
+        return decoder;
     }
 }

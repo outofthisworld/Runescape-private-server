@@ -55,16 +55,10 @@
 
 package world;
 
-import net.buffers.OutputBuffer;
-import net.packets.outgoing.OutgoingPacketBuilder;
 import sun.plugin.dom.exception.InvalidStateException;
 import world.entity.player.Player;
-import world.entity.player.Skill;
-import world.event.Event;
 import world.event.EventBus;
 import world.event.WorldEventBus;
-import world.event.impl.PlayerLoginEvent;
-import world.interfaces.SidebarInterface;
 import world.task.Task;
 
 import java.util.ArrayList;
@@ -94,6 +88,7 @@ public class World {
      */
     World(int worldId) {
         this.worldId = worldId;
+        getEventBus().register(this);
     }
 
 
@@ -118,7 +113,7 @@ public class World {
         worldTasks.clear();
     }
 
-    private int getSlot() {
+    public int getSlot() {
         if (!(playersCount < players.length)) {
             return -1;
         }
@@ -171,76 +166,6 @@ public class World {
         doWorldTasks();
     }
 
-    @Event
-    private void handlePlayerLogin(PlayerLoginEvent p) {
-        submit(() -> {
-            int responseCode = 2;
-
-            if (getFreeSlots() <= 0) {
-
-                //world full
-                responseCode = 7;
-            }
-
-            if (getPlayerByName(p.getUsername()).isPresent()) {
-                //already logged in
-                responseCode = 5;
-            }
-
-            Player.asyncPlayerStore().load(p.getUsername()).thenAcceptAsync((p) -> {
-
-                int rCode = 2;
-
-                if (p == null) {
-                    p = new Player();
-                    p.setUsername(p.getUsername());
-                    p.setPassword(p.getPassword());
-                    Player.asyncPlayerStore().store(username, p);
-                    //Initialize anything
-                }
-
-                if (!p.getPassword().equals(password)) {
-                    //invalid password
-                    rCode = 3;
-                } else if (p.isDisabled()) {
-                    //account disabled
-                    rCode = 4;
-                } else {
-                    p.setClient(c);
-                }
-
-                c.write(OutputBuffer.create(3).writeByte(rCode).writeByte(p.getRights()).writeByte(0));
-                WorldManager.queueLogin(0, p);
-            })
-
-
-            int playerIndex = getSlot();
-
-            if (playerIndex != -1) {
-                OutgoingPacketBuilder out = p.getClient().getOutgoingPacketBuilder();
-                p.getClient().setLoggedIn(true);
-
-                out.initPlayer(1, playerIndex)
-                        .setChatOptions(0, 0, 0);
-
-                for (Skill s : Skill.values()) {
-                    out.setSkillLevel(s.ordinal(), p.getSkillLevel(s), p.getSkillExp(s));
-                }
-
-                for (SidebarInterface sidebarInterface : SidebarInterface.values()) {
-                    out.setSidebarInterface(sidebarInterface.ordinal(), sidebarInterface.getInterfaceId());
-                }
-
-                out.addPlayerOptions(3, 0, new String[]{"Attack", "Trade with"});
-                out.sendMessage("Welcome to EvolutionRS");
-
-
-                out.send();
-
-                addPlayerToWorld(playerIndex, p);
-            }
-        });
-    }
 
     private void handlePlayerDisconnects() {
         for (int i = 0; i < players.length; i++) {

@@ -62,7 +62,6 @@ import net.packets.exceptions.InvalidOpcodeException;
 import net.packets.exceptions.InvalidPacketSizeException;
 import world.World;
 import world.WorldManager;
-import world.entity.player.Player;
 import world.event.impl.PlayerLoginEvent;
 
 import java.util.Arrays;
@@ -70,24 +69,24 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class LoginHandler {
+public final class LoginDecoder {
     private static final int LOGIN_REQUEST = 14;
     private static final int UPDATE = 15;
     private static final int NEW_SESSION = 16;
     private static final int RECONNECT = 18;
-    private final Set<Integer> opcodes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(LoginHandler.LOGIN_REQUEST, LoginHandler.UPDATE, LoginHandler.NEW_SESSION, LoginHandler.RECONNECT)));
+    private final Set<Integer> opcodes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(LoginDecoder.LOGIN_REQUEST, LoginDecoder.UPDATE, LoginDecoder.NEW_SESSION, LoginDecoder.RECONNECT)));
 
 
-    private LoginHandler() {
+    private LoginDecoder() {
     }
 
-    public static void login(Client c, int packetOpcode, InputBuffer in) throws Exception {
+    public static void login(final Client c, final int packetOpcode, final InputBuffer in) throws Exception {
         if (c.isLoggedIn()) {
             return;
         }
 
         switch (packetOpcode) {
-            case LoginHandler.LOGIN_REQUEST:
+            case LoginDecoder.LOGIN_REQUEST:
                 System.out.println("in login stage one");
 
                 /*if (in.readUnsignedByte() != 14) {
@@ -102,8 +101,8 @@ public final class LoginHandler {
                         .writeByte(0)// login response - 0 means exchange session key to establish encryption
                         .writeBigQWORD(c.getServerSessionKey()));// send the net.Server part of the session Id used (Client+net.Server part together are used as cryption key
                 break;
-            case LoginHandler.NEW_SESSION:
-            case LoginHandler.RECONNECT:
+            case LoginDecoder.NEW_SESSION:
+            case LoginDecoder.RECONNECT:
                 /*
                 int loginType = in.readUnsignedByte();
                 if (loginType != 16 && loginType != 18) {
@@ -112,10 +111,10 @@ public final class LoginHandler {
                 }*/
 
                 if (in.remaining() < 1) {
-                    throw new InvalidPacketSizeException(packetOpcode, "Invalid packet size for opcode: " + packetOpcode + "in " + LoginHandler.class.getName());
+                    throw new InvalidPacketSizeException(packetOpcode, "Invalid packet size for opcode: " + packetOpcode + "in " + LoginDecoder.class.getName());
                 }
 
-                short loginPacketSize = in.readUnsignedByte();
+                final short loginPacketSize = in.readUnsignedByte();
                 System.out.println(loginPacketSize);
                 System.out.println(in.remaining());
 
@@ -134,8 +133,8 @@ public final class LoginHandler {
 
                 System.out.println("Remaining in buffer after stage 2: " + in.remaining());
 
-                int magicNum = in.readUnsignedByte();
-                int revision = in.readBigUnsignedWORD();
+                final int magicNum = in.readUnsignedByte();
+                final int revision = in.readBigUnsignedWORD();
 
                 System.out.println(magicNum);
                 System.out.println(revision);
@@ -145,7 +144,7 @@ public final class LoginHandler {
                     return;
                 }
 
-                int lowMemoryVersion = in.readUnsignedByte();
+                final int lowMemoryVersion = in.readUnsignedByte();
                 in.skip(4 * 9);
 
                 loginEncryptedPacketSize--;
@@ -160,31 +159,31 @@ public final class LoginHandler {
                     return;
                 }
 
-                long clientSessionKey = in.readBigSignedQWORD();
-                long serverSessionKey = in.readBigSignedQWORD();
+                final long clientSessionKey = in.readBigSignedQWORD();
+                final long serverSessionKey = in.readBigSignedQWORD();
 
-                int userID = in.readBigSignedDWORD();
+                final int userID = in.readBigSignedDWORD();
 
-                byte[] usernameBytes = in.readUntil(b -> b.byteValue() == 10);
+                final byte[] usernameBytes = in.readUntil(b -> b.byteValue() == 10);
 
                 if (usernameBytes == null) {
                     System.out.println("Username bytes null");
                     return;
                 }
 
-                String username = new String(usernameBytes, 0, usernameBytes.length - 1);
+                final String username = new String(usernameBytes, 0, usernameBytes.length - 1);
                 if (username == null || username.length() == 0) {
                     System.out.println("Blank username");
                     return;
                 }
 
-                byte[] passwordBytes = in.readUntil(b -> b.byteValue() == 10);
+                final byte[] passwordBytes = in.readUntil(b -> b.byteValue() == 10);
 
                 if (passwordBytes == null) {
                     System.out.println("password bytes null");
                 }
 
-                String password = new String(passwordBytes);
+                final String password = new String(passwordBytes);
 
                 if (password == null || password.length() == 0) {
                     System.out.println("invalid pass");
@@ -194,7 +193,7 @@ public final class LoginHandler {
                 System.out.println(username);
                 System.out.println(password);
 
-                int[] sessionKey = new int[4];
+                final int[] sessionKey = new int[4];
                 sessionKey[0] = (int) (clientSessionKey >> 32);
                 sessionKey[1] = (int) clientSessionKey;
                 sessionKey[2] = (int) (serverSessionKey >> 32);
@@ -208,9 +207,9 @@ public final class LoginHandler {
                 }
                 c.setOutCipher(new ISAACCipher(sessionKey));
 
-                World world = WorldManager.getWorld(0);
+                final World world = WorldManager.getWorld(0);
 
-                world.getEventBus().fire(new PlayerLoginEvent(username, password, c));
+                world.getEventBus().fire(new PlayerLoginEvent(world, new LoginDecoder(), username, password, c));
                 /**
                  1	Waits for 2000ms and tries again while counting failures.
                  0	Exchanges session keys, entity name, password, etc.
@@ -235,55 +234,9 @@ public final class LoginHandler {
                  21	"You have only just left another world. Your profile will be transferred in: (number) seconds."
                  None of the above	"Unexpected server response. Please try using a different world."
                  */
-                world.submit(() -> {
-                    int responseCode = 2;
-
-                    if (world.getFreeSlots() <= 0) {
-
-                        //world full
-                        responseCode = 7;
-                    }
-
-                    if (world.getPlayerByName(username).isPresent()) {
-                        //already logged in
-                        responseCode = 5;
-                    }
-
-                    if (responseCode != 2) {
-                        c.write(OutputBuffer.create(3).writeByte(2).writeByte(0).writeByte(0));
-                        return;
-                    }
-
-                    //Check login limit
-                    Player.asyncPlayerStore().load(username).thenAcceptAsync((p) -> {
-
-                        int rCode = 2;
-
-                        if (p == null) {
-                            p = new Player();
-                            p.setUsername(username);
-                            p.setPassword(password);
-                            Player.asyncPlayerStore().store(username, p);
-                            //Initialize anything
-                        }
-
-                        if (!p.getPassword().equals(password)) {
-                            //invalid password
-                            rCode = 3;
-                        } else if (p.isDisabled()) {
-                            //account disabled
-                            rCode = 4;
-                        } else {
-                            p.setClient(c);
-                        }
-
-                        c.write(OutputBuffer.create(3).writeByte(rCode).writeByte(p.getRights()).writeByte(0));
-                        WorldManager.queueLogin(0, p);
-                    });
-                });
                 break;
             default:
-                throw new InvalidOpcodeException(packetOpcode, "Invalid packet opcode being handled by " + LoginHandler.class.getName());
+                throw new InvalidOpcodeException(packetOpcode, "Invalid packet opcode being handled by " + LoginDecoder.class.getName());
         }
     }
 }

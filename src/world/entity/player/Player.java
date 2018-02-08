@@ -58,9 +58,17 @@ package world.entity.player;
 import database.AsyncPlayerStore;
 import database.CollectionAccessor;
 import net.Client;
+import net.packets.outgoing.OutgoingPacketBuilder;
+import world.World;
 import world.containers.Bank;
 import world.containers.Equipment;
 import world.containers.Inventory;
+import world.event.Event;
+import world.event.impl.PlayerLoginEvent;
+import world.interfaces.SidebarInterface;
+
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * The type Player.
@@ -79,6 +87,7 @@ public class Player {
     private String username;
     private String password;
     private boolean isDisabled = false;
+    private int slotId;
 
     /**
      * Instantiates a new Player.
@@ -94,6 +103,72 @@ public class Player {
      */
     public static AsyncPlayerStore asyncPlayerStore() {
         return Player.asyncPlayerStore;
+    }
+
+    /**
+     * Load completable future.
+     *
+     * @param username the username
+     * @return the completable future
+     */
+    public static CompletableFuture<Optional<Player>> load(String username) {
+        return Player.asyncPlayerStore().load(username).thenApplyAsync(player -> Optional.ofNullable(player));
+    }
+
+    public int getSlotId() {
+        return slotId;
+    }
+
+    private void setSlotId(int slotId){
+        this.slotId = slotId;
+    }
+
+    @Event()
+    private void playerLoginEvent(PlayerLoginEvent lEvent) {
+        World loginWorld = lEvent.getWorld();
+        int loginSlot = loginWorld.getSlot();
+
+        if (loginSlot == -1) {
+
+            //world full 7
+            lEvent.getSender().sendResponse(7,0,0);
+            return;
+        }
+
+        if (loginWorld.getPlayerByName(lEvent.getUsername()).isPresent()) {
+            //already logged in 5
+
+            lEvent.getSender().sendResponse(5,0,0);
+            return;
+        }
+
+        Player.load(lEvent.getUsername()).thenAcceptAsync(player -> {
+            loginWorld.submit(()->{
+                Player decoded;
+
+                if (player.isPresent()) {
+                    decoded = player.get();
+                    if (!decoded.getPassword().equals(decoded.getPassword())) {
+                        decoded.getSender().sendResponse(3,0,0);
+                        return;
+                    }
+
+                    if(decoded.isDisabled()){
+                        decoded.getSender().sendReponse(4,0,0);
+                        return;
+                    }
+                } else {
+                    decoded = new Player();
+                    decoded.setUsername(decoded.getUsername());
+                    decoded.setPassword(decoded.getPassword());
+                    decoded.setRights(0);
+                    decoded.asyncPlayerStore().store(decoded.getUsername(), decoded);
+                }
+
+                decoded.setClient(decoded.getClient());
+                decoded.setSlotId(loginSlot);
+            });
+        });
     }
 
     /**
@@ -168,6 +243,16 @@ public class Player {
         return rights;
     }
 
+
+    /**
+     * Sets rights.
+     *
+     * @param rights the rights
+     */
+    public void setRights(int rights) {
+        this.rights = rights;
+    }
+
     /**
      * Gets client.
      *
@@ -182,7 +267,7 @@ public class Player {
      *
      * @param c the c
      */
-    public void setClient(Client c) {
+    private void setClient(Client c) {
         this.c = c;
     }
 
@@ -258,7 +343,7 @@ public class Player {
     /**
      * Sets skill level.
      *
-     * @param skillId    the skill id
+     * @param skill      the skill
      * @param skillLevel the skill level
      */
     public void setSkillLevel(Skill skill, int skillLevel) {
@@ -295,8 +380,8 @@ public class Player {
     /**
      * Sets skill exp.
      *
-     * @param skillId the skill id
-     * @param exp     the exp
+     * @param skill the skill
+     * @param exp   the exp
      */
     public void setSkillExp(Skill skill, int exp) {
         skills[skill.ordinal()] = world.entity.player.Skill.getLevelFromExp(exp);

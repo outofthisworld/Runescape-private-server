@@ -391,7 +391,7 @@ public class Client {
         if (!isLoggedIn()) {
 
             try {
-                LoginHandler.login(c, op, new InputBuffer(inBuffer));
+                LoginDecoder.login(c, op, new InputBuffer(inBuffer));
             } catch (Exception e) {
                 e.printStackTrace();
             }
