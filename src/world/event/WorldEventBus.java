@@ -14,8 +14,12 @@ public class WorldEventBus extends AbstractEventBus {
 
     @Override
     public <T extends Event> void fire(T event) {
+        List<EventHandler> handlers = getRegisteredEvents().get(event.getClass().isAnonymousClass()?event.getClass().getSuperclass():event.getClass());
+
         world.submit(() -> {
-            List<EventHandler> handlers = getRegisteredEvents().get(event.getClass());
+            if (handlers == null) {
+                return;
+            }
             handlers.forEach((h) -> {
                 h.handle(event);
             });
