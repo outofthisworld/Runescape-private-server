@@ -13,8 +13,7 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-import database.Database;
-import net.Server;
+import net.Reactor;
 import world.WorldManager;
 
 import java.io.IOException;
@@ -23,11 +22,11 @@ import java.util.concurrent.Executors;
 
 
 /**
- * The type Engine.
+ * The type Bootstrap.
  */
-public class Engine {
-    private final ExecutorService e = Executors.newSingleThreadExecutor();
-    private final Server server = new Server(EngineConfig.HOST, EngineConfig.PORT);
+public class Bootstrap implements Runnable {
+    private final ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
+    private final Reactor reactor = new Reactor();
 
     /**
      * The entry point of application.
@@ -35,38 +34,38 @@ public class Engine {
      * @param args the input arguments
      */
     public static void main(String[] args) {
-        new Engine().start();
+        new Bootstrap().boot();
     }
 
 
     /**
      * Start.
      */
-    public void start() {
+    public void boot() {
         WorldManager.createWorld();
-        Database.init();
-        e.submit(this::startServer);
+        networkExecutor.submit(this);
     }
 
     /**
      * Stop.
      */
-    public void stop() {
-        server.stop();
+    public void tearDown() {
+        reactor.stop();
         WorldManager.shutdownWorlds();
-        e.shutdownNow();
+        networkExecutor.shutdownNow();
     }
 
-    private void startServer() {
+    @Override
+    public void run() {
         int attempts = 0;
         while (true) {
             try {
-                server.start();
+                reactor.start();
             } catch (IOException e1) {
                 e1.printStackTrace();
                 attempts++;
                 if (attempts == 5) {
-                    stop();
+                    tearDown();
                     break;
                 } else {
                     try {

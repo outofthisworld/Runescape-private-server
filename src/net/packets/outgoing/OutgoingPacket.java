@@ -15,8 +15,8 @@
 
 package net.packets.outgoing;
 
-import net.Client;
 import net.buffers.OutputBuffer;
+import net.network.Client;
 
 /**
  * The type Outgoing packet.
@@ -72,7 +72,7 @@ public class OutgoingPacket {
         /**
          * The constant FLASH_SIDEBAR_ICON.
          * Description
-         * This packet causes a sidebar icon to start flashing.
+         * This packet causes a sidebar icon to boot flashing.
          * <p>
          * Packet Structure
          * Data Type	Description
@@ -271,7 +271,7 @@ public class OutgoingPacket {
          * The constant PLAY_SONG.
          * <p>
          * Description
-         * Sending this packet to the client will cause the client to start playing a song.
+         * Sending this packet to the client will cause the client to boot playing a song.
          * <p>
          * Packet Structure
          * Data Type	Description
@@ -764,7 +764,7 @@ public class OutgoingPacket {
          */
         public static final int SEND_CHAT_INTERFACE = 164;
         /**
-         * Server message
+         * Reactor message
          * Description
          * Sends a server side message (e.g. 'Welcome to RuneScape'), or trade/duel/challenge request.
          * <p>

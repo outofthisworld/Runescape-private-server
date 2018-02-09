@@ -13,9 +13,12 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package net;
+package net.network.channel;
+
+import net.NetworkConfig;
 
 import java.io.IOException;
+import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,12 +30,12 @@ import java.util.concurrent.Executors;
  * The type Channel manager.
  */
 public class ChannelManager {
-    private static int MAX_HANDLER_CHANNELS = 300;
     private static ExecutorService executor = Executors.newCachedThreadPool();
-    private final ArrayList<IChannelHandler> socketHandlers = new ArrayList();
+    private final ArrayList<IChannelHandler> channelHandlers = new ArrayList();
+    private final int maxChannelsPerHandler;
 
-    private ChannelManager() {
-
+    private ChannelManager(int maxChannelsPerHandler) {
+        this.maxChannelsPerHandler = maxChannelsPerHandler;
     }
 
     /**
@@ -41,7 +44,7 @@ public class ChannelManager {
      * @return the channel manager
      */
     public static ChannelManager create() {
-        return new ChannelManager();
+        return new ChannelManager(NetworkConfig.MAX_CHANNELS_PER_HANDLER);
     }
 
     /**
@@ -51,25 +54,12 @@ public class ChannelManager {
      * @return the channel manager
      * @throws IOException the io exception
      */
-    public static ChannelManager create(int numHandlers) throws IOException {
-        ChannelManager s = new ChannelManager();
+    public static ChannelManager create(int maxChannelsPerHandler, int numHandlers) throws IOException {
+        ChannelManager s = new ChannelManager(maxChannelsPerHandler);
         for (int i = 0; i < numHandlers; i++) {
-            s.addSocketHandler(new ChannelHandler());
+            s.addChannelHandler(new ChannelHandler());
         }
         return s;
-    }
-
-    /**
-     * Create channel manager.
-     *
-     * @param numHandlers        the num handlers
-     * @param maxHandlerChannels the max handler channels
-     * @return the channel manager
-     * @throws IOException the io exception
-     */
-    public static ChannelManager create(int numHandlers, int maxHandlerChannels) throws IOException {
-        ChannelManager.MAX_HANDLER_CHANNELS = maxHandlerChannels;
-        return ChannelManager.create(numHandlers);
     }
 
     /**
@@ -78,10 +68,10 @@ public class ChannelManager {
      * @param s the s
      * @throws Exception the exception
      */
-    public void register(SocketChannel s) throws Exception {
+    public SelectionKey register(SocketChannel s) throws Exception {
         int min = Integer.MAX_VALUE;
         IChannelHandler minHandler = null;
-        for (Iterator<IChannelHandler> it = socketHandlers.iterator(); it.hasNext(); ) {
+        for (Iterator<IChannelHandler> it = channelHandlers.iterator(); it.hasNext(); ) {
             IChannelHandler handler = it.next();
             if (!handler.isRunning()) {
                 it.remove();
@@ -93,12 +83,12 @@ public class ChannelManager {
             }
         }
 
-        if (minHandler == null || min >= ChannelManager.MAX_HANDLER_CHANNELS) {
+        if (minHandler == null || min >= maxChannelsPerHandler) {
             ChannelHandler socketHandler = new ChannelHandler();
-            addSocketHandler(socketHandler);
-            socketHandler.handle(s);
+            addChannelHandler(socketHandler);
+            return socketHandler.handle(s);
         } else {
-            minHandler.handle(s);
+            return minHandler.handle(s);
         }
     }
 
@@ -108,9 +98,9 @@ public class ChannelManager {
      * @throws Exception the exception
      */
     public void shutdownHandlers() throws Exception {
-        for (int i = 0; i < socketHandlers.size(); i++) {
-            if (socketHandlers.get(i) != null && socketHandlers.get(i).isRunning()) {
-                socketHandlers.get(i).shutdown();
+        for (int i = 0; i < channelHandlers.size(); i++) {
+            if (channelHandlers.get(i) != null && channelHandlers.get(i).isRunning()) {
+                channelHandlers.get(i).shutdown();
             }
         }
     }
@@ -132,13 +122,13 @@ public class ChannelManager {
      * @param <T> the type parameter
      * @param t   the t
      */
-    public <T extends IChannelHandler> void addSocketHandler(T t) {
+    public <T extends IChannelHandler> void addChannelHandler(T t) {
         if (!t.isRunning()) {
             if (ChannelManager.executor == null || ChannelManager.executor.isShutdown()) {
                 ChannelManager.executor = Executors.newCachedThreadPool();
             }
             ChannelManager.executor.execute(t);
         }
-        socketHandlers.add(t);
+        channelHandlers.add(t);
     }
 }

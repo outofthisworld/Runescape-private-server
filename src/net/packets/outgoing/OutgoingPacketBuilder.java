@@ -15,8 +15,8 @@
 
 package net.packets.outgoing;
 
-import net.Client;
 import net.buffers.OutputBuffer;
+import net.network.Client;
 
 import java.util.Arrays;
 import java.util.List;

@@ -13,7 +13,12 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package net;
+package net.network.channel;
+
+import net.network.Client;
+import net.network.NetworkEvent;
+import net.network.NetworkReadEvent;
+import net.network.NetworkWriteEvent;
 
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
@@ -29,6 +34,8 @@ import java.util.Set;
  */
 public class ChannelHandler implements IChannelHandler {
     private final Selector selector;
+    private final NetworkEvent networkReadEvent = new NetworkReadEvent();
+    private final NetworkEvent networkWriteEvent = new NetworkWriteEvent();
     private volatile boolean isRunning = false;
     private HashMap<SocketChannel, SelectionKey> sockets;
     private int numChannels = 0;
@@ -43,7 +50,7 @@ public class ChannelHandler implements IChannelHandler {
     }
 
     @Override
-    public void handle(SocketChannel socketChannel) throws Exception {
+    public SelectionKey handle(SocketChannel socketChannel) throws Exception {
         if (!socketChannel.isConnected()) {
             throw new Exception("ChannelHandler.java: Attempted to login an unconnected socket channel");
         }
@@ -52,14 +59,14 @@ public class ChannelHandler implements IChannelHandler {
             socketChannel.configureBlocking(false);
         }
 
-        System.out.println("Registering socket channel with connection handler");
-
         if (sockets == null) {
             sockets = new HashMap<>();
         }
 
-        sockets.put(socketChannel, socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE));
+        SelectionKey key;
+        sockets.put(socketChannel, key = socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE));
         numChannels++;
+        return key;
     }
 
     @Override
@@ -133,28 +140,15 @@ public class ChannelHandler implements IChannelHandler {
             }
 
             if (currentlySelected.isValid() && currentlySelected.isReadable()) {
-                System.out.println("readble selection");
                 Client c = (Client) currentlySelected.attachment();
-                try {
-                    System.out.println("processing read");
-                    c.processRead();
-                    //Read into read buffer...
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                c.execute(networkReadEvent);
             }
 
             if (currentlySelected.isValid() && currentlySelected.isWritable()) {
-                System.out.println("writable selection");
                 Client c = (Client) currentlySelected.attachment();
-                try {
-                    System.out.println("processing write");
-                    c.processWrite();
-                    //Read into read buffer...
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                c.execute(networkWriteEvent);
             }
+
             it.remove();
         }
     }

@@ -15,6 +15,8 @@
 
 package world;
 
+import sun.plugin.dom.exception.InvalidStateException;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Future;
@@ -48,6 +50,10 @@ public class WorldManager {
      * @return the int
      */
     public static int createWorld() {
+        if (WorldManager.WORLDS.size() >= WorldConfig.MAX_VIRTUAL_WORLDS) {
+            throw new InvalidStateException("Max no worlds exceeded");
+        }
+
         World w = new World(WorldManager.WORLDS.size());
         WorldManager.WORLDS.add(w);
         //DOnt do anything with it for now, could be used later.

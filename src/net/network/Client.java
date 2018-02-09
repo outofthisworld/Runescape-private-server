@@ -13,14 +13,11 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package net;
+package net.network;
 
-import net.buffers.InputBuffer;
 import net.buffers.OutputBuffer;
 import net.enc.ISAACCipher;
-import net.packets.incoming.IncomingPacket;
 import net.packets.outgoing.OutgoingPacketBuilder;
-import world.WorldManager;
 import world.entity.player.Player;
 
 import java.io.IOException;
@@ -29,18 +26,15 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.Date;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
 /**
  * The type Client.
  */
-public class Client {
-    private static final int MAX_IN_BUFFER_SIZE = 8500, MAX_PACKET_SIZE = 512, BUFFER_INCREASE_SIZE = 1024;
+public class Client implements NetworkEventExecutor {
     private static final Logger logger = Logger.getLogger(Client.class.getName());
     private final SocketChannel channel;
     private final SelectionKey selectionKey;
@@ -72,7 +66,7 @@ public class Client {
         connectedAt = System.nanoTime();
     }
 
-    private SocketChannel getChannel() {
+    protected SocketChannel getChannel() {
         return channel;
     }
 
@@ -99,6 +93,24 @@ public class Client {
             throw new IllegalStateException("Cipher for client already set");
         }
         inCipher = cipher;
+    }
+
+    /**
+     * Gets in buffer.
+     *
+     * @return the in buffer
+     */
+    protected ByteBuffer getInBuffer() {
+        return inBuffer;
+    }
+
+    /**
+     * Sets in buffer.
+     *
+     * @param inBuffer the in buffer
+     */
+    protected void setInBuffer(ByteBuffer inBuffer) {
+        this.inBuffer = inBuffer;
     }
 
     /**
@@ -167,23 +179,24 @@ public class Client {
         player = p;
     }
 
-    /**
-     * Process write.
-     *
-     * @return the completable future
-     */
-    CompletableFuture processWrite() {
-        return CompletableFuture.runAsync(() -> {
-            OutputBuffer buf;
 
-            while ((buf = outgoingBuffers.poll()) != null) {
-                writeOutBuf(buf, false);
-            }
-        });
+    /**
+     * Gets outgoing buffers.
+     *
+     * @return the outgoing buffers
+     */
+    protected ConcurrentLinkedDeque<OutputBuffer> getOutgoingBuffers() {
+        return outgoingBuffers;
     }
 
-
-    private int writeOutBuf(OutputBuffer outBuffer, boolean isNew) {
+    /**
+     * Write out buf int.
+     *
+     * @param outBuffer the out buffer
+     * @param isNew     the is new
+     * @return the int
+     */
+    protected int writeOutBuf(OutputBuffer outBuffer, boolean isNew) {
         int bytesWritten = 0;
 
         int outBufSize = outBuffer.size();
@@ -254,28 +267,13 @@ public class Client {
     }
 
 
-    private int readInBuf() throws Exception {
-
-        //Attempt to resize the input buffer so inBuffer.remaining() is always at-least max packet size.
-        //Throw an exception if inBuffer.capacity() + BUFFER_INCREASE_SIZE >= MAX_IN_BUFFER_SIZE.
-        if (inBuffer.remaining() < Client.MAX_PACKET_SIZE) {
-            if (inBuffer.capacity() + Client.BUFFER_INCREASE_SIZE >= Client.MAX_IN_BUFFER_SIZE) {
-                throw new Exception("InBuffer reached maximum");
-            } else {
-                ByteBuffer b = ByteBuffer.allocate(inBuffer.capacity() + Client.BUFFER_INCREASE_SIZE);
-                inBuffer.flip();
-                b.put(inBuffer);
-                inBuffer.clear();
-                inBuffer = b;
-            }
-        }
-
-        int bytesRead = getChannel().read(inBuffer);
-        if (bytesRead == -1) {
-            throw new Exception("end of stream reached");
-        }
-
-        return bytesRead;
+    /**
+     * Gets remote address.
+     *
+     * @return the remote address
+     */
+    public InetSocketAddress getRemoteAddress() {
+        return remoteAddress;
     }
 
     /**
@@ -319,69 +317,9 @@ public class Client {
     }
 
 
-    /**
-     * Process read.
-     */
-    void processRead() {
-        if (inBuffer == null) {
-            inBuffer = ByteBuffer.allocate(Client.BUFFER_INCREASE_SIZE);
-        }
-
-        int bytesRead;
-
-        try {
-            bytesRead = readInBuf();
-        } catch (Exception e) {
-            e.printStackTrace();
-            disconnect();
-            return;
-        }
-
-        //Make buffer readable
-        inBuffer.flip();
-
-        if (inBuffer.remaining() < 1) {
-            inBuffer.compact();
-            return;
-        }
-
-        int op = inBuffer.get() & 0xFF;
-
-        Client c = this;
-        if (!isLoggedIn()) {
-
-            try {
-                LoginDecoder.login(c, op, new InputBuffer(inBuffer));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        } else {
-            int decodedOp = op - inCipher.getNextValue();
-            int packetSize = IncomingPacket.getPacketSizeForId(decodedOp);
-
-            if (packetSize != -1 && inBuffer.remaining() < packetSize) {
-                inBuffer.rewind();
-                inBuffer.compact();
-                return;
-            }
-
-            InputBuffer in = new InputBuffer(inBuffer, packetSize);
-            Optional<IncomingPacket> p = IncomingPacket.getForId(op);
-
-            if (p.isPresent()) {
-                WorldManager.submitTask(0, () -> {
-                    try {
-                        p.get().handle(this, decodedOp, in);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-            } else {
-                Client.logger.log(Level.INFO, "Unhandled packet received : " + op + " from client: " + remoteAddress.getHostName());
-            }
-        }
-        inBuffer.compact();
+    @Override
+    public void execute(NetworkEvent event) {
+        event.accept(this);
     }
 }
 

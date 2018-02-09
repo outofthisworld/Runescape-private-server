@@ -33,7 +33,6 @@ import java.util.concurrent.*;
  * The type World.
  */
 public class World {
-
     private final Player players[] = new Player[WorldConfig.MAX_PLAYERS_IN_WORLD];
     private final ConcurrentLinkedQueue<Task> worldTasks = new ConcurrentLinkedQueue<>();
     private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor(new WorldThreadFactory(10));
@@ -139,26 +138,26 @@ public class World {
         }
 
         lEvent.getPlayer().load().thenAcceptAsync(player -> {
-            Player decoded;
+            Player deserialized;
             if (player.isPresent()) {
-                decoded = player.get();
-                if (!decoded.getPassword().equals(decoded.getPassword())) {
+                deserialized = player.get();
+                if (!deserialized.getPassword().equals(deserialized.getPassword())) {
                     lEvent.getSender().sendResponse(3, 0, 0);
                     return;
                 }
 
-                if (decoded.isDisabled()) {
+                if (deserialized.isDisabled()) {
                     lEvent.getSender().sendResponse(4, 0, 0);
                     return;
                 }
             } else {
-                decoded = lEvent.getPlayer();
-                Player.asyncPlayerStore().store(decoded);
+                deserialized = lEvent.getPlayer();
+                Player.asyncPlayerStore().store(deserialized);
             }
 
-            decoded.setClient(decoded.getClient());
-            decoded.setSlotId(loginSlot);
-            add(loginSlot, decoded);
+            deserialized.setClient(deserialized.getClient());
+            deserialized.setSlotId(loginSlot);
+            add(loginSlot, deserialized);
         }, worldExecutorService);
     }
 

@@ -16,15 +16,24 @@
 package world.definitions;
 
 import database.CollectionAccessor;
+import database.DatabaseConfig;
 import database.IDBAccessor;
+import database.serialization.GsonSerializer;
 
 import java.util.Collections;
 import java.util.List;
 
 public final class ItemDefinition {
 
-    private static final IDBAccessor<ItemDefinition> itemDB = new CollectionAccessor<>("Items", ItemDefinition.class);
+    private static final IDBAccessor<ItemDefinition> itemDB = new CollectionAccessor<>(new GsonSerializer<>(ItemDefinition.class), DatabaseConfig.ITEMS_COLLECTION);
     private static List<ItemDefinition> itemDefinitions = null;
+
+    static {
+        if (ItemDefinition.itemDefinitions == null) {
+            ItemDefinition.itemDefinitions = Collections.unmodifiableList(ItemDefinition.itemDB.findAll());
+        }
+    }
+
     private final int[] bonuses = new int[18];
     private int id;
     private String name;
@@ -56,13 +65,6 @@ public final class ItemDefinition {
         }
 
         return ItemDefinition.itemDefinitions.get(id);
-    }
-
-    public static void load() {
-        if (ItemDefinition.itemDefinitions != null) {
-            return;
-        }
-        ItemDefinition.itemDefinitions = Collections.unmodifiableList(ItemDefinition.itemDB.findAll());
     }
 
     public int getId() {

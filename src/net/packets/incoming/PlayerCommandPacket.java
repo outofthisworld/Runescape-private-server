@@ -15,7 +15,7 @@
 
 package net.packets.incoming;
 
-import net.Client;
+import net.network.Client;
 import net.buffers.InputBuffer;
 
 import java.util.logging.Logger;

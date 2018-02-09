@@ -16,14 +16,23 @@
 package world.definitions;
 
 import database.CollectionAccessor;
+import database.DatabaseConfig;
 import database.IDBAccessor;
+import database.serialization.GsonSerializer;
 
 import java.util.Collections;
 import java.util.List;
 
 public final class NpcDefinition {
-    private static final IDBAccessor<NpcDefinition> npcDB = new CollectionAccessor<>("Items", NpcDefinition.class);
+    private static final IDBAccessor<NpcDefinition> npcDB = new CollectionAccessor<>(new GsonSerializer<>(NpcDefinition.class), DatabaseConfig.NPC_COLLECTION);
     private static List<NpcDefinition> npcsDefinitions = null;
+
+    static {
+        if (NpcDefinition.npcsDefinitions == null) {
+            NpcDefinition.npcsDefinitions = Collections.unmodifiableList(NpcDefinition.npcDB.findAll());
+        }
+    }
+
     private final boolean attackable = false;
     private final boolean retreats = false;
     private final boolean aggressive = false;
@@ -55,13 +64,6 @@ public final class NpcDefinition {
         }
 
         return NpcDefinition.npcsDefinitions.get(id);
-    }
-
-    public static void load() {
-        if (NpcDefinition.npcsDefinitions != null) {
-            return;
-        }
-        NpcDefinition.npcsDefinitions = Collections.unmodifiableList(NpcDefinition.npcDB.findAll());
     }
 
     public int getId() {

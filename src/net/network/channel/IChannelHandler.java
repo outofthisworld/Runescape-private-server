@@ -13,8 +13,9 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package net;
+package net.network.channel;
 
+import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
 /**
@@ -28,7 +29,7 @@ public interface IChannelHandler extends Runnable {
      * @throws Exception the exception
      */
 /* Tell the socket handler to login this socket channel */
-    void handle(SocketChannel socketChannel) throws Exception;
+    SelectionKey handle(SocketChannel socketChannel) throws Exception;
 
     /**
      * Shutdown.

@@ -13,11 +13,12 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package net;
+package net.network.protocol;
 
 import net.buffers.InputBuffer;
 import net.buffers.OutputBuffer;
 import net.enc.ISAACCipher;
+import net.network.Client;
 import net.packets.exceptions.InvalidOpcodeException;
 import net.packets.exceptions.InvalidPacketSizeException;
 import world.World;
@@ -60,7 +61,7 @@ public final class LoginDecoder {
 
                 c.write(OutputBuffer.create(73, 10).writeBytes(0, 8)// is being ignored by the Client
                         .writeByte(0)// login response - 0 means exchange session key to establish encryption
-                        .writeBigQWORD(c.getServerSessionKey()));// send the net.Server part of the session Id used (Client+net.Server part together are used as cryption key
+                        .writeBigQWORD(c.getServerSessionKey()));// send the net.Reactor part of the session Id used (Client+net.Reactor part together are used as cryption key
                 break;
             case LoginDecoder.NEW_SESSION:
             case LoginDecoder.RECONNECT:

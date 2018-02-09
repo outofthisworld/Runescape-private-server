@@ -16,8 +16,9 @@
 package world.entity.player;
 
 import database.CollectionAccessor;
+import database.DatabaseConfig;
 import database.serialization.GsonSerializer;
-import net.Client;
+import net.network.Client;
 import sun.plugin.dom.exception.InvalidStateException;
 import world.containers.Bank;
 import world.containers.Equipment;
@@ -32,7 +33,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public class Player {
     private static final AsyncPlayerStore asyncPlayerStore = new AsyncPlayerStore(
-            new CollectionAccessor<>(new GsonSerializer<>(Player.class), "Players", "Evolution",
+            new CollectionAccessor<>(new GsonSerializer<>(Player.class), "Evolution", DatabaseConfig.PLAYERS_COLLECTION,
                     Player.class));
     private final int[] skills = new int[world.entity.player.Skill.values().length];
     private final int[] skillExp = new int[world.entity.player.Skill.values().length];
@@ -72,6 +73,12 @@ public class Player {
         return Player.asyncPlayerStore().load(username).thenApplyAsync(player -> Optional.ofNullable(player));
     }
 
+
+    /**
+     * Load completable future.
+     *
+     * @return the completable future
+     */
     public CompletableFuture<Optional<Player>> load() {
         if (getUsername() == null) {
             throw new InvalidStateException("username must be set before loading player.");
@@ -79,10 +86,20 @@ public class Player {
         return Player.asyncPlayerStore().load(this).thenApplyAsync(player -> Optional.ofNullable(player));
     }
 
+    /**
+     * Gets slot id.
+     *
+     * @return the slot id
+     */
     public int getSlotId() {
         return slotId;
     }
 
+    /**
+     * Sets slot id.
+     *
+     * @param slotId the slot id
+     */
     public void setSlotId(int slotId) {
         this.slotId = slotId;
     }

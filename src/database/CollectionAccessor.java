@@ -115,7 +115,7 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
         id = f.get(obj);
 
 
-        UpdateResult r = Database.getClient().getDatabase(DatabaseConfig.DB_NAME).getCollection(collectionName).updateOne(Filters.eq("_id", id), Document.parse(gson.toJson(obj)));
+        UpdateResult r = collection.updateOne(Filters.eq("_id", id), Document.parse(serializer.encode(obj)));
         return r.wasAcknowledged();
     }
 

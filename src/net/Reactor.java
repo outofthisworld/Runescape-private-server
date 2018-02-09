@@ -58,7 +58,7 @@ package net;/*------------------------------------------------------------------
  7. Termination
 
  This License and the rights granted hereunder will terminate automatically upon any breach by You of the terms of this License. Individuals or entities who have received Collections from You under this License, however, will not have their licenses terminated provided such individuals or entities remain in full compliance with those licenses. Sections 1, 2, 5, 6, 7, and 8 will survive any termination of this License.
- Subject to the above terms and conditions, the license granted here is perpetual (for the duration of the applicable copyright in the Work). Notwithstanding the above, Licensor reserves the right to release the Work under different license terms or to stop distributing the Work at any time; provided, however that any such election will not serve to withdraw this License (or any other license that has been, or is required to be, granted under the terms of this License), and this License will continue in full force and effect unless terminated as stated above.
+ Subject to the above terms and conditions, the license granted here is perpetual (for the duration of the applicable copyright in the Work). Notwithstanding the above, Licensor reserves the right to release the Work under different license terms or to tearDown distributing the Work at any time; provided, however that any such election will not serve to withdraw this License (or any other license that has been, or is required to be, granted under the terms of this License), and this License will continue in full force and effect unless terminated as stated above.
  8. Miscellaneous
 
  Each time You Distribute or Publicly Perform the Work or a CollectionAccessor, the Licensor offers to the recipient a license to the Work on the same terms and conditions as the license granted to You under this License.
@@ -67,6 +67,9 @@ package net;/*------------------------------------------------------------------
  This License constitutes the entire agreement between the parties with respect to the Work licensed here. There are no understandings, agreements or representations with respect to the Work not specified here. Licensor shall not be bound by any additional provisions that may appear in any communication from You. This License may not be modified without the mutual written agreement of the Licensor and You.
  The rights granted under, and the subject matter referenced, in this License were drafted utilizing the terminology of the Berne Convention for the Protection of Literary and Artistic Works (as amended on September 28, 1979), the Rome Convention of 1961, the WIPO Copyright Treaty of 1996, the WIPO Performances and Phonograms Treaty of 1996 and the Universal Copyright Convention (as revised on July 24, 1971). These rights and subject matter take effect in the relevant jurisdiction in which the License terms are sought to be enforced according to the corresponding provisions of the implementation of those treaty provisions in the applicable national law. If the standard suite of rights granted under applicable copyright law includes additional rights not granted under this License, such additional rights are deemed to be included in the License; this License is not intended to restrict the license of any rights under applicable law.
  -----------------------------------------------------------------------------*/
+
+import net.network.channel.ChannelGateway;
+import net.network.channel.ChannelManager;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -80,10 +83,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * The type net.Server.
+ * The type net.Reactor.
  */
-public final class Server {
-    private static final Logger logger = Logger.getLogger(Server.class.getName());
+public final class Reactor {
+    private static final Logger logger = Logger.getLogger(Reactor.class.getName());
     private final ChannelManager channelManager = ChannelManager.create();
     private final int numConnectionHandlers;
     private ServerSocketChannel serverSocketChannel;
@@ -91,23 +94,34 @@ public final class Server {
     private Selector onAcceptableSelector;
 
     /**
-     * Instantiates a new net.Server.
+     * Instantiates a new net.Reactor.
      *
      * @param host the host
      * @param port the port
      */
-    public Server(String host, int port) {
-        this(host, port, Runtime.getRuntime().availableProcessors() - 1);
+    public Reactor(String host, int port) {
+        this(host, port, NetworkConfig.DEFAULT_NO_CHANNEL_HANDLERS);
     }
 
     /**
-     * Instantiates a new net.Server.
+     * Instantiates a new net.Reactor.
+     *
+     * @param host the host
+     * @param port the port
+     */
+    public Reactor() {
+        this(NetworkConfig.HOST, NetworkConfig.PORT, NetworkConfig.DEFAULT_NO_CHANNEL_HANDLERS);
+    }
+
+
+    /**
+     * Instantiates a new net.Reactor.
      *
      * @param host                  the host
      * @param port                  the port
      * @param numConnectionHandlers the num connection handlers
      */
-    public Server(String host, int port, int numConnectionHandlers) {
+    public Reactor(String host, int port, int numConnectionHandlers) {
         address = new InetSocketAddress(host, port);
         if (numConnectionHandlers < 1 || numConnectionHandlers >= 50) {
             throw new IllegalArgumentException("Invalid numConnection handlers");
@@ -141,22 +155,6 @@ public final class Server {
     }
 
     /**
-     * Sets address.
-     *
-     * @param address the address
-     * @throws IOException the io exception
-     */
-/*
-
-        Binds the server to a new address (requires restarting server)
-     */
-    public void setAddress(InetSocketAddress address) throws IOException {
-        stop();
-        this.address = address;
-        start();
-    }
-
-    /**
      * Start.
      *
      * @throws IOException the io exception
@@ -166,7 +164,7 @@ public final class Server {
             return;
         }
 
-        Server.logger.log(Level.INFO, String.format("Starting server on host: %s using port : %d", getINetAddress().getHostName(), getINetAddress().getPort()));
+        Reactor.logger.log(Level.INFO, String.format("Starting server on host: %s using port : %d", getAddress().getHostName(), getAddress().getPort()));
 
         //Bind the server
         bindServerSocketChannel();
@@ -175,7 +173,7 @@ public final class Server {
         //Init connection handlers to handle reading
 
 
-        Server.logger.log(Level.INFO, "Successfully binded server");
+        Reactor.logger.log(Level.INFO, "Successfully binded server");
 
         while (serverSocketChannel.isOpen() && onAcceptableSelector.isOpen()) {
             acceptConnections();
@@ -206,14 +204,12 @@ public final class Server {
                 }
 
                 if (currentlySelected.isAcceptable()) {
-
                     SocketChannel socketChannel = serverSocketChannel.accept();
+                    socketChannel.finishConnect();
 
                     //Check we allow this connection
                     ChannelGateway.accept(socketChannel);
-
                     if (socketChannel != null && socketChannel.isConnected()) {
-                        socketChannel.finishConnect();
                         channelManager.register(socketChannel);
                     }
                 }
@@ -256,8 +252,24 @@ public final class Server {
      *
      * @return the i net address
      */
-    public InetSocketAddress getINetAddress() {
+    public InetSocketAddress getAddress() {
         return address;
+    }
+
+    /**
+     * Sets address.
+     *
+     * @param address the address
+     * @throws IOException the io exception
+     */
+/*
+
+        Binds the server to a new address (requires restarting server)
+     */
+    public void setAddress(InetSocketAddress address) throws IOException {
+        stop();
+        this.address = address;
+        start();
     }
 }
 

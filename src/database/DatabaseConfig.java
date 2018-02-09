@@ -21,6 +21,7 @@ public class DatabaseConfig {
 
     public static final String ITEMS_COLLECTION = "Items";
     public static final String NPC_COLLECTION = "Npcs";
+    public static final String PLAYERS_COLLECTION = "Players";
     private static final Logger logger = Logger.getLogger(DatabaseConfig.class.getName());
     public static String DB_HOST = "127.0.0.1";
     public static int DB_PORT = 27017;

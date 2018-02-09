@@ -7,27 +7,17 @@ package database;
 
 import com.mongodb.MongoClient;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Database {
     private static final Logger logger = Logger.getLogger(Database.class.getName());
     private static MongoClient mongoClient;
 
-
-    private Database() {
-
+    static {
+        Database.mongoClient = new MongoClient(DatabaseConfig.DB_HOST, DatabaseConfig.DB_PORT);
     }
 
-    public static void init() {
-        try {
-            Database.mongoClient = new MongoClient(DatabaseConfig.DB_HOST, DatabaseConfig.DB_PORT);
-        } catch (Exception e) {
-            Database.logger.log(Level.INFO, String.format("Unable to connect to database using connection : %s %d", DatabaseConfig.DB_HOST, DatabaseConfig.DB_PORT));
-            e.printStackTrace();
-            Database.mongoClient.close();
-            throw e;
-        }
+    private Database() {
     }
 
     public static MongoClient getClient() {
