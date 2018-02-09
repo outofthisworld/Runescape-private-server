@@ -61,6 +61,11 @@ public class World {
         return worldExecutionTask = worldExecutorService.scheduleAtFixedRate(this::poll, 0, WorldConfig.WORLD_TICK_RATE_MS, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * Gets event bus.
+     *
+     * @return the event bus
+     */
     public EventBus getEventBus() {
         return eventBus;
     }
@@ -73,6 +78,11 @@ public class World {
         worldTasks.clear();
     }
 
+    /**
+     * Gets slot.
+     *
+     * @return the slot
+     */
     public int getSlot() {
         if (!(playersCount < players.length)) {
             return -1;
@@ -91,6 +101,12 @@ public class World {
         return playerIndex;
     }
 
+    /**
+     * Add.
+     *
+     * @param slot the slot
+     * @param p    the p
+     */
     public void add(int slot, Player p) {
         if (players[slot] != null) {
             throw new IllegalArgumentException("Player slot was not null");
@@ -99,20 +115,42 @@ public class World {
         players[slot] = p;
     }
 
+    /**
+     * Gets player by name.
+     *
+     * @param name the name
+     * @return the player by name
+     */
     public Optional<Player> getPlayerByName(String name) {
         return Arrays.stream(players).filter((p) -> p.getUsername().equals(name)).findFirst();
     }
 
+    /**
+     * Gets player.
+     *
+     * @param index the index
+     * @return the player
+     */
     public Player getPlayer(int index) {
         return players[index];
     }
 
+    /**
+     * Gets total players.
+     *
+     * @return the total players
+     */
     public int getTotalPlayers() {
         return playersCount - freePlayerSlots.size();
     }
 
+    /**
+     * Gets free slots.
+     *
+     * @return the free slots
+     */
     public int getFreeSlots() {
-        return players.length - playersCount + freePlayerSlots.size() - WorldManager.getLoginQueueForWorld(this).size();
+        return players.length - playersCount + freePlayerSlots.size();
     }
 
     /**
@@ -132,7 +170,7 @@ public class World {
             int index = i;
             Player player = players[i];
             if (player != null && player.getClient().isDisconnected()) {
-                Player.asyncPlayerStore().store(player.getUsername(), player).whenCompleteAsync((aBoolean, throwable) -> {
+                Player.asyncPlayerStore().store(player).whenCompleteAsync((aBoolean, throwable) -> {
                     if (!aBoolean || throwable != null) {
                         throwable.printStackTrace();
                         return;

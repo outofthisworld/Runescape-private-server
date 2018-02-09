@@ -25,8 +25,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * The type Abstract event bus.
+ */
 public abstract class AbstractEventBus implements EventBus {
 
+    /**
+     * The Registered events.
+     */
     protected final HashMap<Class<?>, List<EventHandler>> registeredEvents = new HashMap<>();
 
     @Override
@@ -77,6 +83,11 @@ public abstract class AbstractEventBus implements EventBus {
     public abstract <T extends Event> void fire(T event);
 
 
+    /**
+     * Gets registered events.
+     *
+     * @return the registered events
+     */
     protected HashMap<Class<?>, List<EventHandler>> getRegisteredEvents() {
         return registeredEvents;
     }

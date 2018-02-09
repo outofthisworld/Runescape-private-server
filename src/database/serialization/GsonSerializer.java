@@ -18,22 +18,44 @@ package database.serialization;
 
 import com.google.gson.*;
 
+/**
+ * The type Gson serializer.
+ *
+ * @param <T> the type parameter
+ */
 public class GsonSerializer<T> extends AbstractSerializer<T, String> {
     private final Class<T> mappingClass;
     private final GsonBuilder gsonBuilder;
     private FieldNamingStrategy fStat;
     private ExclusionStrategy eStat;
 
+    /**
+     * Instantiates a new Gson serializer.
+     *
+     * @param serializationClass the serialization class
+     */
     public GsonSerializer(Class<T> serializationClass) {
         gsonBuilder = new GsonBuilder();
         mappingClass = serializationClass;
     }
 
+    /**
+     * Sets naming stategy.
+     *
+     * @param strat the strat
+     * @return the naming stategy
+     */
     public GsonSerializer<T> setNamingStategy(NamingStrategy strat) {
         gsonBuilder.setFieldNamingStrategy(fStat = createFieldNamingStrategy(strat));
         return this;
     }
 
+    /**
+     * Sets field skip policy.
+     *
+     * @param skip the skip
+     * @return the field skip policy
+     */
     public GsonSerializer<T> setFieldSkipPolicy(SkipFieldPolicy skip) {
         gsonBuilder.setExclusionStrategies(eStat = createExclusionStategy(skip));
         return this;

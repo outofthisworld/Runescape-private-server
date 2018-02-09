@@ -20,9 +20,17 @@ import world.event.impl.Event;
 
 import java.util.List;
 
+/**
+ * The type World event bus.
+ */
 public class WorldEventBus extends AbstractEventBus {
     private final World world;
 
+    /**
+     * Instantiates a new World event bus.
+     *
+     * @param world the world
+     */
     public WorldEventBus(World world) {
         this.world = world;
     }

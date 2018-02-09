@@ -15,9 +15,11 @@
 
 package world.event.impl;
 
+import net.Client;
+
 public class ClientDisconnectEvent extends Event {
     @Override
-    public Cleint getSender() {
+    public Client getSender() {
         return null;
     }
 }

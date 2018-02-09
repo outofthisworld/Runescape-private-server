@@ -18,9 +18,17 @@ package world.storage;
 import database.IDBAccessor;
 import world.entity.player.Player;
 
+/**
+ * The type Player store.
+ */
 public class PlayerStore implements DataAccessor<Player, Player>, DataStore<Boolean, Player> {
     private final IDBAccessor<Player> playerDb;
 
+    /**
+     * Instantiates a new Player store.
+     *
+     * @param playerStore the player store
+     */
     public PlayerStore(IDBAccessor<Player> playerStore) {
         playerDb = playerStore;
     }
@@ -33,6 +41,11 @@ public class PlayerStore implements DataAccessor<Player, Player>, DataStore<Bool
 
     @Override
     public Player load(Player obj) {
-        return playerDb.findOne(obj.getUsername());
+        return playerDb.findOneAndPopulate(obj.getUsername(), obj);
+    }
+
+    @Override
+    public Player load(String key) {
+        return playerDb.findOne(key);
     }
 }

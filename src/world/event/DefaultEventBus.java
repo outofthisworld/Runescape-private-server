@@ -19,6 +19,9 @@ import world.event.impl.Event;
 
 import java.util.List;
 
+/**
+ * The type Default event bus.
+ */
 public class DefaultEventBus extends AbstractEventBus {
     @Override
     public <T extends Event> void fire(T event) {
