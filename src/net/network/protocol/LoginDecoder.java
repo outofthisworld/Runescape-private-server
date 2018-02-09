@@ -19,30 +19,23 @@ import net.buffers.InputBuffer;
 import net.buffers.OutputBuffer;
 import net.enc.ISAACCipher;
 import net.network.Client;
-import net.packets.exceptions.InvalidOpcodeException;
-import net.packets.exceptions.InvalidPacketSizeException;
 import world.World;
 import world.WorldManager;
 import world.entity.player.Player;
 import world.event.impl.PlayerLoginEvent;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-
-public final class LoginDecoder {
+public final class LoginDecoder implements ProtocolDecoder {
     private static final int LOGIN_REQUEST = 14;
     private static final int UPDATE = 15;
     private static final int NEW_SESSION = 16;
     private static final int RECONNECT = 18;
-    private final Set<Integer> opcodes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(LoginDecoder.LOGIN_REQUEST, LoginDecoder.UPDATE, LoginDecoder.NEW_SESSION, LoginDecoder.RECONNECT)));
 
+    @Override
+    public void decode(Client c) {
 
-    private LoginDecoder() {
-    }
+        int packetOpcode = c.getInBuffer().get() & 0xFF;
+        InputBuffer in = new InputBuffer(c.getInBuffer());
 
-    public static void login(Client c, int packetOpcode, InputBuffer in) throws Exception {
         if (c.isLoggedIn()) {
             return;
         }
@@ -73,7 +66,7 @@ public final class LoginDecoder {
                 }*/
 
                 if (in.remaining() < 1) {
-                    throw new InvalidPacketSizeException(packetOpcode, "Invalid packet size for opcode: " + packetOpcode + "in " + LoginDecoder.class.getName());
+                    return;
                 }
 
                 short loginPacketSize = in.readUnsignedByte();
@@ -175,6 +168,7 @@ public final class LoginDecoder {
                 Player p = new Player();
                 p.setUsername(username);
                 p.setPassword(password);
+                p.setRights(0);
                 p.setClient(c);
 
                 world.getEventBus().fire(new PlayerLoginEvent(p, new LoginDecoder()));
@@ -203,8 +197,6 @@ public final class LoginDecoder {
                  None of the above	"Unexpected server response. Please try using a different world."
                  */
                 break;
-            default:
-                throw new InvalidOpcodeException(packetOpcode, "Invalid packet opcode being handled by " + LoginDecoder.class.getName());
         }
     }
 

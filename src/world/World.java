@@ -108,7 +108,7 @@ public class World {
      * @param slot the slot
      * @param p    the p
      */
-    private void add(int slot, Player p) {
+    private void addPlayerToWorld(int slot, Player p) {
         if (players[slot] != null) {
             throw new IllegalArgumentException("Player slot was not null");
         }
@@ -157,8 +157,14 @@ public class World {
 
             deserialized.setClient(deserialized.getClient());
             deserialized.setSlotId(loginSlot);
-            add(loginSlot, deserialized);
-        }, worldExecutorService);
+            deserialized.init();
+            addPlayerToWorld(loginSlot, deserialized);
+        }, worldExecutorService)
+                .whenComplete((aVoid, throwable) -> {
+                    if (throwable != null) {
+                        throwable.printStackTrace();
+                    }
+                });
     }
 
     /**

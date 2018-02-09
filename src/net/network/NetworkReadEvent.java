@@ -1,14 +1,6 @@
 package net.network;
 
-import net.buffers.InputBuffer;
-import net.network.protocol.LoginDecoder;
-import net.packets.incoming.IncomingPacket;
-import world.WorldManager;
-
 import java.nio.ByteBuffer;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class NetworkReadEvent extends NetworkEvent {
     private static final int MAX_IN_BUFFER_SIZE = 8500,
@@ -69,40 +61,7 @@ public class NetworkReadEvent extends NetworkEvent {
             return;
         }
 
-        int op = client.getInBuffer().get() & 0xFF;
-
-
-        if (!client.isLoggedIn()) {
-            try {
-                LoginDecoder.login(client, op, new InputBuffer(client.getInBuffer()));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            int decodedOp = op - client.getInCipher().getNextValue();
-            int packetSize = IncomingPacket.getPacketSizeForId(decodedOp);
-
-            if (packetSize != -1 && client.getInBuffer().remaining() < packetSize) {
-                client.getInBuffer().rewind();
-                client.getInBuffer().compact();
-                return;
-            }
-
-            InputBuffer in = new InputBuffer(client.getInBuffer(), packetSize);
-            Optional<IncomingPacket> p = IncomingPacket.getForId(op);
-
-            if (p.isPresent()) {
-                WorldManager.submitTask(0, () -> {
-                    try {
-                        p.get().handle(client, decodedOp, in);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                });
-            } else {
-                Logger.getLogger(NetworkReadEvent.class.getName()).log(Level.INFO, "Unhandled packet received : " + op + " from client: " + client.getRemoteAddress().getHostName());
-            }
-        }
+        client.getProtocolDecoder().decode(client);
         client.getInBuffer().compact();
     }
 }

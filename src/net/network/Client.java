@@ -17,6 +17,8 @@ package net.network;
 
 import net.buffers.OutputBuffer;
 import net.enc.ISAACCipher;
+import net.network.protocol.LoginDecoder;
+import net.network.protocol.ProtocolDecoder;
 import net.packets.outgoing.OutgoingPacketBuilder;
 import world.entity.player.Player;
 
@@ -50,6 +52,7 @@ public class Client implements NetworkEventExecutor {
     private ISAACCipher outCipher;
     private volatile boolean isLoggedIn;
     private Player player;
+    private ProtocolDecoder protocolDecoder = new LoginDecoder();
 
 
     /**
@@ -68,6 +71,14 @@ public class Client implements NetworkEventExecutor {
 
     protected SocketChannel getChannel() {
         return channel;
+    }
+
+    public ProtocolDecoder getProtocolDecoder() {
+        return protocolDecoder;
+    }
+
+    public void setProtocolDecoder(ProtocolDecoder protocolDecoder) {
+        this.protocolDecoder = protocolDecoder;
     }
 
     private SelectionKey getSelectionKey() {
@@ -100,7 +111,7 @@ public class Client implements NetworkEventExecutor {
      *
      * @return the in buffer
      */
-    protected ByteBuffer getInBuffer() {
+    public ByteBuffer getInBuffer() {
         return inBuffer;
     }
 
