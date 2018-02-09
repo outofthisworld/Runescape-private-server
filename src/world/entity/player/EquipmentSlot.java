@@ -1,3 +1,18 @@
+/*
+ Project by outofthisworld24
+ All rights reserved.
+ */
+
+/*
+ * Project by outofthisworld24
+ * All rights reserved.
+ */
+
+/*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Project by outofthisworld24
+ All rights reserved.
+ -----------------------------------------------------------------------------*/
+
 package world.entity.player;
 
 import java.util.HashMap;

@@ -1,3 +1,18 @@
+/*
+ Project by outofthisworld24
+ All rights reserved.
+ */
+
+/*
+ * Project by outofthisworld24
+ * All rights reserved.
+ */
+
+/*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Project by outofthisworld24
+ All rights reserved.
+ -----------------------------------------------------------------------------*/
+
 package database;
 
 import java.util.List;

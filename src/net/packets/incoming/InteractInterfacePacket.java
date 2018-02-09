@@ -1,3 +1,18 @@
+/*
+ Project by outofthisworld24
+ All rights reserved.
+ */
+
+/*
+ * Project by outofthisworld24
+ * All rights reserved.
+ */
+
+/*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Project by outofthisworld24
+ All rights reserved.
+ -----------------------------------------------------------------------------*/
+
 package net.packets.incoming;
 
 import net.Client;

@@ -1,30 +1,41 @@
+/*
+ Project by outofthisworld24
+ All rights reserved.
+ */
+
+/*
+ * Project by outofthisworld24
+ * All rights reserved.
+ */
+
+/*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Project by outofthisworld24
+ All rights reserved.
+ -----------------------------------------------------------------------------*/
+
 package database.serialization;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.FieldNamingStrategy;
-import com.google.gson.GsonBuilder;
+
+import com.google.gson.*;
 
 public class GsonSerializer<T> extends AbstractSerializer<T, String> {
-
     private final Class<T> mappingClass;
     private final GsonBuilder gsonBuilder;
-    private Encoder<T, String> encoder = new JsonEncoder();
-    private Encoder<String, T> decoder = new JsonDecoder();
+    private FieldNamingStrategy fStat;
+    private ExclusionStrategy eStat;
 
-    public GsonSerializer(Class<T> mappingClass) {
+    public GsonSerializer(Class<T> serializationClass) {
         gsonBuilder = new GsonBuilder();
-        this.mappingClass = mappingClass;
+        mappingClass = serializationClass;
     }
 
-
     public GsonSerializer<T> setNamingStategy(NamingStrategy strat) {
-        gsonBuilder.setFieldNamingStrategy(createFieldNamingStrategy(strat));
+        gsonBuilder.setFieldNamingStrategy(fStat = createFieldNamingStrategy(strat));
         return this;
     }
 
     public GsonSerializer<T> setFieldSkipPolicy(SkipFieldPolicy skip) {
-        gsonBuilder.setExclusionStrategies(createExclusionStategy(skip));
+        gsonBuilder.setExclusionStrategies(eStat = createExclusionStategy(skip));
         return this;
     }
 
@@ -46,52 +57,34 @@ public class GsonSerializer<T> extends AbstractSerializer<T, String> {
         };
     }
 
-    public Encoder<T, String> getEncoder() {
-        return encoder;
-    }
-
-    public GsonSerializer setEncoder(Encoder<T, String> encoder) {
-        this.encoder = encoder;
-        return this;
-    }
-
-    public Encoder<String, T> getDecoder() {
-        return decoder;
-    }
-
-    public GsonSerializer setDecoder(Encoder<String, T> decoder) {
-        this.decoder = decoder;
-        return this;
-    }
-
     @Override
     public String encode(T t) {
-        return encoder.encode(t);
+        return gsonBuilder.create().toJson(t, mappingClass);
     }
 
     @Override
     public T decode(String s) {
-        return decoder.encode(s);
+        return decode(gsonBuilder.create(), s);
+    }
+
+    private T decode(Gson g, String json) {
+        return g.fromJson(json, mappingClass);
+    }
+
+    @Override
+    public T decode(String json, T t) {
+        GsonBuilder b = new GsonBuilder().registerTypeAdapter(mappingClass, (InstanceCreator) type -> t);
+        if (eStat != null) {
+            b.setExclusionStrategies(eStat);
+        }
+        if (fStat != null) {
+            b.setFieldNamingStrategy(fStat);
+        }
+        return decode(b.create(), json);
     }
 
     @Override
     public Class<T> getSerializationClass() {
         return mappingClass;
-    }
-
-    private class JsonEncoder implements Encoder<T, String> {
-
-        @Override
-        public String encode(T t) {
-            return gsonBuilder.create().toJson(t);
-        }
-    }
-
-    private class JsonDecoder implements Encoder<String, T> {
-
-        @Override
-        public T encode(String s) {
-            return gsonBuilder.create().fromJson(s, mappingClass);
-        }
     }
 }

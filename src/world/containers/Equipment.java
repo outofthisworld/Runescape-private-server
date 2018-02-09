@@ -1,3 +1,18 @@
+/*
+ Project by outofthisworld24
+ All rights reserved.
+ */
+
+/*
+ * Project by outofthisworld24
+ * All rights reserved.
+ */
+
+/*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Project by outofthisworld24
+ All rights reserved.
+ -----------------------------------------------------------------------------*/
+
 package world.containers;
 
 import world.entity.player.EquipmentSlot;

@@ -13,9 +13,8 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package world.event.impl;
+package world.storage;
 
-public abstract class Event {
-
-    public abstract Object getSender();
+public interface DataAccessor<T, R> {
+    abstract R load(T obj);
 }

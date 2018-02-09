@@ -13,23 +13,26 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package net.packets.incoming;
+package world.storage;
 
-import net.Client;
-import net.buffers.InputBuffer;
+import database.IDBAccessor;
+import world.entity.player.Player;
 
-import java.util.logging.Logger;
+public class PlayerStore implements DataAccessor<Player, Player>, DataStore<Boolean, Player> {
+    private final IDBAccessor<Player> playerDb;
 
-public class UnknownPacket extends IncomingPacket {
-    private static final Logger logger = Logger.getLogger(BankPacket.class.getName());
-
-    @Override
-    public void handle(Client c, int packetOpcode, InputBuffer in) throws Exception {
-
+    public PlayerStore(IDBAccessor<Player> playerStore) {
+        playerDb = playerStore;
     }
 
     @Override
-    public boolean handlesOpcode(int opcode) {
-        return opcode == Opcodes.UNKNOWN;
+    public Boolean store(Player o) {
+        return playerDb.insert(o);
+    }
+
+
+    @Override
+    public Player load(Player obj) {
+        return playerDb.findOne(obj.getUsername());
     }
 }

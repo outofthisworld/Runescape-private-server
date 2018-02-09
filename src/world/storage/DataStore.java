@@ -13,9 +13,8 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package world.event.impl;
+package world.storage;
 
-public abstract class Event {
-
-    public abstract Object getSender();
+public interface DataStore<T, U> {
+    T store(U o);
 }
