@@ -16,13 +16,12 @@
 package world.entity.player;
 
 import database.CollectionAccessor;
+import database.serialization.GsonSerializer;
 import net.Client;
-import world.World;
+import sun.plugin.dom.exception.InvalidStateException;
 import world.containers.Bank;
 import world.containers.Equipment;
 import world.containers.Inventory;
-import world.event.Event;
-import world.event.impl.PlayerLoginEvent;
 import world.storage.AsyncPlayerStore;
 
 import java.util.Optional;
@@ -33,8 +32,8 @@ import java.util.concurrent.CompletableFuture;
  */
 public class Player {
     private static final AsyncPlayerStore asyncPlayerStore = new AsyncPlayerStore(
-            new CollectionAccessor<>("Players", "Evolution",
-                    Player.class, fieldAttributes -> fieldAttributes.getName().equals("c")));
+            new CollectionAccessor<>(new GsonSerializer<>(Player.class), "Players", "Evolution",
+                    Player.class));
     private final int[] skills = new int[world.entity.player.Skill.values().length];
     private final int[] skillExp = new int[world.entity.player.Skill.values().length];
     private final Bank bank = new Bank(this);
@@ -73,62 +72,21 @@ public class Player {
         return Player.asyncPlayerStore().load(username).thenApplyAsync(player -> Optional.ofNullable(player));
     }
 
+    public CompletableFuture<Optional<Player>> load() {
+        if (getUsername() == null) {
+            throw new InvalidStateException("username must be set before loading player.");
+        }
+        return Player.asyncPlayerStore().load(this).thenApplyAsync(player -> Optional.ofNullable(player));
+    }
+
     public int getSlotId() {
         return slotId;
     }
 
-    private void setSlotId(int slotId) {
+    public void setSlotId(int slotId) {
         this.slotId = slotId;
     }
 
-    @Event()
-    private void playerLoginEvent(PlayerLoginEvent lEvent) {
-        World loginWorld = lEvent.getWorld();
-        int loginSlot = loginWorld.getSlot();
-
-        if (loginSlot == -1) {
-
-            //world full 7
-            lEvent.getSender().sendResponse(7, 0, 0);
-            return;
-        }
-
-        if (loginWorld.getPlayerByName(lEvent.getUsername()).isPresent()) {
-            //already logged in 5
-
-            lEvent.getSender().sendResponse(5, 0, 0);
-            return;
-        }
-
-        Player.load(lEvent.getUsername()).cthenAcceptAsync(player -> {
-            loginWorld.submit(() -> {
-                Player decoded;
-
-                if (player.isPresent()) {
-                    decoded = player.get();
-                    if (!decoded.getPassword().equals(decoded.getPassword())) {
-                        decoded.getSender().sendResponse(3, 0, 0);
-                        return;
-                    }
-
-                    if (decoded.isDisabled()) {
-                        decoded.getSender().sendReponse(4, 0, 0);
-                        return;
-                    }
-                } else {
-                    decoded = new Player();
-                    decoded.setUsername(decoded.getUsername());
-                    decoded.setPassword(decoded.getPassword());
-                    decoded.setRights(0);
-                    decoded.asyncPlayerStore().store(decoded.getUsername(), decoded);
-                }
-
-                decoded.setClient(decoded.getClient());
-                decoded.setSlotId(loginSlot);
-                loginWorld.add(loginSlot, decoded);
-            });
-        });
-    }
 
     /**
      * Gets bank.
@@ -226,7 +184,7 @@ public class Player {
      *
      * @param c the c
      */
-    private void setClient(Client c) {
+    public void setClient(Client c) {
         this.c = c;
     }
 

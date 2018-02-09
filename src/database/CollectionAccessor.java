@@ -43,6 +43,10 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
         this(serializer, DatabaseConfig.DB_NAME, collectionName, serializer.getSerializationClass());
     }
 
+    public CollectionAccessor(AbstractSerializer<T, String> serializer, String dbName, String collectionName) {
+        this(serializer, dbName, collectionName, serializer.getSerializationClass());
+    }
+
     /**
      * Instantiates a new Collection accessor.
      *

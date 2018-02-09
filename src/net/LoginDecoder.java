@@ -22,6 +22,7 @@ import net.packets.exceptions.InvalidOpcodeException;
 import net.packets.exceptions.InvalidPacketSizeException;
 import world.World;
 import world.WorldManager;
+import world.entity.player.Player;
 import world.event.impl.PlayerLoginEvent;
 
 import java.util.Arrays;
@@ -169,7 +170,13 @@ public final class LoginDecoder {
 
                 World world = WorldManager.getWorld(0);
 
-                world.getEventBus().fire(new PlayerLoginEvent(world, new LoginDecoder(), username, password, c));
+
+                Player p = new Player();
+                p.setUsername(username);
+                p.setPassword(password);
+                p.setClient(c);
+
+                world.getEventBus().fire(new PlayerLoginEvent(p, new LoginDecoder()));
                 /**
                  1	Waits for 2000ms and tries again while counting failures.
                  0	Exchanges session keys, entity name, password, etc.
@@ -198,5 +205,9 @@ public final class LoginDecoder {
             default:
                 throw new InvalidOpcodeException(packetOpcode, "Invalid packet opcode being handled by " + LoginDecoder.class.getName());
         }
+    }
+
+    public void sendResponse(int one, int two, int three) {
+
     }
 }

@@ -17,8 +17,10 @@ package world;
 
 import sun.plugin.dom.exception.InvalidStateException;
 import world.entity.player.Player;
+import world.event.Event;
 import world.event.EventBus;
 import world.event.WorldEventBus;
+import world.event.impl.PlayerLoginEvent;
 import world.task.Task;
 
 import java.util.ArrayList;
@@ -83,7 +85,7 @@ public class World {
      *
      * @return the slot
      */
-    public int getSlot() {
+    private int getSlot() {
         if (!(playersCount < players.length)) {
             return -1;
         }
@@ -107,12 +109,57 @@ public class World {
      * @param slot the slot
      * @param p    the p
      */
-    public void add(int slot, Player p) {
+    private void add(int slot, Player p) {
         if (players[slot] != null) {
             throw new IllegalArgumentException("Player slot was not null");
         }
 
         players[slot] = p;
+    }
+
+    @Event()
+    private void playerLoginEvent(PlayerLoginEvent lEvent) {
+
+        if (lEvent.getPlayer() == null) {
+            return;
+        }
+
+        int loginSlot = getSlot();
+
+        if (loginSlot == -1) {
+            //world full 7
+            lEvent.getSender().sendResponse(7, 0, 0);
+            return;
+        }
+
+        if (getPlayerByName(lEvent.getPlayer().getUsername()).isPresent()) {
+            //already logged in 5
+            lEvent.getSender().sendResponse(5, 0, 0);
+            return;
+        }
+
+        lEvent.getPlayer().load().thenAcceptAsync(player -> {
+            Player decoded;
+            if (player.isPresent()) {
+                decoded = player.get();
+                if (!decoded.getPassword().equals(decoded.getPassword())) {
+                    lEvent.getSender().sendResponse(3, 0, 0);
+                    return;
+                }
+
+                if (decoded.isDisabled()) {
+                    lEvent.getSender().sendResponse(4, 0, 0);
+                    return;
+                }
+            } else {
+                decoded = lEvent.getPlayer();
+                Player.asyncPlayerStore().store(decoded);
+            }
+
+            decoded.setClient(decoded.getClient());
+            decoded.setSlotId(loginSlot);
+            add(loginSlot, decoded);
+        }, worldExecutorService);
     }
 
     /**

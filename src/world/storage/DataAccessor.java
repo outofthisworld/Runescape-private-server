@@ -28,7 +28,7 @@ public interface DataAccessor<T, R> {
      * @param obj the obj
      * @return the r
      */
-     R load(T obj);
+    R load(T obj);
 
     /**
      * Load r.
@@ -36,5 +36,5 @@ public interface DataAccessor<T, R> {
      * @param key the key
      * @return the r
      */
-     R load(String key);
+    R load(String key);
 }
