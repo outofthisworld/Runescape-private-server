@@ -1,5 +1,5 @@
 package database;
 
 public interface DataAccessor<T> {
-    abstract T load(String key);
+    abstract T load(T obj);
 }

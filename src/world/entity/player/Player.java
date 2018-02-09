@@ -58,14 +58,12 @@ package world.entity.player;
 import database.AsyncPlayerStore;
 import database.CollectionAccessor;
 import net.Client;
-import net.packets.outgoing.OutgoingPacketBuilder;
 import world.World;
 import world.containers.Bank;
 import world.containers.Equipment;
 import world.containers.Inventory;
 import world.event.Event;
 import world.event.impl.PlayerLoginEvent;
-import world.interfaces.SidebarInterface;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -119,7 +117,7 @@ public class Player {
         return slotId;
     }
 
-    private void setSlotId(int slotId){
+    private void setSlotId(int slotId) {
         this.slotId = slotId;
     }
 
@@ -131,30 +129,30 @@ public class Player {
         if (loginSlot == -1) {
 
             //world full 7
-            lEvent.getSender().sendResponse(7,0,0);
+            lEvent.getSender().sendResponse(7, 0, 0);
             return;
         }
 
         if (loginWorld.getPlayerByName(lEvent.getUsername()).isPresent()) {
             //already logged in 5
 
-            lEvent.getSender().sendResponse(5,0,0);
+            lEvent.getSender().sendResponse(5, 0, 0);
             return;
         }
 
-        Player.load(lEvent.getUsername()).thenAcceptAsync(player -> {
-            loginWorld.submit(()->{
+        Player.load(lEvent.getUsername()).cthenAcceptAsync(player -> {
+            loginWorld.submit(() -> {
                 Player decoded;
 
                 if (player.isPresent()) {
                     decoded = player.get();
                     if (!decoded.getPassword().equals(decoded.getPassword())) {
-                        decoded.getSender().sendResponse(3,0,0);
+                        decoded.getSender().sendResponse(3, 0, 0);
                         return;
                     }
 
-                    if(decoded.isDisabled()){
-                        decoded.getSender().sendReponse(4,0,0);
+                    if (decoded.isDisabled()) {
+                        decoded.getSender().sendReponse(4, 0, 0);
                         return;
                     }
                 } else {
@@ -167,6 +165,7 @@ public class Player {
 
                 decoded.setClient(decoded.getClient());
                 decoded.setSlotId(loginSlot);
+                loginWorld.add(loginSlot, decoded);
             });
         });
     }

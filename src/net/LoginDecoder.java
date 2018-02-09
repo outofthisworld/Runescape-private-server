@@ -80,7 +80,7 @@ public final class LoginDecoder {
     private LoginDecoder() {
     }
 
-    public static void login(final Client c, final int packetOpcode, final InputBuffer in) throws Exception {
+    public static void login(Client c, int packetOpcode, InputBuffer in) throws Exception {
         if (c.isLoggedIn()) {
             return;
         }
@@ -114,7 +114,7 @@ public final class LoginDecoder {
                     throw new InvalidPacketSizeException(packetOpcode, "Invalid packet size for opcode: " + packetOpcode + "in " + LoginDecoder.class.getName());
                 }
 
-                final short loginPacketSize = in.readUnsignedByte();
+                short loginPacketSize = in.readUnsignedByte();
                 System.out.println(loginPacketSize);
                 System.out.println(in.remaining());
 
@@ -133,8 +133,8 @@ public final class LoginDecoder {
 
                 System.out.println("Remaining in buffer after stage 2: " + in.remaining());
 
-                final int magicNum = in.readUnsignedByte();
-                final int revision = in.readBigUnsignedWORD();
+                int magicNum = in.readUnsignedByte();
+                int revision = in.readBigUnsignedWORD();
 
                 System.out.println(magicNum);
                 System.out.println(revision);
@@ -144,7 +144,7 @@ public final class LoginDecoder {
                     return;
                 }
 
-                final int lowMemoryVersion = in.readUnsignedByte();
+                int lowMemoryVersion = in.readUnsignedByte();
                 in.skip(4 * 9);
 
                 loginEncryptedPacketSize--;
@@ -159,31 +159,31 @@ public final class LoginDecoder {
                     return;
                 }
 
-                final long clientSessionKey = in.readBigSignedQWORD();
-                final long serverSessionKey = in.readBigSignedQWORD();
+                long clientSessionKey = in.readBigSignedQWORD();
+                long serverSessionKey = in.readBigSignedQWORD();
 
-                final int userID = in.readBigSignedDWORD();
+                int userID = in.readBigSignedDWORD();
 
-                final byte[] usernameBytes = in.readUntil(b -> b.byteValue() == 10);
+                byte[] usernameBytes = in.readUntil(b -> b.byteValue() == 10);
 
                 if (usernameBytes == null) {
                     System.out.println("Username bytes null");
                     return;
                 }
 
-                final String username = new String(usernameBytes, 0, usernameBytes.length - 1);
+                String username = new String(usernameBytes, 0, usernameBytes.length - 1);
                 if (username == null || username.length() == 0) {
                     System.out.println("Blank username");
                     return;
                 }
 
-                final byte[] passwordBytes = in.readUntil(b -> b.byteValue() == 10);
+                byte[] passwordBytes = in.readUntil(b -> b.byteValue() == 10);
 
                 if (passwordBytes == null) {
                     System.out.println("password bytes null");
                 }
 
-                final String password = new String(passwordBytes);
+                String password = new String(passwordBytes);
 
                 if (password == null || password.length() == 0) {
                     System.out.println("invalid pass");
@@ -193,7 +193,7 @@ public final class LoginDecoder {
                 System.out.println(username);
                 System.out.println(password);
 
-                final int[] sessionKey = new int[4];
+                int[] sessionKey = new int[4];
                 sessionKey[0] = (int) (clientSessionKey >> 32);
                 sessionKey[1] = (int) clientSessionKey;
                 sessionKey[2] = (int) (serverSessionKey >> 32);
@@ -207,7 +207,7 @@ public final class LoginDecoder {
                 }
                 c.setOutCipher(new ISAACCipher(sessionKey));
 
-                final World world = WorldManager.getWorld(0);
+                World world = WorldManager.getWorld(0);
 
                 world.getEventBus().fire(new PlayerLoginEvent(world, new LoginDecoder(), username, password, c));
                 /**

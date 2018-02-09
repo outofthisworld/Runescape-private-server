@@ -10,12 +10,13 @@ public class PlayerStore implements DataAccessor<Player>, DataStore<Boolean, Pla
     }
 
     @Override
-    public Player load(String key) {
-        return playerDb.findOne(key);
+    public Boolean store(Player o) {
+        return playerDb.insert(o);
     }
 
+
     @Override
-    public Boolean store(String key, Player o) {
-        return playerDb.insert(o);
+    public Player load(Player obj) {
+        return playerDb.findOne(obj.getUsername());
     }
 }

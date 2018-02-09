@@ -131,7 +131,7 @@ public class World {
         return playerIndex;
     }
 
-    private void addPlayerToWorld(int slot, Player p) {
+    public void add(int slot, Player p) {
         if (players[slot] != null) {
             throw new IllegalArgumentException("Player slot was not null");
         }
