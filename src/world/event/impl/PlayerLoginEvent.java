@@ -15,7 +15,7 @@
 
 package world.event.impl;
 
-import net.network.protocol.LoginDecoder;
+import net.impl.LoginDecoder;
 import world.entity.player.Player;
 
 /**

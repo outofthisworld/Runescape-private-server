@@ -1,6 +1,4 @@
-package net.network.protocol;
-
-import net.network.Client;
+package net.impl;
 
 public interface ProtocolDecoder {
     void decode(Client c);

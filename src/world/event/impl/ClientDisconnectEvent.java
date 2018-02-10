@@ -15,7 +15,7 @@
 
 package world.event.impl;
 
-import net.network.Client;
+import net.impl.Client;
 
 public class ClientDisconnectEvent extends Event {
     @Override

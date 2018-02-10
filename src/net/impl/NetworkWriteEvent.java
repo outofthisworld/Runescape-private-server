@@ -1,4 +1,4 @@
-package net.network;
+package net.impl;
 
 import net.buffers.OutputBuffer;
 

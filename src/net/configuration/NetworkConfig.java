@@ -1,4 +1,4 @@
-package net;
+package net.configuration;
 
 /**
  * The type Network config.
@@ -20,6 +20,7 @@ public final class NetworkConfig {
      * The constant MAX_CHANNELS_PER_HANDLER.
      */
     public static final int MAX_CHANNELS_PER_HANDLER = 300;
+
 
     private NetworkConfig() {
     }

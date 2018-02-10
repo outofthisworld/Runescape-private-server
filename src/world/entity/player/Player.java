@@ -18,7 +18,7 @@ package world.entity.player;
 import database.CollectionAccessor;
 import database.DatabaseConfig;
 import database.serialization.GsonSerializer;
-import net.network.Client;
+import net.impl.Client;
 import sun.plugin.dom.exception.InvalidStateException;
 import world.containers.Bank;
 import world.containers.Equipment;
@@ -46,6 +46,7 @@ public class Player {
     private String password;
     private boolean isDisabled = false;
     private int slotId;
+    private int worldId;
 
     /**
      * Instantiates a new Player.
@@ -84,6 +85,15 @@ public class Player {
             throw new InvalidStateException("username must be set before loading player.");
         }
         return Player.asyncPlayerStore().load(this).thenApplyAsync(player -> Optional.ofNullable(player));
+    }
+
+    public int getWorldId() {
+
+        return worldId;
+    }
+
+    public void setWorldId(int worldId) {
+        this.worldId = worldId;
     }
 
     /**

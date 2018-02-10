@@ -31,7 +31,7 @@ import java.util.List;
 public abstract class AbstractEventBus implements EventBus {
 
     /**
-     * The Registered network.
+     * The Registered impl.
      */
     protected final HashMap<Class<?>, List<EventHandler>> registeredEvents = new HashMap<>();
 
@@ -84,9 +84,9 @@ public abstract class AbstractEventBus implements EventBus {
 
 
     /**
-     * Gets registered network.
+     * Gets registered impl.
      *
-     * @return the registered network
+     * @return the registered impl
      */
     protected HashMap<Class<?>, List<EventHandler>> getRegisteredEvents() {
         return registeredEvents;

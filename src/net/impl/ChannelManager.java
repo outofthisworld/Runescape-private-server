@@ -13,9 +13,9 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package net.network.channel;
+package net.impl;
 
-import net.NetworkConfig;
+import net.configuration.NetworkConfig;
 
 import java.io.IOException;
 import java.nio.channels.SelectionKey;

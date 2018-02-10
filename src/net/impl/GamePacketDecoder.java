@@ -1,8 +1,6 @@
-package net.network.protocol;
+package net.impl;
 
 import net.buffers.InputBuffer;
-import net.network.Client;
-import net.network.NetworkReadEvent;
 import net.packets.incoming.IncomingPacket;
 import world.WorldManager;
 

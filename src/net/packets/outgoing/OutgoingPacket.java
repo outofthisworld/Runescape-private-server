@@ -16,7 +16,7 @@
 package net.packets.outgoing;
 
 import net.buffers.OutputBuffer;
-import net.network.Client;
+import net.impl.Client;
 
 /**
  * The type Outgoing packet.

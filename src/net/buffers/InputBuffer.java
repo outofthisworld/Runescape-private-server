@@ -276,11 +276,11 @@ public class InputBuffer extends AbstractBuffer {
         boolean found = false;
         while (inBuffer.remaining() > 0) {
             byte s = readSignedByte();
-            bos.write(s);
             if (pred.test(s)) {
                 found = !found;
                 break;
             }
+            bos.write(s);
         }
         if (resetPosition) {
             inBuffer.reset();

@@ -15,7 +15,7 @@
 
 package net.packets.incoming;
 
-import net.network.Client;
+import net.impl.Client;
 import net.buffers.InputBuffer;
 import net.packets.exceptions.InvalidOpcodeException;
 

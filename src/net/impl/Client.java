@@ -13,12 +13,10 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package net.network;
+package net.impl;
 
 import net.buffers.OutputBuffer;
 import net.enc.ISAACCipher;
-import net.network.protocol.LoginDecoder;
-import net.network.protocol.ProtocolDecoder;
 import net.packets.outgoing.OutgoingPacketBuilder;
 import world.entity.player.Player;
 
@@ -50,7 +48,6 @@ public class Client implements NetworkEventExecutor {
     private ByteBuffer inBuffer;
     private ISAACCipher inCipher;
     private ISAACCipher outCipher;
-    private volatile boolean isLoggedIn;
     private Player player;
     private ProtocolDecoder protocolDecoder = new LoginDecoder();
 
@@ -73,7 +70,7 @@ public class Client implements NetworkEventExecutor {
         return channel;
     }
 
-    public ProtocolDecoder getProtocolDecoder() {
+    protected ProtocolDecoder getProtocolDecoder() {
         return protocolDecoder;
     }
 
@@ -90,7 +87,7 @@ public class Client implements NetworkEventExecutor {
      *
      * @return the in cipher
      */
-    public ISAACCipher getInCipher() {
+    protected ISAACCipher getInCipher() {
         return inCipher;
     }
 
@@ -99,7 +96,7 @@ public class Client implements NetworkEventExecutor {
      *
      * @param cipher the cipher
      */
-    public void setInCipher(ISAACCipher cipher) {
+    protected void setInCipher(ISAACCipher cipher) {
         if (inCipher != null) {
             throw new IllegalStateException("Cipher for client already set");
         }
@@ -111,7 +108,7 @@ public class Client implements NetworkEventExecutor {
      *
      * @return the in buffer
      */
-    public ByteBuffer getInBuffer() {
+    protected ByteBuffer getInBuffer() {
         return inBuffer;
     }
 
@@ -124,30 +121,13 @@ public class Client implements NetworkEventExecutor {
         this.inBuffer = inBuffer;
     }
 
-    /**
-     * Is logged in boolean.
-     *
-     * @return the boolean
-     */
-    public boolean isLoggedIn() {
-        return isLoggedIn;
-    }
-
-    /**
-     * Sets logged in.
-     *
-     * @param loggedIn the logged in
-     */
-    public void setLoggedIn(boolean loggedIn) {
-        isLoggedIn = loggedIn;
-    }
 
     /**
      * Gets out cipher.
      *
      * @return the out cipher
      */
-    public ISAACCipher getOutCipher() {
+    protected ISAACCipher getOutCipher() {
         return outCipher;
     }
 
@@ -156,7 +136,7 @@ public class Client implements NetworkEventExecutor {
      *
      * @param cipher the cipher
      */
-    public void setOutCipher(ISAACCipher cipher) {
+    protected void setOutCipher(ISAACCipher cipher) {
         if (outCipher != null) {
             throw new IllegalStateException("Cipher for client already set");
         }

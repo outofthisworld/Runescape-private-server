@@ -15,6 +15,8 @@
 
 package world;
 
+import net.impl.GamePacketDecoder;
+import net.impl.LoginProtocolConstants;
 import sun.plugin.dom.exception.InvalidStateException;
 import world.entity.player.Player;
 import world.event.Event;
@@ -24,7 +26,7 @@ import world.event.impl.PlayerLoginEvent;
 import world.task.Task;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.concurrent.*;
@@ -33,7 +35,7 @@ import java.util.concurrent.*;
  * The type World.
  */
 public class World {
-    private final Player players[] = new Player[WorldConfig.MAX_PLAYERS_IN_WORLD];
+    private final HashMap<Integer, Player> players = new HashMap(WorldConfig.MAX_PLAYERS_IN_WORLD);
     private final ConcurrentLinkedQueue<Task> worldTasks = new ConcurrentLinkedQueue<>();
     private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor(new WorldThreadFactory(10));
     private final int worldId;
@@ -85,7 +87,8 @@ public class World {
      * @return the slot
      */
     private int getSlot() {
-        if (!(playersCount < players.length)) {
+
+        if (!(playersCount < WorldConfig.MAX_PLAYERS_IN_WORLD)) {
             return -1;
         }
 
@@ -109,11 +112,11 @@ public class World {
      * @param p    the p
      */
     private void addPlayerToWorld(int slot, Player p) {
-        if (players[slot] != null) {
+        if (players.containsKey(slot)) {
             throw new IllegalArgumentException("Player slot was not null");
         }
 
-        players[slot] = p;
+        players.put(slot, p);
     }
 
     @Event()
@@ -127,13 +130,13 @@ public class World {
 
         if (loginSlot == -1) {
             //world full 7
-            lEvent.getSender().sendResponse(7, 0, 0);
+            lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.WORLD_FULL, 0);
             return;
         }
 
         if (getPlayerByName(lEvent.getPlayer().getUsername()).isPresent()) {
             //already logged in 5
-            lEvent.getSender().sendResponse(5, 0, 0);
+            lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.ALREADY_LOGGED_IN, 0);
             return;
         }
 
@@ -142,12 +145,12 @@ public class World {
             if (player.isPresent()) {
                 deserialized = player.get();
                 if (!deserialized.getPassword().equals(deserialized.getPassword())) {
-                    lEvent.getSender().sendResponse(3, 0, 0);
+                    lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.INVALID_USERNAME_OR_PASSWORD, 0);
                     return;
                 }
 
                 if (deserialized.isDisabled()) {
-                    lEvent.getSender().sendResponse(4, 0, 0);
+                    lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.ACCOUNT_DISABLED, 0);
                     return;
                 }
             } else {
@@ -155,10 +158,12 @@ public class World {
                 Player.asyncPlayerStore().store(deserialized);
             }
 
-            deserialized.setClient(deserialized.getClient());
             deserialized.setSlotId(loginSlot);
-            deserialized.init();
+            deserialized.setWorldId(worldId);
             addPlayerToWorld(loginSlot, deserialized);
+            deserialized.getClient().setProtocolDecoder(new GamePacketDecoder());
+            lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.LOGIN_SUCCESS, deserialized.getRights());
+            deserialized.init();
         }, worldExecutorService)
                 .whenComplete((aVoid, throwable) -> {
                     if (throwable != null) {
@@ -174,7 +179,7 @@ public class World {
      * @return the player by name
      */
     public Optional<Player> getPlayerByName(String name) {
-        return Arrays.stream(players).filter((p) -> p.getUsername().equals(name)).findFirst();
+        return players.values().stream().filter((p) -> p.getUsername().equals(name)).findFirst();
     }
 
     /**
@@ -184,7 +189,7 @@ public class World {
      * @return the player
      */
     public Player getPlayer(int index) {
-        return players[index];
+        return players.get(index);
     }
 
     /**
@@ -202,7 +207,7 @@ public class World {
      * @return the free slots
      */
     public int getFreeSlots() {
-        return players.length - playersCount + freePlayerSlots.size();
+        return players.size() - playersCount + freePlayerSlots.size();
     }
 
     /**
@@ -229,8 +234,7 @@ public class World {
                     }
 
                     //login entity saving
-                    player.getClient().setLoggedIn(false);
-                    players[index] = null;
+                    players.put()
                     freePlayerSlots.add(index);
                 }, worldExecutorService);
             }

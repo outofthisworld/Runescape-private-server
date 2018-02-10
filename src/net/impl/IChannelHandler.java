@@ -13,7 +13,7 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package net.network.channel;
+package net.impl;
 
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;

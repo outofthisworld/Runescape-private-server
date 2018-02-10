@@ -13,12 +13,7 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package net.network.channel;
-
-import net.network.Client;
-import net.network.NetworkEvent;
-import net.network.NetworkReadEvent;
-import net.network.NetworkWriteEvent;
+package net.impl;
 
 import java.io.IOException;
 import java.nio.channels.SelectionKey;
