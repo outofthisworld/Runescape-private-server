@@ -13,7 +13,7 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package net.enc;
+package net.impl.enc;
 
 
 /**

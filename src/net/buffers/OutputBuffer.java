@@ -77,7 +77,7 @@ public class OutputBuffer extends AbstractBuffer {
      * Create output buffer.
      *
      * @param initialSize       the initial size
-     * @param increaseSizeBytes the amount of bytes that the buffer should increase by if its capacity is reached.
+     * @param increaseSizeBytes the amount of bytes that the buffer should widen by if its capacity is reached.
      * @return the output buffer
      */
     public static OutputBuffer create(int initialSize, int increaseSizeBytes) {
@@ -103,7 +103,7 @@ public class OutputBuffer extends AbstractBuffer {
      * writes to the OutputBuffer unless truly necessary.
      *
      * @param bytes             the bytes
-     * @param increaseSizeBytes the increase size bytes
+     * @param increaseSizeBytes the widen size bytes
      * @return the output buffer
      */
     public static OutputBuffer wrap(byte[] bytes, int increaseSizeBytes) {
@@ -184,7 +184,7 @@ public class OutputBuffer extends AbstractBuffer {
             throw new Exception("Not enough room in buffer b");
         }
         if (b.limit() != b.capacity()) {
-            throw new Exception("Buffer may be in read mode");
+            throw new Exception("Buffer may be in readInBuffer mode");
         }
         b.put(currentOutputBuffer);
         currentOutputBuffer.compact();

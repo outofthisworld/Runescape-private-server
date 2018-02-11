@@ -13,16 +13,20 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package net.impl;
+package net.impl.session;
 
+import net.buffers.InputBuffer;
 import net.buffers.OutputBuffer;
-import net.enc.ISAACCipher;
+import net.impl.decoder.LoginSessionDecoder;
+import net.impl.decoder.ProtocolDecoder;
+import net.impl.enc.ISAACCipher;
+import net.impl.events.NetworkEvent;
+import net.impl.events.NetworkEventExecutor;
 import net.packets.outgoing.OutgoingPacketBuilder;
 import world.entity.player.Player;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.Date;
@@ -43,14 +47,13 @@ public class Client implements NetworkEventExecutor {
     private final Date lastConnectionDate = new Date();
     private final ConcurrentLinkedDeque<OutputBuffer> outgoingBuffers = new ConcurrentLinkedDeque<>();
     private final OutgoingPacketBuilder outgoingPacketBuilder = new OutgoingPacketBuilder(this);
+    private final InputBuffer inputBuffer;
     private long disconnectedAt = -1;
     private boolean isDisconnected = false;
-    private ByteBuffer inBuffer;
     private ISAACCipher inCipher;
     private ISAACCipher outCipher;
     private Player player;
-    private ProtocolDecoder protocolDecoder = new LoginDecoder();
-
+    private ProtocolDecoder protocolDecoder = new LoginSessionDecoder();
 
     /**
      * Instantiates a new Client.
@@ -58,22 +61,38 @@ public class Client implements NetworkEventExecutor {
      * @param selectionKey the selection key
      * @throws IOException the io exception
      */
-    public Client(SelectionKey selectionKey) throws IOException {
+    public Client(SelectionKey key) throws IOException {
+        selectionKey = key;
+        connectedAt = System.nanoTime();
+        inputBuffer = new InputBuffer();
         channel = (SocketChannel) selectionKey.channel();
-        this.selectionKey = selectionKey;
         remoteAddress = (InetSocketAddress) getChannel().getRemoteAddress();
         serverSessionKey = ((long) (java.lang.Math.random() * 99999999D) << 32) + (long) (java.lang.Math.random() * 99999999D);
-        connectedAt = System.nanoTime();
     }
 
-    protected SocketChannel getChannel() {
+    /**
+     * Gets channel.
+     *
+     * @return the channel
+     */
+    private SocketChannel getChannel() {
         return channel;
     }
 
-    protected ProtocolDecoder getProtocolDecoder() {
+    /**
+     * Gets protocol decoder.
+     *
+     * @return the protocol decoder
+     */
+    public ProtocolDecoder getProtocolDecoder() {
         return protocolDecoder;
     }
 
+    /**
+     * Sets protocol decoder.
+     *
+     * @param protocolDecoder the protocol decoder
+     */
     public void setProtocolDecoder(ProtocolDecoder protocolDecoder) {
         this.protocolDecoder = protocolDecoder;
     }
@@ -87,7 +106,7 @@ public class Client implements NetworkEventExecutor {
      *
      * @return the in cipher
      */
-    protected ISAACCipher getInCipher() {
+    public ISAACCipher getInCipher() {
         return inCipher;
     }
 
@@ -96,38 +115,23 @@ public class Client implements NetworkEventExecutor {
      *
      * @param cipher the cipher
      */
-    protected void setInCipher(ISAACCipher cipher) {
+    public void setInCipher(ISAACCipher cipher) {
         if (inCipher != null) {
             throw new IllegalStateException("Cipher for client already set");
         }
         inCipher = cipher;
     }
 
-    /**
-     * Gets in buffer.
-     *
-     * @return the in buffer
-     */
-    protected ByteBuffer getInBuffer() {
-        return inBuffer;
+    public InputBuffer getInputBuffer() {
+        return inputBuffer;
     }
-
-    /**
-     * Sets in buffer.
-     *
-     * @param inBuffer the in buffer
-     */
-    protected void setInBuffer(ByteBuffer inBuffer) {
-        this.inBuffer = inBuffer;
-    }
-
 
     /**
      * Gets out cipher.
      *
      * @return the out cipher
      */
-    protected ISAACCipher getOutCipher() {
+    public ISAACCipher getOutCipher() {
         return outCipher;
     }
 
@@ -136,7 +140,7 @@ public class Client implements NetworkEventExecutor {
      *
      * @param cipher the cipher
      */
-    protected void setOutCipher(ISAACCipher cipher) {
+    public void setOutCipher(ISAACCipher cipher) {
         if (outCipher != null) {
             throw new IllegalStateException("Cipher for client already set");
         }
@@ -170,15 +174,40 @@ public class Client implements NetworkEventExecutor {
         player = p;
     }
 
-
     /**
      * Gets outgoing buffers.
      *
      * @return the outgoing buffers
      */
-    protected ConcurrentLinkedDeque<OutputBuffer> getOutgoingBuffers() {
+    private ConcurrentLinkedDeque<OutputBuffer> getOutgoingBuffers() {
         return outgoingBuffers;
     }
+
+
+    /**
+     * Read in buffer int.
+     *
+     * @return the int
+     */
+    public int readInBuffer() {
+
+        int bytesRead = 0;
+        Exception ex = null;
+        try {
+            bytesRead = getInputBuffer().pipeFrom(channel);
+        } catch (IOException e) {
+            e.printStackTrace();
+            ex = e;
+        }
+
+        if (ex != null || bytesRead == -1) {
+            disconnect();
+            return -1;
+        }
+
+        return bytesRead;
+    }
+
 
     /**
      * Write out buf int.
@@ -187,7 +216,7 @@ public class Client implements NetworkEventExecutor {
      * @param isNew     the is new
      * @return the int
      */
-    protected int writeOutBuf(OutputBuffer outBuffer, boolean isNew) {
+    private int writeOutBuf(OutputBuffer outBuffer, boolean isNew) {
         int bytesWritten = 0;
 
         int outBufSize = outBuffer.size();
@@ -227,6 +256,20 @@ public class Client implements NetworkEventExecutor {
      */
     public CompletableFuture<Integer> write(OutputBuffer outBuffer) {
         return CompletableFuture.supplyAsync(() -> writeOutBuf(outBuffer, true));
+    }
+
+
+    /**
+     * Write outgoing buffers.
+     */
+    public void writeOutgoingBuffers() {
+        CompletableFuture.runAsync(() -> {
+            OutputBuffer buf;
+
+            while ((buf = getOutgoingBuffers().poll()) != null) {
+                writeOutBuf(buf, false);
+            }
+        });
     }
 
     /**
@@ -275,25 +318,15 @@ public class Client implements NetworkEventExecutor {
             return;
         }
 
-        outgoingBuffers.clear();
-
-        //logger.log(Level.INFO, String.format("Client disconnect: $s : %d", this.remoteAddress.getHostString(), this.remoteAddress.getPort()));
-
-        if (selectionKey != null) {
-            selectionKey.cancel();
-        }
-        if (inBuffer != null) {
-            inBuffer.clear();
-        }
-        inBuffer = null;
         try {
-            if (channel != null) {
-                channel.close();
-            }
+            channel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        outgoingBuffers.clear();
+        selectionKey.cancel();
+        inputBuffer.clear();
         disconnectedAt = System.nanoTime();
         isDisconnected = true;
     }

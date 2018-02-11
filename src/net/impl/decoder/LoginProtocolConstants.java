@@ -1,4 +1,4 @@
-package net.impl;
+package net.impl.decoder;
 
 import java.util.function.Predicate;
 
@@ -7,6 +7,22 @@ import java.util.function.Predicate;
  */
 public class LoginProtocolConstants {
 
+    /**
+     * The constant LOGIN_REQUEST.
+     */
+    public static final int LOGIN_REQUEST = 14;
+    /**
+     * The constant UPDATE.
+     */
+    public static final int UPDATE = 15;
+    /**
+     * The constant NEW_SESSION.
+     */
+    public static final int NEW_SESSION = 16;
+    /**
+     * The constant RECONNECT.
+     */
+    public static final int RECONNECT = 18;
     /**
      * The constant PROTOCOL_REVISION.
      */
@@ -48,15 +64,15 @@ public class LoginProtocolConstants {
             username != null && username.length() >= LoginProtocolConstants.MIN_USERNAME_CHARS
                     && username.length() <= LoginProtocolConstants.MAX_USERNAME_CHARS;
 
-    /**
-     * The constant TRY_AGAIN.
-     */
-    public static int TRY_AGAIN = 1;
 
     /**
      * The constant EXCHANGE_SESSION_KEYS.
      */
     public static int EXCHANGE_SESSION_KEYS = 0;
+    /**
+     * The constant TRY_AGAIN.
+     */
+    public static int TRY_AGAIN = 1;
     /**
      * The constant LOGIN_SUCCESS.
      */

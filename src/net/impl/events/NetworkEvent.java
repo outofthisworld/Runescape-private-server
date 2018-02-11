@@ -1,4 +1,6 @@
-package net.impl;
+package net.impl.events;
+
+import net.impl.session.Client;
 
 import java.util.function.Consumer;
 

@@ -15,13 +15,14 @@
 
 package world;
 
-import net.impl.GamePacketDecoder;
-import net.impl.LoginProtocolConstants;
+import net.impl.decoder.GamePacketDecoder;
+import net.impl.decoder.LoginProtocolConstants;
 import sun.plugin.dom.exception.InvalidStateException;
 import world.entity.player.Player;
 import world.event.Event;
 import world.event.EventBus;
 import world.event.WorldEventBus;
+import world.event.impl.ClientDisconnectEvent;
 import world.event.impl.PlayerLoginEvent;
 import world.task.Task;
 
@@ -170,6 +171,16 @@ public class World {
                         throwable.printStackTrace();
                     }
                 });
+    }
+
+    @Event
+    private void playerDisconnectEvent(ClientDisconnectEvent c) {
+        if (p == null || !p.getClient().isDisconnected()) {
+            return;
+        }
+
+
+        players.put()
     }
 
     /**

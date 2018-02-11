@@ -16,53 +16,105 @@
 package net.buffers;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.channels.SocketChannel;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 /**
  * The type Input buffer.
  */
 public class InputBuffer extends AbstractBuffer {
-    private final ByteBuffer inBuffer;
+
+    private final int UPPER_BOUND;
+    private final int RESIZE_THRESHOLD;
+    private final int BUFFER_INCREASE_SIZE;
+    private final int INITIAL_BUFFER_SIZE;
+    private ByteBuffer inBuffer;
+
+
+    /**
+     * Instantiates a new Input buffer.
+     */
+    public InputBuffer() {
+        this(1024, 1024, 512, 8192);
+    }
 
     /**
      * Instantiates a new Input buffer.
      *
-     * @param bytes the bytes
+     * @param initialSizeBytes the initial size bytes
+     * @param increaseSize     the increase size
+     * @param resizeThreshold  the resize threshold
+     * @param upperBound       the upper bound
      */
-    public InputBuffer(byte[] bytes) {
-        inBuffer = ByteBuffer.allocate(bytes.length);
-        inBuffer.put(bytes);
+    public InputBuffer(int initialSizeBytes, int increaseSize, int resizeThreshold, int upperBound) {
+        UPPER_BOUND = upperBound;
+        INITIAL_BUFFER_SIZE = initialSizeBytes;
+        BUFFER_INCREASE_SIZE = increaseSize;
+        RESIZE_THRESHOLD = resizeThreshold;
+        inBuffer = ByteBuffer.allocate(initialSizeBytes);
         inBuffer.flip();
     }
 
+    /**
+     * Widen.
+     *
+     * @param size the size
+     */
+    private void widen(int increaseSize) {
+        ByteBuffer b = ByteBuffer.allocate(inBuffer.capacity() + increaseSize);
+        b.put(inBuffer);
+        inBuffer.clear();
+        inBuffer = b;
+        inBuffer.flip();
+    }
+
+    private boolean bufferNeedsResizing(int resizeThreshold, int increaseSize) {
+        return inBuffer.remaining() <= resizeThreshold && (UPPER_BOUND == -1 || inBuffer.capacity() + increaseSize <= UPPER_BOUND);
+    }
 
     /**
-     * Instantiates a new Input buffer.
+     * Pipe from int.
      *
-     * @param b the b
+     * @param socketChannel the socket channel
+     * @return the int
+     * @throws IOException the io exception
      */
-    public InputBuffer(ByteBuffer b) {
-        inBuffer = ByteBuffer.allocate(b.remaining());
+    public int pipeFrom(SocketChannel socketChannel) throws IOException {
+        Objects.requireNonNull(socketChannel);
+        if (bufferNeedsResizing(RESIZE_THRESHOLD, BUFFER_INCREASE_SIZE)) {
+            widen(BUFFER_INCREASE_SIZE);
+        }
+
+        inBuffer.compact();
+        int bytesRead = socketChannel.read(inBuffer);
+        inBuffer.flip();
+        return bytesRead;
+    }
+
+    /**
+     * Pipe from int.
+     *
+     * @param socketChannel the socket channel
+     * @return the int
+     * @throws IOException the io exception
+     */
+    public int pipeFrom(ByteBuffer b) throws IOException {
+        Objects.requireNonNull(b);
+
+        int resizeAmount = b.remaining() > BUFFER_INCREASE_SIZE ? b.remaining() : BUFFER_INCREASE_SIZE;
+        if (bufferNeedsResizing(b.remaining(), resizeAmount)) {
+            widen(resizeAmount);
+        }
+
+        int read = b.remaining();
+        inBuffer.compact();
         inBuffer.put(b);
         inBuffer.flip();
-    }
-
-    /**
-     * Instantiates a new Input buffer.
-     *
-     * @param b the b
-     */
-    public InputBuffer(ByteBuffer b, int length) {
-        if (length > b.remaining()) {
-            throw new IllegalArgumentException("");
-        }
-        inBuffer = ByteBuffer.allocate(length);
-        for (int i = 0; i < length; i++) {
-            inBuffer.put(b.get());
-        }
-        inBuffer.flip();
+        return read;
     }
 
     /**
@@ -86,13 +138,13 @@ public class InputBuffer extends AbstractBuffer {
 
     @Override
     public byte[] toArray() {
-        inBuffer.compact();
-        return inBuffer.array();
+        return toByteBuffer().array();
     }
+
 
     @Override
     public ByteBuffer toByteBuffer() {
-        return ByteBuffer.wrap(toArray());
+        return inBuffer.duplicate();
     }
 
     /**
@@ -266,15 +318,38 @@ public class InputBuffer extends AbstractBuffer {
         inBuffer.clear();
     }
 
+    /**
+     * Read until byte [ ].
+     *
+     * @param pred the pred
+     * @return the byte [ ]
+     */
     public byte[] readUntil(Predicate<Byte> pred) {
         return readUntil(pred, false);
     }
 
+    /**
+     * Sets in buffer.
+     *
+     * @param b the b
+     */
+    public void setInBuffer(ByteBuffer b) {
+        inBuffer = b;
+    }
+
+    /**
+     * Read until byte [ ].
+     *
+     * @param pred          the pred
+     * @param resetPosition the reset position
+     * @return the byte [ ]
+     */
     public byte[] readUntil(Predicate<Byte> pred, boolean resetPosition) {
         inBuffer.mark();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         boolean found = false;
         while (inBuffer.remaining() > 0) {
+
             byte s = readSignedByte();
             if (pred.test(s)) {
                 found = !found;

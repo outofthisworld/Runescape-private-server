@@ -16,7 +16,7 @@
 package net.packets.incoming;
 
 import net.buffers.InputBuffer;
-import net.impl.Client;
+import net.impl.session.Client;
 
 import java.util.Arrays;
 import java.util.Optional;

@@ -1,6 +1,8 @@
-package net.impl;
+package net.impl.decoder;
 
 import net.buffers.InputBuffer;
+import net.impl.events.NetworkReadEvent;
+import net.impl.session.Client;
 import net.packets.incoming.IncomingPacket;
 import world.WorldManager;
 
@@ -24,7 +26,7 @@ public class GamePacketDecoder implements ProtocolDecoder {
         Optional<IncomingPacket> p = IncomingPacket.getForId(decodedOp);
 
         if (p.isPresent()) {
-            WorldManager.submitTask(0, () -> {
+            WorldManager.submitTask(c.getPlayer().getWorldId(), () -> {
                 try {
                     p.get().handle(c, decodedOp, in);
                 } catch (Exception e) {

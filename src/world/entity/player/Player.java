@@ -18,8 +18,10 @@ package world.entity.player;
 import database.CollectionAccessor;
 import database.DatabaseConfig;
 import database.serialization.GsonSerializer;
-import net.impl.Client;
+import net.impl.session.Client;
 import sun.plugin.dom.exception.InvalidStateException;
+import world.World;
+import world.WorldManager;
 import world.containers.Bank;
 import world.containers.Equipment;
 import world.containers.Inventory;
@@ -32,27 +34,35 @@ import java.util.concurrent.CompletableFuture;
  * The type Player.
  */
 public class Player {
+
+
     private static final AsyncPlayerStore asyncPlayerStore = new AsyncPlayerStore(
             new CollectionAccessor<>(new GsonSerializer<>(Player.class), "Evolution", DatabaseConfig.PLAYERS_COLLECTION,
                     Player.class));
+
+
     private final int[] skills = new int[world.entity.player.Skill.values().length];
     private final int[] skillExp = new int[world.entity.player.Skill.values().length];
     private final Bank bank = new Bank(this);
     private final Inventory inventory = new Inventory(this);
     private final Equipment equipment = new Equipment(this);
-    private int rights;
     private Client c;
     private String username;
     private String password;
+    private int rights;
     private boolean isDisabled = false;
     private int slotId;
     private int worldId;
 
     /**
      * Instantiates a new Player.
+     *
+     * @param username the username
+     * @param password the password
      */
-    public Player() {
-
+    public Player(Client c) {
+        this.c = c;
+        c.setPlayer(this);
     }
 
     /**
@@ -87,13 +97,31 @@ public class Player {
         return Player.asyncPlayerStore().load(this).thenApplyAsync(player -> Optional.ofNullable(player));
     }
 
+    /**
+     * Gets world id.
+     *
+     * @return the world id
+     */
     public int getWorldId() {
-
         return worldId;
     }
 
+    /**
+     * Sets world id.
+     *
+     * @param worldId the world id
+     */
     public void setWorldId(int worldId) {
         this.worldId = worldId;
+    }
+
+    /**
+     * Gets world.
+     *
+     * @return the world
+     */
+    public World getWorld() {
+        return WorldManager.getWorld(getWorldId());
     }
 
     /**
