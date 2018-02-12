@@ -14,21 +14,25 @@ public class GamePacketDecoder implements ProtocolDecoder {
     @Override
     public void decode(Client c) {
 
-        int decodedOp = (c.getInBuffer().get() & 0xFF) - c.getInCipher().getNextValue();
-        int packetSize = IncomingPacket.getPacketSizeForId(decodedOp);
+        InputBuffer in = c.getInputBuffer();
 
-        if (packetSize != -1 && c.getInBuffer().remaining() < packetSize) {
-            c.getInBuffer().rewind();
+        if (in.remaining() < 1) {
             return;
         }
 
-        InputBuffer in = new InputBuffer(c.getInBuffer(), packetSize);
-        Optional<IncomingPacket> p = IncomingPacket.getForId(decodedOp);
+        int decodedOp = in.readUnsignedByte() - c.getInCipher().getNextValue();
+        int packetSize = IncomingPacket.getPacketSizeForId(decodedOp);
 
-        if (p.isPresent()) {
+        if (packetSize != -1 && in.remaining() < packetSize) {
+            return;
+        }
+
+        Optional<IncomingPacket> incoming = IncomingPacket.getForId(decodedOp);
+
+        if (incoming.isPresent()) {
             WorldManager.submitTask(c.getPlayer().getWorldId(), () -> {
                 try {
-                    p.get().handle(c, decodedOp, in);
+                    incoming.get().handle(c, decodedOp, in);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

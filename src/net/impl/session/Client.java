@@ -27,6 +27,7 @@ import world.entity.player.Player;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.BufferOverflowException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.Date;
@@ -190,11 +191,13 @@ public class Client implements NetworkEventExecutor {
      * @return the int
      */
     public int readInBuffer() {
-
         int bytesRead = 0;
         Exception ex = null;
         try {
             bytesRead = getInputBuffer().pipeFrom(channel);
+        } catch (BufferOverflowException e) {
+            e.printStackTrace();
+            ex = e;
         } catch (IOException e) {
             e.printStackTrace();
             ex = e;

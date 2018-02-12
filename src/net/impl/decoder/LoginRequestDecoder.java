@@ -7,7 +7,11 @@ import net.impl.session.Client;
 public class LoginRequestDecoder implements ProtocolDecoder {
     @Override
     public void decode(Client c) {
-        InputBuffer in = new InputBuffer(c.getInBuffer());
+        InputBuffer in = c.getInputBuffer();
+
+        if (in.remaining() < 1) {
+            return;
+        }
 
         int op = in.readUnsignedByte();
 

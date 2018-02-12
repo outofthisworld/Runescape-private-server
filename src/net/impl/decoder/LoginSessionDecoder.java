@@ -29,8 +29,9 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
 
     @Override
     public void decode(Client c) {
-        int packetOpcode = c.getInBuffer().get() & 0xFF;
-        InputBuffer in = new InputBuffer(c.getInBuffer());
+        InputBuffer in = c.getInputBuffer();
+        int packetOpcode = in.readUnsignedByte();
+
 
         if (packetOpcode != LoginProtocolConstants.NEW_SESSION) {
             return;

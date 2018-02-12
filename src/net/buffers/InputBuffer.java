@@ -17,6 +17,7 @@ package net.buffers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.SocketChannel;
@@ -83,26 +84,37 @@ public class InputBuffer extends AbstractBuffer {
      * @return the int
      * @throws IOException the io exception
      */
-    public int pipeFrom(SocketChannel socketChannel) throws IOException {
+    public int pipeFrom(SocketChannel socketChannel) throws IOException, BufferOverflowException {
         Objects.requireNonNull(socketChannel);
         if (bufferNeedsResizing(RESIZE_THRESHOLD, BUFFER_INCREASE_SIZE)) {
             widen(BUFFER_INCREASE_SIZE);
         }
 
         inBuffer.compact();
+        if (inBuffer.remaining() == 0) {
+            throw new BufferOverflowException();
+        }
         int bytesRead = socketChannel.read(inBuffer);
         inBuffer.flip();
         return bytesRead;
     }
 
     /**
-     * Pipe from int.
+     * Takes data from the given @class ByteBuffer and transfers it into this @class InputBuffer.
+     * <p>
+     * This @class InputBuffer will attempt to resize within its constraints, and if needed resize more
+     * than BUFFER_INCREASE_SIZE to fit the reamining bytes in the source buffer. However, if this
      *
      * @param socketChannel the socket channel
      * @return the int
-     * @throws IOException the io exception
+     * @throws java.nio.BufferOverflowException - If there is insufficient space in this buffer for the remaining bytes in the source buffer and this InputBuffer is
+     *                                          bounded.
+     * @throws IllegalArgumentException         - If the source buffer is this buffer
+     * @throws java.nio.ReadOnlyBufferException - If this buffer is read-only
+     * @class InputBuffer is bounded, and the source ByteBuffers remaining bytes will exceed the upper bound
+     * then BufferOverflowException will be thrown.
      */
-    public int pipeFrom(ByteBuffer b) throws IOException {
+    public int pipeFrom(ByteBuffer b) {
         Objects.requireNonNull(b);
 
         int resizeAmount = b.remaining() > BUFFER_INCREASE_SIZE ? b.remaining() : BUFFER_INCREASE_SIZE;
