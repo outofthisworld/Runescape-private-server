@@ -32,12 +32,9 @@ public class OutputBuffer extends AbstractBuffer {
     private static final int INITIAL_SIZE = 512;
     private static final int INCREASE_SIZE_BYTES = 512;
     private final int increaseSizeBytes;
-    /**
-     * The Write big middle.
-     */
-    public OutputBuffer writeBigMiddle;
     private ByteBuffer currentOutputBuffer;
     private Order currentByteOrder = Order.BIG_ENDIAN;
+    private int currentBitPlace = -1;
 
     private OutputBuffer() {
         this(OutputBuffer.INITIAL_SIZE, OutputBuffer.INCREASE_SIZE_BYTES);
@@ -225,6 +222,52 @@ public class OutputBuffer extends AbstractBuffer {
         }
         currentOutputBuffer.put((byte) b);
         return this;
+    }
+
+
+    /**
+     * Write bits.
+     *
+     * @param value   the value
+     * @param numBits the num bits
+     */
+    public void writeBits(long value, int numBits) {
+        int shiftAmount = numBits - 1;
+        int bitIndex;
+        byte currentByteValue = 0;
+
+        if (currentBitPlace == -1) {
+            bitIndex = 8 - 1;
+        } else {
+            bitIndex = currentBitPlace;
+            currentOutputBuffer.flip();
+            currentByteValue = currentOutputBuffer.get();
+            currentOutputBuffer.compact();
+        }
+
+        for (int i = shiftAmount; i >= 0; i--) {
+            currentByteValue |= ((value >> i) & 0x01) << bitIndex--;
+
+            if (i == 0 || bitIndex < 0) {
+                writeByte(currentByteValue);
+                if (i == 0) {
+                    break;
+                } else {
+                    currentByteValue = 0;
+                    bitIndex = 8 - 1;
+                }
+            }
+        }
+        currentBitPlace = bitIndex;
+    }
+
+    /**
+     * Get bit position int.
+     *
+     * @return the int
+     */
+    public int getBitPosition() {
+        return (currentOutputBuffer.position() * 8) - currentBitPlace - 1;
     }
 
     /**

@@ -17,6 +17,7 @@ package net.packets.outgoing;
 
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
+import world.entity.player.Player;
 
 import java.util.Arrays;
 import java.util.List;
@@ -295,6 +296,11 @@ public class OutgoingPacketBuilder {
     public OutgoingPacketBuilder closeInterfaces() {
         createFrame(219);
         return this;
+    }
+
+    public OutgoingPacketBuilder playerUpdate() {
+        Player player = c.getPlayer();
+
     }
 
 

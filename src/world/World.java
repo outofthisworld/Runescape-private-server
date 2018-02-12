@@ -145,7 +145,7 @@ public class World {
             Player deserialized;
             if (player.isPresent()) {
                 deserialized = player.get();
-                if (!deserialized.getPassword().equals(deserialized.getPassword())) {
+                if (!deserialized.getPassword().equals(lEvent.getPassword())) {
                     lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.INVALID_USERNAME_OR_PASSWORD, 0);
                     return;
                 }

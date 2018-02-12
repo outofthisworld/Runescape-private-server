@@ -224,7 +224,7 @@ public class Client implements NetworkEventExecutor {
 
         int outBufSize = outBuffer.size();
 
-        if (outgoingBuffers.size() == 0) {
+        if (outBufSize == 0) {
             try {
                 bytesWritten = outBuffer.pipeTo(channel);
             } catch (IOException e) {
@@ -267,8 +267,11 @@ public class Client implements NetworkEventExecutor {
      */
     public void writeOutgoingBuffers() {
         CompletableFuture.runAsync(() -> {
+            //Deregister for write events
+            selectionKey.interestOps(selectionKey.interestOps() & (~SelectionKey.OP_WRITE));
+            //Write the queued outgoing buffers, if the outgoing buffers are not all written writeOutBuf will
+            //register the selection key for write events.
             OutputBuffer buf;
-
             while ((buf = getOutgoingBuffers().poll()) != null) {
                 writeOutBuf(buf, false);
             }
