@@ -94,7 +94,7 @@ public class OutputBuffer extends AbstractBuffer {
     /**
      * Wraps the specified byte array, creating an OutputBuffer with equal length as the byte array.
      * Note that the first write operation to this output buffer after wrapping a byte array
-     * will cause the internal @class ByteBuffer to resize by @param increaseSizeBytes which may be costly in some
+     * will cause the internal @class ByteBuffer to widen by @param increaseSizeBytes which may be costly in some
      * situations.
      * The intended use of this method is to turn byte array into an output buffer without subsequent
      * writes to the OutputBuffer unless truly necessary.
@@ -206,14 +206,46 @@ public class OutputBuffer extends AbstractBuffer {
         out.clear();
     }
 
-    private void resize(int amount, int increaseSz) {
-        if (out.remaining() < amount) {
-            ByteBuffer x = ByteBuffer.allocate(out.capacity() + increaseSz);
-            out.flip();
-            x.put(out);
-            out.clear();
-            out = x;
+    /**
+     * Widen.
+     *
+     * @param newSize the new size
+     */
+    public OutputBuffer widen(int newSize) {
+        if (newSize == out.capacity()) {
+            return this;
         }
+        if (newSize < out.position()) {
+            throw new IllegalArgumentException("newSize to small, cannot truncate current buffer");
+        }
+        ByteBuffer x = ByteBuffer.allocate(newSize);
+        out.flip();
+        x.put(out);
+        out.clear();
+        out = x;
+        return this;
+    }
+
+    /**
+     * Truncate.
+     *
+     * @param newSize the new size
+     */
+    public OutputBuffer truncate(int newSize) {
+        if (newSize < 0 || newSize > out.capacity()) {
+            throw new IllegalArgumentException("Invalid newsize, must be >= 0");
+        }
+        if (newSize == out.capacity()) {
+            return this;
+        }
+        byte[] bytes = new byte[0];
+        ByteBuffer x = ByteBuffer.allocate(newSize);
+        out.flip();
+        out.get(bytes, 0, bytes.length);
+        x.put(bytes);
+        out.clear();
+        out = x;
+        return this;
     }
 
     /**
@@ -233,7 +265,9 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     private OutputBuffer writeByte(int b, boolean resetBitIndex) {
-        resize(1, increaseSizeBytes);
+        if (out.remaining() < 1) {
+            widen(out.capacity() + increaseSizeBytes);
+        }
         out.put((byte) b);
         if (resetBitIndex) {
             bitIndex = 0;
@@ -241,7 +275,36 @@ public class OutputBuffer extends AbstractBuffer {
         return this;
     }
 
-    public void writeBits(long value, int amount) {
+    /**
+     * Write bit output buffer.
+     *
+     * @param value the value
+     * @return the output buffer
+     */
+    public OutputBuffer writeBit(boolean value) {
+        writeBits(value ? 1 : 0, 1);
+        return this;
+    }
+
+    /**
+     * Write bit output buffer.
+     *
+     * @param value the value
+     * @return the output buffer
+     */
+    public OutputBuffer writeBit(int value) {
+        writeBits(value, 1);
+        return this;
+    }
+
+    /**
+     * Write bits output buffer.
+     *
+     * @param value  the value
+     * @param amount the amount
+     * @return the output buffer
+     */
+    public OutputBuffer writeBits(long value, int amount) {
         if (bitIndex != 0) {
             int remainingBits = 8 - bitIndex;
             int bytePos = out.position() - 1;
@@ -268,9 +331,10 @@ public class OutputBuffer extends AbstractBuffer {
         int newAmount = amount - bitIndex;
         long newValue = (value >> bitIndex);
         for (; newAmount >= 8; newAmount -= 8) {
-            out.put((byte) (newValue >> newAmount));
+            writeByte((byte) (newValue >> newAmount), false);
         }
-        out.put((byte) (value << (8 - bitIndex)));
+        writeByte((byte) (value << (8 - bitIndex)), false);
+        return this;
     }
 
     /**

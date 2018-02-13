@@ -301,6 +301,48 @@ public class OutgoingPacketBuilder {
     public OutgoingPacketBuilder playerUpdate() {
         Player player = c.getPlayer();
 
+        /*
+            Teleporting / region change
+         */
+
+
+        createFrame(81)
+                .widen(8096);
+
+        if (player.isTeleporting() || player.regionHasChanged()) {
+                  /*
+                 * Update required bit
+                */
+            outputBuffer.writeBit(true)
+                /*
+                 * This value indicates the player teleported.
+                 */
+                    .writeBits(3, 2)
+                 /*
+                 * The players height
+                 */
+                    .writeBits(player.getHeight(), 2)
+                  /*
+                   * This indicates that the client should discard the walking queue.
+                  */
+                    .writeBits(player.isTeleporting() ? 1 : 0, 1)
+                 /*
+                   * This flag indicates if an update block is appended.
+                   */
+                    .writeBits(player.getUpdateFlags().isUpdateRequired() ? 1 : 0, 1)
+                  /*
+                   * The local Y position of this player.
+                   */
+                    .writeBits(player.getPosition().getLocalY(player.getLastPosition()), 7)
+
+                  /*
+                   * The local X position of this player.
+                   */
+                    .writeBits(player.getPosition().getLocalX(player.getLastPosition()), 7);
+        } else {
+
+        }
+
     }
 
 

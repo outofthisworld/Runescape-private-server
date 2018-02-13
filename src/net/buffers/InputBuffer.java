@@ -48,7 +48,7 @@ public class InputBuffer extends AbstractBuffer {
      *
      * @param initialSizeBytes the initial size bytes
      * @param increaseSize     the increase size
-     * @param resizeThreshold  the resize threshold
+     * @param resizeThreshold  the widen threshold
      * @param upperBound       the upper bound
      */
     public InputBuffer(int initialSizeBytes, int increaseSize, int resizeThreshold, int upperBound) {
@@ -102,7 +102,7 @@ public class InputBuffer extends AbstractBuffer {
     /**
      * Takes data from the given @class ByteBuffer and transfers it into this @class InputBuffer.
      * <p>
-     * This @class InputBuffer will attempt to resize within its constraints, and if needed resize more
+     * This @class InputBuffer will attempt to widen within its constraints, and if needed widen more
      * than BUFFER_INCREASE_SIZE to fit the reamining bytes in the source buffer. However, if this
      *
      * @param socketChannel the socket channel
