@@ -32,22 +32,22 @@ public class OutputBuffer extends AbstractBuffer {
     private static final int INITIAL_SIZE = 512;
     private static final int INCREASE_SIZE_BYTES = 512;
     private final int increaseSizeBytes;
-    private ByteBuffer currentOutputBuffer;
+    private ByteBuffer out;
     private Order currentByteOrder = Order.BIG_ENDIAN;
-    private int currentBitPlace = -1;
+    private int bitIndex = 0;
 
     private OutputBuffer() {
         this(OutputBuffer.INITIAL_SIZE, OutputBuffer.INCREASE_SIZE_BYTES);
     }
 
     private OutputBuffer(int initialSize, int increaseSizeBytes) {
-        currentOutputBuffer = ByteBuffer.allocate(initialSize);
+        out = ByteBuffer.allocate(initialSize);
         this.increaseSizeBytes = increaseSizeBytes;
     }
 
     private OutputBuffer(byte[] bytes, int increaseSizeBytes) {
-        currentOutputBuffer = ByteBuffer.allocate(bytes.length);
-        currentOutputBuffer.put(bytes);
+        out = ByteBuffer.allocate(bytes.length);
+        out.put(bytes);
         this.increaseSizeBytes = increaseSizeBytes;
     }
 
@@ -126,7 +126,7 @@ public class OutputBuffer extends AbstractBuffer {
      */
     public int pipeAllTo(SocketChannel c) throws IOException {
         int bytesWritten = 0;
-        int length = currentOutputBuffer.position();
+        int length = out.position();
         System.out.println("writing " + length + " bytes");
         while (bytesWritten != length) {
             bytesWritten += pipeTo(c);
@@ -142,9 +142,9 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the int
      */
     public int pipeTo(byte[] byteArr) {
-        currentOutputBuffer.flip();
-        currentOutputBuffer.get(byteArr, 0, byteArr.length);
-        currentOutputBuffer.compact();
+        out.flip();
+        out.get(byteArr, 0, byteArr.length);
+        out.compact();
         return byteArr.length;
     }
 
@@ -156,15 +156,15 @@ public class OutputBuffer extends AbstractBuffer {
      * @throws IOException the io exception
      */
     public int pipeTo(SocketChannel c) throws IOException {
-        currentOutputBuffer.flip();
+        out.flip();
         int bytesWritten;
         try {
-            bytesWritten = c.write(currentOutputBuffer);
+            bytesWritten = c.write(out);
         } catch (Exception e) {
             e.printStackTrace();
             bytesWritten = -1;
         }
-        currentOutputBuffer.compact();
+        out.compact();
         return bytesWritten;
     }
 
@@ -176,15 +176,15 @@ public class OutputBuffer extends AbstractBuffer {
      * @throws Exception the exception
      */
     public OutputBuffer pipeTo(ByteBuffer b) throws Exception {
-        currentOutputBuffer.flip();
-        if (b.capacity() - b.position() < currentOutputBuffer.limit()) {
+        out.flip();
+        if (b.capacity() - b.position() < out.limit()) {
             throw new Exception("Not enough room in buffer b");
         }
         if (b.limit() != b.capacity()) {
             throw new Exception("Buffer may be in readInBuffer mode");
         }
-        b.put(currentOutputBuffer);
-        currentOutputBuffer.compact();
+        b.put(out);
+        out.compact();
         return this;
     }
 
@@ -195,7 +195,7 @@ public class OutputBuffer extends AbstractBuffer {
      */
     @Override
     public int size() {
-        return currentOutputBuffer.position();
+        return out.position();
     }
 
     /**
@@ -203,7 +203,17 @@ public class OutputBuffer extends AbstractBuffer {
      */
     @Override
     public void clear() {
-        currentOutputBuffer.clear();
+        out.clear();
+    }
+
+    private void resize(int amount, int increaseSz) {
+        if (out.remaining() < amount) {
+            ByteBuffer x = ByteBuffer.allocate(out.capacity() + increaseSz);
+            out.flip();
+            x.put(out);
+            out.clear();
+            out = x;
+        }
     }
 
     /**
@@ -213,52 +223,54 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeByte(int b) {
-        if (currentOutputBuffer.position() + 1 >= currentOutputBuffer.capacity()) {
-            ByteBuffer x = ByteBuffer.allocate(currentOutputBuffer.capacity() + increaseSizeBytes);
-            currentOutputBuffer.flip();
-            x.put(currentOutputBuffer);
-            currentOutputBuffer.clear();
-            currentOutputBuffer = x;
+        return writeByte(b, true);
+    }
+
+    /**
+     * Write byte output buffer.
+     *
+     * @param b the b
+     * @return the output buffer
+     */
+    private OutputBuffer writeByte(int b, boolean resetBitIndex) {
+        resize(1, increaseSizeBytes);
+        out.put((byte) b);
+        if (resetBitIndex) {
+            bitIndex = 0;
         }
-        currentOutputBuffer.put((byte) b);
         return this;
     }
 
+    public void writeBits(long value, int amount) {
+        if (bitIndex != 0) {
+            int remainingBits = 8 - bitIndex;
+            int bytePos = out.position() - 1;
+            byte current = out.get(bytePos);
+            int shiftAmount = amount - remainingBits;
 
-    /**
-     * Write bits.
-     *
-     * @param value   the value
-     * @param numBits the num bits
-     */
-    public void writeBits(long value, int numBits) {
-        int shiftAmount = numBits - 1;
-        int bitIndex;
-        byte currentByteValue = 0;
+            if (shiftAmount < 0) {
+                out.put(bytePos, (byte) (current | (value << remainingBits - amount)));
+            } else {
+                out.put(bytePos, (byte) (current | (value >> shiftAmount)));
+            }
 
-        if (currentBitPlace == -1) {
-            bitIndex = 8 - 1;
-        } else {
-            bitIndex = currentBitPlace;
-            currentOutputBuffer.flip();
-            currentByteValue = currentOutputBuffer.get();
-            currentOutputBuffer.compact();
-        }
-
-        for (int i = shiftAmount; i >= 0; i--) {
-            currentByteValue |= ((value >> i) & 0x01) << bitIndex--;
-
-            if (i == 0 || bitIndex < 0) {
-                writeByte(currentByteValue);
-                if (i == 0) {
-                    break;
-                } else {
-                    currentByteValue = 0;
-                    bitIndex = 8 - 1;
-                }
+            int bitsWritten = amount < remainingBits ? amount : remainingBits;
+            bitIndex += bitsWritten;
+            amount -= bitsWritten;
+            if (bitIndex >= 8) {
+                bitIndex = 0;
             }
         }
-        currentBitPlace = bitIndex;
+        if (amount <= 0) {
+            return;
+        }
+        bitIndex = amount & 7;
+        int newAmount = amount - bitIndex;
+        long newValue = (value >> bitIndex);
+        for (; newAmount >= 8; newAmount -= 8) {
+            out.put((byte) (newValue >> newAmount));
+        }
+        out.put((byte) (value << (8 - bitIndex)));
     }
 
     /**
@@ -267,7 +279,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the int
      */
     public int getBitPosition() {
-        return (currentOutputBuffer.position() * 8) - currentBitPlace - 1;
+        return (out.position() * 8) + bitIndex;
     }
 
     /**
@@ -560,7 +572,7 @@ public class OutputBuffer extends AbstractBuffer {
      */
     @Override
     public byte[] toArray() {
-        return currentOutputBuffer.array();
+        return out.array();
     }
 
     /**
@@ -583,22 +595,22 @@ public class OutputBuffer extends AbstractBuffer {
 
     @Override
     public int position() {
-        return currentOutputBuffer.position();
+        return out.position();
     }
 
     @Override
     public void rewind() {
-        currentOutputBuffer.rewind();
+        out.rewind();
     }
 
     @Override
     public void skip(int numBytes) {
-        currentOutputBuffer.position(currentOutputBuffer.position() + numBytes);
+        out.position(out.position() + numBytes);
     }
 
     @Override
     public int remaining() {
-        return currentOutputBuffer.remaining();
+        return out.remaining();
     }
 
     /**
@@ -641,4 +653,40 @@ public class OutputBuffer extends AbstractBuffer {
          */
         NONE
     }
+
+    /**
+     * Write bits.
+     *
+     * @param value   the value
+     * @param numBits the num bits
+     */
+    /*public void writeBits(long value, int numBits) {
+        int shiftAmount = numBits - 1;
+        int bitIndex;
+        byte currentByteValue = 0;
+
+        if (this.bitIndex == -1) {
+            bitIndex = 8 - 1;
+        } else {
+            bitIndex = this.bitIndex;
+            out.flip();
+            currentByteValue = out.get();
+            out.compact();
+        }
+
+        for (int i = shiftAmount; i >= 0; i--) {
+            currentByteValue |= ((value >> i) & 0x01) << bitIndex--;
+
+            if (i == 0 || bitIndex < 0) {
+                writeByte(currentByteValue, false);
+                if (i == 0) {
+                    break;
+                } else {
+                    currentByteValue = 0;
+                    bitIndex = 8 - 1;
+                }
+            }
+        }
+        this.bitIndex = bitIndex;
+    }*/
 }
