@@ -15,6 +15,8 @@
 
 package net.buffers;
 
+import sun.plugin.dom.exception.InvalidStateException;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -653,36 +655,18 @@ public class OutputBuffer extends AbstractBuffer {
         return order(Order.BIG_MIDDLE_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
     }
 
-    /**
-     * To array byte [ ].
-     * <p>
-     * Returns a byte array which backs this @class OutputBuffer.
-     * <p>
-     * Changes to the byte[] will affect the contents of this OutputBuffer.
-     *
-     * @return the byte [ ]
-     */
     @Override
     public byte[] toArray() {
-        return out.array();
+        ByteBuffer dup = toByteBuffer();
+        dup.flip();
+        byte[] bytes = new byte[dup.remaining()];
+        dup.get(bytes);
+        return bytes;
     }
 
-    /**
-     * Returns a new @class ByteBuffer with the contents of this @class OutputBuffer.
-     * Any operations on the ByteBuffer will not affect this @class OutputBuffer.
-     * (Changes to the buffers contents will affect, however this OutputBuffer pos/limit/capcity etc will not be)
-     * <p>
-     * The returned @class ByteBuffer will have a position of 0 and limit/capacity of ByteBuffer.size().
-     * Writing to the returned ByteBuffer will overwrite the data stored within.
-     * <p>
-     * This method should be used when another library only accepts a ByteBuffer as a parameter
-     * and you don't intend on writing anymore data.
-     *
-     * @return the byte buffer
-     */
     @Override
     public ByteBuffer toByteBuffer() {
-        return ByteBuffer.wrap(toArray());
+        return out.duplicate();
     }
 
     @Override
@@ -746,54 +730,6 @@ public class OutputBuffer extends AbstractBuffer {
         NONE
     }
 
-    /**
-     * The interface Buffer reserve.
-     */
-    public interface IBufferReserve {
-        /**
-         * Write value.
-         *
-         * @param value the value
-         */
-        void writeValue(long value);
-
-        /**
-         * Write byte.
-         *
-         * @param b the b
-         */
-        void writeByte(int b);
-
-        /**
-         * Write bytes.
-         *
-         * @param b the b
-         */
-        void writeBytes(ByteBuffer b);
-
-        /**
-         * Write bytes.
-         *
-         * @param bytes the bytes
-         */
-        void writeBytes(Byte bytes[]);
-
-        /**
-         * Write value.
-         *
-         * @param value the value
-         * @param type  the type
-         */
-        void writeValue(long value, ByteTransformationType type);
-
-        /**
-         * Remaining int.
-         *
-         * @return the int
-         */
-        int remaining();
-    }
-
     private class OutputBufferReserve implements IBufferReserve {
         private final int reserveIndex;
         private final int numBytes;
@@ -806,9 +742,10 @@ public class OutputBuffer extends AbstractBuffer {
          */
         public OutputBufferReserve(int numBytes) {
             reserveIndex = out.position();
+            System.out.println("index=" + reserveIndex);
             this.numBytes = numBytes;
             for (int i = 0; i < numBytes; i++) {
-                writeByte(0);
+                OutputBuffer.this.writeByte(0);
             }
         }
 
@@ -819,6 +756,9 @@ public class OutputBuffer extends AbstractBuffer {
 
         @Override
         public void writeByte(int b) {
+            if (remaining() == 0) {
+                throw new InvalidStateException("Cannot exceed reserved bytes (" + numBytes + "). To many bytes written. In class " + getClass().getName());
+            }
             out.put(reserveIndex + cursor++, (byte) b);
         }
 
@@ -844,6 +784,10 @@ public class OutputBuffer extends AbstractBuffer {
             for (byte b : bytes) {
                 writeByte(b);
             }
+        }
+
+        public int bytesSinceReserve() {
+            return ((out.position() - 1) - reserveIndex - (numBytes - 1));
         }
 
         @Override
