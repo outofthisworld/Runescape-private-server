@@ -485,8 +485,7 @@ public class OutputBuffer extends AbstractBuffer {
                 transformValue(value, type);
             }
 
-            writeByte((byte) (value >> (i * 8)));
-            bytesWritten++;
+            bytes[bytesWritten++] = (byte) (value >> (i * 8));
 
             if (bytesWritten == numBytes) {
                 break;
@@ -797,7 +796,8 @@ public class OutputBuffer extends AbstractBuffer {
 
     private class OutputBufferReserve implements IBufferReserve {
         private final int reserveIndex;
-        private int numBytes;
+        private final int numBytes;
+        private int cursor = 0;
 
         /**
          * Instantiates a new Output buffer reserve.
@@ -819,14 +819,13 @@ public class OutputBuffer extends AbstractBuffer {
 
         @Override
         public void writeByte(int b) {
-            OutputBuffer.this.writeByte(b);
-            numBytes--;
+            out.put(reserveIndex + cursor++, (byte) b);
         }
 
         @Override
         public void writeBytes(ByteBuffer b) {
             Objects.requireNonNull(b);
-            while (b.remaining() != 0 && numBytes > 0) {
+            while (b.remaining() != 0 && remaining() != 0) {
                 writeByte(b.get());
             }
         }
@@ -834,8 +833,8 @@ public class OutputBuffer extends AbstractBuffer {
         @Override
         public void writeBytes(Byte[] bytes) {
             Objects.requireNonNull(bytes);
-            for(int i = 0; i < bytes.length && numBytes != 0;i++){
-                this.writeByte(bytes[i]);
+            for (int i = 0; i < bytes.length && remaining() != 0; i++) {
+                writeByte(bytes[i]);
             }
         }
 
@@ -849,7 +848,7 @@ public class OutputBuffer extends AbstractBuffer {
 
         @Override
         public int remaining() {
-            return numBytes;
+            return numBytes - cursor;
         }
     }
 }
