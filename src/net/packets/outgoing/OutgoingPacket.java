@@ -43,7 +43,7 @@ public class OutgoingPacket {
      * @param c the c
      */
     public void send(Client c) {
-        c.write(toOutputBuffer());
+        c.write(this);
     }
 
     /**
@@ -52,7 +52,7 @@ public class OutgoingPacket {
      * @return the output buffer
      */
     public OutputBuffer toOutputBuffer() {
-        return new OutputBuffer(outputBuffer.toArray());
+        return OutputBuffer.wrap(outputBuffer.toArray());
     }
 
     /**

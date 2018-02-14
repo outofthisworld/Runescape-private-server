@@ -44,24 +44,27 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     private OutputBuffer(int initialSize, int increaseSizeBytes) {
-        out = ByteBuffer.allocate(initialSize);
-        this.increaseSizeBytes = increaseSizeBytes;
+        this(ByteBuffer.allocate(initialSize), increaseSizeBytes);
     }
 
     private OutputBuffer(byte[] bytes, int increaseSizeBytes) {
-        out = ByteBuffer.allocate(bytes.length);
-        out.put(bytes);
-        this.increaseSizeBytes = increaseSizeBytes;
+        this(ByteBuffer.allocate(bytes.length).put(bytes), increaseSizeBytes);
     }
 
-    /**
-     * Instantiates a new Output buffer.
-     *
-     * @param bytes the bytes
-     */
-    public OutputBuffer(byte[] bytes) {
+    private OutputBuffer(byte[] bytes) {
         this(bytes, OutputBuffer.INCREASE_SIZE_BYTES);
     }
+
+    private OutputBuffer(ByteBuffer src, int increaseSizeBytes) {
+        assert src.limit() == src.capacity();
+        this.increaseSizeBytes = increaseSizeBytes;
+        out = src;
+    }
+
+    private OutputBuffer(ByteBuffer src) {
+        this(src, OutputBuffer.INCREASE_SIZE_BYTES);
+    }
+
 
     /**
      * Creates a new OutputBuffer with an initial size of 256 bytes
@@ -121,6 +124,27 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
+     * Wrap output buffer.
+     *
+     * @param src the src
+     * @return the output buffer
+     */
+    public static OutputBuffer wrap(ByteBuffer src) {
+        return new OutputBuffer(src);
+    }
+
+    /**
+     * Wrap output buffer.
+     *
+     * @param src               the src
+     * @param increaseSizeBytes the increase size bytes
+     * @return the output buffer
+     */
+    public static OutputBuffer wrap(ByteBuffer src, int increaseSizeBytes) {
+        return new OutputBuffer(src, increaseSizeBytes);
+    }
+
+    /**
      * Pipe all to int.
      *
      * @param c the c
@@ -128,6 +152,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @throws IOException the io exception
      */
     public int pipeAllTo(SocketChannel c) throws IOException {
+        Objects.requireNonNull(c);
         int bytesWritten = 0;
         int length = out.position();
         System.out.println("writing " + length + " bytes");
@@ -145,6 +170,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the int
      */
     public int pipeTo(byte[] byteArr) {
+        Objects.requireNonNull(byteArr);
         out.flip();
         out.get(byteArr, 0, byteArr.length);
         out.compact();
@@ -159,6 +185,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @throws IOException the io exception
      */
     public int pipeTo(SocketChannel c) throws IOException {
+        Objects.requireNonNull(c);
         out.flip();
         int bytesWritten;
         try {
@@ -172,21 +199,39 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
-     * Pipe to output buffer.
+     * Wites bytes from this output buffer into the specified ByteBuffer.
+     * The given ByteBuffer should be greater than or equal to the current
+     * OutputBuffer's size, and should be in write mode.
      *
      * @param b the b
      * @return the output buffer
      * @throws Exception the exception
      */
     public OutputBuffer pipeTo(ByteBuffer b) throws Exception {
+        Objects.requireNonNull(b);
         out.flip();
-        if (b.capacity() - b.position() < out.limit()) {
+        assert b.limit() == b.capacity();
+        if (b.remaining() < out.remaining()) {
             throw new Exception("Not enough room in buffer b");
         }
-        if (b.limit() != b.capacity()) {
-            throw new Exception("Buffer may be in readInBuffer mode");
-        }
         b.put(out);
+        out.compact();
+        return this;
+    }
+
+    /**
+     * Writes the bytes from this @class OutputBuffer to
+     * the specified @class OutputBuffer.
+     *
+     * @param other the other
+     * @return the output buffer
+     */
+    public OutputBuffer pipeTo(OutputBuffer other) {
+        Objects.requireNonNull(other);
+        out.flip();
+        while (out.remaining() != 0) {
+            other.writeByte(out.get());
+        }
         out.compact();
         return this;
     }
@@ -374,6 +419,20 @@ public class OutputBuffer extends AbstractBuffer {
      */
     public OutputBuffer writeByte(int b, ByteTransformationType type) {
         return writeByte(transformValue(b, type));
+    }
+
+
+    /**
+     * Writes bytes into this output buffer from the given ByteBuffer.
+     *
+     * @param src the src
+     * @return the output buffer
+     */
+    public OutputBuffer writeBytes(ByteBuffer src) {
+        while (src.remaining() != 0) {
+            writeByte(src.get());
+        }
+        return this;
     }
 
     /**
@@ -658,6 +717,11 @@ public class OutputBuffer extends AbstractBuffer {
         return order(Order.BIG_MIDDLE_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
     }
 
+    /**
+     * To underlying array byte [ ].
+     *
+     * @return the byte [ ]
+     */
     public byte[] toUnderlyingArray() {
         return out.array();
     }
@@ -669,6 +733,15 @@ public class OutputBuffer extends AbstractBuffer {
         byte[] bytes = new byte[dup.remaining()];
         dup.get(bytes);
         return bytes;
+    }
+
+    /**
+     * Duplicate output buffer.
+     *
+     * @return the output buffer
+     */
+    public OutputBuffer duplicate() {
+        return new OutputBuffer(toByteBuffer());
     }
 
     @Override
@@ -831,7 +904,5 @@ public class OutputBuffer extends AbstractBuffer {
         public int remaining() {
             return numBytes - cursor;
         }
-
-
     }
 }

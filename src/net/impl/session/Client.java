@@ -281,17 +281,16 @@ public class Client implements NetworkEventExecutor {
      * @param packet the packet
      * @return the completable future
      */
-    public CompletableFuture<Integer> write(OutgoingPacket packet){
+    public CompletableFuture<Integer> write(OutgoingPacket packet) {
         return write(packet.toOutputBuffer());
     }
 
 
     /**
-     *
      * Output buffers are queued if the socket channels internal buffer is full
      * When this happens, socketchannel.write() returns 0 bytes written, even though
      * the sent buffer may have more than zero bytes in it.
-     *
+     * <p>
      * As such, we register this clients selection key with the writable event
      * which will in turn call this method when the socket channels underlying buffer has
      * available bytes.
