@@ -15,6 +15,7 @@
 
 package net.packets.outgoing;
 
+import net.buffers.IBufferReserve;
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
 import world.entity.player.Player;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
  */
 public class OutgoingPacketBuilder {
     private final Client c;
-    private OutputBuffer outputBuffer = OutputBuffer.create();
+    private OutputBuffer outputBuffer;
 
     /**
      * Instantiates a new Packet builder.
@@ -38,11 +39,21 @@ public class OutgoingPacketBuilder {
      */
     public OutgoingPacketBuilder(Client c) {
         this.c = c;
+        assignOutputBuffer();
     }
 
-    private OutputBuffer createFrame(int packetId) {
+    private void assignOutputBuffer() {
+        outputBuffer = OutputBuffer.create(4096, 1024);
+    }
+
+    private OutputBuffer createHeader(int packetId) {
         outputBuffer.writeByte(packetId + c.getOutCipher().getNextValue());
         return outputBuffer;
+    }
+
+    private IBufferReserve<OutputBuffer> createHeader(int packetId, int reserveBytes) {
+        createHeader(packetId);
+        return outputBuffer.createByteReserve(reserveBytes);
     }
 
     /**
@@ -51,7 +62,7 @@ public class OutgoingPacketBuilder {
      * @return the packet builder
      */
     public OutgoingPacketBuilder logout() {
-        createFrame(OutgoingPacket.Opcodes.LOGOUT);
+        createHeader(OutgoingPacket.Opcodes.LOGOUT);
         return this;
     }
 
@@ -64,10 +75,18 @@ public class OutgoingPacketBuilder {
      */
     public OutgoingPacketBuilder sendMessage(String s) {
         byte[] sBytes = s.getBytes();
-        createFrame(OutgoingPacket.Opcodes.SEND_MESSAGE).writeByte(sBytes.length + 1).writeBytes(sBytes).writeByte(10);
+        createHeader(OutgoingPacket.Opcodes.SEND_MESSAGE).writeByte(sBytes.length + 1).writeBytes(sBytes).writeByte(10);
         return this;
     }
 
+    /**
+     * Add player options outgoing packet builder.
+     *
+     * @param optionPosition the option position
+     * @param flag           the flag
+     * @param actions        the actions
+     * @return the outgoing packet builder
+     */
     public OutgoingPacketBuilder addPlayerOptions(int optionPosition, int flag, String[] actions) {
 
         List<byte[]> list = Arrays.stream(actions).map(String::getBytes).collect(Collectors.toList());
@@ -80,7 +99,7 @@ public class OutgoingPacketBuilder {
             total = 0;
         }
 
-        createFrame(OutgoingPacket.Opcodes.ADD_PLAYER_OPTION).writeByte(total + 2)
+        createHeader(OutgoingPacket.Opcodes.ADD_PLAYER_OPTION).writeByte(total + 2)
                 .writeByte(optionPosition, OutputBuffer.ByteTransformationType.C)
                 .writeByte(flag, OutputBuffer.ByteTransformationType.A);
 
@@ -97,7 +116,7 @@ public class OutgoingPacketBuilder {
      * @return the packet builder
      */
     public OutgoingPacketBuilder sendInterfaceText(String s, int id) {
-        createFrame(126);
+        createHeader(126);
         byte[] strBytes = s.getBytes();
         outputBuffer.writeBigWORD(strBytes.length + 1 + 2);
         outputBuffer.writeBytes(s.getBytes());
@@ -118,10 +137,10 @@ public class OutgoingPacketBuilder {
      * @return the packet builder
      */
     public OutgoingPacketBuilder createGroundItem(int itemId, int x, int y) {
-        createFrame(OutgoingPacket.Opcodes.UPDATE_PLAYER_XY);
+        createHeader(OutgoingPacket.Opcodes.UPDATE_PLAYER_XY);
         outputBuffer.writeByte(x, OutputBuffer.ByteTransformationType.C);
         outputBuffer.writeByte(y, OutputBuffer.ByteTransformationType.C);
-        createFrame(OutgoingPacket.Opcodes.DISPLAY_GROUND_ITEM);
+        createHeader(OutgoingPacket.Opcodes.DISPLAY_GROUND_ITEM);
         outputBuffer.writeLittleWORDA(itemId);
         outputBuffer.writeBigWORD(1);
         outputBuffer.writeByte(0);
@@ -143,10 +162,10 @@ public class OutgoingPacketBuilder {
     public OutgoingPacketBuilder createGroundItem(int itemID, int itemX, int itemY, int itemAmount) {// Phate: Omg fucking sexy! creates item at
         /*
         // absolute X and Y
-        client.getOutStream().createFrame(85); // Phate: Spawn ground item
+        client.getOutStream().createHeader(85); // Phate: Spawn ground item
         client.getOutStream().writeByteC((itemY - 8 * client.mapRegionY));
         client.getOutStream().writeByteC((itemX - 8 * client.mapRegionX));
-        client.getOutStream().createFrame(44);
+        client.getOutStream().createHeader(44);
         client.getOutStream().writeWordBigEndianA(itemID);
         client.getOutStream().writeWord(itemAmount);
         client.getOutStream().writeByte(0); // x(4 MSB) y(LSB) coords*/
@@ -165,17 +184,24 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder removeGroundItem(int itemX, int itemY, int itemID) {
-        /*client.getOutStream().createFrame(85); // Phate: Item Position Frame
+        /*client.getOutStream().createHeader(85); // Phate: Item Position Frame
         client.getOutStream().writeByteC((itemY - 8 * client.mapRegionY));
         client.getOutStream().writeByteC((itemX - 8 * client.mapRegionX));
-        client.getOutStream().createFrame(156); // Phate: Item Action: Delete
+        client.getOutStream().createHeader(156); // Phate: Item Action: Delete
         client.getOutStream().writeByteS(0); // x(4 MSB) y(LSB) coords
         client.getOutStream().writeWord(itemID); // Phate: Item ID*/
         return this;
     }
 
+    /**
+     * Init player outgoing packet builder.
+     *
+     * @param membership  the membership
+     * @param playerIndex the player index
+     * @return the outgoing packet builder
+     */
     public OutgoingPacketBuilder initPlayer(int membership, int playerIndex) {
-        createFrame(OutgoingPacket.Opcodes.INIT_PLAYER)
+        createHeader(OutgoingPacket.Opcodes.INIT_PLAYER)
                 .writeByte(membership, OutputBuffer.ByteTransformationType.A)
                 .writeLittleWORDA(playerIndex);
         return this;
@@ -193,7 +219,7 @@ public class OutgoingPacketBuilder {
      * @return the packet builder
      */
     public OutgoingPacketBuilder openWelcomeScreen(int recoveryChange, boolean memberWarning, int messages, int lastLoginIP, int lastLogin) {
-        /*client.getOutStream().createFrame(176);
+        /*client.getOutStream().createHeader(176);
         client.getOutStream().writeByteC(recoveryChange);
         client.getOutStream().writeWordA(messages); // # of unread messages
         client.getOutStream().writeByte(memberWarning ? 1 : 0); // 1 for member
@@ -212,7 +238,7 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder setSidebarInterface(int menuId, int form) {
-        /*client.getOutStream().createFrame(71);
+        /*client.getOutStream().createHeader(71);
         client.getOutStream().writeWord(form);
         client.getOutStream().writeByteA(menuId);*/
         return this;
@@ -228,7 +254,7 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder setSkillLevel(int skillNum, int currentLevel, int XP) {
-        /*client.getOutStream().createFrame(134);
+        /*client.getOutStream().createHeader(134);
         client.getOutStream().writeByte(skillNum);
         client.getOutStream().writeDWord_v1(XP);
         client.getOutStream().writeByte(currentLevel);*/
@@ -244,7 +270,7 @@ public class OutgoingPacketBuilder {
      * @return chat options
      */
     public OutgoingPacketBuilder setChatOptions(int publicChat, int privateChat, int tradeBlock) {
-        createFrame(OutgoingPacket.Opcodes.CHAT_PRIVACY_SETTINGS)
+        createHeader(OutgoingPacket.Opcodes.CHAT_PRIVACY_SETTINGS)
                 .writeByte(publicChat).writeByte(privateChat).writeByte(tradeBlock);
         return this;
     }
@@ -256,7 +282,7 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder sendInterface(int id) {
-        /*client.getOutStream().createFrame(97);
+        /*client.getOutStream().createHeader(97);
         client.getOutStream().writeWord(id);*/
         return this;
     }
@@ -268,7 +294,7 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder sendChatInterface(int id) {
-        /*client.getOutStream().createFrame(164);
+        /*client.getOutStream().createHeader(164);
         client.getOutStream().writeWordLittleEndian(id);*/
         return this;
     }
@@ -294,28 +320,29 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder closeInterfaces() {
-        createFrame(219);
+        createHeader(219);
         return this;
     }
+
+    /**
+     * Player update outgoing packet builder.
+     *
+     * @return the outgoing packet builder
+     */
 
     public OutgoingPacketBuilder playerUpdate() {
         Player player = c.getPlayer();
 
         /*
             Teleporting / region change
-         */
+        */
+        IBufferReserve<OutputBuffer> reserve = createHeader(81, 2);
 
-
-        createFrame(81)
-                .widen(8096);
-
-        OutputBuffer.IBufferReserve reserve = outputBuffer.createByteReserve(2);
-        reserve.
 
         if (player.isTeleporting() || player.regionHasChanged()) {
-                  /*
-                 * Update required bit
-                */
+             /*
+              * Update required bit
+             */
             outputBuffer.writeBit(true)
                 /*
                  * This value indicates the player teleported.
@@ -343,9 +370,84 @@ public class OutgoingPacketBuilder {
                    */
                     .writeBits(player.getPosition().getLocalX(player.getLastPosition()), 7);
         } else {
-
+            updatePlayerMovement(player);
         }
 
+        //Write how many bytes the packet contains
+        reserve.writeValue(reserve.bytesSinceReserve());
+    }
+
+    private void updatePlayerMovement(Player player) {
+               /*
+             * Check which type of movement took place.
+             */
+        if (player.getWalkingDirection() == -1) {
+                  /*
+                   * If no movement did, check if an update is required.
+                   */
+            if (player.getUpdateFlags().isUpdateRequired()) {
+                        /*
+                         * Signify that an update happened.
+                         */
+                outputBuffer.writeBit(true)
+                        /*
+                         * Signify that there was no movement.
+                         */
+                        .writeBits(0, 2);
+            } else {
+                        /*
+                         * Signify that nothing changed.
+                         */
+                outputBuffer.writeBit(false);
+            }
+        } else if (player.getRunningDirection() == -1) {
+                  /*
+                   * The player moved but didn't run. Signify that an update is required.
+                   */
+            outputBuffer.writeBit(true)
+
+                  /*
+                   * Signify we moved one tile.
+                   */
+                    .writeBits(2, 1)
+
+                  /*
+                   * Write the primary sprite (i.e. walk direction).
+                   */
+                    .writeBits(3, player.getWalkingDirection())
+
+                  /*
+                   * Write a flag indicating if a block update happened.
+                   */
+                    .writeBit(player.getUpdateFlags().isUpdateRequired());
+
+
+        } else {
+                  /*
+                   * The player ran. Signify that an update happened.
+                   */
+            outputBuffer.writeBit(true)
+
+                  /*
+                   * Signify that we moved two tiles.
+                   */
+                    .writeBits(2, 2)
+
+                  /*
+                   * Write the primary sprite (i.e. walk direction).
+                   */
+                    .writeBits(3, player.getWalkingDirection())
+
+                  /*
+                   * Write the secondary sprite (i.e. run direction).
+                   */
+                    .writeBits(3, player.getRunningDirection())
+
+                  /*
+                   * Write a flag indicating if a block update happened.
+                   */
+                    .writeBit(player.getUpdateFlags().isUpdateRequired());
+        }
     }
 
 
@@ -356,7 +458,7 @@ public class OutgoingPacketBuilder {
      */
     public OutputBuffer build() {
         OutputBuffer current = outputBuffer;
-        outputBuffer = OutputBuffer.create();
+        assignOutputBuffer();
         return current;
     }
 

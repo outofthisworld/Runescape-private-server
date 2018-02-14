@@ -22,6 +22,7 @@ import net.impl.decoder.ProtocolDecoder;
 import net.impl.enc.ISAACCipher;
 import net.impl.events.NetworkEvent;
 import net.impl.events.NetworkEventExecutor;
+import net.packets.outgoing.OutgoingPacket;
 import net.packets.outgoing.OutgoingPacketBuilder;
 import world.entity.player.Player;
 
@@ -59,7 +60,7 @@ public class Client implements NetworkEventExecutor {
     /**
      * Instantiates a new Client.
      *
-     * @param selectionKey the selection key
+     * @param key the key
      * @throws IOException the io exception
      */
     public Client(SelectionKey key) throws IOException {
@@ -123,6 +124,11 @@ public class Client implements NetworkEventExecutor {
         inCipher = cipher;
     }
 
+    /**
+     * Gets input buffer.
+     *
+     * @return the input buffer
+     */
     public InputBuffer getInputBuffer() {
         return inputBuffer;
     }
@@ -219,12 +225,16 @@ public class Client implements NetworkEventExecutor {
      * @param isNew     the is new
      * @return the int
      */
-    private int writeOutBuf(OutputBuffer outBuffer, boolean isNew) {
-        int bytesWritten = 0;
-
+    private int write(OutputBuffer outBuffer, boolean isNew) {
         int outBufSize = outBuffer.size();
 
-        if (outBufSize == 0) {
+        if (outBufSize <= 0) {
+            return 0;
+        }
+
+        int bytesWritten = 0;
+
+        if (!isNew || outgoingBuffers.size() == 0) {
             try {
                 bytesWritten = outBuffer.pipeTo(channel);
             } catch (IOException e) {
@@ -232,6 +242,7 @@ public class Client implements NetworkEventExecutor {
                 disconnect();
             }
         }
+
 
         if (bytesWritten == -1) {
             disconnect();
@@ -258,22 +269,45 @@ public class Client implements NetworkEventExecutor {
      * @return the int
      */
     public CompletableFuture<Integer> write(OutputBuffer outBuffer) {
-        return CompletableFuture.supplyAsync(() -> writeOutBuf(outBuffer, true));
+        if (outBuffer.size() == 0) {
+            return CompletableFuture.completedFuture(0);
+        }
+        return CompletableFuture.supplyAsync(() -> write(outBuffer, true));
+    }
+
+    /**
+     * Write completable future.
+     *
+     * @param packet the packet
+     * @return the completable future
+     */
+    public CompletableFuture<Integer> write(OutgoingPacket packet){
+        return write(packet.toOutputBuffer());
     }
 
 
     /**
-     * Write outgoing buffers.
+     *
+     * Output buffers are queued if the socket channels internal buffer is full
+     * When this happens, socketchannel.write() returns 0 bytes written, even though
+     * the sent buffer may have more than zero bytes in it.
+     *
+     * As such, we register this clients selection key with the writable event
+     * which will in turn call this method when the socket channels underlying buffer has
+     * available bytes.
      */
     public void writeOutgoingBuffers() {
         CompletableFuture.runAsync(() -> {
             //Deregister for write events
             selectionKey.interestOps(selectionKey.interestOps() & (~SelectionKey.OP_WRITE));
-            //Write the queued outgoing buffers, if the outgoing buffers are not all written writeOutBuf will
+            //Write the queued outgoing buffers, if the outgoing buffers are not all written write will
             //register the selection key for write events.
             OutputBuffer buf;
             while ((buf = getOutgoingBuffers().poll()) != null) {
-                writeOutBuf(buf, false);
+                if (buf.size() == 0) {
+                    continue;
+                }
+                write(buf, false);
             }
         });
     }

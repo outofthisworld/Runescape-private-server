@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 /**
  * The interface Buffer reserve.
  */
-public interface IBufferReserve {
+public interface IBufferReserve<T> {
     /**
      * Write value.
      *
@@ -55,4 +55,6 @@ public interface IBufferReserve {
      * @return the int
      */
     int bytesSinceReserve();
+
+    T toBuffer();
 }
