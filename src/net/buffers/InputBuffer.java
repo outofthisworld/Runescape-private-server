@@ -65,8 +65,8 @@ public class InputBuffer extends AbstractBuffer {
      *
      * @param size the size
      */
-    private void widen(int increaseSize) {
-        ByteBuffer b = ByteBuffer.allocate(inBuffer.capacity() + increaseSize);
+    private void widen(int newSz) {
+        ByteBuffer b = ByteBuffer.allocate(inBuffer.capacity() + newSz);
         b.put(inBuffer);
         inBuffer.clear();
         inBuffer = b;
@@ -82,12 +82,13 @@ public class InputBuffer extends AbstractBuffer {
      *
      * @param socketChannel the socket channel
      * @return the int
-     * @throws IOException the io exception
+     * @throws IOException             the io exception
+     * @throws BufferOverflowException the buffer overflow exception
      */
-    public int pipeFrom(SocketChannel socketChannel) throws IOException, BufferOverflowException {
+    public int readFrom(SocketChannel socketChannel) throws IOException, BufferOverflowException {
         Objects.requireNonNull(socketChannel);
         if (bufferNeedsResizing(RESIZE_THRESHOLD, BUFFER_INCREASE_SIZE)) {
-            widen(BUFFER_INCREASE_SIZE);
+            widen(inBuffer.capacity() + BUFFER_INCREASE_SIZE);
         }
 
         inBuffer.compact();
@@ -105,21 +106,19 @@ public class InputBuffer extends AbstractBuffer {
      * This @class InputBuffer will attempt to widen within its constraints, and if needed widen more
      * than BUFFER_INCREASE_SIZE to fit the reamining bytes in the source buffer. However, if this
      *
-     * @param socketChannel the socket channel
+     * @param b the b
      * @return the int
-     * @throws java.nio.BufferOverflowException - If there is insufficient space in this buffer for the remaining bytes in the source buffer and this InputBuffer is
-     *                                          bounded.
+     * @throws java.nio.BufferOverflowException - If there is insufficient space in this buffer for the remaining bytes in the source buffer and this InputBuffer is                                          bounded.
      * @throws IllegalArgumentException         - If the source buffer is this buffer
      * @throws java.nio.ReadOnlyBufferException - If this buffer is read-only
-     * @class InputBuffer is bounded, and the source ByteBuffers remaining bytes will exceed the upper bound
-     * then BufferOverflowException will be thrown.
+     * @class InputBuffer is bounded, and the source ByteBuffers remaining bytes will exceed the upper bound then BufferOverflowException will be thrown.
      */
-    public int pipeFrom(ByteBuffer b) {
+    public int readFrom(ByteBuffer b) {
         Objects.requireNonNull(b);
 
         int resizeAmount = b.remaining() > BUFFER_INCREASE_SIZE ? b.remaining() : BUFFER_INCREASE_SIZE;
         if (bufferNeedsResizing(b.remaining(), resizeAmount)) {
-            widen(resizeAmount);
+            widen(inBuffer.capacity() + resizeAmount);
         }
 
         int read = b.remaining();
@@ -127,6 +126,55 @@ public class InputBuffer extends AbstractBuffer {
         inBuffer.put(b);
         inBuffer.flip();
         return read;
+    }
+
+    /**
+     * Pipes the reamining bytes in this @class InputBuffer to the specified @class OutputBuffer
+     *
+     * @param out the out
+     */
+    public void pipeTo(OutputBuffer out) {
+        Objects.requireNonNull(out);
+        while (inBuffer.remaining() != 0) {
+            out.writeByte(inBuffer.get());
+        }
+    }
+
+    /**
+     * Pipes the reamining bytes in this @class InputBuffer to the specified @class OutputBuffer
+     *
+     * @param out the out
+     */
+    public void pipeTo(ByteBuffer out) {
+        Objects.requireNonNull(out);
+        if (inBuffer.remaining() > out.remaining()) {
+            throw new BufferOverflowException();
+        }
+        while (inBuffer.remaining() != 0) {
+            out.put(inBuffer.get());
+        }
+    }
+
+    /**
+     * Pipe to.
+     *
+     * @param bytes the bytes
+     */
+    public void pipeTo(byte[] bytes) {
+        Objects.requireNonNull(bytes);
+        inBuffer.get(bytes);
+    }
+
+    /**
+     * Pipe to.
+     *
+     * @param bytes  the bytes
+     * @param offset the offset
+     * @param len    the len
+     */
+    public void pipeTo(byte[] bytes, int offset, int len) {
+        Objects.requireNonNull(bytes);
+        inBuffer.get(bytes, offset, len);
     }
 
     /**

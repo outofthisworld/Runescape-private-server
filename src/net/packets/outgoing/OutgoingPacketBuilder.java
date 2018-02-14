@@ -20,9 +20,7 @@ import net.buffers.OutputBuffer;
 import net.impl.session.Client;
 import world.entity.player.Player;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +28,8 @@ import java.util.stream.Collectors;
  */
 public class OutgoingPacketBuilder {
     private final Client c;
+    //Clear every cycle
+    private final HashMap<Player, OutputBuffer> playerMovementCache = new HashMap<>();
     private OutputBuffer outputBuffer;
 
     /**
@@ -65,7 +65,6 @@ public class OutgoingPacketBuilder {
         createHeader(OutgoingPacket.Opcodes.LOGOUT);
         return this;
     }
-
 
     /**
      * 253: Send message packet builder.
@@ -106,7 +105,6 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
-
     /**
      * Send interface text
      * 126: Attaches text to an interface.
@@ -124,7 +122,6 @@ public class OutgoingPacketBuilder {
         outputBuffer.writeBigWORDA(id);
         return this;
     }
-
 
     /**
      * Create ground item packet builder.
@@ -146,7 +143,6 @@ public class OutgoingPacketBuilder {
         outputBuffer.writeByte(0);
         return this;
     }
-
 
     /**
      * Creates a ground item.
@@ -207,7 +203,6 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
-
     /**
      * Open welcome screen packet builder.
      *
@@ -243,7 +238,6 @@ public class OutgoingPacketBuilder {
         client.getOutStream().writeByteA(menuId);*/
         return this;
     }
-
 
     /**
      * 134: Updates a players skill of current lvl and experience
@@ -298,7 +292,6 @@ public class OutgoingPacketBuilder {
         client.getOutStream().writeWordLittleEndian(id);*/
         return this;
     }
-
 
     /**
      * Sends the level up.
@@ -373,11 +366,50 @@ public class OutgoingPacketBuilder {
             updatePlayerMovement(player);
         }
 
+        if (player.getUpdateFlags().isUpdateRequired()) {
+            appendUpdates(player, update, false, true);
+        }
+
+
+        writer.writeBits(8, player.getLocalPlayers().size());
+
+        for (Iterator<Player> iterator = player.getLocalPlayers().iterator(); iterator
+                .hasNext(); ) {
+
+            Player other = iterator.next();
+
+            if (World.getPlayers()[other.getSlot()] != null && other.isRegistered()
+                    && other.getPosition().isWithinDistance(player.getPosition(),
+                    Position.VIEWING_DISTANCE)) {
+                updatePlayerMovement(other, writer);
+
+                if (other.getUpdateFlags().isUpdateRequired()) {
+                    appendUpdates(other, update, false, false);
+                }
+            } else {
+                iterator.remove();
+                writer.writeBit(true);
+                writer.writeBits(2, 3);
+            }
+        }
+
         //Write how many bytes the packet contains
         reserve.writeValue(reserve.bytesSinceReserve());
     }
 
     private void updatePlayerMovement(Player player) {
+
+        if (playerMovementCache.containsKey(player)) {
+            OutputBuffer cachedMovement = playerMovementCache.get(player);
+            OutputBuffer duplicateMovement = cachedMovement.duplicate();
+            playerMovementCache.put(player, duplicateMovement);
+            cachedMovement.pipeTo(outputBuffer);
+            return;
+        }
+
+
+        OutputBuffer playerMovementBuf = OutputBuffer.create(2, 1);
+
                /*
              * Check which type of movement took place.
              */
@@ -389,7 +421,7 @@ public class OutgoingPacketBuilder {
                         /*
                          * Signify that an update happened.
                          */
-                outputBuffer.writeBit(true)
+                playerMovementBuf.writeBit(true)
                         /*
                          * Signify that there was no movement.
                          */
@@ -398,13 +430,13 @@ public class OutgoingPacketBuilder {
                         /*
                          * Signify that nothing changed.
                          */
-                outputBuffer.writeBit(false);
+                playerMovementBuf.writeBit(false);
             }
         } else if (player.getRunningDirection() == -1) {
                   /*
                    * The player moved but didn't run. Signify that an update is required.
                    */
-            outputBuffer.writeBit(true)
+            playerMovementBuf.writeBit(true)
 
                   /*
                    * Signify we moved one tile.
@@ -426,7 +458,7 @@ public class OutgoingPacketBuilder {
                   /*
                    * The player ran. Signify that an update happened.
                    */
-            outputBuffer.writeBit(true)
+            playerMovementBuf.writeBit(true)
 
                   /*
                    * Signify that we moved two tiles.
@@ -448,6 +480,9 @@ public class OutgoingPacketBuilder {
                    */
                     .writeBit(player.getUpdateFlags().isUpdateRequired());
         }
+
+        playerMovementCache.put(player, playerMovementBuf.duplicate());
+        playerMovementBuf.pipeTo(outputBuffer);
     }
 
 

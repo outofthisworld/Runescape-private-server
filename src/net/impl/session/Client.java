@@ -200,7 +200,7 @@ public class Client implements NetworkEventExecutor {
         int bytesRead = 0;
         Exception ex = null;
         try {
-            bytesRead = getInputBuffer().pipeFrom(channel);
+            bytesRead = getInputBuffer().readFrom(channel);
         } catch (BufferOverflowException e) {
             e.printStackTrace();
             ex = e;

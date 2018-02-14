@@ -746,7 +746,8 @@ public class OutputBuffer extends AbstractBuffer {
 
     @Override
     public ByteBuffer toByteBuffer() {
-        return out.duplicate();
+        out.ar
+
     }
 
     @Override
