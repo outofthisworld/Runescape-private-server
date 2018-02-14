@@ -309,6 +309,9 @@ public class OutgoingPacketBuilder {
         createFrame(81)
                 .widen(8096);
 
+        OutputBuffer.IBufferReserve reserve = outputBuffer.createByteReserve(2);
+        reserve.
+
         if (player.isTeleporting() || player.regionHasChanged()) {
                   /*
                  * Update required bit

@@ -18,6 +18,7 @@ package net.buffers;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.Objects;
 
 /**
  * <p>
@@ -210,6 +211,7 @@ public class OutputBuffer extends AbstractBuffer {
      * Widen.
      *
      * @param newSize the new size
+     * @return the output buffer
      */
     public OutputBuffer widen(int newSize) {
         if (newSize == out.capacity()) {
@@ -230,6 +232,7 @@ public class OutputBuffer extends AbstractBuffer {
      * Truncate.
      *
      * @param newSize the new size
+     * @return the output buffer
      */
     public OutputBuffer truncate(int newSize) {
         if (newSize < 0 || newSize > out.capacity()) {
@@ -325,7 +328,7 @@ public class OutputBuffer extends AbstractBuffer {
             }
         }
         if (amount <= 0) {
-            return;
+            return this;
         }
         bitIndex = amount & 7;
         int newAmount = amount - bitIndex;
@@ -335,6 +338,17 @@ public class OutputBuffer extends AbstractBuffer {
         }
         writeByte((byte) (value << (8 - bitIndex)), false);
         return this;
+    }
+
+
+    /**
+     * Create byte reserve buffer reserve.
+     *
+     * @param numBytes the num bytes
+     * @return the buffer reserve
+     */
+    public IBufferReserve createByteReserve(int numBytes) {
+        return new OutputBufferReserve(numBytes);
     }
 
     /**
@@ -424,14 +438,14 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
-     * Write bytes output buffer.
+     * Long to byte array byte [ ].
      *
      * @param value    the value
      * @param numBytes the num bytes
      * @param type     the type
-     * @return the output buffer
+     * @return the byte [ ]
      */
-    public OutputBuffer writeBytes(long value, int numBytes, ByteTransformationType type) {
+    private byte[] longToByteArray(long value, int numBytes, ByteTransformationType type) {
         if (numBytes < 1 || numBytes > 8) {
             throw new RuntimeException("Invalid params, numBytes must be between 1-8 inclusive");
         }
@@ -465,6 +479,7 @@ public class OutputBuffer extends AbstractBuffer {
         }
 
         int bytesWritten = 0;
+        byte[] bytes = new byte[numBytes];
         for (int i = start; i != end; i += increment) {
             if (i == 0) {
                 transformValue(value, type);
@@ -485,7 +500,22 @@ public class OutputBuffer extends AbstractBuffer {
                 i = -1;
             }
         }
+        return bytes;
+    }
 
+    /**
+     * Write bytes output buffer.
+     *
+     * @param value    the value
+     * @param numBytes the num bytes
+     * @param type     the type
+     * @return the output buffer
+     */
+    public OutputBuffer writeBytes(long value, int numBytes, ByteTransformationType type) {
+        byte[] longBytes = longToByteArray(value, numBytes, type);
+        for (byte b : longBytes) {
+            writeByte(b);
+        }
         return this;
     }
 
@@ -495,7 +525,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @param order the order
      * @return the output buffer
      */
-    public OutputBuffer outOrder(Order order) {
+    public OutputBuffer order(Order order) {
         currentByteOrder = order;
         return this;
     }
@@ -507,7 +537,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeLittleDWORD(long x) {
-        return outOrder(Order.LITTLE_ENDIAN).writeBytes(x, 4, ByteTransformationType.NONE);
+        return order(Order.LITTLE_ENDIAN).writeBytes(x, 4, ByteTransformationType.NONE);
     }
 
     /**
@@ -517,7 +547,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeBigDWORD(long x) {
-        return outOrder(Order.BIG_ENDIAN).writeBytes(x, 4, ByteTransformationType.NONE);
+        return order(Order.BIG_ENDIAN).writeBytes(x, 4, ByteTransformationType.NONE);
     }
 
     /**
@@ -527,7 +557,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeBigQWORD(long x) {
-        return outOrder(Order.BIG_ENDIAN).writeBytes(x, 8, ByteTransformationType.NONE);
+        return order(Order.BIG_ENDIAN).writeBytes(x, 8, ByteTransformationType.NONE);
     }
 
     /**
@@ -537,7 +567,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeLittleQWORD(long x) {
-        return outOrder(Order.LITTLE_ENDIAN).writeBytes(x, 8, ByteTransformationType.NONE);
+        return order(Order.LITTLE_ENDIAN).writeBytes(x, 8, ByteTransformationType.NONE);
     }
 
     /**
@@ -547,7 +577,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeBigWORD(int x) {
-        return outOrder(Order.BIG_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
+        return order(Order.BIG_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
     }
 
     /**
@@ -559,7 +589,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeBigWORDA(int x) {
-        return outOrder(Order.BIG_ENDIAN).writeBytes(x, 2, ByteTransformationType.A);
+        return order(Order.BIG_ENDIAN).writeBytes(x, 2, ByteTransformationType.A);
     }
 
     /**
@@ -571,7 +601,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeLittleWORDA(int x) {
-        return outOrder(Order.LITTLE_ENDIAN).writeBytes(x, 2, ByteTransformationType.A);
+        return order(Order.LITTLE_ENDIAN).writeBytes(x, 2, ByteTransformationType.A);
     }
 
     /**
@@ -581,7 +611,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeLittleWORD(int x) {
-        return outOrder(Order.LITTLE_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
+        return order(Order.LITTLE_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
     }
 
     /**
@@ -591,7 +621,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeBigMiddleDWORD(long x) {
-        return outOrder(Order.BIG_MIDDLE_ENDIAN).writeBytes(x, 4, ByteTransformationType.NONE);
+        return order(Order.BIG_MIDDLE_ENDIAN).writeBytes(x, 4, ByteTransformationType.NONE);
     }
 
     /**
@@ -601,7 +631,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeLittleMiddleDWORD(long x) {
-        return outOrder(Order.LITTLE_MIDDLE_ENDIAN).writeBytes(x, 4, ByteTransformationType.NONE);
+        return order(Order.LITTLE_MIDDLE_ENDIAN).writeBytes(x, 4, ByteTransformationType.NONE);
     }
 
     /**
@@ -611,7 +641,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeLittleMiddleWORD(int x) {
-        return outOrder(Order.LITTLE_MIDDLE_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
+        return order(Order.LITTLE_MIDDLE_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
     }
 
     /**
@@ -621,9 +651,8 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeBigMiddleWORD(int x) {
-        return outOrder(Order.BIG_MIDDLE_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
+        return order(Order.BIG_MIDDLE_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
     }
-
 
     /**
      * To array byte [ ].
@@ -719,38 +748,108 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
-     * Write bits.
-     *
-     * @param value   the value
-     * @param numBits the num bits
+     * The interface Buffer reserve.
      */
-    /*public void writeBits(long value, int numBits) {
-        int shiftAmount = numBits - 1;
-        int bitIndex;
-        byte currentByteValue = 0;
+    public interface IBufferReserve {
+        /**
+         * Write value.
+         *
+         * @param value the value
+         */
+        void writeValue(long value);
 
-        if (this.bitIndex == -1) {
-            bitIndex = 8 - 1;
-        } else {
-            bitIndex = this.bitIndex;
-            out.flip();
-            currentByteValue = out.get();
-            out.compact();
-        }
+        /**
+         * Write byte.
+         *
+         * @param b the b
+         */
+        void writeByte(int b);
 
-        for (int i = shiftAmount; i >= 0; i--) {
-            currentByteValue |= ((value >> i) & 0x01) << bitIndex--;
+        /**
+         * Write bytes.
+         *
+         * @param b the b
+         */
+        void writeBytes(ByteBuffer b);
 
-            if (i == 0 || bitIndex < 0) {
-                writeByte(currentByteValue, false);
-                if (i == 0) {
-                    break;
-                } else {
-                    currentByteValue = 0;
-                    bitIndex = 8 - 1;
-                }
+        /**
+         * Write bytes.
+         *
+         * @param bytes the bytes
+         */
+        void writeBytes(Byte bytes[]);
+
+        /**
+         * Write value.
+         *
+         * @param value the value
+         * @param type  the type
+         */
+        void writeValue(long value, ByteTransformationType type);
+
+        /**
+         * Remaining int.
+         *
+         * @return the int
+         */
+        int remaining();
+    }
+
+    private class OutputBufferReserve implements IBufferReserve {
+        private final int reserveIndex;
+        private int numBytes;
+
+        /**
+         * Instantiates a new Output buffer reserve.
+         *
+         * @param numBytes the num bytes
+         */
+        public OutputBufferReserve(int numBytes) {
+            reserveIndex = out.position();
+            this.numBytes = numBytes;
+            for (int i = 0; i < numBytes; i++) {
+                writeByte(0);
             }
         }
-        this.bitIndex = bitIndex;
-    }*/
+
+        @Override
+        public void writeValue(long value) {
+            writeValue(value, ByteTransformationType.NONE);
+        }
+
+        @Override
+        public void writeByte(int b) {
+            OutputBuffer.this.writeByte(b);
+            numBytes--;
+        }
+
+        @Override
+        public void writeBytes(ByteBuffer b) {
+            Objects.requireNonNull(b);
+            while (b.remaining() != 0 && numBytes > 0) {
+                writeByte(b.get());
+            }
+        }
+
+        @Override
+        public void writeBytes(Byte[] bytes) {
+            Objects.requireNonNull(bytes);
+            for(int i = 0; i < bytes.length && numBytes != 0;i++){
+                this.writeByte(bytes[i]);
+            }
+        }
+
+        @Override
+        public void writeValue(long value, ByteTransformationType type) {
+            byte[] bytes = longToByteArray(value, numBytes, type);
+            for (byte b : bytes) {
+                writeByte(b);
+            }
+        }
+
+        @Override
+        public int remaining() {
+            return numBytes;
+        }
+    }
 }
