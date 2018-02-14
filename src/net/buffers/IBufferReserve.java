@@ -48,4 +48,11 @@ public interface IBufferReserve {
      * @return the int
      */
     int remaining();
+
+    /**
+     * Bytes since reserve int.
+     *
+     * @return the int
+     */
+    int bytesSinceReserve();
 }
