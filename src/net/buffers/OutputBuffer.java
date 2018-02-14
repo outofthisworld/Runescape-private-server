@@ -730,6 +730,22 @@ public class OutputBuffer extends AbstractBuffer {
         NONE
     }
 
+    /**
+        Creates an OutputBufferReserve, a pocket in the OutputBuffer
+        which can be written to at a later time. The pocket is filled with 0 bytes
+        until one of the methods are used to fill the pocket.
+
+        This is an abstraction over
+
+            - Skipping x bytes in the output buffer
+            - Remembering the index at which was skipped and how many bytes were skipped
+            - Continuing writing from the new position after skipping
+            - going back to the index of the skipped bytes
+            - setting the indexes of the skipped bytes to the new value.
+
+        This class will keep track of all that information automatically
+        and can return how many bytes have been written since the end of the reserved bytes.
+     */
     private class OutputBufferReserve implements IBufferReserve {
         private final int reserveIndex;
         private final int numBytes;
