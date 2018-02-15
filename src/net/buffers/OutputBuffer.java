@@ -740,14 +740,20 @@ public class OutputBuffer extends AbstractBuffer {
      *
      * @return the output buffer
      */
-    public OutputBuffer duplicate() {
-        return new OutputBuffer(toByteBuffer());
+    public OutputBuffer copy() {
+        byte[] current = out.array();
+        byte[] dest = new byte[current.length];
+        System.arraycopy(out.array(), 0, dest, 0, dest.length);
+        OutputBuffer out = new OutputBuffer(dest);
+        out.out.position(this.out.position());
+        out.out.limit(this.out.limit());
+        return out;
     }
+
 
     @Override
     public ByteBuffer toByteBuffer() {
-        out.ar
-
+        return out.duplicate();
     }
 
     @Override

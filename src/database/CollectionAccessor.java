@@ -13,7 +13,7 @@ import com.mongodb.client.result.UpdateResult;
 import com.sun.javaws.exceptions.InvalidArgumentException;
 import database.serialization.AbstractSerializer;
 import org.bson.Document;
-import util.ErrorUtils;
+import util.Preconditions;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
      * @param mappingClass   the mapping class
      */
     public CollectionAccessor(AbstractSerializer<T, String> serializer, String dbName, String collectionName, Class<T> mappingClass) {
-        ErrorUtils.throwRuntimeIfAnyNull(new IllegalArgumentException("Invalid arguments passed to " + CollectionAccessor.class.getName() + " a field was null.")
+        Preconditions.notNull("Invalid arguments passed to " + CollectionAccessor.class.getName() + " a field was null."
                 , serializer, dbName, collectionName, mappingClass);
         this.serializer = serializer;
         this.dbName = dbName;
@@ -88,6 +88,7 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
      * @throws IllegalAccessException   the illegal access exception
      */
     public boolean update(T obj) throws InvalidArgumentException, IllegalAccessException {
+        Preconditions.notNull(obj);
         Field f = null;
         Object id;
 
