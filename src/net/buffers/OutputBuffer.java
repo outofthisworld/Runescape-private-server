@@ -23,13 +23,7 @@ import java.nio.channels.SocketChannel;
 import java.util.Objects;
 
 /**
- * <p>
- * An unbounded buffer that can be written to and dynamically resized as it is written to.
- * Built around a ByteBuffer, but makes them easier to work with as the buffer only can be written to.
- * Reading from the @class ByteBuffer is done internally through one of its pipe methods.
- * <p>
- * This class is not thread safe, any attempts to use it from multiple threads will result
- * in inconsistencies unless synchronized correctly from user level code.
+ * The type Output buffer.
  */
 public class OutputBuffer extends AbstractBuffer {
     private static final int INITIAL_SIZE = 512;
@@ -67,8 +61,7 @@ public class OutputBuffer extends AbstractBuffer {
 
 
     /**
-     * Creates a new OutputBuffer with an initial size of 256 bytes
-     * that is dynamically resized every 256 bytes.
+     * Create output buffer.
      *
      * @return the output buffer
      */
@@ -80,7 +73,7 @@ public class OutputBuffer extends AbstractBuffer {
      * Create output buffer.
      *
      * @param initialSize       the initial size
-     * @param increaseSizeBytes the amount of bytes that the buffer should widen by if its capacity is reached.
+     * @param increaseSizeBytes the increase size bytes
      * @return the output buffer
      */
     public static OutputBuffer create(int initialSize, int increaseSizeBytes) {
@@ -88,7 +81,7 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
-     * Creates an output buffer of initial size. Dynamically resized every 256 bytes.
+     * Create output buffer.
      *
      * @param initialSize the initial size
      * @return the output buffer
@@ -98,15 +91,10 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
-     * Wraps the specified byte array, creating an OutputBuffer with equal length as the byte array.
-     * Note that the first write operation to this output buffer after wrapping a byte array
-     * will cause the internal @class ByteBuffer to widen by @param increaseSizeBytes which may be costly in some
-     * situations.
-     * The intended use of this method is to turn byte array into an output buffer without subsequent
-     * writes to the OutputBuffer unless truly necessary.
+     * Wrap output buffer.
      *
      * @param bytes             the bytes
-     * @param increaseSizeBytes the widen size bytes
+     * @param increaseSizeBytes the increase size bytes
      * @return the output buffer
      */
     public static OutputBuffer wrap(byte[] bytes, int increaseSizeBytes) {
@@ -170,10 +158,23 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the int
      */
     public int pipeTo(byte[] byteArr) {
+        return pipeTo(byteArr,true);
+    }
+
+    /**
+     * Pipe to int.
+     *
+     * @param byteArr the byte arr
+     * @param compact the compact
+     * @return the int
+     */
+    public int pipeTo(byte[] byteArr, boolean compact) {
         Objects.requireNonNull(byteArr);
         out.flip();
         out.get(byteArr, 0, byteArr.length);
-        out.compact();
+        if (compact) {
+            out.compact();
+        }
         return byteArr.length;
     }
 
@@ -185,6 +186,18 @@ public class OutputBuffer extends AbstractBuffer {
      * @throws IOException the io exception
      */
     public int pipeTo(SocketChannel c) throws IOException {
+        return pipeTo(c, true);
+    }
+
+    /**
+     * Pipe to int.
+     *
+     * @param c       the c
+     * @param compact the compact
+     * @return the int
+     * @throws IOException the io exception
+     */
+    public int pipeTo(SocketChannel c, boolean compact) throws IOException {
         Objects.requireNonNull(c);
         out.flip();
         int bytesWritten;
@@ -194,20 +207,33 @@ public class OutputBuffer extends AbstractBuffer {
             e.printStackTrace();
             bytesWritten = -1;
         }
-        out.compact();
+        if (compact) {
+            out.compact();
+        }
         return bytesWritten;
     }
 
     /**
-     * Wites bytes from this output buffer into the specified ByteBuffer.
-     * The given ByteBuffer should be greater than or equal to the current
-     * OutputBuffer's size, and should be in write mode.
+     * Pipe to output buffer.
      *
      * @param b the b
      * @return the output buffer
      * @throws Exception the exception
      */
     public OutputBuffer pipeTo(ByteBuffer b) throws Exception {
+        pipeTo(b, true);
+        return this;
+    }
+
+    /**
+     * Pipe to output buffer.
+     *
+     * @param b       the b
+     * @param compact the compact
+     * @return the output buffer
+     * @throws Exception the exception
+     */
+    public OutputBuffer pipeTo(ByteBuffer b, boolean compact) throws Exception {
         Objects.requireNonNull(b);
         out.flip();
         assert b.limit() == b.capacity();
@@ -215,47 +241,54 @@ public class OutputBuffer extends AbstractBuffer {
             throw new Exception("Not enough room in buffer b");
         }
         b.put(out);
-        out.compact();
+        if (compact) {
+            out.compact();
+        }
         return this;
     }
 
     /**
-     * Writes the bytes from this @class OutputBuffer to
-     * the specified @class OutputBuffer.
+     * Pipe to output buffer.
      *
      * @param other the other
      * @return the output buffer
      */
     public OutputBuffer pipeTo(OutputBuffer other) {
+        pipeTo(other, true);
+        return this;
+    }
+
+    /**
+     * Pipe to output buffer.
+     *
+     * @param other   the other
+     * @param compact the compact
+     * @return the output buffer
+     */
+    public OutputBuffer pipeTo(OutputBuffer other, boolean compact) {
         Objects.requireNonNull(other);
         out.flip();
         while (out.remaining() != 0) {
             other.writeByte(out.get());
         }
-        out.compact();
+        if (compact) {
+            out.compact();
+        }
         return this;
     }
 
-    /**
-     * Size int.
-     *
-     * @return the int
-     */
     @Override
     public int size() {
         return out.position();
     }
 
-    /**
-     * Clear.
-     */
     @Override
     public void clear() {
         out.clear();
     }
 
     /**
-     * Widen.
+     * Widen output buffer.
      *
      * @param newSize the new size
      * @return the output buffer
@@ -276,7 +309,7 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
-     * Truncate.
+     * Truncate output buffer.
      *
      * @param newSize the new size
      * @return the output buffer
@@ -308,12 +341,6 @@ public class OutputBuffer extends AbstractBuffer {
         return writeByte(b, true);
     }
 
-    /**
-     * Write byte output buffer.
-     *
-     * @param b the b
-     * @return the output buffer
-     */
     private OutputBuffer writeByte(int b, boolean resetBitIndex) {
         if (out.remaining() < 1) {
             widen(out.capacity() + increaseSizeBytes);
@@ -402,9 +429,9 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
-     * Get bit position int.
+     * Gets bit position.
      *
-     * @return the int
+     * @return the bit position
      */
     public int getBitPosition() {
         return (out.position() * 8) + bitIndex;
@@ -423,7 +450,7 @@ public class OutputBuffer extends AbstractBuffer {
 
 
     /**
-     * Writes bytes into this output buffer from the given ByteBuffer.
+     * Write bytes output buffer.
      *
      * @param src the src
      * @return the output buffer
@@ -452,7 +479,7 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
-     * Writes the bytes in reverse.
+     * Write bytes reverse output buffer.
      *
      * @param bytes the bytes
      * @return the output buffer
@@ -485,9 +512,6 @@ public class OutputBuffer extends AbstractBuffer {
         return this;
     }
 
-    /**
-     * Transform a value.
-     */
     private byte transformValue(long value, ByteTransformationType type) {
         switch (type) {
             case A:
@@ -501,14 +525,6 @@ public class OutputBuffer extends AbstractBuffer {
         }
     }
 
-    /**
-     * Long to byte array byte [ ].
-     *
-     * @param value    the value
-     * @param numBytes the num bytes
-     * @param type     the type
-     * @return the byte [ ]
-     */
     private byte[] longToByteArray(long value, int numBytes, ByteTransformationType type) {
         if (numBytes < 1 || numBytes > 8) {
             throw new RuntimeException("Invalid params, numBytes must be between 1-8 inclusive");
@@ -583,7 +599,7 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
-     * Out order output buffer.
+     * Order output buffer.
      *
      * @param order the order
      * @return the output buffer
@@ -644,9 +660,7 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
-     * Write big word output buffer.
-     * <p>
-     * Transforms the LSB with +128 using ByteTransformationType.A
+     * Write big worda output buffer.
      *
      * @param x the x
      * @return the output buffer
@@ -656,9 +670,7 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
-     * Write little word output buffer.
-     * <p>
-     * Transforms the LSB with +128 using ByteTransformationType.A
+     * Write little worda output buffer.
      *
      * @param x the x
      * @return the output buffer
@@ -736,7 +748,7 @@ public class OutputBuffer extends AbstractBuffer {
     }
 
     /**
-     * Duplicate output buffer.
+     * Copy output buffer.
      *
      * @return the output buffer
      */
@@ -805,42 +817,21 @@ public class OutputBuffer extends AbstractBuffer {
         /**
          * A byte transformation type.
          */
-        A, /**
+        A,
+        /**
          * C byte transformation type.
          */
-        C, /**
+        C,
+        /**
          * S byte transformation type.
          */
-        S, /**
+        S,
+        /**
          * None byte transformation type.
          */
         NONE
     }
 
-    /**
-     * Creates an OutputBufferReserve, a pocket in the OutputBuffer
-     * which can be written to at a later time. The pocket is filled with 0 bytes
-     * until one of the methods are used to fill the pocket.
-     * <p>
-     * This is an abstraction over
-     * <p>
-     * - Skipping x bytes in the output buffer
-     * - Remembering the index at which was skipped and how many bytes were skipped
-     * - Continuing writing from the new position after skipping
-     * - going back to the index of the skipped bytes
-     * - setting the indexes of the skipped bytes to the new value.
-     * <p>
-     * This class will keep track of all that information automatically
-     * and can return how many bytes have been written since the end of the reserved bytes.
-     * <p>
-     * At most number of bytes reserved bytes can be written to this reserve.
-     * Any attempt to otherwise write more than reserved bytes will result in an
-     * InvalidStateException.
-     * <p>
-     * Lastly, this class is internal to the OutputBuffer, and @method bytesSinceReserve
-     * may return abnormal results (negative values) if this position on the output buffer
-     * has been set by the end user to be before the reserveIndex.
-     */
     private class OutputBufferReserve implements IBufferReserve<OutputBuffer> {
         private final int reserveIndex;
         private final int numBytes;

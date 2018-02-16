@@ -1,8 +1,9 @@
 package world.entity.update;
 
+
 import java.util.Objects;
 
-public class PlayerUpdateFlags implements IFlag<PlayerUpdateFlags.PlayerUpdateMask> {
+public class PlayerUpdateFlags implements IFlag<PlayerUpdateMask> {
     private final Flags flags = new Flags();
 
     public PlayerUpdateFlags() {
@@ -55,56 +56,4 @@ public class PlayerUpdateFlags implements IFlag<PlayerUpdateFlags.PlayerUpdateMa
     }
 
 
-    public enum PlayerUpdateMask {
-        /**
-         * The constant APPEARANCE.
-         */
-        APPEARANCE(0x10),
-        /**
-         * The Chat.
-         */
-        CHAT(0x80),
-        /**
-         * The Graphics.
-         */
-        GRAPHICS(0x100),
-        /**
-         * The Animation.
-         */
-        ANIMATION(0x8),
-        /**
-         * The Forced chat.
-         */
-        FORCED_CHAT(0x4),
-        /**
-         * The Entity interaction.
-         */
-        ENTITY_INTERACTION(0x1),
-        /**
-         * The Face coordinate.
-         */
-        FACE_COORDINATE(0x2),
-        /**
-         * The Single hit.
-         */
-        SINGLE_HIT(0x20),
-        /**
-         * The Double hit.
-         */
-        DOUBLE_HIT(0x200),
-        /**
-         * The Force movement.
-         */
-        FORCE_MOVEMENT(0x400);
-
-        private final long mask;
-
-        PlayerUpdateMask(long mask) {
-            this.mask = mask;
-        }
-
-        public long getMask() {
-            return mask;
-        }
-    }
 }

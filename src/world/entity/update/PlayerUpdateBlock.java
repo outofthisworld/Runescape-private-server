@@ -6,24 +6,23 @@ import world.entity.player.Player;
 
 import java.nio.ByteBuffer;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 /**
  * The type Player update block.
  */
-public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateFlags.PlayerUpdateMask>> {
+public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
 
-    private static final Map<PlayerUpdateFlags.PlayerUpdateMask, BiConsumer<Player, OutputBuffer>> flagMap =
-            Collections.unmodifiableMap(new HashMap<PlayerUpdateFlags.PlayerUpdateMask, BiConsumer<Player, OutputBuffer>>() {
+    private static final Map<PlayerUpdateMask, BiConsumer<Player, OutputBuffer>> flagMap =
+            Collections.unmodifiableMap(new HashMap<update.PlayerUpdateMask, BiConsumer<Player, OutputBuffer>>() {
                 {
                     /**Handles each type of update mask.*/
 
                     /**
                      The animation portion of the update block.
                      */
-                    put(PlayerUpdateFlags.PlayerUpdateMask.ANIMATION, (entity, outputBuffer) -> {
+                    put(update.PlayerUpdateMask.ANIMATION, (entity, outputBuffer) -> {
                         Animation animation = entity.getAnimation();
                         outputBuffer.writeShort(animation.getId(), ByteOrder.LITTLE).write(animation.getDelay(), ByteModification.NEGATION);
                     });
@@ -32,7 +31,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateFlags.Playe
                     /**
                      The appearance portion of the update block.
                      */
-                    put(PlayerUpdateFlags.PlayerUpdateMask.APPEARANCE, (entity, outputBuffer) -> {
+                    put(update.PlayerUpdateMask.APPEARANCE, (entity, outputBuffer) -> {
                         PacketWriter properties = new PacketWriter(ByteBuffer.allocate(128));
                         properties.write(entity.getAppearance().getGender().getIndicator());
                         properties.write(0);
@@ -75,7 +74,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateFlags.Playe
                     /**
                      The chat portion of the update block.
                      */
-                    put(PlayerUpdateFlags.PlayerUpdateMask.CHAT, (entity, outputBuffer) -> {
+                    put(update.PlayerUpdateMask.CHAT, (entity, outputBuffer) -> {
                         ChatMessage msg = entity.getChatMessage();
                         byte[] bytes = msg.getText();
 
@@ -87,7 +86,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateFlags.Playe
                     /**
                      The double hit portion of the update block.
                      */
-                    put(PlayerUpdateFlags.PlayerUpdateMask.DOUBLE_HIT, (entity, outputBuffer) -> {
+                    put(update.PlayerUpdateMask.DOUBLE_HIT, (entity, outputBuffer) -> {
                         builder.put(entity.getSecondaryHit().getDamage())
                                 .put(entity.getSecondaryHit().getType().getId(), ByteValue.SUBTRACTION)
                                 .put(entity.getSkill().getLevel(Skill.HITPOINTS))
@@ -97,7 +96,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateFlags.Playe
                     /**
                      The single hit portion of the update block.
                      */
-                    put(PlayerUpdateFlags.PlayerUpdateMask.SINGLE_HIT, (entity, outputBuffer) -> {
+                    put(update.PlayerUpdateMask.SINGLE_HIT, (entity, outputBuffer) -> {
                         builder.put(entity.getPrimaryHit().getDamage())
                                 .put(entity.getPrimaryHit().getType().getId(), ByteValue.ADDITION)
                                 .put(entity.getSkill().getLevel(Skill.HITPOINTS), ByteValue.NEGATION)
@@ -107,7 +106,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateFlags.Playe
                     /**
                      The entity interaction portion of the update block.
                      */
-                    put(PlayerUpdateFlags.PlayerUpdateMask.ENTITY_INTERACTION, (entity, outputBuffer) -> {
+                    put(update.PlayerUpdateMask.ENTITY_INTERACTION, (entity, outputBuffer) -> {
                         Entity entity = target.getInteractingEntity();
 
                         if (entity != null) {
@@ -126,7 +125,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateFlags.Playe
                     /**
                      The face coordinate portion of the update block.
                      */
-                    put(PlayerUpdateFlags.PlayerUpdateMask.FACE_COORDINATE, (entity, outputBuffer) -> {
+                    put(update.PlayerUpdateMask.FACE_COORDINATE, (entity, outputBuffer) -> {
                         builder.writeShort((Integer) entity.getAttributes().get(Attributes.FACING_COORDINATE_X),
                                 ByteModification.ADDITION, ByteOrder.LITTLE)
                                 .writeShort((Integer) entity.getAttributes()
@@ -136,7 +135,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateFlags.Playe
                     /**
                      The force movement portion of the update block.
                      */
-                    put(PlayerUpdateFlags.PlayerUpdateMask.FORCE_MOVEMENT, (entity, outputBuffer) -> {
+                    put(update.PlayerUpdateMask.FORCE_MOVEMENT, (entity, outputBuffer) -> {
                         ForceMovement movement = entity.getForceMovement();
 
                         writer.write(movement.getStartLocation().getX(), ByteModification.ADDITION)
@@ -149,14 +148,14 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateFlags.Playe
                     /**
                      The forced chat portion of the update block.
                      */
-                    put(PlayerUpdateFlags.PlayerUpdateMask.FORCED_CHAT, (entity, outputBuffer) -> {
+                    put(update.PlayerUpdateMask.FORCED_CHAT, (entity, outputBuffer) -> {
                         builder.writeString(entity.getForcedChat());
                     });
 
                     /**
                      The graphics portion of the update block.
                      */
-                    put(PlayerUpdateFlags.PlayerUpdateMask.GRAPHICS, (entity, outputBuffer) -> {
+                    put(update.PlayerUpdateMask.GRAPHICS, (entity, outputBuffer) -> {
                         Graphic graphic = entity.getGraphic();
                         outputBuffer.writeShort(graphic.getId(), ByteOrder.LITTLE);
                         outputBuffer.writeInt(graphic.getDelay() | graphic.getHeight());
@@ -180,7 +179,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateFlags.Playe
 
 
     @Override
-    public OutputBuffer build(IFlag<PlayerUpdateFlags.PlayerUpdateMask> updateFlags) {
+    public OutputBuffer build(IFlag<PlayerUpdateMask> updateFlags) {
         Preconditions.notNull(updateFlags);
 
 
@@ -191,11 +190,13 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateFlags.Playe
         */
         buf.writeBytes(updateFlags.getMask(), 2, OutputBuffer.ByteTransformationType.NONE);
 
-        for (PlayerUpdateFlags.PlayerUpdateMask m : PlayerUpdateFlags.PlayerUpdateMask.values()) {
+        for (PlayerUpdateMask m : PlayerUpdateMask.values()) {
             if (updateFlags.isSet(m)) {
                 PlayerUpdateBlock.flagMap.get(m).accept(player, buf);
             }
         }
+
+        buf.pipeTo()
 
         return buf;
     }
