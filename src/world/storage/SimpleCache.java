@@ -1,9 +1,6 @@
 package world.storage;
 
 
-import world.storage.DataAccessor;
-import world.storage.DataStore;
-
 import java.util.HashMap;
 
 public abstract class SimpleCache<T, R> implements DataAccessor<T, R>, DataStore<Boolean, R> {

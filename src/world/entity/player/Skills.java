@@ -5,7 +5,7 @@ public class Skills {
     private final int[] skillExp = new int[world.entity.player.Skill.values().length];
     private final Player p;
 
-    public Skills(Player p){
+    public Skills(Player p) {
         this.p = p;
     }
 

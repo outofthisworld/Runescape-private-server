@@ -20,13 +20,12 @@ import database.DatabaseConfig;
 import database.serialization.GsonSerializer;
 import net.impl.session.Client;
 import sun.plugin.dom.exception.InvalidStateException;
-import world.World;
-import world.WorldManager;
 import world.entity.Entity;
+import world.entity.player.containers.*;
 import world.entity.update.player.PlayerUpdateBlock;
 import world.entity.update.player.PlayerUpdateFlags;
 import world.storage.AsyncPlayerStore;
-import world.entity.player.containers.*;
+
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -133,7 +132,6 @@ public class Player extends Entity {
     }
 
     /**
-
      * Gets player update block.
      *
      * @return the player update block
@@ -271,7 +269,6 @@ public class Player extends Entity {
     public void setUsername(String username) {
         this.username = username;
     }
-
 
 
     @Override
