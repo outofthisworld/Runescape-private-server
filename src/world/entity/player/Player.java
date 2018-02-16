@@ -21,11 +21,14 @@ import database.serialization.GsonSerializer;
 import net.impl.session.Client;
 import sun.plugin.dom.exception.InvalidStateException;
 import world.entity.Entity;
+import world.entity.misc.Position;
 import world.entity.player.containers.*;
 import world.entity.update.player.PlayerUpdateBlock;
 import world.entity.update.player.PlayerUpdateFlags;
 import world.storage.AsyncPlayerStore;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -38,6 +41,12 @@ public class Player extends Entity {
                     Player.class));
 
     /**
+     * Players local to this player
+     * e.g they fall within 15 x and y in the coordinate space.
+
+     */
+    private final List<Player> localPlayers = new ArrayList<>();
+    /**
      * The players skills
      */
     private final Skills skills = new Skills(this);
@@ -45,7 +54,6 @@ public class Player extends Entity {
      * The players bank
      */
     private final Bank bank = new Bank(this);
-
     /**
      * The players inventory
      */
@@ -82,6 +90,7 @@ public class Player extends Entity {
      * The players username
      */
     private boolean isDisabled = false;
+
 
     /**
      * Instantiates a new Player.
@@ -270,9 +279,18 @@ public class Player extends Entity {
         this.username = username;
     }
 
+    /**
+     * Gets local players.
+     *
+     * @return the local players
+     */
+    public List<Player> getLocalPlayers() {
+        return localPlayers;
+    }
+
 
     @Override
     public void poll() {
-
+        getClient().getOutgoingPacketBuilder().playerUpdate().send();
     }
 }

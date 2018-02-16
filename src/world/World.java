@@ -18,6 +18,7 @@ package world;
 import net.impl.decoder.GamePacketDecoder;
 import net.impl.decoder.LoginProtocolConstants;
 import sun.plugin.dom.exception.InvalidStateException;
+import util.Preconditions;
 import world.entity.player.Player;
 import world.entity.update.UpdateBlockCache;
 import world.entity.update.player.PlayerUpdateBlock;
@@ -100,7 +101,7 @@ public class World {
      *
      * @return the slot
      */
-    private int getSlot() {
+    public int getSlot() {
 
         if (!(playersCount < WorldConfig.MAX_PLAYERS_IN_WORLD)) {
             return -1;
@@ -119,18 +120,65 @@ public class World {
         return playerIndex;
     }
 
+    public boolean isSlotEmpty(int slot){
+        if(slot < 0 || slot >= WorldConfig.MAX_PLAYERS_IN_WORLD) return true;
+        return !players.containsKey(slot);
+    }
+
     /**
      * Add.
      *
      * @param slot the slot
      * @param p    the p
      */
-    private void addPlayerToWorld(int slot, Player p) {
+    public void addPlayerToWorld(int slot, Player p) {
+        Preconditions.notNull(p);
+        Preconditions.inRangeClosed(slot,0, WorldConfig.MAX_PLAYERS_IN_WORLD);
+
         if (players.containsKey(slot)) {
             throw new IllegalArgumentException("Player slot was not null");
         }
 
         players.put(slot, p);
+    }
+
+
+    public void addPlayerToWorld(Player p) {
+        Preconditions.notNull(p);
+        Preconditions.inRangeClosed(p.getSlotId(),0, WorldConfig.MAX_PLAYERS_IN_WORLD);
+
+        if (players.containsKey(p.getSlotId())) {
+            throw new IllegalArgumentException("Player slot was not null");
+        }
+
+        players.put(p.getSlotId(), p);
+    }
+
+    public void removePlayerFromWorld(int slot){
+        Preconditions.inRangeClosed(slot,0, WorldConfig.MAX_PLAYERS_IN_WORLD);
+
+        if(isSlotEmpty(slot)){
+            return;
+        }
+
+        Player p = players.get(slot);
+
+        Player.asyncPlayerStore().store(p.getUsername(),p).whenCompleteAsync((aBoolean, throwable) -> {
+            if (!aBoolean || throwable != null) {
+                throwable.printStackTrace();
+                return;
+            }
+
+            //login entity saving
+            players.put()
+            freePlayerSlots.add(slot);
+        }, worldExecutorService);
+
+    }
+
+    public void removePlayerFromWorld(Player p){
+        Preconditions.notNull(p);
+        removePlayerFromWorld(p.getSlotId());
     }
 
     @Event()
@@ -169,7 +217,7 @@ public class World {
                 }
             } else {
                 deserialized = lEvent.getPlayer();
-                Player.asyncPlayerStore().store(deserialized);
+                Player.asyncPlayerStore().store(deserialized.getUsername(),deserialized);
             }
 
             deserialized.setSlotId(loginSlot);
@@ -188,12 +236,13 @@ public class World {
 
     @Event
     private void playerDisconnectEvent(ClientDisconnectEvent c) {
+        Player p = c.getSender().getPlayer();
+
         if (p == null || !p.getClient().isDisconnected()) {
             return;
         }
 
-
-        players.put()
+        removePlayerFromWorld(p);
     }
 
     /**
@@ -238,32 +287,17 @@ public class World {
      * Poll.
      */
     private void poll() {
-        /*
-            Adds players that are currently in the loginQueue for this world to this worlds players arraylist.
-         */
-        handlePlayerDisconnects();
+        for (Player player: players.values()){
+            if(player.getClient().isDisconnected())
+                continue;
+
+            player.poll();
+        }
+
         doWorldTasks();
     }
 
 
-    private void handlePlayerDisconnects() {
-        for (int i = 0; i < players.length; i++) {
-            int index = i;
-            Player player = players[i];
-            if (player != null && player.getClient().isDisconnected()) {
-                Player.asyncPlayerStore().store(player).whenCompleteAsync((aBoolean, throwable) -> {
-                    if (!aBoolean || throwable != null) {
-                        throwable.printStackTrace();
-                        return;
-                    }
-
-                    //login entity saving
-                    players.put()
-                    freePlayerSlots.add(index);
-                }, worldExecutorService);
-            }
-        }
-    }
 
     private void doWorldTasks() {
         Task t;

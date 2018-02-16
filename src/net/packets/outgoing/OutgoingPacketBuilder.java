@@ -18,6 +18,7 @@ package net.packets.outgoing;
 import net.buffers.IBufferReserve;
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
+import world.WorldManager;
 import world.entity.player.Player;
 import world.entity.update.player.PlayerUpdateBlock;
 import world.storage.SimpleCache;
@@ -389,6 +390,8 @@ public class OutgoingPacketBuilder {
 
             Player other = iterator.next();
 
+            other.getWorld().
+
             if (World.getPlayers()[other.getSlot()] != null && other.isRegistered()
                     && other.getPosition().isWithinDistance(player.getPosition(),
                     Position.VIEWING_DISTANCE)) {
@@ -397,8 +400,8 @@ public class OutgoingPacketBuilder {
                 appendPlayerUpdateBlock(other);
             } else {
                 iterator.remove();
-                writer.writeBit(true);
-                writer.writeBits(2, 3);
+                outputBuffer.writeBit(true);
+                outputBuffer.writeBits(3, 2);
             }
         }
 

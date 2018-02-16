@@ -17,17 +17,21 @@ package world.entity;
 
 import world.World;
 import world.WorldManager;
+import world.entity.misc.Position;
 
 public abstract class Entity {
     /**
+     * The entities position
+     */
+    protected final Position position = new Position(3232,3333,0);
+    /**
      * The entities slot id
      */
-    private int slotId;
+    protected int slotId;
     /**
      * The world the player currently belongs to
      */
-    private int worldId;
-
+    protected int worldId;
     /**
      * Gets world id.
      *
@@ -73,6 +77,10 @@ public abstract class Entity {
         return WorldManager.getWorld(getWorldId());
     }
 
+
+    public Position getPosition() {
+        return position;
+    }
 
     public abstract void poll();
 }

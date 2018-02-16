@@ -64,8 +64,12 @@ public class Position {
         return Math.abs(distanceBetweenX(other)) <= y;
     }
 
+    public boolean isWithinZ(Position other, int z) {
+        return Math.abs(distanceBetweenZ(other)) <= z;
+    }
+
     public boolean isWithinXY(Position other, int check) {
-        return isWithinX(other,check) && isWithinY(other,check);
+        return isWithinX(other, check) && isWithinY(other, check);
     }
 
     public int distanceBetweenX(Position other) {
