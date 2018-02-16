@@ -32,5 +32,15 @@ public enum NpcUpdateMask {
     /**
      * The Double hit.
      */
-    DOUBLE_HIT(0x8)
+    DOUBLE_HIT(0x8);
+
+    private final int mask;
+
+    NpcUpdateMask(int mask) {
+        this.mask = mask;
+    }
+
+    public int getMask() {
+        return mask;
+    }
 }

@@ -1,5 +1,6 @@
 package world.entity.update;
 
+import javafx.animation.Animation;
 import net.buffers.OutputBuffer;
 import util.Preconditions;
 import world.entity.player.Player;
@@ -166,6 +167,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
     private static final int UPDATE_BLOCK_SIZE = 4096;
     private static final int UPDATE_BLOCK_INCREASE_SIZE = 1024;
     private final Player player;
+    private final OutputBuffer updateBlock = OutputBuffer.create(PlayerUpdateBlock.UPDATE_BLOCK_SIZE, PlayerUpdateBlock.UPDATE_BLOCK_INCREASE_SIZE);
 
     /**
      * Instantiates a new Player update block.
@@ -179,25 +181,34 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
 
 
     @Override
-    public OutputBuffer build(IFlag<PlayerUpdateMask> updateFlags) {
+    public PlayerUpdateBlock build(IFlag<PlayerUpdateMask> updateFlags) {
         Preconditions.notNull(updateFlags);
 
+        /*
+            Clear the current update block.
+        */
+        updateBlock.clear();
 
-        OutputBuffer buf = OutputBuffer.create(PlayerUpdateBlock.UPDATE_BLOCK_SIZE, PlayerUpdateBlock.UPDATE_BLOCK_INCREASE_SIZE);
-        buf.order(OutputBuffer.Order.LITTLE_ENDIAN);
+         /*
+            Clear the current update block.
+        */
+        updateBlock.order(OutputBuffer.Order.LITTLE_ENDIAN);
+
         /*
             Write the mask as little endian.
         */
-        buf.writeBytes(updateFlags.getMask(), 2, OutputBuffer.ByteTransformationType.NONE);
+        updateBlock.writeBytes(updateFlags.getMask(), 2, OutputBuffer.ByteTransformationType.NONE);
+
 
         for (PlayerUpdateMask m : PlayerUpdateMask.values()) {
             if (updateFlags.isSet(m)) {
-                PlayerUpdateBlock.flagMap.get(m).accept(player, buf);
+                PlayerUpdateBlock.flagMap.get(m).accept(player, updateBlock);
             }
         }
+    }
 
-        buf.pipeTo()
-
-        return buf;
+    @Override
+    public OutputBuffer getBlock() {
+        return updateBlock;
     }
 }

@@ -19,6 +19,7 @@ import net.buffers.IBufferReserve;
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
 import world.entity.player.Player;
+import world.entity.update.PlayerUpdateBlock;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -366,8 +367,28 @@ public class OutgoingPacketBuilder {
             updatePlayerMovement(player);
         }
 
-        if (player.getUpdateFlags().isUpdateRequired()) {
-            appendUpdates(player, update, false, true);
+        /*
+            If any updates flags are set for this player, append the update block.
+         */
+        if (player.getUpdateFlags().anySet()) {
+            /*
+                Get the update block cache for this world.
+             */
+            Cache playerUpdateBlockCache = player.getWorld().getPlayerUpdateBlockCache();
+
+            PlayerUpdateBlock pUpdateBlock;
+            if (playerUpdateBlockCache.contains(player)) {
+                pUpdateBlock = updateBlockCache.get(player);
+            } else {
+                /*
+                Cache this update block, so it can be used later.
+                */
+                pUpdateBlock = player.getPlayerUpdateBlock().build(player.getUpdateFlags());
+                playerUpdateBlockCache.put(player, pUpdateBlock);
+            }
+
+            //Pipe the update block to the current outputBuffer and rewind so the update block can be used again.
+            pUpdateBlock.getBlock().pipeTo(outputBuffer, false).rewind();
         }
 
 

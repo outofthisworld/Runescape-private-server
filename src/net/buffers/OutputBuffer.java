@@ -158,7 +158,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the int
      */
     public int pipeTo(byte[] byteArr) {
-        return pipeTo(byteArr,true);
+        return pipeTo(byteArr, true);
     }
 
     /**
