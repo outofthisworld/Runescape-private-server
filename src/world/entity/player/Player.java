@@ -25,6 +25,9 @@ import world.WorldManager;
 import world.containers.Bank;
 import world.containers.Equipment;
 import world.containers.Inventory;
+import world.entity.Entity;
+import world.entity.update.PlayerUpdateBlock;
+import world.entity.update.PlayerUpdateFlags;
 import world.storage.AsyncPlayerStore;
 
 import java.util.Optional;
@@ -33,7 +36,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * The type Player.
  */
-public class Player {
+public class Player extends Entity {
 
 
     private static final AsyncPlayerStore asyncPlayerStore = new AsyncPlayerStore(
@@ -46,6 +49,8 @@ public class Player {
     private final Bank bank = new Bank(this);
     private final Inventory inventory = new Inventory(this);
     private final Equipment equipment = new Equipment(this);
+    private final PlayerUpdateFlags updateFlags = new PlayerUpdateFlags();
+    private final PlayerUpdateBlock playerUpdateBlock = new PlayerUpdateBlock(this);
     private Client c;
     private String username;
     private String password;
@@ -57,8 +62,7 @@ public class Player {
     /**
      * Instantiates a new Player.
      *
-     * @param username the username
-     * @param password the password
+     * @param c the c
      */
     public Player(Client c) {
         this.c = c;
@@ -84,6 +88,23 @@ public class Player {
         return Player.asyncPlayerStore().load(username).thenApplyAsync(player -> Optional.ofNullable(player));
     }
 
+    /**
+     * Gets update flags.
+     *
+     * @return the update flags
+     */
+    public PlayerUpdateFlags getUpdateFlags() {
+        return updateFlags;
+    }
+
+    /**
+     * Gets player update block.
+     *
+     * @return the player update block
+     */
+    public PlayerUpdateBlock getPlayerUpdateBlock() {
+        return playerUpdateBlock;
+    }
 
     /**
      * Load completable future.
@@ -377,4 +398,8 @@ public class Player {
         //c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
     }
 
+    @Override
+    public void poll() {
+
+    }
 }
