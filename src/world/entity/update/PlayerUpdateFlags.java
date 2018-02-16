@@ -45,6 +45,12 @@ public class PlayerUpdateFlags implements IFlag<PlayerUpdateFlags.PlayerUpdateMa
 
     @Override
     public long getMask() {
+        if (flags.getMask() >= 0x100) {
+            /*
+                Indicates to the client that this flag is two bytes.
+             */
+            flags.setFlag(0x40L);
+        }
         return flags.getMask();
     }
 

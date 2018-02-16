@@ -1,5 +1,10 @@
 package world.entity.update;
 
+/**
+ * The interface Flag.
+ *
+ * @param <T> the type parameter
+ */
 public interface IFlag<T> {
     /**
      * Sets flag.
@@ -41,6 +46,7 @@ public interface IFlag<T> {
      * Clear.
      */
     public void clear();
+
 
     /**
      * Gets mask.
