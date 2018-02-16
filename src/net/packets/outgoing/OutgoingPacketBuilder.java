@@ -19,7 +19,8 @@ import net.buffers.IBufferReserve;
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
 import world.entity.player.Player;
-import world.entity.update.PlayerUpdateBlock;
+import world.entity.update.player.PlayerUpdateBlock;
+import world.storage.SimpleCache;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -318,6 +319,45 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
+    private void appendPlayerUpdateBlock(Player player) {
+        Objects.requireNonNull(player);
+
+        /*
+            If there are no updates, just return.
+         */
+        if (!player.getUpdateFlags().anySet()) {
+            return;
+        }
+
+        /*
+           Get the update block cache for this world.
+         */
+        SimpleCache<String, PlayerUpdateBlock> playerUpdateBlockCache = player.getWorld().getPlayerUpdateBlockCache();
+
+        /*
+            The player update block, either built or retrieved from the cache.
+         */
+        PlayerUpdateBlock pUpdateBlock;
+
+
+        if (playerUpdateBlockCache.contains(player.getUsername())) {
+            pUpdateBlock = playerUpdateBlockCache.load(player.getUsername());
+        } else {
+            /*
+                Build the player update block from the flags.
+            */
+            pUpdateBlock = player.getPlayerUpdateBlock().build(player.getUpdateFlags());
+            /*
+                Cache this update block, so it can be used later.
+             */
+            playerUpdateBlockCache.store(player.getUsername(), pUpdateBlock);
+        }
+
+        //Pipe the update block to the current outputBuffer and rewind so the update block can be used again.
+        pUpdateBlock.getBlock().pipeTo(outputBuffer, false).rewind();
+    }
+
+
     /**
      * Player update outgoing packet builder.
      *
@@ -332,8 +372,47 @@ public class OutgoingPacketBuilder {
         */
         IBufferReserve<OutputBuffer> reserve = createHeader(81, 2);
 
+        /*
+            Update the players movement.
+         */
+        updatePlayerMovement(player, true);
+        /*
+            Append the current players update block.
+         */
+        appendPlayerUpdateBlock(player);
 
-        if (player.isTeleporting() || player.regionHasChanged()) {
+
+        outputBuffer.writeBits(player.getLocalPlayers().size(), 8);
+
+        for (Iterator<Player> iterator = player.getLocalPlayers().iterator(); iterator
+                .hasNext(); ) {
+
+            Player other = iterator.next();
+
+            if (World.getPlayers()[other.getSlot()] != null && other.isRegistered()
+                    && other.getPosition().isWithinDistance(player.getPosition(),
+                    Position.VIEWING_DISTANCE)) {
+                updatePlayerMovement(other, false);
+
+                appendPlayerUpdateBlock(other);
+            } else {
+                iterator.remove();
+                writer.writeBit(true);
+                writer.writeBits(2, 3);
+            }
+        }
+
+        /*
+            Build local players list.
+         */
+
+        //Write how many bytes the packet contains
+        reserve.writeValue(reserve.bytesSinceReserve());
+    }
+
+    private void updatePlayerMovement(Player player, boolean thisPlayer) {
+
+        if (thisPlayer && player.isTeleporting() || player.regionHasChanged()) {
              /*
               * Update required bit
              */
@@ -364,146 +443,78 @@ public class OutgoingPacketBuilder {
                    */
                     .writeBits(player.getPosition().getLocalX(player.getLastPosition()), 7);
         } else {
-            updatePlayerMovement(player);
-        }
-
-        /*
-            If any updates flags are set for this player, append the update block.
-         */
-        if (player.getUpdateFlags().anySet()) {
-            /*
-                Get the update block cache for this world.
-             */
-            Cache playerUpdateBlockCache = player.getWorld().getPlayerUpdateBlockCache();
-
-            PlayerUpdateBlock pUpdateBlock;
-            if (playerUpdateBlockCache.contains(player)) {
-                pUpdateBlock = updateBlockCache.get(player);
-            } else {
-                /*
-                Cache this update block, so it can be used later.
-                */
-                pUpdateBlock = player.getPlayerUpdateBlock().build(player.getUpdateFlags());
-                playerUpdateBlockCache.put(player, pUpdateBlock);
-            }
-
-            //Pipe the update block to the current outputBuffer and rewind so the update block can be used again.
-            pUpdateBlock.getBlock().pipeTo(outputBuffer, false).rewind();
-        }
-
-
-        writer.writeBits(8, player.getLocalPlayers().size());
-
-        for (Iterator<Player> iterator = player.getLocalPlayers().iterator(); iterator
-                .hasNext(); ) {
-
-            Player other = iterator.next();
-
-            if (World.getPlayers()[other.getSlot()] != null && other.isRegistered()
-                    && other.getPosition().isWithinDistance(player.getPosition(),
-                    Position.VIEWING_DISTANCE)) {
-                updatePlayerMovement(other, writer);
-
-                if (other.getUpdateFlags().isUpdateRequired()) {
-                    appendUpdates(other, update, false, false);
-                }
-            } else {
-                iterator.remove();
-                writer.writeBit(true);
-                writer.writeBits(2, 3);
-            }
-        }
-
-        //Write how many bytes the packet contains
-        reserve.writeValue(reserve.bytesSinceReserve());
-    }
-
-    private void updatePlayerMovement(Player player) {
-
-        if (playerMovementCache.containsKey(player)) {
-            OutputBuffer cachedMovement = playerMovementCache.get(player);
-            OutputBuffer duplicateMovement = cachedMovement.duplicate();
-            playerMovementCache.put(player, duplicateMovement);
-            cachedMovement.pipeTo(outputBuffer);
-            return;
-        }
-
-
-        OutputBuffer playerMovementBuf = OutputBuffer.create(2, 1);
 
                /*
              * Check which type of movement took place.
              */
-        if (player.getWalkingDirection() == -1) {
+            if (player.getWalkingDirection() == -1) {
                   /*
                    * If no movement did, check if an update is required.
                    */
-            if (player.getUpdateFlags().isUpdateRequired()) {
+                if (player.getUpdateFlags().isUpdateRequired()) {
                         /*
                          * Signify that an update happened.
                          */
-                playerMovementBuf.writeBit(true)
+                    outputBuffer.writeBit(true)
                         /*
                          * Signify that there was no movement.
                          */
-                        .writeBits(0, 2);
-            } else {
+                            .writeBits(0, 2);
+                } else {
                         /*
                          * Signify that nothing changed.
                          */
-                playerMovementBuf.writeBit(false);
-            }
-        } else if (player.getRunningDirection() == -1) {
+                    outputBuffer.writeBit(false);
+                }
+            } else if (player.getRunningDirection() == -1) {
                   /*
                    * The player moved but didn't run. Signify that an update is required.
                    */
-            playerMovementBuf.writeBit(true)
+                outputBuffer.writeBit(true)
 
                   /*
                    * Signify we moved one tile.
                    */
-                    .writeBits(2, 1)
+                        .writeBits(2, 1)
 
                   /*
                    * Write the primary sprite (i.e. walk direction).
                    */
-                    .writeBits(3, player.getWalkingDirection())
+                        .writeBits(3, player.getWalkingDirection())
 
                   /*
                    * Write a flag indicating if a block update happened.
                    */
-                    .writeBit(player.getUpdateFlags().isUpdateRequired());
+                        .writeBit(player.getUpdateFlags().isUpdateRequired());
 
 
-        } else {
+            } else {
                   /*
                    * The player ran. Signify that an update happened.
                    */
-            playerMovementBuf.writeBit(true)
+                outputBuffer.writeBit(true)
 
                   /*
                    * Signify that we moved two tiles.
                    */
-                    .writeBits(2, 2)
+                        .writeBits(2, 2)
 
                   /*
                    * Write the primary sprite (i.e. walk direction).
                    */
-                    .writeBits(3, player.getWalkingDirection())
+                        .writeBits(3, player.getWalkingDirection())
 
                   /*
                    * Write the secondary sprite (i.e. run direction).
                    */
-                    .writeBits(3, player.getRunningDirection())
+                        .writeBits(3, player.getRunningDirection())
 
                   /*
                    * Write a flag indicating if a block update happened.
                    */
-                    .writeBit(player.getUpdateFlags().isUpdateRequired());
+                        .writeBit(player.getUpdateFlags().isUpdateRequired());
+            }
         }
-
-        playerMovementCache.put(player, playerMovementBuf.duplicate());
-        playerMovementBuf.pipeTo(outputBuffer);
     }
 
 

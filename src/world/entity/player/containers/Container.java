@@ -13,7 +13,7 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package world.containers;
+package world.entity.player.containers;
 
 import sun.plugin.dom.exception.InvalidStateException;
 

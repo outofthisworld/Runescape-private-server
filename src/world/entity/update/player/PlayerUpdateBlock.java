@@ -1,9 +1,11 @@
-package world.entity.update;
+package world.entity.update.player;
 
 import javafx.animation.Animation;
 import net.buffers.OutputBuffer;
 import util.Preconditions;
 import world.entity.player.Player;
+import world.entity.update.IFlag;
+import world.entity.update.UpdateBlock;
 
 import java.nio.ByteBuffer;
 import java.util.Collections;

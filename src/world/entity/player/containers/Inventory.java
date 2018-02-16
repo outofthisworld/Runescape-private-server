@@ -13,7 +13,7 @@
  All rights reserved.
  -----------------------------------------------------------------------------*/
 
-package world.containers;
+package world.entity.player.containers;
 
 import world.entity.player.Player;
 import world.item.Item;

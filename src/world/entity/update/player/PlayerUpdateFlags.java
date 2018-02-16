@@ -1,5 +1,8 @@
-package world.entity.update;
+package world.entity.update.player;
 
+
+import world.entity.update.Flags;
+import world.entity.update.IFlag;
 
 import java.util.Objects;
 

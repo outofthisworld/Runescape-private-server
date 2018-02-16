@@ -22,11 +22,12 @@ package world.storage;
  * @param <U> the type parameter
  */
 public interface DataStore<T, U> {
+
     /**
      * Store t.
      *
      * @param o the o
      * @return the t
      */
-    T store(U o);
+    T store(String key, U o);
 }

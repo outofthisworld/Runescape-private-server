@@ -327,13 +327,13 @@ public class DataScraper {
             con.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
 
             con.setRequestProperty("Accept-Language", "en-US,en;q=0.9");
-            con.setRequestProperty("Cache-Control", "max-age=0");
+            con.setRequestProperty("SimpleCache-Control", "max-age=0");
             con.setRequestProperty("Connection", "keep-alive");
             con.setRequestProperty("Cookie", "__cfduid=d834ad0aa8f8e5d7ba1b3968dee9135881517955301; zybezskin=bluelight; __utmc=229830303; __utmz=229830303.1517955306.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); __utma=229830303.1219473518.1517955304.1517955304.1517955304.1; __qca=P0-1710673473-1517955305622; __utmt=1; __utmt_b=1; __utmb=229830303.36.10.1517955306");
             con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36");
             con.setRequestProperty("Accept-Charset", "utf-8");
-            con.setRequestProperty("Cache-Control", "no-cache");
+            con.setRequestProperty("SimpleCache-Control", "no-cache");
             con.setRequestProperty("Content-Length", "0");
             con.setRequestProperty("Host", "2007rshelp.com");
             con.setRequestProperty("DNT", "1");

@@ -22,14 +22,11 @@ import net.impl.session.Client;
 import sun.plugin.dom.exception.InvalidStateException;
 import world.World;
 import world.WorldManager;
-import world.containers.Bank;
-import world.containers.Equipment;
-import world.containers.Inventory;
 import world.entity.Entity;
-import world.entity.update.PlayerUpdateBlock;
-import world.entity.update.PlayerUpdateFlags;
+import world.entity.update.player.PlayerUpdateBlock;
+import world.entity.update.player.PlayerUpdateFlags;
 import world.storage.AsyncPlayerStore;
-
+import world.entity.player.containers.*;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -37,27 +34,55 @@ import java.util.concurrent.CompletableFuture;
  * The type Player.
  */
 public class Player extends Entity {
-
-
     private static final AsyncPlayerStore asyncPlayerStore = new AsyncPlayerStore(
             new CollectionAccessor<>(new GsonSerializer<>(Player.class), "Evolution", DatabaseConfig.PLAYERS_COLLECTION,
                     Player.class));
 
-
-    private final int[] skills = new int[world.entity.player.Skill.values().length];
-    private final int[] skillExp = new int[world.entity.player.Skill.values().length];
+    /**
+     * The players skills
+     */
+    private final Skills skills = new Skills(this);
+    /**
+     * The players bank
+     */
     private final Bank bank = new Bank(this);
+
+    /**
+     * The players inventory
+     */
     private final Inventory inventory = new Inventory(this);
+    /**
+     * The players equipment
+     */
     private final Equipment equipment = new Equipment(this);
+    /**
+     * The players update flags
+     */
     private final PlayerUpdateFlags updateFlags = new PlayerUpdateFlags();
+    /**
+     * The players update block
+     */
     private final PlayerUpdateBlock playerUpdateBlock = new PlayerUpdateBlock(this);
+    /**
+     * The client for the player, contains networking stuff.
+     */
     private Client c;
+    /**
+     * The players username
+     */
     private String username;
+    /**
+     * The players username
+     */
     private String password;
+    /**
+     * The players username
+     */
     private int rights;
+    /**
+     * The players username
+     */
     private boolean isDisabled = false;
-    private int slotId;
-    private int worldId;
 
     /**
      * Instantiates a new Player.
@@ -81,11 +106,11 @@ public class Player extends Entity {
     /**
      * Load completable future.
      *
-     * @param username the username
+     * @param p the p
      * @return the completable future
      */
-    public static CompletableFuture<Optional<Player>> load(String username) {
-        return Player.asyncPlayerStore().load(username).thenApplyAsync(player -> Optional.ofNullable(player));
+    public static CompletableFuture<Optional<Player>> load(Player p) {
+        return Player.asyncPlayerStore().load(p).thenApplyAsync(player -> Optional.ofNullable(player));
     }
 
     /**
@@ -97,7 +122,18 @@ public class Player extends Entity {
         return updateFlags;
     }
 
+
     /**
+     * Gets skills.
+     *
+     * @return the skills
+     */
+    public Skills getSkills() {
+        return skills;
+    }
+
+    /**
+
      * Gets player update block.
      *
      * @return the player update block
@@ -117,52 +153,6 @@ public class Player extends Entity {
         }
         return Player.asyncPlayerStore().load(this).thenApplyAsync(player -> Optional.ofNullable(player));
     }
-
-    /**
-     * Gets world id.
-     *
-     * @return the world id
-     */
-    public int getWorldId() {
-        return worldId;
-    }
-
-    /**
-     * Sets world id.
-     *
-     * @param worldId the world id
-     */
-    public void setWorldId(int worldId) {
-        this.worldId = worldId;
-    }
-
-    /**
-     * Gets world.
-     *
-     * @return the world
-     */
-    public World getWorld() {
-        return WorldManager.getWorld(getWorldId());
-    }
-
-    /**
-     * Gets slot id.
-     *
-     * @return the slot id
-     */
-    public int getSlotId() {
-        return slotId;
-    }
-
-    /**
-     * Sets slot id.
-     *
-     * @param slotId the slot id
-     */
-    public void setSlotId(int slotId) {
-        this.slotId = slotId;
-    }
-
 
     /**
      * Gets bank.
@@ -282,121 +272,7 @@ public class Player extends Entity {
         this.username = username;
     }
 
-    /**
-     * Gets skill level.
-     *
-     * @param skillId the skill id
-     * @return the skill level
-     */
-    public int getSkillLevel(int skillId) {
-        if (skillId < 0 || skillId >= skills.length) {
-            throw new IllegalArgumentException("Invalid skill id");
-        }
 
-        return skills[skillId];
-    }
-
-
-    /**
-     * Gets skill level.
-     *
-     * @param skill the skill
-     * @return the skill level
-     */
-    public int getSkillLevel(Skill skill) {
-        return skills[skill.ordinal()];
-    }
-
-
-    /**
-     * Gets skill exp.
-     *
-     * @param skill the skill
-     * @return the skill exp
-     */
-    public int getSkillExp(Skill skill) {
-        return skillExp[skill.ordinal()];
-    }
-
-
-    /**
-     * Gets skill exp.
-     *
-     * @param skillId the skill id
-     * @return the skill exp
-     */
-    public int getSkillExp(int skillId) {
-        if (skillId < 0 || skillId >= skillExp.length) {
-            throw new IllegalArgumentException("Invalid skill id");
-        }
-
-        return skillExp[skillId];
-    }
-
-    /**
-     * Sets skill level.
-     *
-     * @param skill      the skill
-     * @param skillLevel the skill level
-     */
-    public void setSkillLevel(Skill skill, int skillLevel) {
-        if (skillLevel < 1 || skillLevel > 99) {
-            throw new IllegalArgumentException("Skill level must be between one and 99");
-        }
-
-        skills[skill.ordinal()] = skillLevel;
-        skillExp[skill.ordinal()] = world.entity.player.Skill.getExpFromLevel(skillLevel);
-        //c.getOutgoingPacketBuilder().updateSkill(skill.ordinal(), skills[skill.ordinal()], skillExp[skill.ordinal()]);
-    }
-
-    /**
-     * Sets skill level.
-     *
-     * @param skillId    the skill id
-     * @param skillLevel the skill level
-     */
-    public void setSkillLevel(int skillId, int skillLevel) {
-        if (skillId < 0 || skillId >= skills.length) {
-            throw new IllegalArgumentException("Invalid skill id");
-        }
-
-        if (skillLevel < 1 || skillLevel > 99) {
-            throw new IllegalArgumentException("Skill level must be between one and 99");
-        }
-
-
-        skills[skillId] = skillLevel;
-        skillExp[skillId] = world.entity.player.Skill.getExpFromLevel(skillLevel);
-        //c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
-    }
-
-    /**
-     * Sets skill exp.
-     *
-     * @param skill the skill
-     * @param exp   the exp
-     */
-    public void setSkillExp(Skill skill, int exp) {
-        skills[skill.ordinal()] = world.entity.player.Skill.getLevelFromExp(exp);
-        skillExp[skill.ordinal()] = exp;
-        //c.getOutgoingPacketBuilder().updateSkill(skill.ordinal(), skills[skill.ordinal()], skillExp[skill.ordinal()]);
-    }
-
-    /**
-     * Sets skill exp.
-     *
-     * @param skillId the skill id
-     * @param exp     the exp
-     */
-    public void setSkillExp(int skillId, int exp) {
-        if (skillId < 0 || skillId >= skillExp.length) {
-            throw new IllegalArgumentException("Invalid skill id");
-        }
-
-        skills[skillId] = world.entity.player.Skill.getLevelFromExp(exp);
-        skillExp[skillId] = exp;
-        //c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
-    }
 
     @Override
     public void poll() {

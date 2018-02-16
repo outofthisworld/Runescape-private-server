@@ -19,6 +19,9 @@ import net.impl.decoder.GamePacketDecoder;
 import net.impl.decoder.LoginProtocolConstants;
 import sun.plugin.dom.exception.InvalidStateException;
 import world.entity.player.Player;
+import world.entity.update.player.PlayerUpdateBlock;
+import world.storage.SimpleCache;
+import world.entity.update.UpdateBlockCache;
 import world.event.Event;
 import world.event.EventBus;
 import world.event.WorldEventBus;
@@ -42,6 +45,7 @@ public class World {
     private final int worldId;
     private final HashSet<Integer> freePlayerSlots = new HashSet<>();
     private final EventBus eventBus = new WorldEventBus(this);
+    private final SimpleCache<String, PlayerUpdateBlock> playerUpdateBlockCache = new UpdateBlockCache();
     private ScheduledFuture<?> worldExecutionTask;
     private int playersCount = 0;
 
@@ -72,6 +76,15 @@ public class World {
      */
     public EventBus getEventBus() {
         return eventBus;
+    }
+
+    /**
+     * Gets update block cache.
+     *
+     * @return the update block cache
+     */
+    public SimpleCache<String, PlayerUpdateBlock> getPlayerUpdateBlockCache() {
+        return playerUpdateBlockCache;
     }
 
     /**

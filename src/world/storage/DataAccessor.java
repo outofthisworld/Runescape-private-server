@@ -29,12 +29,4 @@ public interface DataAccessor<T, R> {
      * @return the r
      */
     R load(T obj);
-
-    /**
-     * Load r.
-     *
-     * @param key the key
-     * @return the r
-     */
-    R load(String key);
 }

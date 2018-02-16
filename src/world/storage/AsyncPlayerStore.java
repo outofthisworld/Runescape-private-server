@@ -44,13 +44,9 @@ public class AsyncPlayerStore implements DataStore<CompletableFuture<Boolean>, P
         return CompletableFuture.supplyAsync(() -> playerStore.load(p));
     }
 
-    @Override
-    public CompletableFuture<Player> load(String key) {
-        return CompletableFuture.supplyAsync(() -> playerStore.load(key));
-    }
 
     @Override
-    public CompletableFuture<Boolean> store(Player o) {
-        return CompletableFuture.supplyAsync(() -> playerStore.store(o));
+    public CompletableFuture<Boolean> store(String key, Player o) {
+        return CompletableFuture.supplyAsync(() -> playerStore.store(key, o));
     }
 }

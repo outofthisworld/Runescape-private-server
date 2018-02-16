@@ -33,8 +33,9 @@ public class PlayerStore implements DataAccessor<Player, Player>, DataStore<Bool
         playerDb = playerStore;
     }
 
+
     @Override
-    public Boolean store(Player o) {
+    public Boolean store(String key, Player o) {
         return playerDb.insert(o);
     }
 
@@ -42,10 +43,5 @@ public class PlayerStore implements DataAccessor<Player, Player>, DataStore<Bool
     @Override
     public Player load(Player obj) {
         return playerDb.findOneAndPopulate(obj.getUsername(), obj);
-    }
-
-    @Override
-    public Player load(String key) {
-        return playerDb.findOne(key);
     }
 }
