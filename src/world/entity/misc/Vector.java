@@ -67,6 +67,34 @@ public class Vector {
         return this;
     }
 
+    @Override
+    public int hashCode() {
+        int result = x;
+        result = 31 * result + y + z;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Vector)) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+
+        Vector v = (Vector) obj;
+
+        if (v.getX() == getX() && v.getY() == getY() && v.getZ() == getZ()) {
+            return true;
+        }
+
+        return false;
+    }
+
     public Vector multiplyY(int value) {
         y *= value;
         return this;

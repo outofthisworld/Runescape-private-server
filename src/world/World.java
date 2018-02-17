@@ -19,6 +19,7 @@ import net.impl.decoder.GamePacketDecoder;
 import net.impl.decoder.LoginProtocolConstants;
 import util.Preconditions;
 import util.Stopwatch;
+import world.entity.misc.Position;
 import world.entity.player.Player;
 import world.entity.update.UpdateBlockCache;
 import world.entity.update.player.PlayerUpdateBlock;
@@ -31,10 +32,7 @@ import world.storage.SimpleCache;
 import world.task.Task;
 import world.task.WorldThreadFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,16 +41,65 @@ import java.util.logging.Logger;
  * The type World.
  */
 public class World {
+    /**
+     * The World executor service.
+     */
     private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor(new WorldThreadFactory(10));
+    /**
+     * The set of free slots, appended to when a player leaves the world.
+     */
     private final HashSet<Integer> freePlayerSlots = new HashSet<>();
+    /**
+     * The player update block cache. Used to cache player update blocks
+     * to avoid reconstructing the block multiple times for different players.
+     */
     private final SimpleCache<String, PlayerUpdateBlock> playerUpdateBlockCache = new UpdateBlockCache();
+    /**
+     * All players in the world.
+     */
     private final HashMap<Integer, Player> players = new HashMap(WorldConfig.MAX_PLAYERS_IN_WORLD);
+    /**
+     * Divides players up by region, to make processing of certain things easier. E.G
+     * AOE spells.
+     */
+    private final Map<Position, Set<Player>> playersByRegion = new HashMap<>();
+    /**
+     * Tasks queued to execute on the world thread.
+     */
     private final ConcurrentLinkedQueue<Task> worldTasks = new ConcurrentLinkedQueue<>();
+    /**
+     * The world event bus. Any class can register events with this event bus
+     * and also choose when to fire certain events. The events, in the case of @class WorldEventBus
+     * are always fired on the world thread, but not in sync with the world. As the world
+     * thread fires every WorldConfig.WORLD_TICK_RATE_MS, it is possible that an event will execute
+     * during the period of time between a successive world tick.
+     * <p>
+     * E.G world thread executes @method poll();
+     * poll takes 350ms to complete
+     * 250ms left until next poll
+     * event is fired during this 250ms wait between next execution.
+     */
     private final EventBus eventBus = new WorldEventBus(this);
+    /**
+     * The class logger.
+     */
     private final Logger logger = Logger.getLogger(World.class.getName());
+    /**
+     * A simple timer to time how long the main world loop takes.
+     */
     private final Stopwatch loopTimer = new Stopwatch();
+    /**
+     * The worlds id.
+     */
     private final int worldId;
+    /**
+     * The worlds execution task
+     */
     private ScheduledFuture<?> worldExecutionTask;
+    /**
+     * The players count (not that this is not the direct players count and should never be
+     * returned directly. See @method getPlayersCount();
+     */
     private int playersCount = 0;
 
     /**
@@ -125,6 +172,12 @@ public class World {
         return playerIndex;
     }
 
+    /**
+     * Is slot empty boolean.
+     *
+     * @param slot the slot
+     * @return the boolean
+     */
     public boolean isSlotEmpty(int slot) {
         if (slot < 0 || slot >= WorldConfig.MAX_PLAYERS_IN_WORLD) {
             return true;
@@ -146,21 +199,84 @@ public class World {
             throw new IllegalArgumentException("Player slot was not null");
         }
 
+        addPlayerToRegion(p);
         players.put(slot, p);
     }
 
-
-    public void addPlayerToWorld(Player p) {
+    private void addPlayerToRegion(Player p) {
         Preconditions.notNull(p);
-        Preconditions.inRangeClosed(p.getSlotId(), 0, WorldConfig.MAX_PLAYERS_IN_WORLD);
 
-        if (players.containsKey(p.getSlotId())) {
-            throw new IllegalArgumentException("Player slot was not null");
-        }
-
-        players.put(p.getSlotId(), p);
+        Position currentPosition = p.getPosition();
+        int regionX = currentPosition.getRegionX();
+        int regionY = currentPosition.getRegionY();
+        int z = currentPosition.getVector().getZ();
+        Position regionPosition = new Position(regionX, regionY, z);
+        addPlayerToRegion(p, regionPosition);
     }
 
+    /**
+     * Gets players by region.
+     * The set returned is unmodifiable.
+     */
+    public Optional<Set<Player>> getPlayersByRegion(Position regionPosition) {
+        if (!playersByRegion.containsKey(regionPosition)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(Collections.unmodifiableSet(playersByRegion.get(regionPosition)));
+    }
+
+    private void addPlayerToRegion(Player p, Position regionPosition) {
+        Preconditions.notNull(p, regionPosition);
+
+        if (!playersByRegion.containsKey(regionPosition)) {
+            Set<Player> set = new HashSet<>();
+            set.add(p);
+            playersByRegion.put(regionPosition, set);
+        } else {
+            playersByRegion.get(regionPosition).add(p);
+        }
+
+        p.setLastRegionPosition(regionPosition);
+    }
+
+    /**
+     * Update player region.
+     * Should be called any time a players region is updated
+     * which will in turn update the playersByRegion map.
+     *
+     * @param p the p
+     */
+    public void updatePlayerRegion(Player p) {
+        Preconditions.notNull(p, p.getLastRegionPosition());
+
+        Position lastRegionPosition = p.getLastRegionPosition();
+
+        Preconditions.notNull(playersByRegion.get(lastRegionPosition));
+
+        Set<Player> playersInRegion = playersByRegion.get(lastRegionPosition);
+
+        Preconditions.areEqual(playersInRegion.contains(p), true);
+
+        playersInRegion.remove(p);
+
+        addPlayerToRegion(p);
+    }
+
+    /**
+     * Add player to world.
+     *
+     * @param p the p
+     */
+    public void addPlayerToWorld(Player p) {
+        addPlayerToWorld(p.getSlotId(), p);
+    }
+
+    /**
+     * Remove player from world.
+     *
+     * @param slot the slot
+     */
     public void removePlayerFromWorld(int slot) {
         Preconditions.inRangeClosed(slot, 0, WorldConfig.MAX_PLAYERS_IN_WORLD);
 
@@ -183,6 +299,11 @@ public class World {
 
     }
 
+    /**
+     * Remove player from world.
+     *
+     * @param p the p
+     */
     public void removePlayerFromWorld(Player p) {
         Preconditions.notNull(p);
         removePlayerFromWorld(p.getSlotId());

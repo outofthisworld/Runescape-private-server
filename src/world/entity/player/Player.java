@@ -21,15 +21,13 @@ import database.serialization.GsonSerializer;
 import net.impl.session.Client;
 import sun.plugin.dom.exception.InvalidStateException;
 import world.entity.Entity;
-import world.entity.player.containers.Bank;
-import world.entity.player.containers.Equipment;
-import world.entity.player.containers.Inventory;
+import world.entity.misc.Position;
 import world.entity.update.player.PlayerUpdateBlock;
 import world.entity.update.player.PlayerUpdateFlags;
+import world.event.Event;
 import world.storage.AsyncPlayerStore;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
@@ -45,7 +43,7 @@ public class Player extends Entity {
      * Players local to this player
      * e.g they fall within 15 x and y in the coordinate space.
      */
-    private final List<Player> localPlayers = new ArrayList<>();
+    private final HashSet<Player> localPlayers = new HashSet<>();
     /**
      * The players skills
      */
@@ -90,6 +88,10 @@ public class Player extends Entity {
      * The players username
      */
     private boolean isDisabled = false;
+    /**
+     * The last region this player belonged to.
+     */
+    private Position lastRegionPosition = null;
 
 
     /**
@@ -98,8 +100,18 @@ public class Player extends Entity {
      * @param c the c
      */
     public Player(Client c) {
+        /*
+            Set this players client
+         */
         this.c = c;
+        /*
+            Set the client player to this player
+        */
         c.setPlayer(this);
+        /*
+            Register this player with the world event bus
+        */
+        getWorld().getEventBus().register(this);
     }
 
     /**
@@ -284,10 +296,67 @@ public class Player extends Entity {
      *
      * @return the local players
      */
-    public List<Player> getLocalPlayers() {
+    public HashSet<Player> getLocalPlayers() {
         return localPlayers;
     }
 
+    /**
+     * Takes care of building the local players list.
+     * <p>
+     * This may be more efficient than the 0(n^2) method of looping through the players list.
+     * <p>
+     * Which looks like
+     * for(Player p: world.getPlayers()){
+     * <p>
+     * for(Player other: world.getPlayers()){
+     * if(other == p) continue;
+     * if(p.getPosition().isWithinViewableDistance(other)){
+     * p.getLocalPlayersList().add(other);
+     * }
+     * }
+     * <p>
+     * }
+     * <p>
+     * This will have to be tested.
+     * <p>
+     * Reasons for being more efficient:
+     * This event is fired in between game loop executions on the World thread.
+     * As such, when the game loop runs it doesn't have to worry about building the local players list,
+     * As it has already been built.
+     */
+    @Event
+    private void buildLocalPlayerList(PlayerMoveEvent playerMoveEvent) {
+        Player movePlayer = playerMoveEvent.getPlayer();
+        Position movePosition = playerMoveEvent.getPosition();
+        boolean isWithinViewableDistance = getPosition().isWithinXY(movePosition, 15)
+                && getPosition().isWithinZ(movePosition, 0);
+        if (localPlayers.contains(movePlayer)) {
+
+            if (!isWithinViewableDistance) {
+                /*
+                    The player has moved outside this players local players
+                */
+                localPlayers.remove(movePlayer);
+            }
+
+        } else {
+
+            if (isWithinViewableDistance) {
+                /*
+                    The player has moved outside this players local players
+                */
+                localPlayers.add(movePlayer);
+            }
+        }
+    }
+
+    public Position getLastRegionPosition() {
+        return lastRegionPosition;
+    }
+
+    public void setLastRegionPosition(Position lastRegionPosition) {
+        this.lastRegionPosition = lastRegionPosition;
+    }
 
     @Override
     public void poll() {
