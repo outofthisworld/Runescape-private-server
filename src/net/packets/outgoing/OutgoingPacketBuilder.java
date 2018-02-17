@@ -18,7 +18,6 @@ package net.packets.outgoing;
 import net.buffers.IBufferReserve;
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
-import world.WorldManager;
 import world.entity.player.Player;
 import world.entity.update.player.PlayerUpdateBlock;
 import world.storage.SimpleCache;

@@ -17,8 +17,8 @@ package world;
 
 import net.impl.decoder.GamePacketDecoder;
 import net.impl.decoder.LoginProtocolConstants;
-import sun.plugin.dom.exception.InvalidStateException;
 import util.Preconditions;
+import util.Stopwatch;
 import world.entity.player.Player;
 import world.entity.update.UpdateBlockCache;
 import world.entity.update.player.PlayerUpdateBlock;
@@ -29,24 +29,29 @@ import world.event.impl.ClientDisconnectEvent;
 import world.event.impl.PlayerLoginEvent;
 import world.storage.SimpleCache;
 import world.task.Task;
+import world.task.WorldThreadFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.concurrent.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The type World.
  */
 public class World {
+    private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor(new WorldThreadFactory(10));
+    private final HashSet<Integer> freePlayerSlots = new HashSet<>();
+    private final SimpleCache<String, PlayerUpdateBlock> playerUpdateBlockCache = new UpdateBlockCache();
     private final HashMap<Integer, Player> players = new HashMap(WorldConfig.MAX_PLAYERS_IN_WORLD);
     private final ConcurrentLinkedQueue<Task> worldTasks = new ConcurrentLinkedQueue<>();
-    private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor(new WorldThreadFactory(10));
-    private final int worldId;
-    private final HashSet<Integer> freePlayerSlots = new HashSet<>();
     private final EventBus eventBus = new WorldEventBus(this);
-    private final SimpleCache<String, PlayerUpdateBlock> playerUpdateBlockCache = new UpdateBlockCache();
+    private final Logger logger = Logger.getLogger(World.class.getName());
+    private final Stopwatch loopTimer = new Stopwatch();
+    private final int worldId;
     private ScheduledFuture<?> worldExecutionTask;
     private int playersCount = 0;
 
@@ -120,8 +125,10 @@ public class World {
         return playerIndex;
     }
 
-    public boolean isSlotEmpty(int slot){
-        if(slot < 0 || slot >= WorldConfig.MAX_PLAYERS_IN_WORLD) return true;
+    public boolean isSlotEmpty(int slot) {
+        if (slot < 0 || slot >= WorldConfig.MAX_PLAYERS_IN_WORLD) {
+            return true;
+        }
         return !players.containsKey(slot);
     }
 
@@ -133,7 +140,7 @@ public class World {
      */
     public void addPlayerToWorld(int slot, Player p) {
         Preconditions.notNull(p);
-        Preconditions.inRangeClosed(slot,0, WorldConfig.MAX_PLAYERS_IN_WORLD);
+        Preconditions.inRangeClosed(slot, 0, WorldConfig.MAX_PLAYERS_IN_WORLD);
 
         if (players.containsKey(slot)) {
             throw new IllegalArgumentException("Player slot was not null");
@@ -145,7 +152,7 @@ public class World {
 
     public void addPlayerToWorld(Player p) {
         Preconditions.notNull(p);
-        Preconditions.inRangeClosed(p.getSlotId(),0, WorldConfig.MAX_PLAYERS_IN_WORLD);
+        Preconditions.inRangeClosed(p.getSlotId(), 0, WorldConfig.MAX_PLAYERS_IN_WORLD);
 
         if (players.containsKey(p.getSlotId())) {
             throw new IllegalArgumentException("Player slot was not null");
@@ -154,29 +161,29 @@ public class World {
         players.put(p.getSlotId(), p);
     }
 
-    public void removePlayerFromWorld(int slot){
-        Preconditions.inRangeClosed(slot,0, WorldConfig.MAX_PLAYERS_IN_WORLD);
+    public void removePlayerFromWorld(int slot) {
+        Preconditions.inRangeClosed(slot, 0, WorldConfig.MAX_PLAYERS_IN_WORLD);
 
-        if(isSlotEmpty(slot)){
+        if (isSlotEmpty(slot)) {
             return;
         }
 
         Player p = players.get(slot);
 
-        Player.asyncPlayerStore().store(p.getUsername(),p).whenCompleteAsync((aBoolean, throwable) -> {
+        Player.asyncPlayerStore().store(p.getUsername(), p).whenCompleteAsync((aBoolean, throwable) -> {
             if (!aBoolean || throwable != null) {
                 throwable.printStackTrace();
                 return;
             }
 
             //login entity saving
-            players.put()
+            //players.put()
             freePlayerSlots.add(slot);
         }, worldExecutorService);
 
     }
 
-    public void removePlayerFromWorld(Player p){
+    public void removePlayerFromWorld(Player p) {
         Preconditions.notNull(p);
         removePlayerFromWorld(p.getSlotId());
     }
@@ -217,7 +224,7 @@ public class World {
                 }
             } else {
                 deserialized = lEvent.getPlayer();
-                Player.asyncPlayerStore().store(deserialized.getUsername(),deserialized);
+                Player.asyncPlayerStore().store(deserialized.getUsername(), deserialized);
             }
 
             deserialized.setSlotId(loginSlot);
@@ -287,16 +294,28 @@ public class World {
      * Poll.
      */
     private void poll() {
-        for (Player player: players.values()){
-            if(player.getClient().isDisconnected())
+        loopTimer.restart();
+        for (Player player : players.values()) {
+            if (player.getClient().isDisconnected()) {
+                removePlayerFromWorld(player);
                 continue;
+            }
 
+            /*
+                Update movement
+                Send update packet
+            */
             player.poll();
         }
 
         doWorldTasks();
+        /*
+           Clear the player update block cache.
+        */
+        playerUpdateBlockCache.clear();
+        loopTimer.stop();
+        logger.log(Level.INFO, "Completed world poll in " + loopTimer.getTimePassed(TimeUnit.MILLISECONDS) + "ms");
     }
-
 
 
     private void doWorldTasks() {
@@ -355,34 +374,5 @@ public class World {
      */
     public <T> Future<T> submit(Callable<T> r) {
         return worldExecutorService.submit(r);
-    }
-
-    private static class WorldThreadFactory implements ThreadFactory {
-        private final int count = 0;
-        private final int priority;
-
-        /**
-         * Instantiates a new World thread factory.
-         *
-         * @param priority the priority
-         */
-        public WorldThreadFactory(int priority) {
-
-            if (priority > Thread.MAX_PRIORITY || priority < Thread.MIN_PRIORITY) {
-                throw new InvalidStateException("Invalid priority for world thread.");
-            }
-
-            this.priority = priority;
-        }
-
-
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread();
-            t.setName("World " + count + " thread");
-            t.setPriority(priority);
-            t.setUncaughtExceptionHandler((t1, e) -> e.printStackTrace());
-            return t;
-        }
     }
 }

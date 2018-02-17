@@ -23,7 +23,7 @@ public abstract class Entity {
     /**
      * The entities position
      */
-    protected final Position position = new Position(3232,3333,0);
+    protected final Position position = new Position(3232, 3333, 0);
     /**
      * The entities slot id
      */
@@ -32,6 +32,7 @@ public abstract class Entity {
      * The world the player currently belongs to
      */
     protected int worldId;
+
     /**
      * Gets world id.
      *

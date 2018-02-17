@@ -21,8 +21,9 @@ import database.serialization.GsonSerializer;
 import net.impl.session.Client;
 import sun.plugin.dom.exception.InvalidStateException;
 import world.entity.Entity;
-import world.entity.misc.Position;
-import world.entity.player.containers.*;
+import world.entity.player.containers.Bank;
+import world.entity.player.containers.Equipment;
+import world.entity.player.containers.Inventory;
 import world.entity.update.player.PlayerUpdateBlock;
 import world.entity.update.player.PlayerUpdateFlags;
 import world.storage.AsyncPlayerStore;
@@ -43,7 +44,6 @@ public class Player extends Entity {
     /**
      * Players local to this player
      * e.g they fall within 15 x and y in the coordinate space.
-
      */
     private final List<Player> localPlayers = new ArrayList<>();
     /**

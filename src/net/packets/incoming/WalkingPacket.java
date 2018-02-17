@@ -15,8 +15,8 @@
 
 package net.packets.incoming;
 
-import net.impl.session.Client;
 import net.buffers.InputBuffer;
+import net.impl.session.Client;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,6 +30,16 @@ public class WalkingPacket extends IncomingPacket {
 
     @Override
     public void handle(Client c, int packetOpcode, InputBuffer in) throws Exception {
+        if (!handlesOpcode(packetOpcode)) {
+            return;
+        }
+
+        int size = in.readBigUnsignedWORD();
+
+        if (packetOpcode == 248) {
+            size -= 14;
+        }
+
 
     }
 
