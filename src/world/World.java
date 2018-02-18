@@ -346,6 +346,7 @@ public class World {
                 }
             } else {
                 deserialized = lEvent.getPlayer();
+                deserialized.getAppearance().setDefault();
                 Player.asyncPlayerStore().store(deserialized.getUsername(), deserialized);
             }
 

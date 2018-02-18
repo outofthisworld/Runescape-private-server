@@ -25,6 +25,7 @@ import net.impl.events.NetworkEventExecutor;
 import net.packets.outgoing.OutgoingPacket;
 import net.packets.outgoing.OutgoingPacketBuilder;
 import world.entity.player.Player;
+import world.event.impl.ClientDisconnectEvent;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -368,6 +369,7 @@ public class Client implements NetworkEventExecutor {
         inputBuffer.clear();
         disconnectedAt = System.nanoTime();
         isDisconnected = true;
+        player.getWorld().getEventBus().fire(new ClientDisconnectEvent(this));
     }
 
     /**

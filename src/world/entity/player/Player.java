@@ -24,10 +24,13 @@ import world.entity.Entity;
 import world.entity.misc.Position;
 import world.entity.update.player.PlayerUpdateBlock;
 import world.entity.update.player.PlayerUpdateFlags;
+import world.entity.update.player.PlayerUpdateMask;
 import world.event.Event;
 import world.event.impl.PlayerMoveEvent;
+import world.interfaces.SidebarInterface;
 import world.storage.AsyncPlayerStore;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -50,6 +53,10 @@ public class Player extends Entity {
      * The players skills
      */
     private final Skills skills = new Skills(this);
+    /*
+            The players appearence.
+         */
+    private final Appearance appearance = new Appearance(this);
     /**
      * The players bank
      */
@@ -70,6 +77,7 @@ public class Player extends Entity {
      * The players update block
      */
     private final PlayerUpdateBlock playerUpdateBlock = new PlayerUpdateBlock(this);
+    private final boolean isInitialized = false;
     /**
      * The client for the player, contains networking stuff.
      */
@@ -94,12 +102,14 @@ public class Player extends Entity {
      * The last region this player belonged to.
      */
     private Position lastRegionPosition = null;
-
+    /**
+     * The last region this player belonged to.
+     */
     private boolean isTeleporting = false;
-
+    /**
+     * The last region this player belonged to.
+     */
     private boolean regionChanged = false;
-
-    private boolean isInitialized = false;
 
     /**
      * Instantiates a new Player.
@@ -138,6 +148,10 @@ public class Player extends Entity {
      */
     public static CompletableFuture<Optional<Player>> load(Player p) {
         return Player.asyncPlayerStore().load(p).thenApplyAsync(player -> Optional.ofNullable(player));
+    }
+
+    public Appearance getAppearance() {
+        return appearance;
     }
 
     /**
@@ -417,12 +431,29 @@ public class Player extends Entity {
     }
 
 
-    public void init(){
-        if(isInitialized) return;
+    /**
+     * Init.
+     */
+    public void init() {
+        if (isInitialized) {
+            return;
+        }
 
         /*
-            Send interfaces ect..
+            Region changed when first logging in
+         */
+        setRegionChanged(true);
+        /*
+            Update appearance when first logging in
+         */
+        getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
+        /*
+           Send interfaces ect..
         */
+        int[] index = {0};
+        Arrays.stream(SidebarInterface.values()).forEach(i -> {
+            getClient().getOutgoingPacketBuilder().setSidebarInterface(index[0]++, i.getInterfaceId());
+        });
     }
 
     @Override

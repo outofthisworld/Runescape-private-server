@@ -403,12 +403,9 @@ public class OutgoingPacketBuilder {
             }
         }
 
-        /*
-            Build local players list.
-         */
-
         //Write how many bytes the packet contains
         reserve.writeValue(reserve.bytesSinceReserve());
+        return this;
     }
 
     private void updatePlayerMovement(Player player, boolean thisPlayer) {
