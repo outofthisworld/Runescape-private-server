@@ -34,6 +34,10 @@ public class OutgoingPacketBuilder {
     private final HashMap<Player, OutputBuffer> playerMovementCache = new HashMap<>();
     private OutputBuffer outputBuffer;
 
+    public int bytesWritten(){
+        return outputBuffer.position();
+    }
+
     /**
      * Instantiates a new Packet builder.
      *
@@ -49,7 +53,10 @@ public class OutgoingPacketBuilder {
     }
 
     private OutputBuffer createHeader(int packetId) {
-        outputBuffer.writeByte(packetId + c.getOutCipher().getNextValue());
+        System.out.println(packetId);
+        byte b = (byte) (packetId + c.getOutCipher().getNextValue());
+        System.out.println("encoded pakcet id: " + b);
+        outputBuffer.writeByte(b);
         return outputBuffer;
     }
 
@@ -191,14 +198,18 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
+
+
     /**
      * Init player outgoing packet builder.
+     *
      *
      * @param membership  the membership
      * @param playerIndex the player index
      * @return the outgoing packet builder
      */
     public OutgoingPacketBuilder initPlayer(int membership, int playerIndex) {
+
         createHeader(OutgoingPacket.Opcodes.INIT_PLAYER)
                 .writeByte(membership, OutputBuffer.ByteTransformationType.A)
                 .writeLittleWORDA(playerIndex);
@@ -250,6 +261,11 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder setSkillLevel(int skillNum, int currentLevel, int XP) {
+        createHeader(OutgoingPacket.Opcodes.UPDATE_SKILL)
+                .writeByte(skillNum).
+                order(OutputBuffer.Order.BIG_MIDDLE_ENDIAN)
+                .writeBytes(XP,4)
+                .writeByte(currentLevel);
         /*client.getOutStream().createHeader(134);
         client.getOutStream().writeByte(skillNum);
         client.getOutStream().writeDWord_v1(XP);
@@ -385,6 +401,8 @@ public class OutgoingPacketBuilder {
 
 
         outputBuffer.writeBits(player.getLocalPlayers().size(), 8);
+        //Some random num
+        outputBuffer.writeBits(2047, 11);
 
         for (Iterator<Player> iterator = player.getLocalPlayers().iterator(); iterator
                 .hasNext(); ) {
@@ -406,6 +424,8 @@ public class OutgoingPacketBuilder {
 
         //Write how many bytes the packet contains
         reserve.writeValue(reserve.bytesSinceReserve());
+
+        System.out.println("bytes since reserve : " + reserve.bytesSinceReserve());
         return this;
     }
 

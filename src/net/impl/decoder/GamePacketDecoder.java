@@ -20,9 +20,11 @@ public class GamePacketDecoder implements ProtocolDecoder {
             return;
         }
 
-        int decodedOp = in.readUnsignedByte() - c.getInCipher().getNextValue();
-        int packetSize = IncomingPacket.getPacketSizeForId(decodedOp);
+        int decodedOp = in.readUnsignedByte() - c.getInCipher().getNextValue() & 0xFF;
+        System.out.println("decoded op = " + decodedOp);
 
+        int packetSize = IncomingPacket.getPacketSizeForId(decodedOp);
+        System.out.println(packetSize);
         if (packetSize != -1 && in.remaining() < packetSize) {
             return;
         }

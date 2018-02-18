@@ -19,6 +19,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The type Collection accessor.
@@ -131,7 +133,17 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
             throw new IllegalArgumentException("Tried to insert null object into database");
         }
 
-        collection.insertOne(Document.parse(serializer.encode(obj)));
+        Logger.getLogger(getClass().getName()).log(Level.INFO, "INSERTING OBJJ INTO COLLECTION " + collectionName);
+        try {
+            collection.insertOne(Document.parse(serializer.encode(obj)));
+            Logger.getLogger(getClass().getName()).log(Level.INFO, "INSERTED");
+        } catch (Exception e) {
+            System.out.println("caught exception");
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "ERROR");
+            e.printStackTrace();
+            return false;
+        }
+
         return true;
     }
 

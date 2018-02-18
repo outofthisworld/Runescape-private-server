@@ -20,8 +20,8 @@ import world.item.Item;
 
 public class Bank {
     private static final int BANK_SIZE = 200;
-    private final Player p;
-    private final Container<Item> bankItems;
+    private Player p;
+    private Container<Item> bankItems;
 
 
     public Bank(Player p) {

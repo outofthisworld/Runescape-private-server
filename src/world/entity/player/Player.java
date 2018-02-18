@@ -15,11 +15,17 @@
 
 package world.entity.player;
 
+import com.google.gson.FieldAttributes;
 import database.CollectionAccessor;
 import database.DatabaseConfig;
 import database.serialization.GsonSerializer;
+import database.serialization.SkipFieldPolicy;
+import database.serialization.impl.FieldToIdPolicy;
+import database.serialization.impl.PlayerSkipFieldPolicy;
+import net.impl.decoder.LoginProtocolConstants;
 import net.impl.session.Client;
 import sun.plugin.dom.exception.InvalidStateException;
+import util.Preconditions;
 import world.entity.Entity;
 import world.entity.misc.Position;
 import world.entity.player.containers.Bank;
@@ -33,10 +39,7 @@ import world.event.impl.PlayerMoveEvent;
 import world.interfaces.SidebarInterface;
 import world.storage.AsyncPlayerStore;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -44,7 +47,10 @@ import java.util.concurrent.CompletableFuture;
  */
 public class Player extends Entity {
     private static final AsyncPlayerStore asyncPlayerStore = new AsyncPlayerStore(
-            new CollectionAccessor<>(new GsonSerializer<>(Player.class), "Evolution", DatabaseConfig.PLAYERS_COLLECTION,
+            new CollectionAccessor<>(new GsonSerializer<>(Player.class)
+                    .setFieldSkipPolicy(new PlayerSkipFieldPolicy())
+                    .setNamingStategy(new FieldToIdPolicy("username")),
+                    "Evolution", DatabaseConfig.PLAYERS_COLLECTION,
                     Player.class));
 
     /**
@@ -119,15 +125,11 @@ public class Player extends Entity {
      *
      * @param c the c
      */
-    public Player(Client c) {
+    public Player() {
         /*
             Set this players client
          */
         this.c = c;
-        /*
-            Set the client player to this player
-        */
-        c.setPlayer(this);
         /*
             Register this player with the world event bus
         */
@@ -330,7 +332,12 @@ public class Player extends Entity {
      * @param c the c
      */
     public void setClient(Client c) {
+        Preconditions.notNull(c);
         this.c = c;
+                /*
+            Set the client player to this player
+        */
+        c.setPlayer(this);
     }
 
     /**
@@ -348,6 +355,8 @@ public class Player extends Entity {
      * @param username the username
      */
     public void setUsername(String username) {
+        Preconditions.notNull(username);
+        Preconditions.areEqual(LoginProtocolConstants.VALID_USERNAME_PREDICATE.test(username),true);
         this.username = username;
     }
 
@@ -438,9 +447,6 @@ public class Player extends Entity {
      * Init.
      */
     public void init() {
-        if (isInitialized) {
-            return;
-        }
 
         /*
             Region changed when first logging in
@@ -450,28 +456,42 @@ public class Player extends Entity {
             Update appearance when first logging in
          */
         getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
-        /*
-           Send interfaces ect..
-        */
-        int[] index = {0};
-        Arrays.stream(SidebarInterface.values()).forEach(i -> {
-            getClient().getOutgoingPacketBuilder().setSidebarInterface(index[0]++, i.getInterfaceId());
-        });
+
+
+        getClient().getOutgoingPacketBuilder().initPlayer(1, getSlotId());
+
+        getClient().getOutgoingPacketBuilder().setChatOptions(0, 0, 0);
+
+
+        Skill[] skills = Skill.values();
+        for(int i = 0; i < skills.length;i++){
+            getClient().getOutgoingPacketBuilder().setSkillLevel(i,getSkills().getSkillLevel(skills[i]), getSkills().getSkillExp(skills[i]));
+        }
+
+
+        for(SidebarInterface i:SidebarInterface.values()){
+            getClient().getOutgoingPacketBuilder().setSidebarInterface(i.ordinal(), i.getInterfaceId());
+        }
+
+        //System.out.println(getClient().getOutgoingPacketBuilder().bytesWritten());
+        getClient().getOutgoingPacketBuilder().send();
     }
 
     @Override
     public void poll() {
+
         /*
            Updates player movement
         */
         getMovement().poll();
 
-        /*
-            Sends update packet.
-        */
+
+
         getClient().getOutgoingPacketBuilder().playerUpdate().send();
+
 
         regionChanged = false;
         isTeleporting = false;
+        getUpdateFlags().clear();
     }
 }

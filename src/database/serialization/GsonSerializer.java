@@ -40,6 +40,17 @@ public class GsonSerializer<T> extends AbstractSerializer<T, String> {
     }
 
     /**
+     * Register type adapter gson serializer.
+     *
+     * @param t the t
+     * @return the gson serializer
+     */
+    public GsonSerializer<T> registerTypeAdapter(JsonDeserializer<T> t){
+        gsonBuilder.registerTypeHierarchyAdapter(getSerializationClass(),t);
+        return this;
+    }
+
+    /**
      * Sets naming stategy.
      *
      * @param strat the strat
@@ -57,7 +68,8 @@ public class GsonSerializer<T> extends AbstractSerializer<T, String> {
      * @return the field skip policy
      */
     public GsonSerializer<T> setFieldSkipPolicy(SkipFieldPolicy skip) {
-        gsonBuilder.setExclusionStrategies(eStat = createExclusionStategy(skip));
+        eStat = createExclusionStategy(skip);
+        gsonBuilder.setExclusionStrategies(eStat);
         return this;
     }
 

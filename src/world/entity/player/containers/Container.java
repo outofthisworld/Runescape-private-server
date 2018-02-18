@@ -24,8 +24,8 @@ import java.util.List;
 
 public class Container<T> extends AbstractList<T> implements List<T> {
 
-    private final T[] items;
-    private final HashSet<Integer> removedIndex = new HashSet<>();
+    private T[] items;
+    private HashSet<Integer> removedIndex = new HashSet<>();
     private int cursor = 0;
 
     /**
@@ -34,30 +34,30 @@ public class Container<T> extends AbstractList<T> implements List<T> {
      * @param size  the size
      * @param klazz the klazz
      */
-    public Container(int size, Class<T> klazz) {
+    public Container(int size,
+                     Class<T> klazz
+    ) {
         items = (T[]) Array.newInstance(klazz, size);
     }
 
     @Override
-    protected void removeRange(int fromIndex, int toIndex) {
+    protected void removeRange(int fromIndex,
+                               int toIndex
+    ) {
         if (fromIndex > toIndex) {
             int temp = fromIndex;
             fromIndex = toIndex;
             toIndex = temp;
         }
-
         if (fromIndex < 0) {
             throw new IllegalArgumentException("Invalid from index");
         }
-
         if (toIndex > items.length) {
             throw new IllegalArgumentException("Invalid to index");
         }
-
         if (fromIndex == toIndex) {
             items[fromIndex] = null;
         }
-
         for (int i = fromIndex; i < toIndex; i++) {
             remove(i);
         }
@@ -98,7 +98,6 @@ public class Container<T> extends AbstractList<T> implements List<T> {
         if (remaining() == 0) {
             return false;
         }
-
         if (removedIndex.isEmpty()) {
             System.out.println("adding index " + cursor);
             items[cursor++] = t;
@@ -108,19 +107,22 @@ public class Container<T> extends AbstractList<T> implements List<T> {
             items[index] = t;
             removedIndex.remove(index);
         }
-
         return true;
     }
 
     @Override
-    public T set(int index, T element) {
+    public T set(int index,
+                 T element
+    ) {
         T cur = items[index];
         items[index] = element;
         return cur;
     }
 
     @Override
-    public void add(int index, T element) {
+    public void add(int index,
+                    T element
+    ) {
         if (isEmpty(index)) {
             throw new InvalidStateException("Cannot add over a non null container item, use set.");
         }

@@ -286,7 +286,14 @@ public class World {
 
         Player p = players.get(slot);
 
-        Player.asyncPlayerStore().store(p.getUsername(), p).whenCompleteAsync((aBoolean, throwable) -> {
+        if(p == null)
+            throw new IllegalStateException("null player in players list");
+
+        playersByRegion.get(p.getLastRegionPosition()).remove(p);
+        players.remove(slot);
+        freePlayerSlots.add(slot);
+
+        /*Player.asyncPlayerStore().store(p.getUsername(), p).whenCompleteAsync((aBoolean, throwable) -> {
             if (!aBoolean || throwable != null) {
                 throwable.printStackTrace();
                 return;
@@ -295,7 +302,7 @@ public class World {
             //login entity saving
             //players.put()
             freePlayerSlots.add(slot);
-        }, worldExecutorService);
+        }, worldExecutorService);*/
 
     }
 
@@ -311,7 +318,7 @@ public class World {
 
     @Event()
     public void playerLoginEvent(PlayerLoginEvent lEvent) {
-        logger.log(Level.INFO, "New player logging in");
+        logger.log(Level.INFO, "NEW PLAYER LOG IN EVENT FIRING");
 
         if (lEvent.getPlayer() == null) {
             return;
@@ -335,10 +342,9 @@ public class World {
         }
 
         lEvent.getPlayer().load().thenAcceptAsync(player -> {
-            logger.log(Level.INFO, "Loaded player async");
             Player deserialized;
-            if (player.isPresent()) {
-                logger.log(Level.INFO, "Player existed");
+            boolean useDb = false;
+            if (useDb && player.isPresent()) {
                 deserialized = player.get();
                 if (!deserialized.getPassword().equals(lEvent.getPassword())) {
                     lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.INVALID_USERNAME_OR_PASSWORD, 0);
@@ -350,24 +356,24 @@ public class World {
                     return;
                 }
             } else {
-                logger.log(Level.INFO, "Creating new player");
                 deserialized = lEvent.getPlayer();
+                deserialized.setPassword(lEvent.getPassword());
                 deserialized.getAppearance().setDefault();
-                Player.asyncPlayerStore().store(deserialized.getUsername(), deserialized);
+                if(useDb) {
+                    Player.asyncPlayerStore().store(deserialized.getUsername(), deserialized).whenComplete((aBoolean, throwable) -> {
+                        if (throwable != null) {
+                            throwable.printStackTrace();
+                        }
+                    });
+                }
             }
 
-            logger.log(Level.INFO, "Setting login slot id " + loginSlot);
             deserialized.setSlotId(loginSlot);
-            logger.log(Level.INFO, "Setting world id " + worldId);
             deserialized.setWorldId(worldId);
-            logger.log(Level.INFO, "Adding player to world");
-            addPlayerToWorld(loginSlot, deserialized);
-            logger.log(Level.INFO, "Switching client to game packet decoder");
             deserialized.getClient().setProtocolDecoder(new GamePacketDecoder());
-            logger.log(Level.INFO, "Sending login success response");
             lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.LOGIN_SUCCESS, deserialized.getRights());
-            logger.log(Level.INFO, "Sending player data");
             deserialized.init();
+            addPlayerToWorld(loginSlot,deserialized);
         }, worldExecutorService)
                 .whenComplete((aVoid, throwable) -> {
                     if (throwable != null) {

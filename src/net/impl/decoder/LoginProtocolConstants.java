@@ -7,6 +7,7 @@ import java.util.function.Predicate;
  */
 public class LoginProtocolConstants {
 
+
     /**
      * The constant LOGIN_REQUEST.
      */
@@ -68,7 +69,7 @@ public class LoginProtocolConstants {
     /**
      * The constant EXCHANGE_SESSION_KEYS.
      */
-    public static int EXCHANGE_SESSION_KEYS = 0;
+    public static boolean EXCHANGE_SESSION_KEYS = false;
     /**
      * The constant TRY_AGAIN.
      */

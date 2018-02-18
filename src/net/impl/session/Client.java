@@ -369,7 +369,9 @@ public class Client implements NetworkEventExecutor {
         inputBuffer.clear();
         disconnectedAt = System.nanoTime();
         isDisconnected = true;
-        player.getWorld().getEventBus().fire(new ClientDisconnectEvent(this));
+
+        if(player != null)
+            player.getWorld().getEventBus().fire(new ClientDisconnectEvent(this));
     }
 
     /**

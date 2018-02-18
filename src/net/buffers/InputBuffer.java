@@ -60,11 +60,7 @@ public class InputBuffer extends AbstractBuffer {
         inBuffer.flip();
     }
 
-    /**
-     * Widen.
-     *
-     * @param size the size
-     */
+
     private void widen(int newSz) {
         ByteBuffer b = ByteBuffer.allocate(inBuffer.capacity() + newSz);
         b.put(inBuffer);
@@ -93,6 +89,9 @@ public class InputBuffer extends AbstractBuffer {
 
         inBuffer.compact();
         if (inBuffer.remaining() == 0) {
+            System.out.println(inBuffer.limit());
+            System.out.println(inBuffer.capacity());
+            System.out.println(inBuffer.position());
             throw new BufferOverflowException();
         }
         int bytesRead = socketChannel.read(inBuffer);
@@ -221,8 +220,7 @@ public class InputBuffer extends AbstractBuffer {
         if (numBytes < 1 || numBytes > 8) {
             throw new RuntimeException("Invalid params, numBytes must be between 1-8 inclusive");
         }
-        byte[] bytes = new byte[numBytes];
-        inBuffer.get(bytes, 0, bytes.length);
+
         long l = 0L;
         int start;
         int end;
@@ -237,7 +235,9 @@ public class InputBuffer extends AbstractBuffer {
             increment = -1;
         }
         for (int i = start; i != end; i += increment) {
-            l |= ((bytes[i] & 0xFF) << (inBuffer.order() == ByteOrder.BIG_ENDIAN ? (end - 1 - i) * 8 : i * 8));
+            int shiftAmount = (inBuffer.order() == ByteOrder.BIG_ENDIAN ? (end - 1 - i) * 8 : i * 8);
+            long val = inBuffer.get() & 0xFF;
+            l |= ( val << shiftAmount);
         }
         return l;
     }
@@ -376,6 +376,7 @@ public class InputBuffer extends AbstractBuffer {
     @Override
     public void clear() {
         inBuffer.clear();
+        inBuffer.position(inBuffer.capacity());
     }
 
     /**

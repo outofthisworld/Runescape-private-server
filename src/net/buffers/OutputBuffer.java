@@ -515,13 +515,13 @@ public class OutputBuffer extends AbstractBuffer {
     private byte transformValue(long value, ByteTransformationType type) {
         switch (type) {
             case A:
-                return (byte) (value + 128);
+                return (byte) ((value & 0xFF) + 128);
             case S:
-                return (byte) (128 - value);
+                return (byte) (128 - (value & 0xFF));
             case C:
-                return (byte) (-value);
+                return (byte) (-(value & 0xFF));
             default:
-                return (byte) value;
+                return (byte) (value & 0xFF);
         }
     }
 
@@ -561,11 +561,14 @@ public class OutputBuffer extends AbstractBuffer {
         int bytesWritten = 0;
         byte[] bytes = new byte[numBytes];
         for (int i = start; i != end; i += increment) {
+            byte b = (byte) (value >> (i * 8));
+
             if (i == 0) {
-                transformValue(value, type);
+                //value = transformValue(value, type);
+                b =  transformValue(b, type);
             }
 
-            bytes[bytesWritten++] = (byte) (value >> (i * 8));
+            bytes[bytesWritten++] = b;
 
             if (bytesWritten == numBytes) {
                 break;
@@ -844,7 +847,6 @@ public class OutputBuffer extends AbstractBuffer {
          */
         public OutputBufferReserve(int numBytes) {
             reserveIndex = out.position();
-            System.out.println("index=" + reserveIndex);
             this.numBytes = numBytes;
             for (int i = 0; i < numBytes; i++) {
                 OutputBuffer.this.writeByte(0);
