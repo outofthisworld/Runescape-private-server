@@ -357,6 +357,10 @@ public class OutgoingPacketBuilder {
         pUpdateBlock.getBlock().pipeTo(outputBuffer, false).rewind();
     }
 
+    public OutgoingPacketBuilder updateRegion() {
+        createHeader(210);
+    }
+
 
     /**
      * Player update outgoing packet builder.
@@ -367,9 +371,6 @@ public class OutgoingPacketBuilder {
     public OutgoingPacketBuilder playerUpdate() {
         Player player = c.getPlayer();
 
-        /*
-            Teleporting / region change
-        */
         IBufferReserve<OutputBuffer> reserve = createHeader(81, 2);
 
         /*
@@ -389,13 +390,11 @@ public class OutgoingPacketBuilder {
 
             Player other = iterator.next();
 
-            other.getWorld().
 
-            if (World.getPlayers()[other.getSlot()] != null && other.isRegistered()
-                    && other.getPosition().isWithinDistance(player.getPosition(),
-                    Position.VIEWING_DISTANCE)) {
+            boolean isWithinViewableDistance = player.getPosition().isWithinXY(other.getPosition(), 15)
+                    && player.getPosition().isWithinZ(other.getPosition(), 0);
+            if (other.getWorld().getPlayer(other.getSlotId()) != null && isWithinViewableDistance) {
                 updatePlayerMovement(other, false);
-
                 appendPlayerUpdateBlock(other);
             } else {
                 iterator.remove();
@@ -414,7 +413,7 @@ public class OutgoingPacketBuilder {
 
     private void updatePlayerMovement(Player player, boolean thisPlayer) {
 
-        if (thisPlayer && player.isTeleporting() || player.regionHasChanged()) {
+        if (thisPlayer && player.isTeleporting() || player.isRegionChanged()) {
              /*
               * Update required bit
              */
@@ -426,7 +425,7 @@ public class OutgoingPacketBuilder {
                  /*
                  * The players height
                  */
-                    .writeBits(player.getHeight(), 2)
+                    .writeBits(player.getPosition().getVector().getZ(), 2)
                   /*
                    * This indicates that the client should discard the walking queue.
                   */
@@ -434,26 +433,25 @@ public class OutgoingPacketBuilder {
                  /*
                    * This flag indicates if an update block is appended.
                    */
-                    .writeBits(player.getUpdateFlags().isUpdateRequired() ? 1 : 0, 1)
+                    .writeBits(player.getUpdateFlags().anySet() ? 1 : 0, 1)
                   /*
                    * The local Y position of this player.
                    */
-                    .writeBits(player.getPosition().getLocalY(player.getLastPosition()), 7)
-
+                    .writeBits(player.getPosition().getLocalY(), 7)
                   /*
                    * The local X position of this player.
                    */
-                    .writeBits(player.getPosition().getLocalX(player.getLastPosition()), 7);
+                    .writeBits(player.getPosition().getLocalX(), 7);
         } else {
 
-               /*
+            /*
              * Check which type of movement took place.
              */
-            if (player.getWalkingDirection() == -1) {
+            if (!player.getMovement().isMoving()) {
                   /*
                    * If no movement did, check if an update is required.
                    */
-                if (player.getUpdateFlags().isUpdateRequired()) {
+                if (player.getUpdateFlags().anySet()) {
                         /*
                          * Signify that an update happened.
                          */
@@ -468,7 +466,7 @@ public class OutgoingPacketBuilder {
                          */
                     outputBuffer.writeBit(false);
                 }
-            } else if (player.getRunningDirection() == -1) {
+            } else if (!player.getMovement().isRunning()) {
                   /*
                    * The player moved but didn't run. Signify that an update is required.
                    */
@@ -482,12 +480,12 @@ public class OutgoingPacketBuilder {
                   /*
                    * Write the primary sprite (i.e. walk direction).
                    */
-                        .writeBits(3, player.getWalkingDirection())
+                        .writeBits(3, player.getMovement().getDirection())
 
                   /*
                    * Write a flag indicating if a block update happened.
                    */
-                        .writeBit(player.getUpdateFlags().isUpdateRequired());
+                        .writeBit(player.getUpdateFlags().anySet());
 
 
             } else {
@@ -504,17 +502,17 @@ public class OutgoingPacketBuilder {
                   /*
                    * Write the primary sprite (i.e. walk direction).
                    */
-                        .writeBits(3, player.getWalkingDirection())
+                        .writeBits(3, player.getMovement().getDirection())
 
                   /*
                    * Write the secondary sprite (i.e. run direction).
                    */
-                        .writeBits(3, player.getRunningDirection())
+                        .writeBits(3, player.getMovement().getDirection())
 
                   /*
                    * Write a flag indicating if a block update happened.
                    */
-                        .writeBit(player.getUpdateFlags().isUpdateRequired());
+                        .writeBit(player.getUpdateFlags().anySet());
             }
         }
     }

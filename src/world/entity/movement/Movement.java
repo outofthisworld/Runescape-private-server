@@ -30,6 +30,10 @@ public class Movement {
             return;
         }
 
+        if (movementQueue.size() == 0) {
+            direction = -1;
+        }
+
         direction = parseDirection(movementPosition.getVector().getX() - lastPosition.getVector().getX(),
                 movementPosition.getVector().getY() - lastPosition.getVector().getY());
 
@@ -41,13 +45,24 @@ public class Movement {
             Player player = (Player) e;
 
 
-            if (regionNeedsUpdating) {
+            int mapOffsetX = player.getPosition().getMapOffsetX();
+            int mapOffsetY = player.getPosition().getMapOffsetY();
+
+            if (mapOffsetX <= 16 || mapOffsetX >= 88 || mapOffsetY <= 16 || mapOffsetY >= 88) {
                 e.getWorld().getEventBus().fire(new RegionUpdateEvent(player, this));
             }
 
             //Send movement event
             e.getWorld().getEventBus().fire(new PlayerMoveEvent(player, this));
         }
+    }
+
+    public boolean isMoving() {
+        return direction != -1;
+    }
+
+    public boolean isRunning() {
+        return isRunning;
     }
 
     public int getDirection() {

@@ -95,6 +95,11 @@ public class Player extends Entity {
      */
     private Position lastRegionPosition = null;
 
+    private boolean isTeleporting = false;
+
+    private boolean regionChanged = false;
+
+    private boolean isInitialized = false;
 
     /**
      * Instantiates a new Player.
@@ -133,6 +138,42 @@ public class Player extends Entity {
      */
     public static CompletableFuture<Optional<Player>> load(Player p) {
         return Player.asyncPlayerStore().load(p).thenApplyAsync(player -> Optional.ofNullable(player));
+    }
+
+    /**
+     * Is teleporting boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isTeleporting() {
+        return isTeleporting;
+    }
+
+    /**
+     * Sets teleporting.
+     *
+     * @param teleporting the teleporting
+     */
+    public void setTeleporting(boolean teleporting) {
+        isTeleporting = teleporting;
+    }
+
+    /**
+     * Is region changed boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isRegionChanged() {
+        return regionChanged;
+    }
+
+    /**
+     * Sets region changed.
+     *
+     * @param regionChanged the region changed
+     */
+    public void setRegionChanged(boolean regionChanged) {
+        this.regionChanged = regionChanged;
     }
 
     /**
@@ -357,12 +398,31 @@ public class Player extends Entity {
         }
     }
 
+    /**
+     * Gets last region position.
+     *
+     * @return the last region position
+     */
     public Position getLastRegionPosition() {
         return lastRegionPosition;
     }
 
+    /**
+     * Sets last region position.
+     *
+     * @param lastRegionPosition the last region position
+     */
     public void setLastRegionPosition(Position lastRegionPosition) {
         this.lastRegionPosition = lastRegionPosition;
+    }
+
+
+    public void init(){
+        if(isInitialized) return;
+
+        /*
+            Send interfaces ect..
+        */
     }
 
     @Override
@@ -376,5 +436,8 @@ public class Player extends Entity {
             Sends update packet.
         */
         getClient().getOutgoingPacketBuilder().playerUpdate().send();
+
+        regionChanged = false;
+        isTeleporting = false;
     }
 }

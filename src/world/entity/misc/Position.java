@@ -71,6 +71,27 @@ public class Position {
         return getVector().getX() % Position.MAP_SIZE_TILES;
     }
 
+
+    /**
+     * Returns the local Y coordinate of an {@link Position}.
+     *
+     * @param location The {@link Position}.
+     * @return The returned local coordinate.
+     */
+    public final int getLocalX() {
+        return getVector().getX() - 8 * getChunkXCentered();
+    }
+
+    /**
+     * Returns the local Y coordinate of an {@link Position}.
+     *
+     * @param location The {@link Position}.
+     * @return The returned local coordinate.
+     */
+    public final int getLocalY() {
+        return getVector().getY() - 8 * getChunkYCentered();
+    }
+
     public int getMapOffsetY() {
         return getVector().getY() % Position.MAP_SIZE_TILES;
     }

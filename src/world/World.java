@@ -446,6 +446,7 @@ public class World {
         Objects.requireNonNull(p);
         updatePlayerRegion(p);
         p.getClient().getOutgoingPacketBuilder().updateRegion().send();
+        p.setRegionChanged(true);
     }
 
 
