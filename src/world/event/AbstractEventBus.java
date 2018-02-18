@@ -24,11 +24,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The type Abstract event bus.
  */
 public abstract class AbstractEventBus implements EventBus {
+    private static final Logger logger = Logger.getLogger(AbstractEventBus.class.getName());
 
     /**
      * The Registered impl.
@@ -67,6 +70,7 @@ public abstract class AbstractEventBus implements EventBus {
 
             Class paramClass = paramTypes[0];
 
+            AbstractEventBus.logger.log(Level.INFO, "registering event handler under  " + klazz.getName() + " for event " + paramClass.getName());
             register(paramClass, event -> {
                 try {
                     m.invoke(obj, event);

@@ -24,12 +24,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
  * The type Channel manager.
  */
 public class ChannelManager {
+    private static final Logger logger = Logger.getLogger(ChannelManager.class.getName());
     private static ExecutorService executor = Executors.newCachedThreadPool();
     private final ArrayList<IChannelHandler> channelHandlers = new ArrayList();
     private final int maxChannelsPerHandler;
@@ -84,10 +87,12 @@ public class ChannelManager {
         }
 
         if (minHandler == null || min >= maxChannelsPerHandler) {
+            logger.log(Level.INFO, "Created new channel handler for socket.");
             ChannelHandler socketHandler = new ChannelHandler();
             addChannelHandler(socketHandler);
             return socketHandler.handle(s);
         } else {
+            logger.log(Level.INFO, "Found existing handler for socket");
             return minHandler.handle(s);
         }
     }

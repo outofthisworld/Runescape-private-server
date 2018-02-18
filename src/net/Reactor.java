@@ -208,8 +208,10 @@ public final class Reactor {
                     SocketChannel socketChannel = serverSocketChannel.accept();
                     socketChannel.finishConnect();
 
+
                     //Check we allow this connection
                     ChannelGateway.accept(socketChannel);
+                    Reactor.logger.log(Level.INFO, "Accepted connection, registering with channel manager");
                     if (socketChannel != null && socketChannel.isConnected()) {
                         channelManager.register(socketChannel);
                     }

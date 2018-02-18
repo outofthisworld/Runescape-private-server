@@ -31,7 +31,6 @@ import world.event.impl.PlayerLoginEvent;
 import world.event.impl.RegionUpdateEvent;
 import world.storage.SimpleCache;
 import world.task.Task;
-import world.task.WorldThreadFactory;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -45,7 +44,7 @@ public class World {
     /**
      * The World executor service.
      */
-    private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor(new WorldThreadFactory(10));
+    private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor();
     /**
      * The set of free slots, appended to when a player leaves the world.
      */
@@ -103,6 +102,7 @@ public class World {
      */
     private int playersCount = 0;
 
+
     /**
      * Instantiates a new World.
      *
@@ -112,7 +112,6 @@ public class World {
         this.worldId = worldId;
         getEventBus().register(this);
     }
-
 
     /**
      * Start scheduled future.
@@ -311,29 +310,35 @@ public class World {
     }
 
     @Event()
-    private void playerLoginEvent(PlayerLoginEvent lEvent) {
+    public void playerLoginEvent(PlayerLoginEvent lEvent) {
+        logger.log(Level.INFO, "New player logging in");
 
         if (lEvent.getPlayer() == null) {
             return;
         }
 
         int loginSlot = getSlot();
+        logger.log(Level.INFO, "Found slot for player " + loginSlot);
 
         if (loginSlot == -1) {
             //world full 7
+            logger.log(Level.INFO, "Sending world full response");
             lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.WORLD_FULL, 0);
             return;
         }
 
         if (getPlayerByName(lEvent.getPlayer().getUsername()).isPresent()) {
+            logger.log(Level.INFO, "Sending player logged in response");
             //already logged in 5
             lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.ALREADY_LOGGED_IN, 0);
             return;
         }
 
         lEvent.getPlayer().load().thenAcceptAsync(player -> {
+            logger.log(Level.INFO, "Loaded player async");
             Player deserialized;
             if (player.isPresent()) {
+                logger.log(Level.INFO, "Player existed");
                 deserialized = player.get();
                 if (!deserialized.getPassword().equals(lEvent.getPassword())) {
                     lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.INVALID_USERNAME_OR_PASSWORD, 0);
@@ -345,16 +350,23 @@ public class World {
                     return;
                 }
             } else {
+                logger.log(Level.INFO, "Creating new player");
                 deserialized = lEvent.getPlayer();
                 deserialized.getAppearance().setDefault();
                 Player.asyncPlayerStore().store(deserialized.getUsername(), deserialized);
             }
 
+            logger.log(Level.INFO, "Setting login slot id " + loginSlot);
             deserialized.setSlotId(loginSlot);
+            logger.log(Level.INFO, "Setting world id " + worldId);
             deserialized.setWorldId(worldId);
+            logger.log(Level.INFO, "Adding player to world");
             addPlayerToWorld(loginSlot, deserialized);
+            logger.log(Level.INFO, "Switching client to game packet decoder");
             deserialized.getClient().setProtocolDecoder(new GamePacketDecoder());
+            logger.log(Level.INFO, "Sending login success response");
             lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.LOGIN_SUCCESS, deserialized.getRights());
+            logger.log(Level.INFO, "Sending player data");
             deserialized.init();
         }, worldExecutorService)
                 .whenComplete((aVoid, throwable) -> {
@@ -437,7 +449,7 @@ public class World {
         */
         playerUpdateBlockCache.clear();
         loopTimer.stop();
-        logger.log(Level.INFO, "Completed world poll in " + loopTimer.getTimePassed(TimeUnit.MILLISECONDS) + "ms");
+        //logger.log(Level.INFO, "Completed world poll in " + loopTimer.getTimePassed(TimeUnit.MILLISECONDS) + "ms");
     }
 
     @Event

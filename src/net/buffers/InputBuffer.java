@@ -261,8 +261,8 @@ public class InputBuffer extends AbstractBuffer {
      *
      * @return the short
      */
-    public short readUnsignedByte() {
-        return (short) (inBuffer.get() & 0xFF);
+    public int readUnsignedByte() {
+        return (inBuffer.get() & 0xFF);
     }
 
 

@@ -76,7 +76,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
                         outputBuffer.writeBigQWORD(RsUtils.convertStringToLong(entity.getUsername()));
                         outputBuffer.writeByte(3);
                         outputBuffer.writeBigWORD(0);
-                        outputBuffer.writeByte(outputBuffer.position()-last, OutputBuffer.ByteTransformationType.C);
+                        outputBuffer.writeByte(outputBuffer.position() - last, OutputBuffer.ByteTransformationType.C);
                     });
 
                     /**

@@ -28,11 +28,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The type Channel handler.
  */
 public class ChannelHandler implements IChannelHandler {
+    private static final Logger logger = Logger.getLogger(ChannelHandler.class.getName());
     private final Selector selector;
     private final NetworkEvent networkReadEvent = new NetworkReadEvent();
     private final NetworkEvent networkWriteEvent = new NetworkWriteEvent();
@@ -64,7 +67,9 @@ public class ChannelHandler implements IChannelHandler {
         }
 
         SelectionKey key;
+
         sockets.put(socketChannel, key = socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE));
+        logger.log(Level.INFO, "Succesfully registered socket with channel handler.");
         numChannels++;
         return key;
     }
@@ -140,11 +145,13 @@ public class ChannelHandler implements IChannelHandler {
             }
 
             if (currentlySelected.isValid() && currentlySelected.isReadable()) {
+                logger.log(Level.INFO, "Executing read event for socket");
                 Client c = (Client) currentlySelected.attachment();
                 c.execute(networkReadEvent);
             }
 
             if (currentlySelected.isValid() && currentlySelected.isWritable()) {
+                logger.log(Level.INFO, "Executing write event for socket");
                 Client c = (Client) currentlySelected.attachment();
                 c.execute(networkWriteEvent);
             }

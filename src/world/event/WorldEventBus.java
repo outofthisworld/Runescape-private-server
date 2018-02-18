@@ -19,11 +19,14 @@ import world.World;
 import world.event.impl.Event;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The type World event bus.
  */
 public class WorldEventBus extends AbstractEventBus {
+    private static final Logger logger = Logger.getLogger(WorldEventBus.class.getName());
     private final World world;
 
     /**
@@ -37,13 +40,22 @@ public class WorldEventBus extends AbstractEventBus {
 
     @Override
     public <T extends Event> void fire(T event) {
-        List<EventHandler> handlers = getRegisteredEvents().get(event.getClass().isAnonymousClass() ? event.getClass().getSuperclass() : event.getClass());
+        Class<?> c = event.getClass().isAnonymousClass() ? event.getClass().getSuperclass() : event.getClass();
+        List<EventHandler> handlers = getRegisteredEvents().get(c);
+
+        if (handlers.size() == 0) {
+            WorldEventBus.logger.log(Level.INFO, "Firing event for " + c.getName() + " but no handlers exist");
+            return;
+        } else {
+            WorldEventBus.logger.log(Level.INFO, "Firing event for " + c.getName());
+        }
 
         world.submit(() -> {
             if (handlers == null) {
                 return;
             }
             handlers.forEach((h) -> {
+                WorldEventBus.logger.log(Level.INFO, "Firing handler");
                 h.handle(event);
             });
         });

@@ -28,7 +28,10 @@ public class WorldThreadFactory implements ThreadFactory {
         Thread t = new Thread();
         t.setName("World " + count + " thread");
         t.setPriority(priority);
-        t.setUncaughtExceptionHandler((t1, e) -> e.printStackTrace());
+        t.setUncaughtExceptionHandler((t1, e) -> {
+            System.out.println("error");
+            e.printStackTrace();
+        });
         return t;
     }
 }

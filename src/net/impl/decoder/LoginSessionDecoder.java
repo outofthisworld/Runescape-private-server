@@ -25,10 +25,17 @@ import world.WorldManager;
 import world.entity.player.Player;
 import world.event.impl.PlayerLoginEvent;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public final class LoginSessionDecoder implements ProtocolDecoder {
+    private static final Logger logger = Logger.getLogger(LoginSessionDecoder.class.getName());
 
     @Override
     public void decode(Client c) {
+
+        LoginSessionDecoder.logger.log(Level.INFO, "Decoding login session");
+
         InputBuffer in = c.getInputBuffer();
         int packetOpcode = in.readUnsignedByte();
 
@@ -41,7 +48,7 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
             return;
         }
 
-        short loginBlockSize = in.readUnsignedByte();
+        int loginBlockSize = in.readUnsignedByte();
 
         if (in.remaining() != loginBlockSize) {
             System.out.println("Not enough data in buffer");
@@ -119,6 +126,7 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
         Player p = new Player(c);
         p.setUsername(username);
 
+        LoginSessionDecoder.logger.log(Level.INFO, "Firing player login event");
         world.getEventBus().fire(new PlayerLoginEvent(p, username, password, this));
     }
 

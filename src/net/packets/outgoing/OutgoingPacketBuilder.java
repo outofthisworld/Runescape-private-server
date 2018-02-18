@@ -359,6 +359,7 @@ public class OutgoingPacketBuilder {
 
     public OutgoingPacketBuilder updateRegion() {
         createHeader(210);
+        return this;
     }
 
 

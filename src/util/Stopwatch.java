@@ -36,7 +36,8 @@ public class Stopwatch {
      * @return the time passed
      */
     public long getTimePassed(TimeUnit t) {
-        return t.convert((stopTime == -1 ? System.nanoTime() : stopTime) - startTime, TimeUnit.NANOSECONDS);
+        long endTime = stopTime == -1 ? System.nanoTime() : stopTime;
+        return t.convert(endTime - startTime, TimeUnit.NANOSECONDS);
     }
 
     /**
@@ -47,6 +48,6 @@ public class Stopwatch {
         if (stopTime != -1) {
             return;
         }
-        stopTime = System.currentTimeMillis();
+        stopTime = System.nanoTime();
     }
 }

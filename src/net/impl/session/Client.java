@@ -17,7 +17,7 @@ package net.impl.session;
 
 import net.buffers.InputBuffer;
 import net.buffers.OutputBuffer;
-import net.impl.decoder.LoginSessionDecoder;
+import net.impl.decoder.LoginRequestDecoder;
 import net.impl.decoder.ProtocolDecoder;
 import net.impl.enc.ISAACCipher;
 import net.impl.events.NetworkEvent;
@@ -56,7 +56,7 @@ public class Client implements NetworkEventExecutor {
     private ISAACCipher inCipher;
     private ISAACCipher outCipher;
     private Player player;
-    private ProtocolDecoder protocolDecoder = new LoginSessionDecoder();
+    private ProtocolDecoder protocolDecoder = new LoginRequestDecoder();
 
     /**
      * Instantiates a new Client.

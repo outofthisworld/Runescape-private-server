@@ -83,7 +83,7 @@ public class Setup {
      * @param args the input arguments
      */
     public static void main(String[] args) {
-        Database.init();
+        //Database.init();
         /*Database.getClient().dropDatabase(DatabaseConfig.DB_NAME);
         try {
             Setup.defs = Setup.builder.fromJson(Setup.loadDefAsString("src/database/data/item_def.json"), ItemDefinition[].class);
