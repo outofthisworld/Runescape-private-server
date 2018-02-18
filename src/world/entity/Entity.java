@@ -16,14 +16,24 @@
 package world.entity;
 
 import world.World;
+import world.WorldConfig;
 import world.WorldManager;
 import world.entity.misc.Position;
+import world.entity.movement.Movement;
 
+/**
+ * The type Entity.
+ */
 public abstract class Entity {
     /**
      * The entities position
      */
-    protected final Position position = new Position(3232, 3333, 0);
+    protected final Position position = new Position(WorldConfig.PLAYER_START_X, WorldConfig.PLAYER_START_Y, WorldConfig.PLAYER_START_Z);
+
+    /**
+     * The Movement.
+     */
+    protected final Movement movement = new Movement(this);
     /**
      * The entities slot id
      */
@@ -32,6 +42,15 @@ public abstract class Entity {
      * The world the player currently belongs to
      */
     protected int worldId;
+
+    /**
+     * Gets movement.
+     *
+     * @return the movement
+     */
+    public Movement getMovement() {
+        return movement;
+    }
 
     /**
      * Gets world id.
@@ -79,9 +98,27 @@ public abstract class Entity {
     }
 
 
+    /**
+     * Gets position.
+     *
+     * @return the position
+     */
     public Position getPosition() {
         return position;
     }
 
+
+    /**
+     * Is player boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isPlayer() {
+        return false;
+    }
+
+    /**
+     * Poll.
+     */
     public abstract void poll();
 }

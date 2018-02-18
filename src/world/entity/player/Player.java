@@ -25,10 +25,12 @@ import world.entity.misc.Position;
 import world.entity.update.player.PlayerUpdateBlock;
 import world.entity.update.player.PlayerUpdateFlags;
 import world.event.Event;
+import world.event.impl.PlayerMoveEvent;
 import world.storage.AsyncPlayerStore;
 
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -296,8 +298,13 @@ public class Player extends Entity {
      *
      * @return the local players
      */
-    public HashSet<Player> getLocalPlayers() {
+    public Set<Player> getLocalPlayers() {
         return localPlayers;
+    }
+
+    @Override
+    public boolean isPlayer() {
+        return true;
     }
 
     /**
@@ -327,7 +334,7 @@ public class Player extends Entity {
     @Event
     private void buildLocalPlayerList(PlayerMoveEvent playerMoveEvent) {
         Player movePlayer = playerMoveEvent.getPlayer();
-        Position movePosition = playerMoveEvent.getPosition();
+        Position movePosition = movePlayer.getPosition();
         boolean isWithinViewableDistance = getPosition().isWithinXY(movePosition, 15)
                 && getPosition().isWithinZ(movePosition, 0);
         if (localPlayers.contains(movePlayer)) {
@@ -360,6 +367,14 @@ public class Player extends Entity {
 
     @Override
     public void poll() {
+        /*
+           Updates player movement
+        */
+        getMovement().poll();
+
+        /*
+            Sends update packet.
+        */
         getClient().getOutgoingPacketBuilder().playerUpdate().send();
     }
 }

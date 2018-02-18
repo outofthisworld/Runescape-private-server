@@ -28,6 +28,7 @@ import world.event.EventBus;
 import world.event.WorldEventBus;
 import world.event.impl.ClientDisconnectEvent;
 import world.event.impl.PlayerLoginEvent;
+import world.event.impl.RegionUpdateEvent;
 import world.storage.SimpleCache;
 import world.task.Task;
 import world.task.WorldThreadFactory;
@@ -107,7 +108,7 @@ public class World {
      *
      * @param worldId the world id
      */
-    World(int worldId) {
+    World(final int worldId) {
         this.worldId = worldId;
         getEventBus().register(this);
     }
@@ -159,8 +160,8 @@ public class World {
             return -1;
         }
 
-        Optional<Integer> freeSlot = freePlayerSlots.stream().findFirst();
-        int playerIndex;
+        final Optional<Integer> freeSlot = freePlayerSlots.stream().findFirst();
+        final int playerIndex;
         if (freeSlot.isPresent()) {
             playerIndex = freeSlot.get();
             freePlayerSlots.remove(playerIndex);
@@ -178,7 +179,7 @@ public class World {
      * @param slot the slot
      * @return the boolean
      */
-    public boolean isSlotEmpty(int slot) {
+    public boolean isSlotEmpty(final int slot) {
         if (slot < 0 || slot >= WorldConfig.MAX_PLAYERS_IN_WORLD) {
             return true;
         }
@@ -191,7 +192,7 @@ public class World {
      * @param slot the slot
      * @param p    the p
      */
-    public void addPlayerToWorld(int slot, Player p) {
+    public void addPlayerToWorld(final int slot, final Player p) {
         Preconditions.notNull(p);
         Preconditions.inRangeClosed(slot, 0, WorldConfig.MAX_PLAYERS_IN_WORLD);
 
@@ -203,14 +204,14 @@ public class World {
         players.put(slot, p);
     }
 
-    private void addPlayerToRegion(Player p) {
+    private void addPlayerToRegion(final Player p) {
         Preconditions.notNull(p);
 
-        Position currentPosition = p.getPosition();
-        int regionX = currentPosition.getRegionX();
-        int regionY = currentPosition.getRegionY();
-        int z = currentPosition.getVector().getZ();
-        Position regionPosition = new Position(regionX, regionY, z);
+        final Position currentPosition = p.getPosition();
+        final int regionX = currentPosition.getRegionX();
+        final int regionY = currentPosition.getRegionY();
+        final int z = currentPosition.getVector().getZ();
+        final Position regionPosition = new Position(regionX, regionY, z);
         addPlayerToRegion(p, regionPosition);
     }
 
@@ -218,7 +219,7 @@ public class World {
      * Gets players by region.
      * The set returned is unmodifiable.
      */
-    public Optional<Set<Player>> getPlayersByRegion(Position regionPosition) {
+    public Optional<Set<Player>> getPlayersByRegion(final Position regionPosition) {
         if (!playersByRegion.containsKey(regionPosition)) {
             return Optional.empty();
         }
@@ -226,11 +227,11 @@ public class World {
         return Optional.of(Collections.unmodifiableSet(playersByRegion.get(regionPosition)));
     }
 
-    private void addPlayerToRegion(Player p, Position regionPosition) {
+    private void addPlayerToRegion(final Player p, final Position regionPosition) {
         Preconditions.notNull(p, regionPosition);
 
         if (!playersByRegion.containsKey(regionPosition)) {
-            Set<Player> set = new HashSet<>();
+            final Set<Player> set = new HashSet<>();
             set.add(p);
             playersByRegion.put(regionPosition, set);
         } else {
@@ -247,14 +248,14 @@ public class World {
      *
      * @param p the p
      */
-    public void updatePlayerRegion(Player p) {
+    public void updatePlayerRegion(final Player p) {
         Preconditions.notNull(p, p.getLastRegionPosition());
 
-        Position lastRegionPosition = p.getLastRegionPosition();
+        final Position lastRegionPosition = p.getLastRegionPosition();
 
         Preconditions.notNull(playersByRegion.get(lastRegionPosition));
 
-        Set<Player> playersInRegion = playersByRegion.get(lastRegionPosition);
+        final Set<Player> playersInRegion = playersByRegion.get(lastRegionPosition);
 
         Preconditions.areEqual(playersInRegion.contains(p), true);
 
@@ -268,7 +269,7 @@ public class World {
      *
      * @param p the p
      */
-    public void addPlayerToWorld(Player p) {
+    public void addPlayerToWorld(final Player p) {
         addPlayerToWorld(p.getSlotId(), p);
     }
 
@@ -277,14 +278,14 @@ public class World {
      *
      * @param slot the slot
      */
-    public void removePlayerFromWorld(int slot) {
+    public void removePlayerFromWorld(final int slot) {
         Preconditions.inRangeClosed(slot, 0, WorldConfig.MAX_PLAYERS_IN_WORLD);
 
         if (isSlotEmpty(slot)) {
             return;
         }
 
-        Player p = players.get(slot);
+        final Player p = players.get(slot);
 
         Player.asyncPlayerStore().store(p.getUsername(), p).whenCompleteAsync((aBoolean, throwable) -> {
             if (!aBoolean || throwable != null) {
@@ -304,19 +305,19 @@ public class World {
      *
      * @param p the p
      */
-    public void removePlayerFromWorld(Player p) {
+    public void removePlayerFromWorld(final Player p) {
         Preconditions.notNull(p);
         removePlayerFromWorld(p.getSlotId());
     }
 
     @Event()
-    private void playerLoginEvent(PlayerLoginEvent lEvent) {
+    private void playerLoginEvent(final PlayerLoginEvent lEvent) {
 
         if (lEvent.getPlayer() == null) {
             return;
         }
 
-        int loginSlot = getSlot();
+        final int loginSlot = getSlot();
 
         if (loginSlot == -1) {
             //world full 7
@@ -363,8 +364,8 @@ public class World {
     }
 
     @Event
-    private void playerDisconnectEvent(ClientDisconnectEvent c) {
-        Player p = c.getSender().getPlayer();
+    private void playerDisconnectEvent(final ClientDisconnectEvent c) {
+        final Player p = c.getSender().getPlayer();
 
         if (p == null || !p.getClient().isDisconnected()) {
             return;
@@ -379,7 +380,7 @@ public class World {
      * @param name the name
      * @return the player by name
      */
-    public Optional<Player> getPlayerByName(String name) {
+    public Optional<Player> getPlayerByName(final String name) {
         return players.values().stream().filter((p) -> p.getUsername().equals(name)).findFirst();
     }
 
@@ -389,7 +390,7 @@ public class World {
      * @param index the index
      * @return the player
      */
-    public Player getPlayer(int index) {
+    public Player getPlayer(final int index) {
         return players.get(index);
     }
 
@@ -416,7 +417,7 @@ public class World {
      */
     private void poll() {
         loopTimer.restart();
-        for (Player player : players.values()) {
+        for (final Player player : players.values()) {
             if (player.getClient().isDisconnected()) {
                 removePlayerFromWorld(player);
                 continue;
@@ -438,10 +439,19 @@ public class World {
         logger.log(Level.INFO, "Completed world poll in " + loopTimer.getTimePassed(TimeUnit.MILLISECONDS) + "ms");
     }
 
+    @Event
+    private void handleRegionUpdate(final RegionUpdateEvent regionUpdate){
+        Objects.requireNonNull(regionUpdate);
+        final Player p = regionUpdate.getPlayer();
+        Objects.requireNonNull(p);
+        updatePlayerRegion(p);
+        p.getClient().getOutgoingPacketBuilder().updateRegion().send();
+    }
+
 
     private void doWorldTasks() {
         Task t;
-        ArrayList<Task> incompleteTasks = new ArrayList<>();
+        final ArrayList<Task> incompleteTasks = new ArrayList<>();
 
         while ((t = worldTasks.poll()) != null) {
             if (!t.isFinished() && t.check()) {
@@ -469,7 +479,7 @@ public class World {
      *
      * @param t the t
      */
-    public void queueWorldTask(Task t) {
+    public void queueWorldTask(final Task t) {
         worldTasks.add(t);
     }
 
@@ -482,7 +492,7 @@ public class World {
      * @param r the r
      * @return the future
      */
-    public Future<?> submit(Runnable r) {
+    public Future<?> submit(final Runnable r) {
         return worldExecutorService.submit(r);
     }
 
@@ -493,7 +503,7 @@ public class World {
      * @param r   the r
      * @return the future
      */
-    public <T> Future<T> submit(Callable<T> r) {
+    public <T> Future<T> submit(final Callable<T> r) {
         return worldExecutorService.submit(r);
     }
 }
