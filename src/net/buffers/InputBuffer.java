@@ -15,6 +15,8 @@
 
 package net.buffers;
 
+import util.Preconditions;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.BufferOverflowException;
@@ -52,11 +54,26 @@ public class InputBuffer extends AbstractBuffer {
      * @param upperBound       the upper bound
      */
     public InputBuffer(int initialSizeBytes, int increaseSize, int resizeThreshold, int upperBound) {
+        Preconditions.greaterThanOrEqualTo(initialSizeBytes,0);
         UPPER_BOUND = upperBound;
         INITIAL_BUFFER_SIZE = initialSizeBytes;
         BUFFER_INCREASE_SIZE = increaseSize;
         RESIZE_THRESHOLD = resizeThreshold;
         inBuffer = ByteBuffer.allocate(initialSizeBytes);
+        inBuffer.flip();
+    }
+
+    public InputBuffer(InputBuffer in,int size) {
+        this(size,1024,512,-1);
+        inBuffer.compact();
+        int cSize= 0;
+        while(in.remaining() != 0){
+            if(cSize == size){
+                break;
+            }
+            inBuffer.put(in.readSignedByte());
+            cSize++;
+        }
         inBuffer.flip();
     }
 
