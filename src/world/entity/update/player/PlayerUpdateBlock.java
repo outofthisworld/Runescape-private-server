@@ -1,5 +1,6 @@
 package world.entity.update.player;
 
+import net.buffers.IBufferReserve;
 import net.buffers.OutputBuffer;
 import util.Preconditions;
 import util.RsUtils;
@@ -35,7 +36,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
                      The appearance portion of the update block.
                      */
                     put(PlayerUpdateMask.APPEARANCE, (entity, outputBuffer) -> {
-                        int last = outputBuffer.position();
+                        IBufferReserve<OutputBuffer> reserve = outputBuffer.createByteReserve(1);
                         outputBuffer.writeByte(entity.getAppearance().getGender());
                         //Dont know what these do...
                         outputBuffer.writeByte(0);
@@ -76,7 +77,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
                         outputBuffer.writeBigQWORD(RsUtils.convertStringToLong(entity.getUsername()));
                         outputBuffer.writeByte(3);
                         outputBuffer.writeBigWORD(0);
-                        outputBuffer.writeByte(outputBuffer.position() - last, OutputBuffer.ByteTransformationType.C);
+                        reserve.writeValue(reserve.bytesSinceReserve(), OutputBuffer.ByteTransformationType.C);
                     });
 
                     /**
@@ -171,7 +172,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
                 }
             });
 
-    private static final int UPDATE_BLOCK_SIZE = 4096;
+    private static final int UPDATE_BLOCK_SIZE = 2048;
     private static final int UPDATE_BLOCK_INCREASE_SIZE = 1024;
     private final Player player;
     private final OutputBuffer updateBlock = OutputBuffer.create(PlayerUpdateBlock.UPDATE_BLOCK_SIZE, PlayerUpdateBlock.UPDATE_BLOCK_INCREASE_SIZE);
@@ -196,23 +197,26 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
         */
         updateBlock.clear();
 
-         /*
-            Clear the current update block.
-        */
-        updateBlock.order(OutputBuffer.Order.LITTLE_ENDIAN);
-
         /*
             Write the mask as little endian.
         */
-        updateBlock.writeBytes(updateFlags.getMask(), 2, OutputBuffer.ByteTransformationType.NONE);
+        updateBlock.order(OutputBuffer.Order.LITTLE_ENDIAN);
+
+        if(updateFlags.getMask() >= 0x100L) {
+            updateBlock.writeBytes(updateFlags.getMask(), 2, OutputBuffer.ByteTransformationType.NONE);
+        }else{
+            updateBlock.writeByte((int) (updateFlags.getMask()));
+        }
+
+        updateBlock.order(OutputBuffer.Order.BIG_ENDIAN);
 
 
         for (PlayerUpdateMask m : PlayerUpdateMask.values()) {
             if (updateFlags.isSet(m)) {
+                System.out.println("Updating player : " +  m.name());
                 PlayerUpdateBlock.flagMap.get(m).accept(player, updateBlock);
             }
         }
-
         return this;
     }
 

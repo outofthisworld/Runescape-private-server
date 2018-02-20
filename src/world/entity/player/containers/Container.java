@@ -99,11 +99,9 @@ public class Container<T> extends AbstractList<T> implements List<T> {
             return false;
         }
         if (removedIndex.isEmpty()) {
-            System.out.println("adding index " + cursor);
             items[cursor++] = t;
         } else {
             int index = removedIndex.toArray(new Integer[]{})[0];
-            System.out.println("adding index " + index);
             items[index] = t;
             removedIndex.remove(index);
         }

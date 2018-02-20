@@ -317,7 +317,7 @@ public class World {
     }
 
     @Event()
-    public void playerLoginEvent(PlayerLoginEvent lEvent) {
+    private void playerLoginEvent(PlayerLoginEvent lEvent) {
         logger.log(Level.INFO, "NEW PLAYER LOG IN EVENT FIRING");
 
         if (lEvent.getPlayer() == null) {
@@ -464,7 +464,6 @@ public class World {
         Player p = regionUpdate.getPlayer();
         Objects.requireNonNull(p);
         updatePlayerRegion(p);
-        p.getClient().getOutgoingPacketBuilder().updateRegion().send();
         p.setRegionChanged(true);
     }
 

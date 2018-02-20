@@ -53,9 +53,7 @@ public class OutgoingPacketBuilder {
     }
 
     private OutputBuffer createHeader(int packetId) {
-        System.out.println(packetId);
         byte b = (byte) (packetId + c.getOutCipher().getNextValue());
-        System.out.println("encoded pakcet id: " + b);
         outputBuffer.writeByte(b);
         return outputBuffer;
     }
@@ -128,7 +126,7 @@ public class OutgoingPacketBuilder {
         outputBuffer.writeBigWORD(strBytes.length + 1 + 2);
         outputBuffer.writeBytes(s.getBytes());
         outputBuffer.writeByte(10); //End string
-        outputBuffer.writeBigWORDA(id);
+        outputBuffer.writeBigWORDTypeA(id);
         return this;
     }
 
@@ -335,7 +333,7 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
-    private void appendPlayerUpdateBlock(Player player) {
+    private void appendPlayerUpdateBlock(Player player, OutputBuffer update) {
         Objects.requireNonNull(player);
 
         /*
@@ -370,11 +368,17 @@ public class OutgoingPacketBuilder {
         }
 
         //Pipe the update block to the current outputBuffer and rewind so the update block can be used again.
-        pUpdateBlock.getBlock().pipeTo(outputBuffer, false).rewind();
+        pUpdateBlock.getBlock().pipeTo(update, false).rewind();
     }
 
     public OutgoingPacketBuilder updateRegion() {
-        createHeader(210);
+        createHeader(73);
+        /**
+         * * Short Special A	Region X coordinate (absolute X / 8) plus 6.
+         * Short	Region Y coordinate (absolute Y / 8) plus 6.
+         */
+        outputBuffer.writeBigWordTypeS(c.getPlayer().getPosition().getChunkXCentered()).
+        writeBigWORDTypeA(c.getPlayer().getPosition().getChunkYCentered());
         return this;
     }
 
@@ -388,7 +392,16 @@ public class OutgoingPacketBuilder {
     public OutgoingPacketBuilder playerUpdate() {
         Player player = c.getPlayer();
 
+        if(player.isRegionChanged()){
+            updateRegion().send();
+        }
+
         IBufferReserve<OutputBuffer> reserve = createHeader(81, 2);
+
+        /*
+            The update buffer.
+        */
+        OutputBuffer update = OutputBuffer.create(4096,1024);
 
         /*
             Update the players movement.
@@ -397,24 +410,21 @@ public class OutgoingPacketBuilder {
         /*
             Append the current players update block.
          */
-        appendPlayerUpdateBlock(player);
+        appendPlayerUpdateBlock(player,update);
 
 
         outputBuffer.writeBits(player.getLocalPlayers().size(), 8);
-        //Some random num
-        outputBuffer.writeBits(2047, 11);
 
         for (Iterator<Player> iterator = player.getLocalPlayers().iterator(); iterator
                 .hasNext(); ) {
 
             Player other = iterator.next();
 
-
             boolean isWithinViewableDistance = player.getPosition().isWithinXY(other.getPosition(), 15)
                     && player.getPosition().isWithinZ(other.getPosition(), 0);
             if (other.getWorld().getPlayer(other.getSlotId()) != null && isWithinViewableDistance) {
                 updatePlayerMovement(other, false);
-                appendPlayerUpdateBlock(other);
+                appendPlayerUpdateBlock(other, update);
             } else {
                 iterator.remove();
                 outputBuffer.writeBit(true);
@@ -422,10 +432,33 @@ public class OutgoingPacketBuilder {
             }
         }
 
+            Player awaitingLocalPlayer;
+            while ((awaitingLocalPlayer = player.getLocalPlayersQueue().poll()) != null) {
+                System.out.println("updating players list");
+                //Adds a players to the local player list, and in-view of other players.
+                outputBuffer.writeBits(awaitingLocalPlayer.getSlotId(), 11)
+                        .writeBit(true)
+                        .writeBit(true)
+                        .writeBits(awaitingLocalPlayer.getPosition().getVector().getY() - player.getPosition().getVector().getY(), 5)
+                        .writeBits(awaitingLocalPlayer.getPosition().getVector().getX() - player.getPosition().getVector().getX(), 5);
+
+                appendPlayerUpdateBlock(awaitingLocalPlayer, update);
+            }
+
+
+        //1: our player movement
+        //2: Local players size
+        //3: other player movement
+        //4: New local players and there relative x and y
+        //3: Our player updates
+        //4: Other player updates
+        //5: New local player updates
+        if(update.position() > 0) {
+            outputBuffer.writeBits(2047, 11);
+            update.pipeTo(outputBuffer,true);
+        }
         //Write how many bytes the packet contains
         reserve.writeValue(reserve.bytesSinceReserve());
-
-        System.out.println("bytes since reserve : " + reserve.bytesSinceReserve());
         return this;
     }
 
@@ -460,6 +493,7 @@ public class OutgoingPacketBuilder {
                    * The local X position of this player.
                    */
                     .writeBits(player.getPosition().getLocalX(), 7);
+
         } else {
 
             /*
@@ -493,7 +527,7 @@ public class OutgoingPacketBuilder {
                   /*
                    * Signify we moved one tile.
                    */
-                        .writeBits(2, 1)
+                        .writeBits(1, 2)
 
                   /*
                    * Write the primary sprite (i.e. walk direction).

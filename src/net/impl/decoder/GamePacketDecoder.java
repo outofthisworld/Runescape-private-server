@@ -20,7 +20,7 @@ public class GamePacketDecoder implements ProtocolDecoder {
             return;
         }
 
-        int decodedOp = in.readUnsignedByte() - c.getInCipher().getNextValue() & 0xFF;
+        int decodedOp = in.readSignedByte() - c.getInCipher().getNextValue() & 0xFF;
         System.out.println("decoded op = " + decodedOp);
 
         int packetSize = IncomingPacket.getPacketSizeForId(decodedOp);
@@ -40,7 +40,7 @@ public class GamePacketDecoder implements ProtocolDecoder {
                 }
             });
         } else {
-            Logger.getLogger(NetworkReadEvent.class.getName()).log(Level.INFO, "Unhandled packet received : " + decodedOp + " from client: " + c.getRemoteAddress().getHostName());
+           // Logger.getLogger(NetworkReadEvent.class.getName()).log(Level.INFO, "Unhandled packet received : " + decodedOp + " from client: " + c.getRemoteAddress().getHostName());
         }
     }
 }

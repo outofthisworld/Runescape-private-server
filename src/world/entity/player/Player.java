@@ -59,6 +59,10 @@ public class Player extends Entity {
      */
     private final HashSet<Player> localPlayers = new HashSet<>();
     /**
+     * The queue of players awaiting to be added to the local players list.
+     */
+    private final Queue<Player> localPlayersQueue = new LinkedList<>();
+    /**
      * The players skills
      */
     private final Skills skills = new Skills(this);
@@ -369,6 +373,10 @@ public class Player extends Entity {
         return localPlayers;
     }
 
+    public Queue<Player> getLocalPlayersQueue() {
+        return localPlayersQueue;
+    }
+
     @Override
     public boolean isPlayer() {
         return true;
@@ -401,6 +409,10 @@ public class Player extends Entity {
     @Event
     private void buildLocalPlayerList(PlayerMoveEvent playerMoveEvent) {
         Player movePlayer = playerMoveEvent.getPlayer();
+
+        if(movePlayer == this)
+            return;
+
         Position movePosition = movePlayer.getPosition();
         boolean isWithinViewableDistance = getPosition().isWithinXY(movePosition, 15)
                 && getPosition().isWithinZ(movePosition, 0);
@@ -419,7 +431,7 @@ public class Player extends Entity {
                 /*
                     The player has moved outside this players local players
                 */
-                localPlayers.add(movePlayer);
+                localPlayersQueue.add(movePlayer);
             }
         }
     }
@@ -447,7 +459,6 @@ public class Player extends Entity {
      * Init.
      */
     public void init() {
-
         /*
             Region changed when first logging in
          */
@@ -458,25 +469,25 @@ public class Player extends Entity {
         getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
 
 
-        getClient().getOutgoingPacketBuilder().initPlayer(1, getSlotId());
+        getClient().getOutgoingPacketBuilder().initPlayer(1, getSlotId()).send();
 
-        getClient().getOutgoingPacketBuilder().setChatOptions(0, 0, 0);
-
+        getClient().getOutgoingPacketBuilder().setChatOptions(0, 0, 0).send();
 
         Skill[] skills = Skill.values();
         for(int i = 0; i < skills.length;i++){
             getClient().getOutgoingPacketBuilder().setSkillLevel(i,getSkills().getSkillLevel(skills[i]), getSkills().getSkillExp(skills[i]));
         }
-
-
+        getClient().getOutgoingPacketBuilder().send();
         for(SidebarInterface i:SidebarInterface.values()){
             getClient().getOutgoingPacketBuilder().setSidebarInterface(i.ordinal(), i.getInterfaceId());
         }
 
         //System.out.println(getClient().getOutgoingPacketBuilder().bytesWritten());
         getClient().getOutgoingPacketBuilder().send();
+
     }
 
+    private boolean isInit = false;
     @Override
     public void poll() {
 
@@ -486,8 +497,8 @@ public class Player extends Entity {
         getMovement().poll();
 
 
-
         getClient().getOutgoingPacketBuilder().playerUpdate().send();
+
 
 
         regionChanged = false;

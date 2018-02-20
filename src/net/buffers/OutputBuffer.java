@@ -265,6 +265,25 @@ public class OutputBuffer extends AbstractBuffer {
      * @param compact the compact
      * @return the output buffer
      */
+    public OutputBuffer pipeToAsBits(OutputBuffer other, boolean compact) {
+        Objects.requireNonNull(other);
+        out.flip();
+        while (out.remaining() != 0) {
+            other.writeBits(out.get(),8);
+        }
+        if (compact) {
+            out.compact();
+        }
+        return this;
+    }
+
+    /**
+     * Pipe to output buffer.
+     *
+     * @param other   the other
+     * @param compact the compact
+     * @return the output buffer
+     */
     public OutputBuffer pipeTo(OutputBuffer other, boolean compact) {
         Objects.requireNonNull(other);
         out.flip();
@@ -395,9 +414,10 @@ public class OutputBuffer extends AbstractBuffer {
             }
 
             int bitsWritten = amount < remainingBits ? amount : remainingBits;
-            bitIndex += bitsWritten;
+            bitIndex +=bitsWritten;
             amount -= bitsWritten;
-            if (bitIndex >= 8) {
+            value >>= remainingBits;
+            if(bitIndex>=8){
                 bitIndex = 0;
             }
         }
@@ -406,11 +426,12 @@ public class OutputBuffer extends AbstractBuffer {
         }
         bitIndex = amount & 7;
         int newAmount = amount - bitIndex;
-        long newValue = (value >> bitIndex);
-        for (; newAmount >= 8; newAmount -= 8) {
-            writeByte((byte) (newValue >> newAmount), false);
+        //newValue should not equal 2047
+        for (int i = 0; i != newAmount; i+=8) {
+            writeByte((byte) ((value >> i)), false);
         }
-        writeByte((byte) (value << (8 - bitIndex)), false);
+        if(bitIndex>0)
+            writeByte((byte) (value << (8 - bitIndex)), false);
         return this;
     }
 
@@ -434,7 +455,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the bit position
      */
     public int getBitPosition() {
-        return (out.position() * 8) + bitIndex;
+        return (out.position() * 8) - (8- bitIndex);
     }
 
     /**
@@ -668,8 +689,18 @@ public class OutputBuffer extends AbstractBuffer {
      * @param x the x
      * @return the output buffer
      */
-    public OutputBuffer writeBigWORDA(int x) {
+    public OutputBuffer writeBigWORDTypeA(int x) {
         return order(Order.BIG_ENDIAN).writeBytes(x, 2, ByteTransformationType.A);
+    }
+
+    /**
+     * Write big worda output buffer.
+     *
+     * @param x the x
+     * @return the output buffer
+     */
+    public OutputBuffer writeBigWordTypeS(int x) {
+        return order(Order.BIG_ENDIAN).writeBytes(x, 2, ByteTransformationType.S);
     }
 
     /**
@@ -892,7 +923,7 @@ public class OutputBuffer extends AbstractBuffer {
 
         @Override
         public int bytesSinceReserve() {
-            return ((out.position() - 1) - reserveIndex - (numBytes - 1));
+            return ((out.position() - 1) - (reserveIndex + ( numBytes -1 )));
         }
 
         @Override
