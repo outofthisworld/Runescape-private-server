@@ -33,6 +33,9 @@ public class OutputBuffer extends AbstractBuffer {
     private Order currentByteOrder = Order.BIG_ENDIAN;
     private int bitIndex = 0;
 
+
+    private IBufferReserve<OutputBuffer> lastReserve = null;
+
     private OutputBuffer() {
         this(OutputBuffer.INITIAL_SIZE, OutputBuffer.INCREASE_SIZE_BYTES);
     }
@@ -143,11 +146,9 @@ public class OutputBuffer extends AbstractBuffer {
         Objects.requireNonNull(c);
         int bytesWritten = 0;
         int length = out.position();
-        System.out.println("writing " + length + " bytes");
         while (bytesWritten != length) {
             bytesWritten += pipeTo(c);
         }
-        System.out.println("wrote : " + bytesWritten);
         return bytesWritten;
     }
 
@@ -269,7 +270,7 @@ public class OutputBuffer extends AbstractBuffer {
         Objects.requireNonNull(other);
         out.flip();
         while (out.remaining() != 0) {
-            other.writeBits(out.get(),8);
+            other.writeBits(out.get(), 8);
         }
         if (compact) {
             out.compact();
@@ -407,19 +408,18 @@ public class OutputBuffer extends AbstractBuffer {
             byte current = out.get(bytePos);
             int shiftAmount = amount - remainingBits;
 
+            int bitsWritten = 0;
             if (shiftAmount < 0) {
-                out.put(bytePos, (byte) (current | (value << remainingBits - amount)));
+                bitsWritten = amount;
+                out.put(bytePos, (byte) (current | (value << -shiftAmount)));
             } else {
+                bitsWritten = remainingBits;
                 out.put(bytePos, (byte) (current | (value >> shiftAmount)));
             }
 
-            int bitsWritten = amount < remainingBits ? amount : remainingBits;
-            bitIndex +=bitsWritten;
+            bitIndex = (bitIndex + bitsWritten) % 8;
             amount -= bitsWritten;
             value >>= remainingBits;
-            if(bitIndex>=8){
-                bitIndex = 0;
-            }
         }
         if (amount <= 0) {
             return this;
@@ -427,10 +427,10 @@ public class OutputBuffer extends AbstractBuffer {
         bitIndex = amount & 7;
         int newAmount = amount - bitIndex;
         //newValue should not equal 2047
-        for (int i = 0; i != newAmount; i+=8) {
+        for (int i = 0; i != newAmount; i += 8) {
             writeByte((byte) ((value >> i)), false);
         }
-        if(bitIndex>0)
+        if (bitIndex > 0)
             writeByte((byte) (value << (8 - bitIndex)), false);
         return this;
     }
@@ -455,7 +455,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the bit position
      */
     public int getBitPosition() {
-        return (out.position() * 8) - (8- bitIndex);
+        return (out.position() * 8) - (8 - bitIndex);
     }
 
     /**
@@ -528,7 +528,6 @@ public class OutputBuffer extends AbstractBuffer {
         }
         for (int i = 0; i < repeat; i++) {
             writeByte((byte) val);
-            System.out.println("writing byte");
         }
         return this;
     }
@@ -586,7 +585,7 @@ public class OutputBuffer extends AbstractBuffer {
 
             if (i == 0) {
                 //value = transformValue(value, type);
-                b =  transformValue(b, type);
+                b = transformValue(b, type);
             }
 
             bytes[bytesWritten++] = b;
@@ -772,6 +771,15 @@ public class OutputBuffer extends AbstractBuffer {
         return out.array();
     }
 
+    /**
+     * To last reserve buffer reserve.
+     *
+     * @return the buffer reserve
+     */
+    public IBufferReserve<OutputBuffer> toLastReserve() {
+        return lastReserve;
+    }
+
     @Override
     public byte[] toArray() {
         ByteBuffer dup = toByteBuffer();
@@ -877,6 +885,7 @@ public class OutputBuffer extends AbstractBuffer {
          * @param numBytes the num bytes
          */
         public OutputBufferReserve(int numBytes) {
+            lastReserve = this;
             reserveIndex = out.position();
             this.numBytes = numBytes;
             for (int i = 0; i < numBytes; i++) {
@@ -885,45 +894,56 @@ public class OutputBuffer extends AbstractBuffer {
         }
 
         @Override
-        public void writeValue(long value) {
+        public IBufferReserve<OutputBuffer> writeValue(long value) {
             writeValue(value, ByteTransformationType.NONE);
+            return this;
         }
 
         @Override
-        public void writeByte(int b) {
+        public IBufferReserve<OutputBuffer> writeByte(int b) {
             if (remaining() == 0) {
                 throw new InvalidStateException("Cannot exceed reserved bytes (" + numBytes + "). To many bytes written. In class " + getClass().getName());
             }
             out.put(reserveIndex + cursor++, (byte) b);
+            return this;
         }
 
         @Override
-        public void writeBytes(ByteBuffer b) {
+        public IBufferReserve<OutputBuffer> writeBytes(ByteBuffer b) {
             Objects.requireNonNull(b);
             while (b.remaining() != 0 && remaining() != 0) {
                 writeByte(b.get());
             }
+            return this;
         }
 
         @Override
-        public void writeBytes(Byte[] bytes) {
+        public IBufferReserve<OutputBuffer> writeBytes(Byte[] bytes) {
             Objects.requireNonNull(bytes);
             for (int i = 0; i < bytes.length && remaining() != 0; i++) {
                 writeByte(bytes[i]);
             }
+            return this;
         }
 
         @Override
-        public void writeValue(long value, ByteTransformationType type) {
+        public IBufferReserve<OutputBuffer> writeValue(long value, ByteTransformationType type) {
             byte[] bytes = longToByteArray(value, numBytes, type);
             for (byte b : bytes) {
                 writeByte(b);
             }
+            return this;
+        }
+
+        @Override
+        public IBufferReserve<OutputBuffer> writeBytesSinceReserve() {
+            writeValue(bytesSinceReserve());
+            return this;
         }
 
         @Override
         public int bytesSinceReserve() {
-            return ((out.position() - 1) - (reserveIndex + ( numBytes -1 )));
+            return ((out.position() - 1) - (reserveIndex + (numBytes - 1)));
         }
 
         @Override

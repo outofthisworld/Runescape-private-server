@@ -24,11 +24,8 @@ import java.io.IOException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -40,7 +37,6 @@ public class ChannelHandler implements IChannelHandler {
     private final NetworkEvent networkReadEvent = new NetworkReadEvent();
     private final NetworkEvent networkWriteEvent = new NetworkWriteEvent();
     private volatile boolean isRunning = false;
-    private HashMap<SocketChannel, SelectionKey> sockets;
     private int numChannels = 0;
 
     /**
@@ -53,7 +49,7 @@ public class ChannelHandler implements IChannelHandler {
     }
 
     @Override
-    public SelectionKey handle(SocketChannel socketChannel) throws Exception {
+    public void handle(SocketChannel socketChannel) throws Exception {
         if (!socketChannel.isConnected()) {
             throw new Exception("ChannelHandler.java: Attempted to login an unconnected socket channel");
         }
@@ -62,23 +58,13 @@ public class ChannelHandler implements IChannelHandler {
             socketChannel.configureBlocking(false);
         }
 
-        if (sockets == null) {
-            sockets = new HashMap<>();
-        }
-
-        SelectionKey key;
-
-        sockets.put(socketChannel, key = socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE));
-        logger.log(Level.INFO, "Succesfully registered socket with channel handler.");
+        socketChannel.register(selector, SelectionKey.OP_READ);
         numChannels++;
-        return key;
     }
 
     @Override
     public void shutdown() throws IOException {
         selector.close();
-        sockets.clear();
-        sockets = null;
         isRunning = false;
     }
 
@@ -97,28 +83,10 @@ public class ChannelHandler implements IChannelHandler {
         isRunning = true;
         while (selector.isOpen()) {
             try {
-                selector.select(5000);
+                selector.select(500);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            Set<Map.Entry<SocketChannel, SelectionKey>> set = sockets.entrySet();
-            for (Iterator<Map.Entry<SocketChannel, SelectionKey>> i = set.iterator(); i.hasNext(); ) {
-                Map.Entry<SocketChannel, SelectionKey> en = i.next();
-
-                SelectionKey s = en.getValue();
-
-                if (!s.isValid()) {
-                    if (s.attachment() != null) {
-                        Client c = (Client) s.attachment();
-                        c.disconnect();
-                        s.attach(null);
-                        s.cancel();
-                        i.remove();
-                    }
-                }
-            }
-
             pollSelections();
         }
         isRunning = false;
@@ -129,29 +97,27 @@ public class ChannelHandler implements IChannelHandler {
      */
     protected final void pollSelections() {
         Set<SelectionKey> selectionKeySet = selector.selectedKeys();
-
         SelectionKey currentlySelected;
+
         for (Iterator<SelectionKey> it = selectionKeySet.iterator(); it.hasNext(); ) {
 
             currentlySelected = it.next();
 
             if (currentlySelected.attachment() == null) {
                 try {
+                    System.out.println("Attaching new client");
                     currentlySelected.attach(new Client(currentlySelected));
                 } catch (IOException e) {
                     e.printStackTrace();
-                    continue;
                 }
             }
 
             if (currentlySelected.isValid() && currentlySelected.isReadable()) {
-                logger.log(Level.INFO, "Executing read event for socket");
                 Client c = (Client) currentlySelected.attachment();
                 c.execute(networkReadEvent);
             }
 
             if (currentlySelected.isValid() && currentlySelected.isWritable()) {
-                logger.log(Level.INFO, "Executing write event for socket");
                 Client c = (Client) currentlySelected.attachment();
                 c.execute(networkWriteEvent);
             }

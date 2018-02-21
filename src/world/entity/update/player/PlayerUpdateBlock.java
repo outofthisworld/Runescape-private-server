@@ -202,9 +202,9 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
         */
         updateBlock.order(OutputBuffer.Order.LITTLE_ENDIAN);
 
-        if(updateFlags.getMask() >= 0x100L) {
+        if (updateFlags.getMask() >= 0x100L) {
             updateBlock.writeBytes(updateFlags.getMask(), 2, OutputBuffer.ByteTransformationType.NONE);
-        }else{
+        } else {
             updateBlock.writeByte((int) (updateFlags.getMask()));
         }
 
@@ -213,7 +213,6 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
 
         for (PlayerUpdateMask m : PlayerUpdateMask.values()) {
             if (updateFlags.isSet(m)) {
-                System.out.println("Updating player : " +  m.name());
                 PlayerUpdateBlock.flagMap.get(m).accept(player, updateBlock);
             }
         }

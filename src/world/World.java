@@ -30,6 +30,7 @@ import world.event.impl.ClientDisconnectEvent;
 import world.event.impl.PlayerLoginEvent;
 import world.event.impl.RegionUpdateEvent;
 import world.storage.SimpleCache;
+import world.task.DefaultThreadFactory;
 import world.task.Task;
 
 import java.util.*;
@@ -44,7 +45,7 @@ public class World {
     /**
      * The World executor service.
      */
-    private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory(10));
     /**
      * The set of free slots, appended to when a player leaves the world.
      */
@@ -286,7 +287,7 @@ public class World {
 
         Player p = players.get(slot);
 
-        if(p == null)
+        if (p == null)
             throw new IllegalStateException("null player in players list");
 
         playersByRegion.get(p.getLastRegionPosition()).remove(p);
@@ -359,7 +360,7 @@ public class World {
                 deserialized = lEvent.getPlayer();
                 deserialized.setPassword(lEvent.getPassword());
                 deserialized.getAppearance().setDefault();
-                if(useDb) {
+                if (useDb) {
                     Player.asyncPlayerStore().store(deserialized.getUsername(), deserialized).whenComplete((aBoolean, throwable) -> {
                         if (throwable != null) {
                             throwable.printStackTrace();
@@ -373,7 +374,7 @@ public class World {
             deserialized.getClient().setProtocolDecoder(new GamePacketDecoder());
             lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.LOGIN_SUCCESS, deserialized.getRights());
             deserialized.init();
-            addPlayerToWorld(loginSlot,deserialized);
+            addPlayerToWorld(loginSlot, deserialized);
         }, worldExecutorService)
                 .whenComplete((aVoid, throwable) -> {
                     if (throwable != null) {
@@ -455,7 +456,7 @@ public class World {
         */
         playerUpdateBlockCache.clear();
         loopTimer.stop();
-        //logger.log(Level.INFO, "Completed world poll in " + loopTimer.getTimePassed(TimeUnit.MILLISECONDS) + "ms");
+        // logger.log(Level.INFO, "Completed world poll in " + loopTimer.getTimePassed(TimeUnit.MILLISECONDS) + "ms");
     }
 
     @Event
@@ -474,6 +475,7 @@ public class World {
 
         while ((t = worldTasks.poll()) != null) {
             if (!t.isFinished() && t.check()) {
+                System.out.println("executing");
                 t.execute();
             }
             if (!t.isFinished()) {

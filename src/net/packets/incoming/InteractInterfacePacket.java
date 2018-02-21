@@ -15,8 +15,8 @@
 
 package net.packets.incoming;
 
-import net.impl.session.Client;
 import net.buffers.InputBuffer;
+import net.impl.session.Client;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,5 +38,10 @@ public class InteractInterfacePacket extends IncomingPacket {
     @Override
     public boolean handlesOpcode(int opcode) {
         return opcodes.contains(opcode);
+    }
+
+    @Override
+    public Set<Integer> getOpcodes() {
+        return opcodes;
     }
 }

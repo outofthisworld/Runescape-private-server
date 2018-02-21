@@ -69,55 +69,35 @@ public class DataScraper {
                     if (line.contains("<th style=\"white-space: nowrap;\"><a href=\"/wiki/Members\" title=\"Members\">Members only</a>?")) {
                         String next = reader.readLine();
                         if (next != null) {
-                            if (next.toLowerCase().contains("yes")) {
-                                DataScraper.defs[i].membersOnly = true;
-                            } else {
-                                DataScraper.defs[i].membersOnly = false;
-                            }
+                            DataScraper.defs[i].membersOnly = next.toLowerCase().contains("yes");
                         }
                     }
 
                     if (line.contains("<th style=\"white-space: nowrap;\"><a href=\"/wiki/Quest_items\" title=\"Quest items\">Quest item</a>?")) {
                         String next = reader.readLine();
                         if (next != null) {
-                            if (next.toLowerCase().contains("yes")) {
-                                DataScraper.defs[i].questItem = true;
-                            } else {
-                                DataScraper.defs[i].questItem = false;
-                            }
+                            DataScraper.defs[i].questItem = next.toLowerCase().contains("yes");
                         }
                     }
 
                     if (line.contains("<th style=\"white-space: nowrap;\"><a href=\"/wiki/Tradeable\" title=\"Tradeable\" class=\"mw-redirect\">Tradeable</a>?")) {
                         String next = reader.readLine();
                         if (next != null) {
-                            if (next.toLowerCase().contains("yes")) {
-                                DataScraper.defs[i].tradeable = true;
-                            } else {
-                                DataScraper.defs[i].tradeable = false;
-                            }
+                            DataScraper.defs[i].tradeable = next.toLowerCase().contains("yes");
                         }
                     }
 
                     if (line.contains("<th style=\"white-space: nowrap;\"><a href=\"/wiki/Equipment\" title=\"Equipment\">Equipable</a>?")) {
                         String next = reader.readLine();
                         if (next != null) {
-                            if (next.toLowerCase().contains("yes")) {
-                                DataScraper.defs[i].equipable = true;
-                            } else {
-                                DataScraper.defs[i].equipable = false;
-                            }
+                            DataScraper.defs[i].equipable = next.toLowerCase().contains("yes");
                         }
                     }
 
                     if (line.contains("<th style=\"white-space: nowrap;\"><a href=\"/wiki/Stackable_items\" title=\"Stackable items\">Stackable</a>?")) {
                         String next = reader.readLine();
                         if (next != null) {
-                            if (next.toLowerCase().contains("yes")) {
-                                DataScraper.defs[i].stackable = true;
-                            } else {
-                                DataScraper.defs[i].stackable = false;
-                            }
+                            DataScraper.defs[i].stackable = next.toLowerCase().contains("yes");
                         }
                     }
 

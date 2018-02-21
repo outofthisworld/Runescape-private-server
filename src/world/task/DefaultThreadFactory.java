@@ -4,7 +4,7 @@ import sun.plugin.dom.exception.InvalidStateException;
 
 import java.util.concurrent.ThreadFactory;
 
-public class WorldThreadFactory implements ThreadFactory {
+public class DefaultThreadFactory implements ThreadFactory {
     private final int count = 0;
     private final int priority;
 
@@ -13,7 +13,7 @@ public class WorldThreadFactory implements ThreadFactory {
      *
      * @param priority the priority
      */
-    public WorldThreadFactory(int priority) {
+    public DefaultThreadFactory(int priority) {
 
         if (priority > Thread.MAX_PRIORITY || priority < Thread.MIN_PRIORITY) {
             throw new InvalidStateException("Invalid priority for world thread.");
@@ -25,7 +25,7 @@ public class WorldThreadFactory implements ThreadFactory {
 
     @Override
     public Thread newThread(Runnable r) {
-        Thread t = new Thread();
+        Thread t = new Thread(r);
         t.setName("World " + count + " thread");
         t.setPriority(priority);
         t.setUncaughtExceptionHandler((t1, e) -> {

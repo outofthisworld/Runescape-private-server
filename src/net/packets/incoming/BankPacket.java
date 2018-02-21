@@ -76,4 +76,9 @@ public class BankPacket extends IncomingPacket {
     public boolean handlesOpcode(int opcode) {
         return opcodes.contains(opcode);
     }
+
+    @Override
+    public Set<Integer> getOpcodes() {
+        return opcodes;
+    }
 }

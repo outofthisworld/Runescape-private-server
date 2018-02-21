@@ -88,11 +88,8 @@ public class Vector {
 
         Vector v = (Vector) obj;
 
-        if (v.getX() == getX() && v.getY() == getY() && v.getZ() == getZ()) {
-            return true;
-        }
+        return v.getX() == getX() && v.getY() == getY() && v.getZ() == getZ();
 
-        return false;
     }
 
     public Vector multiplyY(int value) {

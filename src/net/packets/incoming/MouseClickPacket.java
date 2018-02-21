@@ -15,9 +15,10 @@
 
 package net.packets.incoming;
 
-import net.impl.session.Client;
 import net.buffers.InputBuffer;
+import net.impl.session.Client;
 
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class MouseClickPacket extends IncomingPacket {
@@ -31,5 +32,10 @@ public class MouseClickPacket extends IncomingPacket {
     @Override
     public boolean handlesOpcode(int opcode) {
         return opcode == Opcodes.MOUSE_CLICK;
+    }
+
+    @Override
+    public Set<Integer> getOpcodes() {
+        return null;
     }
 }

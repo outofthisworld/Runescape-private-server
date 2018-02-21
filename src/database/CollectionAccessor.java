@@ -94,12 +94,12 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
         Field f = null;
         Object id;
 
-        if (f == null) {
-            try {
-                f = mappingClass.getDeclaredField("_id");
-            } catch (NoSuchFieldException e) {
-            }
+
+        try {
+            f = mappingClass.getDeclaredField("_id");
+        } catch (NoSuchFieldException e) {
         }
+
 
         if (f == null) {
             try {
@@ -200,9 +200,7 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
 
     private Document fromHashMap(HashMap<String, ?> hm) {
         Document d = new Document();
-        hm.entrySet().forEach((entry) -> {
-            d.put(entry.getKey(), entry.getValue());
-        });
+        hm.forEach((key, value) -> d.put(key, value));
         return d;
     }
 

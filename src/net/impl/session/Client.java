@@ -24,8 +24,10 @@ import net.impl.events.NetworkEvent;
 import net.impl.events.NetworkEventExecutor;
 import net.packets.outgoing.OutgoingPacket;
 import net.packets.outgoing.OutgoingPacketBuilder;
+import util.Preconditions;
 import world.entity.player.Player;
 import world.event.impl.ClientDisconnectEvent;
+import world.task.DefaultThreadFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -33,8 +35,10 @@ import java.nio.BufferOverflowException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 import java.util.Date;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 
@@ -42,21 +46,46 @@ import java.util.logging.Logger;
  * The type Client.
  */
 public class Client implements NetworkEventExecutor {
+    private static final ExecutorService writerService = Executors.newSingleThreadExecutor(new DefaultThreadFactory(10));
     private static final Logger logger = Logger.getLogger(Client.class.getName());
     private final SocketChannel channel;
-    private final SelectionKey selectionKey;
     private final InetSocketAddress remoteAddress;
     private final long serverSessionKey, connectedAt;
     private final Date lastConnectionDate = new Date();
     private final ConcurrentLinkedDeque<OutputBuffer> outgoingBuffers = new ConcurrentLinkedDeque<>();
     private final OutgoingPacketBuilder outgoingPacketBuilder = new OutgoingPacketBuilder(this);
     private final InputBuffer inputBuffer;
+    private SelectionKey selectionKey;
     private long disconnectedAt = -1;
     private boolean isDisconnected = false;
     private ISAACCipher inCipher;
     private ISAACCipher outCipher;
     private Player player;
+    private final Runnable pollBuffers = () -> {
+        OutputBuffer buf;
+        while ((buf = getOutgoingBuffers().poll()) != null) {
+            if (buf.size() == 0) {
+                continue;
+            }
+            write(buf, false);
+        }
+    };
     private ProtocolDecoder protocolDecoder = new LoginRequestDecoder();
+    private Future<?> outgoingBufferFuture;
+
+    /**
+     * Instantiates a new Client.
+     *
+     * @param key the key
+     * @throws IOException the io exception
+     */
+    public Client() throws IOException {
+        connectedAt = System.nanoTime();
+        inputBuffer = new InputBuffer(256, 256, 128, -1);
+        channel = (SocketChannel) selectionKey.channel();
+        remoteAddress = (InetSocketAddress) getChannel().getRemoteAddress();
+        serverSessionKey = ((long) (java.lang.Math.random() * 99999999D) << 32) + (long) (java.lang.Math.random() * 99999999D);
+    }
 
     /**
      * Instantiates a new Client.
@@ -65,9 +94,9 @@ public class Client implements NetworkEventExecutor {
      * @throws IOException the io exception
      */
     public Client(SelectionKey key) throws IOException {
-        selectionKey = key;
         connectedAt = System.nanoTime();
-        inputBuffer = new InputBuffer();
+        inputBuffer = new InputBuffer(256, 256, 128, -1);
+        selectionKey = key;
         channel = (SocketChannel) selectionKey.channel();
         remoteAddress = (InetSocketAddress) getChannel().getRemoteAddress();
         serverSessionKey = ((long) (java.lang.Math.random() * 99999999D) << 32) + (long) (java.lang.Math.random() * 99999999D);
@@ -100,8 +129,23 @@ public class Client implements NetworkEventExecutor {
         this.protocolDecoder = protocolDecoder;
     }
 
-    private SelectionKey getSelectionKey() {
+    /**
+     * Gets selection key.
+     *
+     * @return the selection key
+     */
+    public SelectionKey getSelectionKey() {
         return selectionKey;
+    }
+
+    /**
+     * Sets selection key.
+     *
+     * @param s the s
+     */
+    public void setSelectionKey(SelectionKey s) {
+        Preconditions.notNull(s);
+        selectionKey = s;
     }
 
     /**
@@ -191,7 +235,6 @@ public class Client implements NetworkEventExecutor {
         return outgoingBuffers;
     }
 
-
     /**
      * Read in buffer int.
      *
@@ -218,7 +261,6 @@ public class Client implements NetworkEventExecutor {
         return bytesRead;
     }
 
-
     /**
      * Write out buf int.
      *
@@ -235,14 +277,14 @@ public class Client implements NetworkEventExecutor {
 
         int bytesWritten = 0;
 
-        if (!isNew || outgoingBuffers.size() == 0) {
-            try {
-                bytesWritten = outBuffer.pipeTo(channel);
-            } catch (IOException e) {
-                e.printStackTrace();
-                disconnect();
-            }
+        // if (!isNew || outgoingBuffers.size() == 0) {
+        try {
+            bytesWritten = outBuffer.pipeTo(channel);
+        } catch (IOException e) {
+            e.printStackTrace();
+            disconnect();
         }
+        // }
 
 
         if (bytesWritten == -1) {
@@ -251,11 +293,7 @@ public class Client implements NetworkEventExecutor {
         }
 
         if (bytesWritten == 0 || bytesWritten != outBufSize) {
-            if (isNew) {
-                outgoingBuffers.addLast(outBuffer);
-            } else {
-                outgoingBuffers.addFirst(outBuffer);
-            }
+            outgoingBuffers.addFirst(outBuffer);
             selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
         }
 
@@ -269,11 +307,12 @@ public class Client implements NetworkEventExecutor {
      * @param outBuffer the out buffer
      * @return the int
      */
-    public CompletableFuture<Integer> write(OutputBuffer outBuffer) {
-        if (outBuffer.size() == 0) {
-            return CompletableFuture.completedFuture(0);
-        }
-        return CompletableFuture.supplyAsync(() -> write(outBuffer, true));
+    public void write(OutputBuffer outBuffer) {
+        if (outBuffer == null) return;
+        writerService.submit(() -> {
+            outgoingBuffers.addLast(outBuffer);
+            selectionKey.interestOps(selectionKey.interestOps() | SelectionKey.OP_WRITE);
+        });
     }
 
     /**
@@ -282,10 +321,9 @@ public class Client implements NetworkEventExecutor {
      * @param packet the packet
      * @return the completable future
      */
-    public CompletableFuture<Integer> write(OutgoingPacket packet) {
-        return write(packet.toOutputBuffer());
+    public void write(OutgoingPacket packet) {
+        write(packet.toOutputBuffer());
     }
-
 
     /**
      * Output buffers are queued if the socket channels internal buffer is full
@@ -297,19 +335,11 @@ public class Client implements NetworkEventExecutor {
      * available bytes.
      */
     public void writeOutgoingBuffers() {
-        CompletableFuture.runAsync(() -> {
-            //Deregister for write events
-            selectionKey.interestOps(selectionKey.interestOps() & (~SelectionKey.OP_WRITE));
-            //Write the queued outgoing buffers, if the outgoing buffers are not all written write will
-            //register the selection key for write events.
-            OutputBuffer buf;
-            while ((buf = getOutgoingBuffers().poll()) != null) {
-                if (buf.size() == 0) {
-                    continue;
-                }
-                write(buf, false);
-            }
-        });
+        if (outgoingBufferFuture != null && !outgoingBufferFuture.isDone())
+            return;
+
+        selectionKey.interestOps(selectionKey.interestOps() & (~SelectionKey.OP_WRITE));
+        outgoingBufferFuture = writerService.submit(pollBuffers);
     }
 
     /**
@@ -370,7 +400,7 @@ public class Client implements NetworkEventExecutor {
         disconnectedAt = System.nanoTime();
         isDisconnected = true;
 
-        if(player != null)
+        if (player != null)
             player.getWorld().getEventBus().fire(new ClientDisconnectEvent(this));
     }
 

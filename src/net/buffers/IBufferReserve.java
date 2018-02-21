@@ -11,28 +11,28 @@ public interface IBufferReserve<T> {
      *
      * @param value the value
      */
-    void writeValue(long value);
+    IBufferReserve<T> writeValue(long value);
 
     /**
      * Write byte.
      *
      * @param b the b
      */
-    void writeByte(int b);
+    IBufferReserve<T> writeByte(int b);
 
     /**
      * Write bytes.
      *
      * @param b the b
      */
-    void writeBytes(ByteBuffer b);
+    IBufferReserve<T> writeBytes(ByteBuffer b);
 
     /**
      * Write bytes.
      *
      * @param bytes the bytes
      */
-    void writeBytes(Byte bytes[]);
+    IBufferReserve<T> writeBytes(Byte bytes[]);
 
     /**
      * Write value.
@@ -40,7 +40,9 @@ public interface IBufferReserve<T> {
      * @param value the value
      * @param type  the type
      */
-    void writeValue(long value, OutputBuffer.ByteTransformationType type);
+    IBufferReserve<T> writeValue(long value, OutputBuffer.ByteTransformationType type);
+
+    IBufferReserve<T> writeBytesSinceReserve();
 
     /**
      * Remaining int.

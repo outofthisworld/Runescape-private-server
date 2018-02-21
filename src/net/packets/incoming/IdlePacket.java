@@ -15,8 +15,8 @@
 
 package net.packets.incoming;
 
-import net.impl.session.Client;
 import net.buffers.InputBuffer;
+import net.impl.session.Client;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,16 +35,21 @@ public class IdlePacket extends IncomingPacket {
     @Override
     public void handle(Client c, int packetOpcode, InputBuffer in) throws Exception {
         switch (packetOpcode) {
-        //Sent when the player is idle for the current cycle, and acts as a "ping" packet.
-        case Opcodes.IDLE:
-            break;
-        case Opcodes.IDLE_LOGOUT:
-            break;
+            //Sent when the player is idle for the current cycle, and acts as a "ping" packet.
+            case Opcodes.IDLE:
+                break;
+            case Opcodes.IDLE_LOGOUT:
+                break;
         }
     }
 
     @Override
     public boolean handlesOpcode(int opcode) {
         return opcodes.contains(opcode);
+    }
+
+    @Override
+    public Set<Integer> getOpcodes() {
+        return opcodes;
     }
 }

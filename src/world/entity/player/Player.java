@@ -15,11 +15,9 @@
 
 package world.entity.player;
 
-import com.google.gson.FieldAttributes;
 import database.CollectionAccessor;
 import database.DatabaseConfig;
 import database.serialization.GsonSerializer;
-import database.serialization.SkipFieldPolicy;
 import database.serialization.impl.FieldToIdPolicy;
 import database.serialization.impl.PlayerSkipFieldPolicy;
 import net.impl.decoder.LoginProtocolConstants;
@@ -156,7 +154,7 @@ public class Player extends Entity {
      * @return the completable future
      */
     public static CompletableFuture<Optional<Player>> load(Player p) {
-        return Player.asyncPlayerStore().load(p).thenApplyAsync(player -> Optional.ofNullable(player));
+        return Player.asyncPlayerStore().load(p).thenApplyAsync(Optional::ofNullable);
     }
 
     public Appearance getAppearance() {
@@ -236,7 +234,7 @@ public class Player extends Entity {
         if (getUsername() == null) {
             throw new InvalidStateException("username must be set before loading player.");
         }
-        return Player.asyncPlayerStore().load(this).thenApplyAsync(player -> Optional.ofNullable(player));
+        return Player.asyncPlayerStore().load(this).thenApplyAsync(Optional::ofNullable);
     }
 
     /**
@@ -360,7 +358,7 @@ public class Player extends Entity {
      */
     public void setUsername(String username) {
         Preconditions.notNull(username);
-        Preconditions.areEqual(LoginProtocolConstants.VALID_USERNAME_PREDICATE.test(username),true);
+        Preconditions.areEqual(LoginProtocolConstants.VALID_USERNAME_PREDICATE.test(username), true);
         this.username = username;
     }
 
@@ -410,7 +408,7 @@ public class Player extends Entity {
     private void buildLocalPlayerList(PlayerMoveEvent playerMoveEvent) {
         Player movePlayer = playerMoveEvent.getPlayer();
 
-        if(movePlayer == this)
+        if (movePlayer == this)
             return;
 
         Position movePosition = movePlayer.getPosition();
@@ -474,11 +472,11 @@ public class Player extends Entity {
         getClient().getOutgoingPacketBuilder().setChatOptions(0, 0, 0).send();
 
         Skill[] skills = Skill.values();
-        for(int i = 0; i < skills.length;i++){
-            getClient().getOutgoingPacketBuilder().setSkillLevel(i,getSkills().getSkillLevel(skills[i]), getSkills().getSkillExp(skills[i]));
+        for (int i = 0; i < skills.length; i++) {
+            getClient().getOutgoingPacketBuilder().setSkillLevel(i, getSkills().getSkillLevel(skills[i]), getSkills().getSkillExp(skills[i]));
         }
         getClient().getOutgoingPacketBuilder().send();
-        for(SidebarInterface i:SidebarInterface.values()){
+        for (SidebarInterface i : SidebarInterface.values()) {
             getClient().getOutgoingPacketBuilder().setSidebarInterface(i.ordinal(), i.getInterfaceId());
         }
 
@@ -487,7 +485,7 @@ public class Player extends Entity {
 
     }
 
-    private boolean isInit = false;
+
     @Override
     public void poll() {
 
@@ -498,7 +496,6 @@ public class Player extends Entity {
 
 
         getClient().getOutgoingPacketBuilder().playerUpdate().send();
-
 
 
         regionChanged = false;

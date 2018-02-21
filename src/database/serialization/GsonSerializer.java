@@ -45,8 +45,8 @@ public class GsonSerializer<T> extends AbstractSerializer<T, String> {
      * @param t the t
      * @return the gson serializer
      */
-    public GsonSerializer<T> registerTypeAdapter(JsonDeserializer<T> t){
-        gsonBuilder.registerTypeHierarchyAdapter(getSerializationClass(),t);
+    public GsonSerializer<T> registerTypeAdapter(JsonDeserializer<T> t) {
+        gsonBuilder.registerTypeHierarchyAdapter(getSerializationClass(), t);
         return this;
     }
 
@@ -74,7 +74,7 @@ public class GsonSerializer<T> extends AbstractSerializer<T, String> {
     }
 
     private FieldNamingStrategy createFieldNamingStrategy(NamingStrategy strat) {
-        return field -> strat.translateName(field);
+        return strat::translateName;
     }
 
     private ExclusionStrategy createExclusionStategy(SkipFieldPolicy policy) {

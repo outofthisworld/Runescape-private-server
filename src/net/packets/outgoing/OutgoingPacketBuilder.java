@@ -30,13 +30,11 @@ import java.util.stream.Collectors;
  */
 public class OutgoingPacketBuilder {
     private final Client c;
-    //Clear every cycle
-    private final HashMap<Player, OutputBuffer> playerMovementCache = new HashMap<>();
+    /*
+        The update buffer.
+    */
+    private final OutputBuffer update = OutputBuffer.create(4096, 1024);
     private OutputBuffer outputBuffer;
-
-    public int bytesWritten(){
-        return outputBuffer.position();
-    }
 
     /**
      * Instantiates a new Packet builder.
@@ -48,8 +46,12 @@ public class OutgoingPacketBuilder {
         assignOutputBuffer();
     }
 
+    public int bytesWritten() {
+        return outputBuffer.position();
+    }
+
     private void assignOutputBuffer() {
-        outputBuffer = OutputBuffer.create(4096, 1024);
+        outputBuffer = OutputBuffer.create(1024, 512);
     }
 
     private OutputBuffer createHeader(int packetId) {
@@ -80,8 +82,12 @@ public class OutgoingPacketBuilder {
      * @return the packet builder
      */
     public OutgoingPacketBuilder sendMessage(String s) {
-        byte[] sBytes = s.getBytes();
-        createHeader(OutgoingPacket.Opcodes.SEND_MESSAGE).writeByte(sBytes.length + 1).writeBytes(sBytes).writeByte(10);
+        createHeader(OutgoingPacket.Opcodes.SEND_MESSAGE, 1)
+                .toBuffer()
+                .writeBytes(s.getBytes())
+                .writeByte(10)
+                .toLastReserve()
+                .writeBytesSinceReserve();
         return this;
     }
 
@@ -99,11 +105,7 @@ public class OutgoingPacketBuilder {
         Optional<Integer> totalBytes = list.stream().map(b -> b.length).reduce((integer, integer2) -> integer + integer2);
 
         int total;
-        if (totalBytes.isPresent()) {
-            total = totalBytes.get();
-        } else {
-            total = 0;
-        }
+        total = totalBytes.orElse(0);
 
         createHeader(OutgoingPacket.Opcodes.ADD_PLAYER_OPTION).writeByte(total + 2)
                 .writeByte(optionPosition, OutputBuffer.ByteTransformationType.C)
@@ -197,10 +199,8 @@ public class OutgoingPacketBuilder {
     }
 
 
-
     /**
      * Init player outgoing packet builder.
-     *
      *
      * @param membership  the membership
      * @param playerIndex the player index
@@ -262,7 +262,7 @@ public class OutgoingPacketBuilder {
         createHeader(OutgoingPacket.Opcodes.UPDATE_SKILL)
                 .writeByte(skillNum).
                 order(OutputBuffer.Order.BIG_MIDDLE_ENDIAN)
-                .writeBytes(XP,4)
+                .writeBytes(XP, 4)
                 .writeByte(currentLevel);
         /*client.getOutStream().createHeader(134);
         client.getOutStream().writeByte(skillNum);
@@ -378,7 +378,7 @@ public class OutgoingPacketBuilder {
          * Short	Region Y coordinate (absolute Y / 8) plus 6.
          */
         outputBuffer.writeBigWordTypeS(c.getPlayer().getPosition().getChunkXCentered()).
-        writeBigWORDTypeA(c.getPlayer().getPosition().getChunkYCentered());
+                writeBigWORD(c.getPlayer().getPosition().getChunkYCentered());
         return this;
     }
 
@@ -392,16 +392,11 @@ public class OutgoingPacketBuilder {
     public OutgoingPacketBuilder playerUpdate() {
         Player player = c.getPlayer();
 
-        if(player.isRegionChanged()){
+        if (player.isRegionChanged()) {
             updateRegion().send();
         }
 
         IBufferReserve<OutputBuffer> reserve = createHeader(81, 2);
-
-        /*
-            The update buffer.
-        */
-        OutputBuffer update = OutputBuffer.create(4096,1024);
 
         /*
             Update the players movement.
@@ -410,7 +405,7 @@ public class OutgoingPacketBuilder {
         /*
             Append the current players update block.
          */
-        appendPlayerUpdateBlock(player,update);
+        appendPlayerUpdateBlock(player, update);
 
 
         outputBuffer.writeBits(player.getLocalPlayers().size(), 8);
@@ -432,18 +427,17 @@ public class OutgoingPacketBuilder {
             }
         }
 
-            Player awaitingLocalPlayer;
-            while ((awaitingLocalPlayer = player.getLocalPlayersQueue().poll()) != null) {
-                System.out.println("updating players list");
-                //Adds a players to the local player list, and in-view of other players.
-                outputBuffer.writeBits(awaitingLocalPlayer.getSlotId(), 11)
-                        .writeBit(true)
-                        .writeBit(true)
-                        .writeBits(awaitingLocalPlayer.getPosition().getVector().getY() - player.getPosition().getVector().getY(), 5)
-                        .writeBits(awaitingLocalPlayer.getPosition().getVector().getX() - player.getPosition().getVector().getX(), 5);
+        Player awaitingLocalPlayer;
+        while ((awaitingLocalPlayer = player.getLocalPlayersQueue().poll()) != null) {
+            //Adds a players to the local player list, and in-view of other players.
+            outputBuffer.writeBits(awaitingLocalPlayer.getSlotId(), 11)
+                    .writeBit(true)
+                    .writeBit(true)
+                    .writeBits(awaitingLocalPlayer.getPosition().getVector().getY() - player.getPosition().getVector().getY(), 5)
+                    .writeBits(awaitingLocalPlayer.getPosition().getVector().getX() - player.getPosition().getVector().getX(), 5);
 
-                appendPlayerUpdateBlock(awaitingLocalPlayer, update);
-            }
+            appendPlayerUpdateBlock(awaitingLocalPlayer, update);
+        }
 
 
         //1: our player movement
@@ -453,12 +447,13 @@ public class OutgoingPacketBuilder {
         //3: Our player updates
         //4: Other player updates
         //5: New local player updates
-        if(update.position() > 0) {
+        if (update.position() > 0) {
             outputBuffer.writeBits(2047, 11);
-            update.pipeTo(outputBuffer,true);
+            update.pipeTo(outputBuffer, true);
         }
         //Write how many bytes the packet contains
         reserve.writeValue(reserve.bytesSinceReserve());
+        update.clear();
         return this;
     }
 

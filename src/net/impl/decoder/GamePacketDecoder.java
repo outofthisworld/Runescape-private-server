@@ -1,60 +1,54 @@
 package net.impl.decoder;
 
 import net.buffers.InputBuffer;
-import net.impl.NetworkConfig;
-import net.impl.events.NetworkReadEvent;
 import net.impl.session.Client;
 import net.packets.incoming.IncomingPacket;
-import world.WorldManager;
+import util.Stopwatch;
 
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class GamePacketDecoder implements ProtocolDecoder {
+    private final Stopwatch stopWatch = new Stopwatch();
+
     @Override
     public void decode(Client c) {
 
         InputBuffer in = c.getInputBuffer();
 
-        if (in.remaining() < 1) {
-            return;
-        }
+        while (in.remaining() > 0) {
+            int encodedOp = (in.readSignedByte() & 0xFF);
+            int decodedOp = encodedOp - c.getInCipher().getNextValue() & 0xFF;
 
-        int encodedOp = (in.readSignedByte() & 0xFF);
-        int decodedOp =  encodedOp - c.getInCipher().getNextValue() & 0xFF;
+            if (decodedOp == 0) {
+                continue;
+            }
 
-        int packetSize = IncomingPacket.getPacketSizeForId(decodedOp);
+            int packetSize = IncomingPacket.getPacketSizeForId(decodedOp);
 
 
-        if(packetSize == -1){
+            if (packetSize == -1) {
 
-            if(in.remaining() < 1)
+                if (in.remaining() < 1)
+                    return;
+
+                packetSize = in.readUnsignedByte();
+            }
+
+            if (in.remaining() < packetSize) {
+                in.rewind();
                 return;
+            }
 
-            packetSize = in.readUnsignedByte();
-        }
-
-        System.out.println("Received packet: {deocdedOpcode:"+decodedOp+",packetSize:"+packetSize+"}");
-
-        if (in.remaining() < packetSize) {
-            in.rewind();
-            return;
-        }
-
-        Optional<IncomingPacket> incoming = IncomingPacket.getForId(decodedOp);
-        InputBuffer payload = new InputBuffer(c.getInputBuffer(), packetSize);
-
-        if (incoming.isPresent()) {
-            WorldManager.submitTask(c.getPlayer().getWorldId(), () -> {
+            Optional<IncomingPacket> incoming = IncomingPacket.getForId(decodedOp);
+            InputBuffer payload = new InputBuffer(c.getInputBuffer(), packetSize);
+            incoming.ifPresent(packet -> c.getPlayer().getWorld().submit(() -> {
                 try {
-                    incoming.get().handle(c, decodedOp, payload);
+                    packet.handle(c, decodedOp, payload);
+                    stopWatch.stop();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            });
-        } else {
-            Logger.getLogger(NetworkReadEvent.class.getName()).log(Level.INFO, "Unhandled packet received : " + decodedOp + " from client: " + c.getRemoteAddress().getHostName());
+            }));
         }
     }
 }

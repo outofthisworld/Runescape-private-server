@@ -15,6 +15,7 @@
 
 import net.Reactor;
 import world.WorldManager;
+import world.task.DefaultThreadFactory;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -25,7 +26,7 @@ import java.util.concurrent.Executors;
  * The type Bootstrap.
  */
 public class Bootstrap implements Runnable {
-    private final ExecutorService networkExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService networkExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory(10));
     private final Reactor reactor = new Reactor();
 
     /**
@@ -57,24 +58,10 @@ public class Bootstrap implements Runnable {
 
     @Override
     public void run() {
-        int attempts = 0;
-        while (true) {
-            try {
-                reactor.start();
-            } catch (IOException e1) {
-                e1.printStackTrace();
-                attempts++;
-                if (attempts == 5) {
-                    tearDown();
-                    break;
-                } else {
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e2) {
-                        e2.printStackTrace();
-                    }
-                }
-            }
+        try {
+            reactor.start();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -15,9 +15,10 @@
 
 package net.packets.incoming;
 
-import net.impl.session.Client;
 import net.buffers.InputBuffer;
+import net.impl.session.Client;
 
+import java.util.Set;
 import java.util.logging.Logger;
 
 public class DesignScreenPacket extends IncomingPacket {
@@ -31,5 +32,10 @@ public class DesignScreenPacket extends IncomingPacket {
     @Override
     public boolean handlesOpcode(int opcode) {
         return opcode == Opcodes.DESIGN_SCREEN;
+    }
+
+    @Override
+    public Set<Integer> getOpcodes() {
+        return null;
     }
 }

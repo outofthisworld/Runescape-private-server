@@ -20,7 +20,8 @@ public class InvalidPacketSizeException extends Exception {
     private final String message;
 
     public InvalidPacketSizeException(int opcode, String message) {
-        this.opcode = opcode; this.message = message;
+        this.opcode = opcode;
+        this.message = message;
     }
 
     public int getOpcode() {

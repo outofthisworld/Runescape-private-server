@@ -20,7 +20,8 @@ public class InvalidOpcodeException extends Exception {
     private final String message;
 
     public InvalidOpcodeException(int opcode, String message) {
-        this.opcode = opcode; this.message = message;
+        this.opcode = opcode;
+        this.message = message;
     }
 
     public int getOpcode() {

@@ -18,12 +18,40 @@ package net.packets.incoming;
 import net.buffers.InputBuffer;
 import net.impl.session.Client;
 
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class IncomingPacket {
 
-    private static final IncomingPacket[] packets = new IncomingPacket[]{};
+    private static final HashMap<Integer, IncomingPacket> packets = new HashMap<>(255);
+
+
+    private static final IncomingPacket[] incomingPackets = new IncomingPacket[]{
+            new BankPacket(),
+            new CameraMovementPacket(),
+            new ChatPrivacyPacket(),
+            new DesignScreenPacket(),
+            new ForwardDialoguePacket(),
+            new GroundItemPacket(),
+            new IdlePacket(),
+            new InteractInterfacePacket(),
+            new InteractItemPacket(),
+            new InteractNpcPacket(),
+            new InteractObjectPacket(),
+            new InteractPlayerPacket(),
+            new ItemOnPacket(),
+            new MagicOnPacket(),
+            new MouseClickPacket(),
+            new PlayerCommandPacket(),
+            new PlayerReportingPacket(),
+            new PlayerRequestPacket(),
+            new PrivateChatPacket(),
+            new RegionPacket(),
+            new UnknownPacket(),
+            new WalkingPacket(),
+            new WindowFocusChangedPacket()
+    };
     private static final int packetSizes[] = {0, 0, 0, 1, -1, 0, 0, 0, 0, 0, // 0
             0, 0, 0, 0, 8, 0, 6, 2, 2, 0, // 10
             0, 2, 0, 6, 0, 12, 0, 0, 0, 0, // 20
@@ -52,11 +80,20 @@ public abstract class IncomingPacket {
             0, 0, 6, 6, 0, 0, 0 // 250
     };
 
+    static {
+        for (int i = 0; i < incomingPackets.length; i++) {
+            IncomingPacket p = incomingPackets[i];
+            Set<Integer> packetOpcodes = p.getOpcodes();
+            if (packetOpcodes == null) continue;
+            packetOpcodes.forEach(op -> packets.put(op, p));
+        }
+    }
+
     public IncomingPacket() {
     }
 
     public static Optional<IncomingPacket> getForId(int id) {
-        return Arrays.stream(IncomingPacket.packets).filter(e -> e.handlesOpcode(id)).findAny();
+        return Optional.ofNullable(packets.get(id));
     }
 
     public static int getPacketSizeForId(int id) {
@@ -69,6 +106,8 @@ public abstract class IncomingPacket {
     public abstract void handle(Client c, int packetOpcode, InputBuffer in) throws Exception;
 
     public abstract boolean handlesOpcode(int opcode);
+
+    public abstract Set<Integer> getOpcodes();
 
 
     public static class Opcodes {

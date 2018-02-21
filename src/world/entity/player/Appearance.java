@@ -46,6 +46,8 @@ public class Appearance {
         /*
          * The default appearance indices.
 		 */
+
+
         for (int i = 0; i < Appearance.DEFAULT_APPEARANCE.length; i++) {
 
             appearance[i] = Appearance.DEFAULT_APPEARANCE[i];

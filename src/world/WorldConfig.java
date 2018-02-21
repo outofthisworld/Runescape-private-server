@@ -20,9 +20,11 @@ public final class WorldConfig {
     public static final int MAX_PLAYERS_IN_WORLD = 2000;
     public static final int MAX_VIRTUAL_WORLDS = 10;
 
-    public static final int PLAYER_START_X = 3360;
-    public static final int PLAYER_START_Y = 3213;
-    public static final int PLAYER_START_Z = 1;
+    public static final int PLAYER_START_X = 3093;
+    public static final int PLAYER_START_Y = 3493;
+    public static final int PLAYER_START_Z = 0;
+
+    public static final boolean DEBUG = false;
 
     private WorldConfig() {
     }

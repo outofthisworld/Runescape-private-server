@@ -54,7 +54,7 @@ public class InputBuffer extends AbstractBuffer {
      * @param upperBound       the upper bound
      */
     public InputBuffer(int initialSizeBytes, int increaseSize, int resizeThreshold, int upperBound) {
-        Preconditions.greaterThanOrEqualTo(initialSizeBytes,0);
+        Preconditions.greaterThanOrEqualTo(initialSizeBytes, 0);
         UPPER_BOUND = upperBound;
         INITIAL_BUFFER_SIZE = initialSizeBytes;
         BUFFER_INCREASE_SIZE = increaseSize;
@@ -63,12 +63,12 @@ public class InputBuffer extends AbstractBuffer {
         inBuffer.flip();
     }
 
-    public InputBuffer(InputBuffer in,int size) {
-        this(size,1024,512,-1);
+    public InputBuffer(InputBuffer in, int size) {
+        this(size, 1024, 512, -1);
         inBuffer.compact();
-        int cSize= 0;
-        while(in.remaining() != 0){
-            if(cSize == size){
+        int cSize = 0;
+        while (in.remaining() != 0) {
+            if (cSize == size) {
                 break;
             }
             inBuffer.put(in.readSignedByte());
@@ -100,15 +100,14 @@ public class InputBuffer extends AbstractBuffer {
      */
     public int readFrom(SocketChannel socketChannel) throws IOException, BufferOverflowException {
         Objects.requireNonNull(socketChannel);
+        inBuffer.compact();
+
         if (bufferNeedsResizing(RESIZE_THRESHOLD, BUFFER_INCREASE_SIZE)) {
+            System.out.println("reszing buf to " + inBuffer.capacity() + BUFFER_INCREASE_SIZE);
             widen(inBuffer.capacity() + BUFFER_INCREASE_SIZE);
         }
 
-        inBuffer.compact();
         if (inBuffer.remaining() == 0) {
-            System.out.println(inBuffer.limit());
-            System.out.println(inBuffer.capacity());
-            System.out.println(inBuffer.position());
             throw new BufferOverflowException();
         }
         int bytesRead = socketChannel.read(inBuffer);
@@ -133,12 +132,13 @@ public class InputBuffer extends AbstractBuffer {
         Objects.requireNonNull(b);
 
         int resizeAmount = b.remaining() > BUFFER_INCREASE_SIZE ? b.remaining() : BUFFER_INCREASE_SIZE;
+
+        inBuffer.compact();
         if (bufferNeedsResizing(b.remaining(), resizeAmount)) {
             widen(inBuffer.capacity() + resizeAmount);
         }
 
         int read = b.remaining();
-        inBuffer.compact();
         inBuffer.put(b);
         inBuffer.flip();
         return read;
@@ -254,7 +254,7 @@ public class InputBuffer extends AbstractBuffer {
         for (int i = start; i != end; i += increment) {
             int shiftAmount = (inBuffer.order() == ByteOrder.BIG_ENDIAN ? (end - 1 - i) * 8 : i * 8);
             long val = inBuffer.get() & 0xFF;
-            l |= ( val << shiftAmount);
+            l |= (val << shiftAmount);
         }
         return l;
     }
@@ -430,7 +430,7 @@ public class InputBuffer extends AbstractBuffer {
 
             byte s = readSignedByte();
             if (pred.test(s)) {
-                found = !found;
+                found = true;
                 break;
             }
             bos.write(s);

@@ -1,6 +1,7 @@
 package util;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 
 public final class Preconditions {
@@ -38,7 +39,7 @@ public final class Preconditions {
     }
 
     public static void throwRuntimeIfAnyNull(RuntimeException t, Object... objects) {
-        if (Arrays.stream(objects).filter(e -> e == null).count() > 0) {
+        if (Arrays.stream(objects).filter(Objects::isNull).count() > 0) {
             throw t;
         }
     }
