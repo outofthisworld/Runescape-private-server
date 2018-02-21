@@ -35,6 +35,7 @@ public class InputBuffer extends AbstractBuffer {
     private final int RESIZE_THRESHOLD;
     private final int BUFFER_INCREASE_SIZE;
     private final int INITIAL_BUFFER_SIZE;
+    private Order currentByteOrder = Order.BIG_ENDIAN;
     private ByteBuffer inBuffer;
 
 
@@ -233,34 +234,46 @@ public class InputBuffer extends AbstractBuffer {
         return inBuffer.position();
     }
 
-    private long readBytes(int numBytes) {
-        if (numBytes < 1 || numBytes > 8) {
-            throw new RuntimeException("Invalid params, numBytes must be between 1-8 inclusive");
-        }
+    private long readBytes(int numBytes, ByteTransformationType type) {
+        Preconditions.inRangeClosed(numBytes,1,8);
+        Preconditions.notNull(type);
 
         long l = 0L;
         int start;
         int end;
         int increment;
-        if (inBuffer.order() == ByteOrder.BIG_ENDIAN) {
-            start = 0;
-            end = numBytes;
-            increment = 1;
-        } else {
-            start = numBytes - 1;
-            end = -1;
-            increment = -1;
+
+        switch(currentByteOrder){
+            case BIG_ENDIAN:
+                start = (numBytes-1) * 8;
+                end = -8;
+                increment = -8;
+                break;
+            case LITTLE_ENDIAN:
+                start = 0;
+                end = 64;
+                increment = 8;
+                break;
+            default:
+                throw new IllegalStateException("");
         }
+
         for (int i = start; i != end; i += increment) {
-            int shiftAmount = (inBuffer.order() == ByteOrder.BIG_ENDIAN ? (end - 1 - i) * 8 : i * 8);
-            long val = inBuffer.get() & 0xFF;
-            l |= (val << shiftAmount);
+            byte value = inBuffer.get();
+
+            if(i == 0){
+                value = type.transformValue(value);
+            }
+
+            long val = value & 0xFF;
+            l |= (val << i);
         }
+
         return l;
     }
 
-    private InputBuffer inOrder(ByteOrder b) {
-        inBuffer.order(b);
+    private InputBuffer inOrder(Order order) {
+        currentByteOrder = order;
         return this;
     }
 
@@ -289,7 +302,7 @@ public class InputBuffer extends AbstractBuffer {
      * @return the long
      */
     public long readBigUnsignedDWORD() {
-        long bytes = inOrder(ByteOrder.BIG_ENDIAN).readBytes(4);
+        long bytes = inOrder(Order.BIG_ENDIAN).readBytes(4,ByteTransformationType.NONE);
         return bytes & 0xFFFFFFFFL;
     }
 
@@ -299,7 +312,7 @@ public class InputBuffer extends AbstractBuffer {
      * @return the long
      */
     public long readLittleUnsignedDWORD() {
-        long bytes = inOrder(ByteOrder.LITTLE_ENDIAN).readBytes(4);
+        long bytes = inOrder(Order.LITTLE_ENDIAN).readBytes(4,ByteTransformationType.NONE);
         return bytes & 0xFFFFFFFFL;
     }
 
@@ -309,7 +322,7 @@ public class InputBuffer extends AbstractBuffer {
      * @return the long
      */
     public long readBigSignedQWORD() {
-        return inOrder(ByteOrder.BIG_ENDIAN).readBytes(8);
+        return inOrder(Order.BIG_ENDIAN).readBytes(8,ByteTransformationType.NONE);
     }
 
     /**
@@ -318,7 +331,7 @@ public class InputBuffer extends AbstractBuffer {
      * @return the long
      */
     public long readLittleSignedQWORD() {
-        return inOrder(ByteOrder.LITTLE_ENDIAN).readBytes(8);
+        return inOrder(Order.LITTLE_ENDIAN).readBytes(8,ByteTransformationType.NONE);
     }
 
     /**
@@ -327,7 +340,7 @@ public class InputBuffer extends AbstractBuffer {
      * @return the int
      */
     public int readBigSignedDWORD() {
-        return (int) inOrder(ByteOrder.BIG_ENDIAN).readBytes(4);
+        return (int) inOrder(Order.BIG_ENDIAN).readBytes(4,ByteTransformationType.NONE);
     }
 
     /**
@@ -336,7 +349,7 @@ public class InputBuffer extends AbstractBuffer {
      * @return the int
      */
     public int readLittleSignedDWORD() {
-        return (int) inOrder(ByteOrder.LITTLE_ENDIAN).readBytes(4);
+        return (int) inOrder(Order.LITTLE_ENDIAN).readBytes(4,ByteTransformationType.NONE);
     }
 
     /**
@@ -345,7 +358,7 @@ public class InputBuffer extends AbstractBuffer {
      * @return the short
      */
     public short readLittleSignedWORD() {
-        return (short) inOrder(ByteOrder.LITTLE_ENDIAN).readBytes(2);
+        return (short) inOrder(Order.LITTLE_ENDIAN).readBytes(2,ByteTransformationType.NONE);
     }
 
     /**
@@ -354,7 +367,7 @@ public class InputBuffer extends AbstractBuffer {
      * @return the short
      */
     public short readBigSignedWORD() {
-        return (short) inOrder(ByteOrder.BIG_ENDIAN).readBytes(2);
+        return (short) inOrder(Order.BIG_ENDIAN).readBytes(2,ByteTransformationType.NONE);
     }
 
     /**
@@ -363,7 +376,7 @@ public class InputBuffer extends AbstractBuffer {
      * @return the int
      */
     public int readLittleUnsignedWORD() {
-        return (int) (inOrder(ByteOrder.LITTLE_ENDIAN).readBytes(2) & 0xFFFFL);
+        return (int) (inOrder(Order.LITTLE_ENDIAN).readBytes(2,ByteTransformationType.NONE) & 0xFFFFL);
     }
 
     /**
@@ -372,7 +385,7 @@ public class InputBuffer extends AbstractBuffer {
      * @return the int
      */
     public int readBigUnsignedWORD() {
-        return (int) (inOrder(ByteOrder.BIG_ENDIAN).readBytes(2) & 0xFFFFL);
+        return (int) (inOrder(Order.BIG_ENDIAN).readBytes(2,ByteTransformationType.NONE) & 0xFFFFL);
     }
 
     /**

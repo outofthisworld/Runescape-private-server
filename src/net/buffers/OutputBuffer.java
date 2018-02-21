@@ -16,6 +16,7 @@
 package net.buffers;
 
 import sun.plugin.dom.exception.InvalidStateException;
+import util.Preconditions;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -466,7 +467,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeByte(int b, ByteTransformationType type) {
-        return writeByte(transformValue(b, type));
+        return writeByte(type.transformValue((byte)b));
     }
 
 
@@ -532,23 +533,10 @@ public class OutputBuffer extends AbstractBuffer {
         return this;
     }
 
-    private byte transformValue(long value, ByteTransformationType type) {
-        switch (type) {
-            case A:
-                return (byte) ((value & 0xFF) + 128);
-            case S:
-                return (byte) (128 - (value & 0xFF));
-            case C:
-                return (byte) (-(value & 0xFF));
-            default:
-                return (byte) (value & 0xFF);
-        }
-    }
 
     private byte[] longToByteArray(long value, int numBytes, ByteTransformationType type) {
-        if (numBytes < 1 || numBytes > 8) {
-            throw new RuntimeException("Invalid params, numBytes must be between 1-8 inclusive");
-        }
+        Preconditions.inRangeClosed(numBytes,1,8);
+        Preconditions.notNull(type);
 
         int start = 0;
         int end = 0;
@@ -585,7 +573,7 @@ public class OutputBuffer extends AbstractBuffer {
 
             if (i == 0) {
                 //value = transformValue(value, type);
-                b = transformValue(b, type);
+                b = type.transformValue(b);
             }
 
             bytes[bytesWritten++] = b;
@@ -830,49 +818,7 @@ public class OutputBuffer extends AbstractBuffer {
         return out.remaining();
     }
 
-    /**
-     * The enum Order.
-     */
-    public enum Order {
-        /**
-         * Big endian order.
-         */
-        BIG_ENDIAN,
-        /**
-         * Little endian order.
-         */
-        LITTLE_ENDIAN,
-        /**
-         * Big middle endian order.
-         */
-        BIG_MIDDLE_ENDIAN,
-        /**
-         * Little middle endian order.
-         */
-        LITTLE_MIDDLE_ENDIAN
-    }
 
-    /**
-     * The enum Byte transformation type.
-     */
-    public enum ByteTransformationType {
-        /**
-         * A byte transformation type.
-         */
-        A,
-        /**
-         * C byte transformation type.
-         */
-        C,
-        /**
-         * S byte transformation type.
-         */
-        S,
-        /**
-         * None byte transformation type.
-         */
-        NONE
-    }
 
     private class OutputBufferReserve implements IBufferReserve<OutputBuffer> {
         private final int reserveIndex;

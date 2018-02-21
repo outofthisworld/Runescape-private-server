@@ -15,7 +15,9 @@
 
 package net.packets.outgoing;
 
+import net.buffers.ByteTransformationType;
 import net.buffers.IBufferReserve;
+import net.buffers.Order;
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
 import world.entity.player.Player;
@@ -108,8 +110,8 @@ public class OutgoingPacketBuilder {
         total = totalBytes.orElse(0);
 
         createHeader(OutgoingPacket.Opcodes.ADD_PLAYER_OPTION).writeByte(total + 2)
-                .writeByte(optionPosition, OutputBuffer.ByteTransformationType.C)
-                .writeByte(flag, OutputBuffer.ByteTransformationType.A);
+                .writeByte(optionPosition, ByteTransformationType.C)
+                .writeByte(flag, ByteTransformationType.A);
 
         return this;
     }
@@ -144,8 +146,8 @@ public class OutgoingPacketBuilder {
      */
     public OutgoingPacketBuilder createGroundItem(int itemId, int x, int y) {
         createHeader(OutgoingPacket.Opcodes.UPDATE_PLAYER_XY);
-        outputBuffer.writeByte(x, OutputBuffer.ByteTransformationType.C);
-        outputBuffer.writeByte(y, OutputBuffer.ByteTransformationType.C);
+        outputBuffer.writeByte(x,ByteTransformationType.C);
+        outputBuffer.writeByte(y, ByteTransformationType.C);
         createHeader(OutgoingPacket.Opcodes.DISPLAY_GROUND_ITEM);
         outputBuffer.writeLittleWORDA(itemId);
         outputBuffer.writeBigWORD(1);
@@ -209,7 +211,7 @@ public class OutgoingPacketBuilder {
     public OutgoingPacketBuilder initPlayer(int membership, int playerIndex) {
 
         createHeader(OutgoingPacket.Opcodes.INIT_PLAYER)
-                .writeByte(membership, OutputBuffer.ByteTransformationType.A)
+                .writeByte(membership, ByteTransformationType.A)
                 .writeLittleWORDA(playerIndex);
         return this;
     }
@@ -261,7 +263,7 @@ public class OutgoingPacketBuilder {
     public OutgoingPacketBuilder setSkillLevel(int skillNum, int currentLevel, int XP) {
         createHeader(OutgoingPacket.Opcodes.UPDATE_SKILL)
                 .writeByte(skillNum).
-                order(OutputBuffer.Order.BIG_MIDDLE_ENDIAN)
+                order(Order.BIG_MIDDLE_ENDIAN)
                 .writeBytes(XP, 4)
                 .writeByte(currentLevel);
         /*client.getOutStream().createHeader(134);

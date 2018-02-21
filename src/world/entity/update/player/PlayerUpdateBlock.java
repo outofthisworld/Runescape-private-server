@@ -1,6 +1,8 @@
 package world.entity.update.player;
 
+import net.buffers.ByteTransformationType;
 import net.buffers.IBufferReserve;
+import net.buffers.Order;
 import net.buffers.OutputBuffer;
 import util.Preconditions;
 import util.RsUtils;
@@ -77,7 +79,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
                         outputBuffer.writeBigQWORD(RsUtils.convertStringToLong(entity.getUsername()));
                         outputBuffer.writeByte(3);
                         outputBuffer.writeBigWORD(0);
-                        reserve.writeValue(reserve.bytesSinceReserve(), OutputBuffer.ByteTransformationType.C);
+                        reserve.writeValue(reserve.bytesSinceReserve(), ByteTransformationType.C);
                     });
 
                     /**
@@ -200,15 +202,15 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
         /*
             Write the mask as little endian.
         */
-        updateBlock.order(OutputBuffer.Order.LITTLE_ENDIAN);
+        updateBlock.order(Order.LITTLE_ENDIAN);
 
         if (updateFlags.getMask() >= 0x100L) {
-            updateBlock.writeBytes(updateFlags.getMask(), 2, OutputBuffer.ByteTransformationType.NONE);
+            updateBlock.writeBytes(updateFlags.getMask(), 2, ByteTransformationType.NONE);
         } else {
             updateBlock.writeByte((int) (updateFlags.getMask()));
         }
 
-        updateBlock.order(OutputBuffer.Order.BIG_ENDIAN);
+        updateBlock.order(Order.BIG_ENDIAN);
 
 
         for (PlayerUpdateMask m : PlayerUpdateMask.values()) {

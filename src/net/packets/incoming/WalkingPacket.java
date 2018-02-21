@@ -34,11 +34,22 @@ public class WalkingPacket extends IncomingPacket {
             return;
         }
 
-        int size = in.readBigUnsignedWORD();
+        int size = in.remaining();
 
         if (packetOpcode == 248) {
-            size -= 14;
+            size -= 14; // strip off anti-cheat data
         }
+
+        int steps = (size-5)/2;
+
+        int[][] path = new int[steps][2];
+
+        in.readLittleUnsignedWORD();
+
+
+        //c.getPlayer().getMovement().
+
+
 
 
     }
