@@ -47,16 +47,16 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
                         outputBuffer.writeByte(0);
                         outputBuffer.writeByte(0);
 
-                        outputBuffer.writeBigWORD(0x100 + entity.getAppearance().getAppearenceIndice(0));
+                        outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(0));
                         outputBuffer.writeByte(0);
-                        outputBuffer.writeBigWORD(0x100 + entity.getAppearance().getAppearenceIndice(1));
-                        outputBuffer.writeBigWORD(0x100 + entity.getAppearance().getAppearenceIndice(2));
-                        outputBuffer.writeBigWORD(0x100 + entity.getAppearance().getAppearenceIndice(3));
-                        outputBuffer.writeBigWORD(0x100 + entity.getAppearance().getAppearenceIndice(4));
-                        outputBuffer.writeBigWORD(0x100 + entity.getAppearance().getAppearenceIndice(5));
+                        outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(1));
+                        outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(2));
+                        outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(3));
+                        outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(4));
+                        outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(5));
 
                         if (entity.getAppearance().getGender() == 0) {
-                            outputBuffer.writeBigWORD(0x100 + entity.getAppearance().getAppearenceIndice(6));
+                            outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(6));
                         } else {
                             outputBuffer.writeByte(0);
                         }
@@ -68,17 +68,17 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
                         outputBuffer.writeByte(entity.getAppearance().getColorIndice(4));
 
                         //Dont know what these do
-                        outputBuffer.writeBigWORD(0x328);
-                        outputBuffer.writeBigWORD(0x337);
-                        outputBuffer.writeBigWORD(0x333);
-                        outputBuffer.writeBigWORD(0x334);
-                        outputBuffer.writeBigWORD(0x335);
-                        outputBuffer.writeBigWORD(0x336);
-                        outputBuffer.writeBigWORD(0x338);
+                        outputBuffer.writeBigWord(0x328);
+                        outputBuffer.writeBigWord(0x337);
+                        outputBuffer.writeBigWord(0x333);
+                        outputBuffer.writeBigWord(0x334);
+                        outputBuffer.writeBigWord(0x335);
+                        outputBuffer.writeBigWord(0x336);
+                        outputBuffer.writeBigWord(0x338);
 
                         outputBuffer.writeBigQWORD(RsUtils.convertStringToLong(entity.getUsername()));
                         outputBuffer.writeByte(3);
-                        outputBuffer.writeBigWORD(0);
+                        outputBuffer.writeBigWord(0);
                         reserve.writeValue(reserve.bytesSinceReserve(), ByteTransformationType.C);
                     });
 

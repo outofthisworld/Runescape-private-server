@@ -18,14 +18,17 @@ package net.packets.incoming;
 import net.buffers.InputBuffer;
 import net.impl.session.Client;
 import world.entity.player.Player;
+import world.event.impl.RegionUpdateEvent;
 
 import java.util.HashSet;
+import java.util.Scanner;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
 public class PlayerCommandPacket extends IncomingPacket {
     private static final Logger logger = Logger.getLogger(BankPacket.class.getName());
+    private StringBuilder messageBuilder = new StringBuilder();
+
 
     @Override
     public void handle(Client c, int packetOpcode, InputBuffer in) throws Exception {
@@ -36,19 +39,60 @@ public class PlayerCommandPacket extends IncomingPacket {
         }
 
         Player p = c.getPlayer();
-        StringTokenizer stringTokenizer = new StringTokenizer(new String(in.toArray()));
+        Scanner scanner = new Scanner(new String(in.toArray()));
+        scanner.useDelimiter(" ");
 
-        switch (stringTokenizer.nextToken()) {
+        if (!scanner.hasNext()) return;
+
+        String input = scanner.next().toLowerCase().trim();
+        switch (input) {
+            case "tele":
+
+                int count = 0;
+                while (scanner.hasNextInt()) {
+                    count++;
+                }
+
+                if (count < 2) {
+                    c.getOutgoingPacketBuilder()
+                            .sendMessage("Invalid command format, usage - ::tele x y [z]").send();
+                }
+
+                int x = scanner.nextInt();
+                int y = scanner.nextInt();
+                int z = 0;
+
+                if (count == 3) z = scanner.nextInt();
+
+                p.getPosition().getVector().setX(x).setY(y).setZ(z);
+                p.getWorld().getEventBus().fire(new RegionUpdateEvent(p, null));
+                break;
             case "coords":
                 c.getOutgoingPacketBuilder()
-                        .sendMessage(p.getPosition().getVector().getX() + "," + p.getPosition().getVector().getY() + "," + p.getPosition().getVector().getZ()).send();
+                        .sendMessage(messageBuilder
+                                .append(p.getPosition().getVector().getX())
+                                .append(",").append(p.getPosition().getVector().getY())
+                                .append(",").append(p.getPosition().getVector().getZ())
+                                .toString())
+                        .send();
+                break;
+            case "local":
+                c.getOutgoingPacketBuilder()
+                        .sendMessage(messageBuilder
+                                .append(p.getPosition().getLocalX())
+                                .append(",")
+                                .append(p.getPosition().getLocalY())
+                                .toString())
+                        .send();
                 break;
             default:
                 c.getOutgoingPacketBuilder()
-                        .sendMessage("unknown command").send();
+                        .sendMessage("unknown command: " + input).send();
                 break;
         }
 
+
+        messageBuilder.delete(0, messageBuilder.length());
     }
 
     @Override

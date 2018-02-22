@@ -40,7 +40,7 @@ public interface IBufferReserve<T> {
      * @param value the value
      * @param type  the type
      */
-    IBufferReserve<T> writeValue(long value,ByteTransformationType type);
+    IBufferReserve<T> writeValue(long value, ByteTransformationType type);
 
     IBufferReserve<T> writeBytesSinceReserve();
 

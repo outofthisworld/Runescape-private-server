@@ -208,11 +208,7 @@ public class World {
         Preconditions.notNull(p);
 
         Position currentPosition = p.getPosition();
-        int regionX = currentPosition.getRegionX();
-        int regionY = currentPosition.getRegionY();
-        int z = currentPosition.getVector().getZ();
-        Position regionPosition = new Position(regionX, regionY, z);
-        addPlayerToRegion(p, regionPosition);
+        addPlayerToRegion(p, currentPosition.getRegionPosition());
     }
 
     /**
@@ -465,6 +461,7 @@ public class World {
         Player p = regionUpdate.getPlayer();
         Objects.requireNonNull(p);
         updatePlayerRegion(p);
+        p.getClient().getOutgoingPacketBuilder().updateRegion();
         p.setRegionChanged(true);
     }
 

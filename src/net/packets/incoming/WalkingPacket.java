@@ -15,6 +15,7 @@
 
 package net.packets.incoming;
 
+import net.buffers.ByteTransformationType;
 import net.buffers.InputBuffer;
 import net.impl.session.Client;
 
@@ -40,18 +41,34 @@ public class WalkingPacket extends IncomingPacket {
             size -= 14; // strip off anti-cheat data
         }
 
-        int steps = (size-5)/2;
+        int steps = (size - 5) / 2;
+
+        if (in.remaining() < steps * 2 + 5) {
+            System.out.println("Not enough data sent in walk packet");
+            return;
+        }
 
         int[][] path = new int[steps][2];
 
-        in.readLittleUnsignedWORD();
+        int targetX = in.readLittleUnsignedWordTypeA();
 
+        for (int i = 0; i < steps; i++) {
+            path[i][0] = in.readSignedByte();
+            path[i][1] = in.readSignedByte();
+        }
 
-        //c.getPlayer().getMovement().
+        int targetY = in.readLittleUnsignedWORD();
+        int run = in.readUnsignedByte(ByteTransformationType.C);
+        boolean shouldRun = run == 1;
 
-
-
-
+        c.getPlayer().getMovement().beginMovement();
+        c.getPlayer().getMovement().stepTo(targetX, targetY);
+        for (int i = 0; i < steps; i++) {
+            path[i][0] = path[i][0] + targetX;
+            path[i][1] = path[i][1] + targetY;
+            c.getPlayer().getMovement().stepTo(path[i][0], path[i][1]);
+        }
+        c.getPlayer().getMovement().finishMovement();
     }
 
     @Override

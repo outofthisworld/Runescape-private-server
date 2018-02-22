@@ -127,10 +127,10 @@ public class OutgoingPacketBuilder {
     public OutgoingPacketBuilder sendInterfaceText(String s, int id) {
         createHeader(126);
         byte[] strBytes = s.getBytes();
-        outputBuffer.writeBigWORD(strBytes.length + 1 + 2);
+        outputBuffer.writeBigWord(strBytes.length + 1 + 2);
         outputBuffer.writeBytes(s.getBytes());
         outputBuffer.writeByte(10); //End string
-        outputBuffer.writeBigWORDTypeA(id);
+        outputBuffer.writeBigWordTypeA(id);
         return this;
     }
 
@@ -146,11 +146,11 @@ public class OutgoingPacketBuilder {
      */
     public OutgoingPacketBuilder createGroundItem(int itemId, int x, int y) {
         createHeader(OutgoingPacket.Opcodes.UPDATE_PLAYER_XY);
-        outputBuffer.writeByte(x,ByteTransformationType.C);
+        outputBuffer.writeByte(x, ByteTransformationType.C);
         outputBuffer.writeByte(y, ByteTransformationType.C);
         createHeader(OutgoingPacket.Opcodes.DISPLAY_GROUND_ITEM);
-        outputBuffer.writeLittleWORDA(itemId);
-        outputBuffer.writeBigWORD(1);
+        outputBuffer.writeLittleWordTypeA(itemId);
+        outputBuffer.writeBigWord(1);
         outputBuffer.writeByte(0);
         return this;
     }
@@ -212,7 +212,7 @@ public class OutgoingPacketBuilder {
 
         createHeader(OutgoingPacket.Opcodes.INIT_PLAYER)
                 .writeByte(membership, ByteTransformationType.A)
-                .writeLittleWORDA(playerIndex);
+                .writeLittleWordTypeA(playerIndex);
         return this;
     }
 
@@ -246,9 +246,7 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder setSidebarInterface(int menuId, int form) {
-        /*client.getOutStream().createHeader(71);
-        client.getOutStream().writeWord(form);
-        client.getOutStream().writeByteA(menuId);*/
+        createHeader(71).writeBigWord(form).writeByte(menuId, ByteTransformationType.A);
         return this;
     }
 
@@ -379,8 +377,8 @@ public class OutgoingPacketBuilder {
          * * Short Special A	Region X coordinate (absolute X / 8) plus 6.
          * Short	Region Y coordinate (absolute Y / 8) plus 6.
          */
-        outputBuffer.writeBigWordTypeS(c.getPlayer().getPosition().getChunkXCentered()).
-                writeBigWORD(c.getPlayer().getPosition().getChunkYCentered());
+        outputBuffer.writeBigWordTypeA(c.getPlayer().getPosition().getChunkX()).
+                writeBigWord(c.getPlayer().getPosition().getChunkY());
         return this;
     }
 
@@ -394,9 +392,6 @@ public class OutgoingPacketBuilder {
     public OutgoingPacketBuilder playerUpdate() {
         Player player = c.getPlayer();
 
-        if (player.isRegionChanged()) {
-            updateRegion().send();
-        }
 
         IBufferReserve<OutputBuffer> reserve = createHeader(81, 2);
 
@@ -461,7 +456,10 @@ public class OutgoingPacketBuilder {
 
     private void updatePlayerMovement(Player player, boolean thisPlayer) {
 
-        if (thisPlayer && player.isTeleporting() || player.isRegionChanged()) {
+        if (thisPlayer && (player.isTeleporting() || player.isRegionChanged())) {
+
+            System.out.println("Sending region changed movement.");
+
              /*
               * Update required bit
              */
@@ -516,6 +514,7 @@ public class OutgoingPacketBuilder {
                     outputBuffer.writeBit(false);
                 }
             } else if (!player.getMovement().isRunning()) {
+                System.out.println("In update sending player direction : " + player.getMovement().getDirection());
                   /*
                    * The player moved but didn't run. Signify that an update is required.
                    */
@@ -529,7 +528,7 @@ public class OutgoingPacketBuilder {
                   /*
                    * Write the primary sprite (i.e. walk direction).
                    */
-                        .writeBits(3, player.getMovement().getDirection())
+                        .writeBits(player.getMovement().getDirection(), 3)
 
                   /*
                    * Write a flag indicating if a block update happened.

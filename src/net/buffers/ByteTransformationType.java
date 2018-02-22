@@ -1,4 +1,5 @@
 package net.buffers;
+
 /**
  * The enum Byte transformation type.
  */
@@ -9,7 +10,7 @@ public enum ByteTransformationType {
     A {
         @Override
         byte transformValue(byte value) {
-            return (byte) (value  + 128);
+            return (byte) (value + 128);
         }
     },
     /**

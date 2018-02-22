@@ -19,7 +19,6 @@ import world.World;
 import world.event.impl.Event;
 
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -44,10 +43,7 @@ public class WorldEventBus extends AbstractEventBus {
         List<EventHandler> handlers = getRegisteredEvents().get(c);
 
         if (handlers.size() == 0) {
-            WorldEventBus.logger.log(Level.INFO, "Firing event for " + c.getName() + " but no handlers exist");
             return;
-        } else {
-            WorldEventBus.logger.log(Level.INFO, "Firing event for " + c.getName());
         }
 
         world.submit(() -> {
@@ -55,7 +51,6 @@ public class WorldEventBus extends AbstractEventBus {
                 return;
             }
             handlers.forEach((h) -> {
-                WorldEventBus.logger.log(Level.INFO, "Firing handler");
                 h.handle(event);
             });
         });

@@ -409,18 +409,15 @@ public class OutputBuffer extends AbstractBuffer {
             byte current = out.get(bytePos);
             int shiftAmount = amount - remainingBits;
 
-            int bitsWritten = 0;
             if (shiftAmount < 0) {
-                bitsWritten = amount;
-                out.put(bytePos, (byte) (current | (value << -shiftAmount)));
+                out.put(bytePos, (byte) (current | (value << remainingBits - amount)));
             } else {
-                bitsWritten = remainingBits;
                 out.put(bytePos, (byte) (current | (value >> shiftAmount)));
             }
 
+            int bitsWritten = amount < remainingBits ? amount : remainingBits;
             bitIndex = (bitIndex + bitsWritten) % 8;
             amount -= bitsWritten;
-            value >>= remainingBits;
         }
         if (amount <= 0) {
             return this;
@@ -467,7 +464,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @return the output buffer
      */
     public OutputBuffer writeByte(int b, ByteTransformationType type) {
-        return writeByte(type.transformValue((byte)b));
+        return writeByte(type.transformValue((byte) b));
     }
 
 
@@ -535,7 +532,7 @@ public class OutputBuffer extends AbstractBuffer {
 
 
     private byte[] longToByteArray(long value, int numBytes, ByteTransformationType type) {
-        Preconditions.inRangeClosed(numBytes,1,8);
+        Preconditions.inRangeClosed(numBytes, 1, 8);
         Preconditions.notNull(type);
 
         int start = 0;
@@ -572,7 +569,6 @@ public class OutputBuffer extends AbstractBuffer {
             byte b = (byte) (value >> (i * 8));
 
             if (i == 0) {
-                //value = transformValue(value, type);
                 b = type.transformValue(b);
             }
 
@@ -666,7 +662,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @param x the x
      * @return the output buffer
      */
-    public OutputBuffer writeBigWORD(int x) {
+    public OutputBuffer writeBigWord(int x) {
         return order(Order.BIG_ENDIAN).writeBytes(x, 2, ByteTransformationType.NONE);
     }
 
@@ -676,8 +672,18 @@ public class OutputBuffer extends AbstractBuffer {
      * @param x the x
      * @return the output buffer
      */
-    public OutputBuffer writeBigWORDTypeA(int x) {
+    public OutputBuffer writeBigWordTypeA(int x) {
         return order(Order.BIG_ENDIAN).writeBytes(x, 2, ByteTransformationType.A);
+    }
+
+    /**
+     * Write big word type c output buffer.
+     *
+     * @param x the x
+     * @return the output buffer
+     */
+    public OutputBuffer writeBigWordTypeC(int x) {
+        return order(Order.BIG_ENDIAN).writeBytes(x, 2, ByteTransformationType.C);
     }
 
     /**
@@ -696,7 +702,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @param x the x
      * @return the output buffer
      */
-    public OutputBuffer writeLittleWORDA(int x) {
+    public OutputBuffer writeLittleWordTypeA(int x) {
         return order(Order.LITTLE_ENDIAN).writeBytes(x, 2, ByteTransformationType.A);
     }
 
@@ -817,7 +823,6 @@ public class OutputBuffer extends AbstractBuffer {
     public int remaining() {
         return out.remaining();
     }
-
 
 
     private class OutputBufferReserve implements IBufferReserve<OutputBuffer> {

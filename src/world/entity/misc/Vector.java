@@ -111,24 +111,27 @@ public class Vector {
         return x;
     }
 
-    public void setX(int x) {
+    public Vector setX(int x) {
         this.x = x;
+        return this;
     }
 
     public int getY() {
         return y;
     }
 
-    public void setY(int y) {
+    public Vector setY(int y) {
         this.y = y;
+        return this;
     }
 
     public int getZ() {
         return z;
     }
 
-    public void setZ(int z) {
+    public Vector setZ(int z) {
         this.z = z;
+        return this;
     }
 
     public Vector copy() {

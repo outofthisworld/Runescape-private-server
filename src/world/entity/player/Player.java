@@ -34,6 +34,7 @@ import world.entity.update.player.PlayerUpdateFlags;
 import world.entity.update.player.PlayerUpdateMask;
 import world.event.Event;
 import world.event.impl.PlayerMoveEvent;
+import world.event.impl.RegionUpdateEvent;
 import world.interfaces.SidebarInterface;
 import world.storage.AsyncPlayerStore;
 
@@ -457,19 +458,17 @@ public class Player extends Entity {
      * Init.
      */
     public void init() {
-        /*
-            Region changed when first logging in
-         */
-        setRegionChanged(true);
+
         /*
             Update appearance when first logging in
          */
         getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
 
+        getWorld().getEventBus().fire(new RegionUpdateEvent(this, null));
 
-        getClient().getOutgoingPacketBuilder().initPlayer(1, getSlotId()).send();
+        getClient().getOutgoingPacketBuilder().initPlayer(1, getSlotId());
 
-        getClient().getOutgoingPacketBuilder().setChatOptions(0, 0, 0).send();
+        getClient().getOutgoingPacketBuilder().setChatOptions(0, 0, 0);
 
         Skill[] skills = Skill.values();
         for (int i = 0; i < skills.length; i++) {
@@ -485,7 +484,6 @@ public class Player extends Entity {
 
     }
 
-
     @Override
     public void poll() {
 
@@ -496,7 +494,6 @@ public class Player extends Entity {
 
 
         getClient().getOutgoingPacketBuilder().playerUpdate().send();
-
 
         regionChanged = false;
         isTeleporting = false;
