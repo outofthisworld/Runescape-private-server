@@ -73,26 +73,26 @@ public final class Preconditions {
         Preconditions.inRangeOpen(amount, min, max);
     }
 
-    public static void lessThanOrEqualTo(int amount, int value) {
-        if (value > amount) {
+    public static void lessThanOrEqualTo(int amount, int check) {
+        if (check > amount) {
             Preconditions.throwIllegalArgumentException();
         }
     }
 
-    public static void lessThan(int amount, int value) {
-        if (value >= amount) {
+    public static void lessThan(int amount, int check) {
+        if (check >= amount) {
             Preconditions.throwIllegalArgumentException();
         }
     }
 
-    public static void greaterThanOrEqualTo(int amount, int value) {
-        if (amount < value) {
+    public static void greaterThanOrEqualTo(int amount, int check) {
+        if (amount < check) {
             Preconditions.throwIllegalArgumentException();
         }
     }
 
-    public static void greaterThan(int amount, int value) {
-        if (amount <= value) {
+    public static void greaterThan(int amount, int check) {
+        if (amount <= check) {
             Preconditions.throwIllegalArgumentException();
         }
     }

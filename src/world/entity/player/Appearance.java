@@ -1,25 +1,33 @@
 package world.entity.player;
 
+import util.Preconditions;
+
 public class Appearance {
+
     /**
      * The default appearance indices.
      */
-    public static final int[] DEFAULT_APPEARANCE = {18, 26, 36, 0, 33, 42, 10};
+    public static final int[] DEFAULT_APPEARANCE = {3, 19, 29, 35, 39, 44};
 
-    /**
+    /**	pHead = 3;
+     pTorso = 19;
+     pArms = 29;
+     pHands = 35;
+     pLegs = 39;
+     pFeet = 44;
      * The default clothes color indices.
      */
-    public static final int[] DEFAULT_COLORS = {7, 8, 9, 5, 0};
+    public static final int[] DEFAULT_COLORS = { 0, 5, 6, 4, 7, 10};
 
     /**
      * The appearance indices.
      */
-    private final int[] appearance = new int[13];
+    private final int[] appearance = new int[DEFAULT_APPEARANCE.length];
 
     /**
      * The clothes color indicates.
      */
-    private final int[] colors = new int[5];
+    private final int[] colors = new int[DEFAULT_COLORS.length];
     private final Player p;
     private int gender = 0;
 
@@ -33,12 +41,14 @@ public class Appearance {
     }
 
 
-    public int getAppearenceIndice(int i) {
-        return Appearance.DEFAULT_APPEARANCE[i];
+    public int getAppearence(AppearanceSlot slot) {
+        Preconditions.notNull(slot);
+        return appearance[slot.getId()];
     }
 
-    public int getColorIndice(int i) {
-        return Appearance.DEFAULT_APPEARANCE[i];
+    public int getColor(AppearanceSlot slot) {
+        Preconditions.notNull(slot);
+        return colors[slot.getId()];
     }
 
 

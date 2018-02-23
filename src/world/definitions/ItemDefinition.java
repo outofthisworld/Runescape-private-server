@@ -28,11 +28,6 @@ public final class ItemDefinition {
     private static final IDBAccessor<ItemDefinition> itemDB = new CollectionAccessor<>(new GsonSerializer<>(ItemDefinition.class), DatabaseConfig.ITEMS_COLLECTION);
     private static List<ItemDefinition> itemDefinitions = null;
 
-    static {
-        if (ItemDefinition.itemDefinitions == null) {
-            ItemDefinition.itemDefinitions = Collections.unmodifiableList(ItemDefinition.itemDB.findAll());
-        }
-    }
 
     private final int[] bonuses = new int[18];
     private int id;
@@ -61,7 +56,7 @@ public final class ItemDefinition {
 
     public static ItemDefinition getForId(int id) {
         if (ItemDefinition.itemDefinitions == null || id < 0 || id >= ItemDefinition.itemDefinitions.size()) {
-            return null;
+            throw new IllegalStateException("Invalid item definition id or item definitions were null");
         }
 
         return ItemDefinition.itemDefinitions.get(id);
@@ -153,5 +148,12 @@ public final class ItemDefinition {
 
     public int getSlotId() {
         return slotId;
+    }
+
+    public static void load(){
+        if (ItemDefinition.itemDefinitions != null) {
+            return;
+        }
+        ItemDefinition.itemDefinitions = Collections.unmodifiableList(ItemDefinition.itemDB.findAll());
     }
 }

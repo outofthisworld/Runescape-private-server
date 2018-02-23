@@ -15,6 +15,7 @@
 
 import net.Reactor;
 import world.WorldManager;
+import world.definitions.ItemDefinition;
 import world.task.DefaultThreadFactory;
 
 import java.io.IOException;
@@ -44,6 +45,7 @@ public class Bootstrap implements Runnable {
      */
     public void boot() {
         WorldManager.createWorld();
+        ItemDefinition.load();
         networkExecutor.submit(this);
     }
 

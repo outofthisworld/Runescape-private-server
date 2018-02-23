@@ -6,12 +6,16 @@ import net.buffers.Order;
 import net.buffers.OutputBuffer;
 import util.Preconditions;
 import util.RsUtils;
+import world.entity.player.EquipmentSlot;
 import world.entity.player.Player;
+import world.entity.player.containers.Container;
 import world.entity.update.IFlag;
 import world.entity.update.UpdateBlock;
+import world.item.Item;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -40,15 +44,39 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
                     put(PlayerUpdateMask.APPEARANCE, (entity, outputBuffer) -> {
                         IBufferReserve<OutputBuffer> reserve = outputBuffer.createByteReserve(1);
                         outputBuffer.writeByte(entity.getAppearance().getGender());
-                        //Dont know what these do...
-                        outputBuffer.writeByte(0);
-                        outputBuffer.writeByte(0);
-                        outputBuffer.writeByte(0);
-                        outputBuffer.writeByte(0);
-                        outputBuffer.writeByte(0);
+
+                        /*
+                            HEAD(0),
+                            CAPE(1),
+                            AMULET(2),
+                            WEAPON(3),
+                            CHEST(4),
+                            SHIELD(5),
+                            LEGS(7),
+                            HANDS(9),
+                            FEET(10),
+                            RING(12),
+                            ARROWS(13);
+                         */
+                        outputBuffer.writeByte(0); //head
+                        outputBuffer.writeByte(0); //cape
+                        outputBuffer.writeByte(0); //amulet
+                        outputBuffer.writeByte(0); //weapon
+                        outputBuffer.writeByte(0); //chest - torso
+                        outputBuffer.writeByte(0); // shield
+                        outputBuffer.writeByte(0); // legs
+                        outputBuffer.writeByte(0); // hands
+                        outputBuffer.writeByte(0); // feet
+
+
+                        /*if (!Equipment.isPlate(playerEquipment[playerChest])) {
+                            playerProps.writeWord(0x100 + pArms);
+                        } else {
+                            playerProps.writeByte(0);
+                        }*/
+
 
                         outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(0));
-                        outputBuffer.writeByte(0);
                         outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(1));
                         outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(2));
                         outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(3));

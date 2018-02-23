@@ -15,11 +15,12 @@
 
 package world.entity.player.containers;
 
+import util.Preconditions;
 import world.entity.player.EquipmentSlot;
 import world.entity.player.Player;
 import world.item.Item;
 
-public class Equipment {
+public class Equipment implements IContainer<Item> {
     private final Player p;
     private final Container<Item> equipment;
 
@@ -38,13 +39,18 @@ public class Equipment {
     }
 
     public void equip(EquipmentSlot e, int itemId) {
-
+        Preconditions.notNull(e);
+        Preconditions.greaterThan(itemId,0);
     }
 
     public void unEquip(EquipmentSlot e, int itemId) {
         if (p.getInventory().remaining() == 0) {
             p.getClient().getOutgoingPacketBuilder().sendMessage("Your inventory is currently full");
         }
+    }
+
+    public Container<Item> getContainer() {
+        return equipment;
     }
 
     public void refresh() {

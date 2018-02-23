@@ -18,7 +18,7 @@ package world.entity.player.containers;
 import world.entity.player.Player;
 import world.item.Item;
 
-public class Bank {
+public class Bank implements IContainer<Item>{
     private static final int BANK_SIZE = 200;
     private Player p;
     private Container<Item> bankItems;
@@ -35,5 +35,10 @@ public class Bank {
 
     public void removeBankItem(Item item) {
 
+    }
+
+    @Override
+    public Container<Item> getContainer() {
+        return bankItems;
     }
 }
