@@ -408,14 +408,19 @@ public class OutputBuffer extends AbstractBuffer {
             int bytePos = out.position() - 1;
             byte current = out.get(bytePos);
             int shiftAmount = amount - remainingBits;
-
-            if (shiftAmount < 0) {
-                out.put(bytePos, (byte) (current | (value << remainingBits - amount)));
-            } else {
-                out.put(bytePos, (byte) (current | (value >> shiftAmount)));
-            }
-
             int bitsWritten = amount < remainingBits ? amount : remainingBits;
+            int clearShiftAmount = 8 - bitsWritten + 56;
+
+            byte b;
+            if (shiftAmount < 0) {
+                b = (byte) (current | (value << remainingBits - amount));
+            } else {
+                long temp = (value >> shiftAmount);
+                temp = (temp << clearShiftAmount);
+                temp = (byte) (temp >>> clearShiftAmount);
+                b = (byte) (current | temp);
+            }
+            out.put(bytePos, b);
             bitIndex = (bitIndex + bitsWritten) % 8;
             amount -= bitsWritten;
         }

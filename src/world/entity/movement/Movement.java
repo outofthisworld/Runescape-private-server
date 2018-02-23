@@ -3,8 +3,6 @@ package world.entity.movement;
 import world.entity.Entity;
 import world.entity.misc.Position;
 import world.entity.player.Player;
-import world.event.impl.PlayerMoveEvent;
-import world.event.impl.RegionUpdateEvent;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -28,6 +26,10 @@ public class Movement {
 
     public Movement(Entity e) {
         this.e = e;
+    }
+
+    public Position getLastPosition() {
+        return lastPosition;
     }
 
     public void poll() {
@@ -63,8 +65,12 @@ public class Movement {
                 player.send(new RegionUpdateEvent(player, this));
             }*/
 
+           /*if(!e.getPosition().equals(player.getLastRegionPosition())){
+               player.send(new RegionUpdateEvent(player, this));
+           }*/
+
             //Send movement event
-            player.send(new PlayerMoveEvent(player, this));
+            /// player.send(new PlayerMoveEvent(player, this));
         }
 
 

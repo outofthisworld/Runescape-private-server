@@ -33,14 +33,14 @@ import world.entity.player.containers.Inventory;
 import world.entity.update.player.PlayerUpdateBlock;
 import world.entity.update.player.PlayerUpdateFlags;
 import world.entity.update.player.PlayerUpdateMask;
-import world.event.Event;
 import world.event.impl.AbstractEvent;
-import world.event.impl.PlayerMoveEvent;
 import world.event.impl.RegionUpdateEvent;
 import world.interfaces.SidebarInterface;
 import world.storage.AsyncPlayerStore;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -59,10 +59,6 @@ public class Player extends Entity {
      * e.g they fall within 15 x and y in the coordinate space.
      */
     private final HashSet<Player> localPlayers = new HashSet<>();
-    /**
-     * The queue of players awaiting to be added to the local players list.
-     */
-    private final Queue<Player> localPlayersQueue = new LinkedList<>();
     /**
      * The players skills
      */
@@ -379,63 +375,9 @@ public class Player extends Entity {
         return localPlayers;
     }
 
-    /**
-     * Gets local players queue.
-     *
-     * @return the local players queue
-     */
-    public Queue<Player> getLocalPlayersQueue() {
-        return localPlayersQueue;
-    }
-
     @Override
     public boolean isPlayer() {
         return true;
-    }
-
-    /**
-     * Takes care of building the local players list.
-     * <p>
-     * This may be more efficient than the 0(n^2) method of looping through the players list.
-     * <p>
-     * Which looks like
-     * for(Player p: world.getPlayers()){
-     * <p>
-     * for(Player other: world.getPlayers()){
-     * if(other == p) continue;
-     * if(p.getPosition().isWithinViewableDistance(other)){
-     * p.getLocalPlayersList().add(other);
-     * }
-     * }
-     * <p>
-     * }
-     * <p>
-     * This will have to be tested.
-     * <p>
-     * Reasons for being more efficient:
-     * This event is fired in between game loop executions on the World thread.
-     * As such, when the game loop runs it doesn't have to worry about building the local players list,
-     * As it has already been built.
-     */
-    @Event
-    private void buildLocalPlayerList(PlayerMoveEvent playerMoveEvent) {
-        System.out.println("in player move event");
-        Player movePlayer = playerMoveEvent.getPlayer();
-
-        if (movePlayer == this)
-            return;
-
-        Position movePosition = movePlayer.getPosition();
-        boolean isWithinViewableDistance = getPosition().isWithinXY(movePosition, 15)
-                && getPosition().isWithinZ(movePosition,0);
-        System.out.println("is within viewableDistance: " + isWithinViewableDistance);
-        if (!localPlayers.contains(movePlayer) && isWithinViewableDistance) {
-                /*
-                    The player has moved outside this players local players
-                */
-            localPlayersQueue.add(movePlayer);
-
-        }
     }
 
     /**
@@ -461,35 +403,13 @@ public class Player extends Entity {
      * Init.
      */
     public void init() {
-        Player thisPlayer = this;
         /*
             Update appearance when first logging in
          */
         getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
 
+        //Updates this players region in the world and sends region update packet
         send(new RegionUpdateEvent(this, null));
-
-        send(new PlayerMoveEvent(this,null));
-
-        //This should be quad region
-        Set<Player> playersInRegion = getWorld().getPlayersByQuadRegion(this.getPosition().getRegionPosition());
-
-        if(playersInRegion.size() == 0){
-            System.out.println("WARNING: no players in region");
-        }else{
-            System.out.println("INFO: found players in region");
-
-            playersInRegion.forEach(p->{
-                if(p == thisPlayer){
-                    return;
-                }
-                boolean isWithinViewableDistance = getPosition().isWithinXY(p.getPosition(), 15)
-                        && getPosition().isWithinZ(p.getPosition(),0);
-                if(isWithinViewableDistance){
-                    localPlayersQueue.add(p);
-                }
-            });
-        }
 
         getClient().getOutgoingPacketBuilder().initPlayer(1, getSlotId());
 
@@ -506,7 +426,6 @@ public class Player extends Entity {
 
         //System.out.println(getClient().getOutgoingPacketBuilder().bytesWritten());
         getClient().getOutgoingPacketBuilder().send();
-
     }
 
     /**
@@ -514,7 +433,7 @@ public class Player extends Entity {
      *
      * @param p the p
      */
-    public void send(OutgoingPacket p){
+    public void send(OutgoingPacket p) {
         getClient().write(p);
     }
 
@@ -523,7 +442,7 @@ public class Player extends Entity {
      *
      * @param e the e
      */
-    public void send(AbstractEvent e){
+    public void send(AbstractEvent e) {
         getWorld().getEventBus().fire(e);
     }
 

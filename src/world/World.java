@@ -228,7 +228,7 @@ public class World {
     public Set<Player> getPlayersByQuadRegion(Position regionPosition) {
         Set<Player> playersInQuadRegion = new HashSet<>();
 
-        Consumer<Set<Player>> addPlayersToQuadRegion =  (players)-> playersInQuadRegion.addAll(players);
+        Consumer<Set<Player>> addPlayersToQuadRegion = (players) -> playersInQuadRegion.addAll(players);
 
         getPlayersByRegion(regionPosition).ifPresent(addPlayersToQuadRegion);
 
@@ -328,7 +328,6 @@ public class World {
             //players.put()
             freePlayerSlots.add(slot);
         }, worldExecutorService);*/
-
     }
 
     /**
@@ -491,7 +490,6 @@ public class World {
         updatePlayerRegion(p);
         p.getClient().getOutgoingPacketBuilder().updateRegion();
         p.setRegionChanged(true);
-        p.setTeleporting(true);
     }
 
 

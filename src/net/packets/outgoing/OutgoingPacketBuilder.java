@@ -334,7 +334,7 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
-    private void appendPlayerUpdateBlock(Player player, OutputBuffer update) {
+    private void appendPlayerUpdateBlock(Player player, OutputBuffer update, boolean useCache) {
         Objects.requireNonNull(player);
 
         /*
@@ -355,7 +355,8 @@ public class OutgoingPacketBuilder {
         PlayerUpdateBlock pUpdateBlock;
 
 
-        if (playerUpdateBlockCache.contains(player.getUsername())) {
+        if (useCache && playerUpdateBlockCache.contains(player.getUsername())) {
+            System.out.println("Retrieve player from update block cache");
             pUpdateBlock = playerUpdateBlockCache.load(player.getUsername());
         } else {
             /*
@@ -403,7 +404,7 @@ public class OutgoingPacketBuilder {
         /*
             Append the current players update block.
          */
-        appendPlayerUpdateBlock(player, update);
+        appendPlayerUpdateBlock(player, update, false);
 
 
         outputBuffer.writeBits(player.getLocalPlayers().size(), 8);
@@ -413,11 +414,12 @@ public class OutgoingPacketBuilder {
 
             Player other = iterator.next();
 
-            boolean isWithinViewableDistance = player.getPosition().isWithinXY(other.getPosition(), 15)
-                    && player.getPosition().isWithinZ(other.getPosition(),0);
-            if (other.getWorld().getPlayer(other.getSlotId()) != null && isWithinViewableDistance) {
+
+            if (other.getWorld().getPlayer(other.getSlotId()) != null &&
+                    other.getWorld().getPlayer(other.getSlotId()).getUsername().equals(other.getUsername()) &&
+                    player.getPosition().isInViewingDistance(other.getPosition())) {
                 updatePlayerMovement(other, false);
-                appendPlayerUpdateBlock(other, update);
+                appendPlayerUpdateBlock(other, update, false);
             } else {
                 iterator.remove();
                 outputBuffer.writeBit(true);
@@ -425,21 +427,40 @@ public class OutgoingPacketBuilder {
             }
         }
 
-        Player awaitingLocalPlayer;
-        while ((awaitingLocalPlayer = player.getLocalPlayersQueue().poll()) != null) {
-            System.out.println("Updating local list for player: " + player.getUsername());
-            System.out.println("Adding player : " + awaitingLocalPlayer.getUsername());
-            //Adds a players to the local player list, and in-view of other players.
-            outputBuffer.writeBits(awaitingLocalPlayer.getSlotId(), 11)
-                    .writeBit(true)
-                    .writeBit(true)
-                    .writeBits(awaitingLocalPlayer.getPosition().getVector().getY() - player.getPosition().getVector().getY(), 5)
-                    .writeBits(awaitingLocalPlayer.getPosition().getVector().getX() - player.getPosition().getVector().getX(), 5);
+        //Find players in the surrounding area to this player
+        Set<Player> playersInRegion = player.getWorld().getPlayersByQuadRegion(player.getPosition().getRegionPosition());
 
-            player.getLocalPlayers().add(awaitingLocalPlayer);
-            awaitingLocalPlayer.getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
-            appendPlayerUpdateBlock(awaitingLocalPlayer, update);
-        }
+
+        //Add close players to the localPLayersQueue
+        playersInRegion.forEach(p -> {
+            if (p == player) {
+                return;
+            }
+
+            if (player.getLocalPlayers().contains(p)) {
+                return;
+            }
+
+            if (player.getPosition().isInViewingDistance(p.getPosition())) {
+                System.out.println("Updating local list for player: " + player.getUsername());
+                System.out.println("Adding player : " + p.getUsername());
+
+                int offsetY = p.getPosition().getVector().getY() - player.getPosition().getVector().getY();
+                int offsetX = p.getPosition().getVector().getX() - player.getPosition().getVector().getX();
+                System.out.println(offsetX);
+                System.out.println(offsetY);
+                //Adds a players to the local player list, and in-view of other players.
+                outputBuffer.writeBits(p.getSlotId(), 11)
+                        .writeBit(true)
+                        .writeBit(true)
+                        .writeBits(offsetY, 5)
+                        .writeBits(offsetX, 5);
+
+                player.getLocalPlayers().add(p);
+                p.getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
+                appendPlayerUpdateBlock(p, update, false);
+            }
+        });
 
 
         //1: our player movement
@@ -453,6 +474,7 @@ public class OutgoingPacketBuilder {
             outputBuffer.writeBits(2047, 11);
             update.pipeTo(outputBuffer, true);
         }
+
         //Write how many bytes the packet contains
         reserve.writeValue(reserve.bytesSinceReserve());
         update.clear();

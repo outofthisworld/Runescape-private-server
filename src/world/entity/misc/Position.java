@@ -403,7 +403,11 @@ public class Position {
         return v.getZ() - other.getVector().getZ();
     }
 
-    public Position copy(){
+    public boolean isInViewingDistance(Position other) {
+        return isWithinXY(other, 15) && isWithinZ(other, 0);
+    }
+
+    public Position copy() {
         return new Position(v.copy());
     }
 }
