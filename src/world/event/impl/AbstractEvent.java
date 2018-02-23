@@ -16,9 +16,9 @@
 package world.event.impl;
 
 /**
- * The type Event.
+ * The type AbstractEvent.
  */
-public abstract class Event {
+public abstract class AbstractEvent {
 
     /**
      * Gets sender.

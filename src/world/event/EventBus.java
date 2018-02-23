@@ -15,10 +15,10 @@
 
 package world.event;
 
-import world.event.impl.Event;
+import world.event.impl.AbstractEvent;
 
 /**
- * The interface Event bus.
+ * The interface AbstractEvent bus.
  */
 public interface EventBus {
     /**
@@ -28,7 +28,7 @@ public interface EventBus {
      * @param klazz   the klazz
      * @param handler the handler
      */
-    <T extends world.event.impl.Event> void register(Class<T> klazz, EventHandler<? super T> handler);
+    <T extends AbstractEvent> void register(Class<T> klazz, EventHandler<? super T> handler);
 
     /**
      * Fire.
@@ -36,7 +36,7 @@ public interface EventBus {
      * @param <T>   the type parameter
      * @param event the event
      */
-    <T extends Event> void fire(T event);
+    <T extends AbstractEvent> void fire(T event);
 
     /**
      * Register.

@@ -25,7 +25,6 @@ public class Movement {
     private Position lastPosition = null;
     private Position lastRegion = null;
     private int direction = -1;
-    private boolean wasFired = false;
 
     public Movement(Entity e) {
         this.e = e;
@@ -57,15 +56,15 @@ public class Movement {
             System.out.println(deltaX);
             System.out.println(deltaY);
 
-            Position regionPosition = player.getPosition().getRegionPosition();
+           /* Position regionPosition = player.getPosition().getRegionPosition();
             if (deltaX <= 16 || deltaX >= 88 || deltaY <= 16 || deltaY >= 88) {
                 System.out.println("firing region changed");
                 lastRegion = regionPosition;
-                e.getWorld().getEventBus().fire(new RegionUpdateEvent(player, this));
-            }
+                player.send(new RegionUpdateEvent(player, this));
+            }*/
 
             //Send movement event
-            e.getWorld().getEventBus().fire(new PlayerMoveEvent(player, this));
+            player.send(new PlayerMoveEvent(player, this));
         }
 
 

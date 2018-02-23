@@ -16,7 +16,7 @@
 package world.event;
 
 
-import world.event.impl.Event;
+import world.event.impl.AbstractEvent;
 
 import java.lang.annotation.AnnotationTypeMismatchException;
 import java.lang.reflect.InvocationTargetException;
@@ -39,7 +39,7 @@ public abstract class AbstractEventBus implements EventBus {
     protected final HashMap<Class<?>, List<EventHandler>> registeredEvents = new HashMap<>();
 
     @Override
-    public <T extends Event> void register(Class<T> klazz, EventHandler<? super T> handler) {
+    public <T extends AbstractEvent> void register(Class<T> klazz, EventHandler<? super T> handler) {
         List<EventHandler> handlers;
 
         if (registeredEvents.containsKey(klazz)) {
@@ -84,7 +84,7 @@ public abstract class AbstractEventBus implements EventBus {
     }
 
     @Override
-    public abstract <T extends Event> void fire(T event);
+    public abstract <T extends AbstractEvent> void fire(T event);
 
 
     /**

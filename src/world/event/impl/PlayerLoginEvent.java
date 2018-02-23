@@ -21,7 +21,7 @@ import world.entity.player.Player;
 /**
  * The type Player login event.
  */
-public class PlayerLoginEvent extends Event {
+public class PlayerLoginEvent extends AbstractEvent {
     private final LoginSessionDecoder decoder;
     private final Player player;
     private final String username;

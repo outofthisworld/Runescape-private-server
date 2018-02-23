@@ -348,7 +348,7 @@ public class Position {
      * @return the boolean
      */
     public boolean isWithinY(Position other, int y) {
-        return Math.abs(distanceBetweenX(other)) <= y;
+        return Math.abs(distanceBetweenY(other)) <= y;
     }
 
     /**
@@ -400,6 +400,10 @@ public class Position {
      * @return the int
      */
     public int distanceBetweenZ(Position other) {
-        return v.getY() - other.getVector().getY();
+        return v.getZ() - other.getVector().getZ();
+    }
+
+    public Position copy(){
+        return new Position(v.copy());
     }
 }

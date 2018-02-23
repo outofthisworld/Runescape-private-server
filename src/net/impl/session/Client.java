@@ -401,7 +401,7 @@ public class Client implements NetworkEventExecutor {
         isDisconnected = true;
 
         if (player != null)
-            player.getWorld().getEventBus().fire(new ClientDisconnectEvent(this));
+            player.send(new ClientDisconnectEvent(this));
     }
 
     /**

@@ -4,7 +4,7 @@ import util.Preconditions;
 import world.entity.movement.Movement;
 import world.entity.player.Player;
 
-public class PlayerMoveEvent extends Event {
+public class PlayerMoveEvent extends AbstractEvent {
     private final Player e;
     private final Movement movement;
 

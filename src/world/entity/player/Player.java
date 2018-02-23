@@ -22,6 +22,7 @@ import database.serialization.impl.FieldToIdPolicy;
 import database.serialization.impl.PlayerSkipFieldPolicy;
 import net.impl.decoder.LoginProtocolConstants;
 import net.impl.session.Client;
+import net.packets.outgoing.OutgoingPacket;
 import sun.plugin.dom.exception.InvalidStateException;
 import util.Preconditions;
 import world.entity.Entity;
@@ -33,6 +34,7 @@ import world.entity.update.player.PlayerUpdateBlock;
 import world.entity.update.player.PlayerUpdateFlags;
 import world.entity.update.player.PlayerUpdateMask;
 import world.event.Event;
+import world.event.impl.AbstractEvent;
 import world.event.impl.PlayerMoveEvent;
 import world.event.impl.RegionUpdateEvent;
 import world.interfaces.SidebarInterface;
@@ -158,6 +160,11 @@ public class Player extends Entity {
         return Player.asyncPlayerStore().load(p).thenApplyAsync(Optional::ofNullable);
     }
 
+    /**
+     * Gets appearance.
+     *
+     * @return the appearance
+     */
     public Appearance getAppearance() {
         return appearance;
     }
@@ -372,6 +379,11 @@ public class Player extends Entity {
         return localPlayers;
     }
 
+    /**
+     * Gets local players queue.
+     *
+     * @return the local players queue
+     */
     public Queue<Player> getLocalPlayersQueue() {
         return localPlayersQueue;
     }
@@ -407,6 +419,7 @@ public class Player extends Entity {
      */
     @Event
     private void buildLocalPlayerList(PlayerMoveEvent playerMoveEvent) {
+        System.out.println("in player move event");
         Player movePlayer = playerMoveEvent.getPlayer();
 
         if (movePlayer == this)
@@ -414,24 +427,14 @@ public class Player extends Entity {
 
         Position movePosition = movePlayer.getPosition();
         boolean isWithinViewableDistance = getPosition().isWithinXY(movePosition, 15)
-                && getPosition().isWithinZ(movePosition, 0);
-        if (localPlayers.contains(movePlayer)) {
-
-            if (!isWithinViewableDistance) {
+                && getPosition().isWithinZ(movePosition,0);
+        System.out.println("is within viewableDistance: " + isWithinViewableDistance);
+        if (!localPlayers.contains(movePlayer) && isWithinViewableDistance) {
                 /*
                     The player has moved outside this players local players
                 */
-                localPlayers.remove(movePlayer);
-            }
+            localPlayersQueue.add(movePlayer);
 
-        } else {
-
-            if (isWithinViewableDistance) {
-                /*
-                    The player has moved outside this players local players
-                */
-                localPlayersQueue.add(movePlayer);
-            }
         }
     }
 
@@ -458,13 +461,35 @@ public class Player extends Entity {
      * Init.
      */
     public void init() {
-
+        Player thisPlayer = this;
         /*
             Update appearance when first logging in
          */
         getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
 
-        getWorld().getEventBus().fire(new RegionUpdateEvent(this, null));
+        send(new RegionUpdateEvent(this, null));
+
+        send(new PlayerMoveEvent(this,null));
+
+        //This should be quad region
+        Set<Player> playersInRegion = getWorld().getPlayersByQuadRegion(this.getPosition().getRegionPosition());
+
+        if(playersInRegion.size() == 0){
+            System.out.println("WARNING: no players in region");
+        }else{
+            System.out.println("INFO: found players in region");
+
+            playersInRegion.forEach(p->{
+                if(p == thisPlayer){
+                    return;
+                }
+                boolean isWithinViewableDistance = getPosition().isWithinXY(p.getPosition(), 15)
+                        && getPosition().isWithinZ(p.getPosition(),0);
+                if(isWithinViewableDistance){
+                    localPlayersQueue.add(p);
+                }
+            });
+        }
 
         getClient().getOutgoingPacketBuilder().initPlayer(1, getSlotId());
 
@@ -482,6 +507,24 @@ public class Player extends Entity {
         //System.out.println(getClient().getOutgoingPacketBuilder().bytesWritten());
         getClient().getOutgoingPacketBuilder().send();
 
+    }
+
+    /**
+     * Send.
+     *
+     * @param p the p
+     */
+    public void send(OutgoingPacket p){
+        getClient().write(p);
+    }
+
+    /**
+     * Send.
+     *
+     * @param e the e
+     */
+    public void send(AbstractEvent e){
+        getWorld().getEventBus().fire(e);
     }
 
     @Override

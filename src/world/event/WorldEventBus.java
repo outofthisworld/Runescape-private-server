@@ -16,7 +16,7 @@
 package world.event;
 
 import world.World;
-import world.event.impl.Event;
+import world.event.impl.AbstractEvent;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -38,7 +38,7 @@ public class WorldEventBus extends AbstractEventBus {
     }
 
     @Override
-    public <T extends Event> void fire(T event) {
+    public <T extends AbstractEvent> void fire(T event) {
         Class<?> c = event.getClass().isAnonymousClass() ? event.getClass().getSuperclass() : event.getClass();
         List<EventHandler> handlers = getRegisteredEvents().get(c);
 

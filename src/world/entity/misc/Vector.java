@@ -26,6 +26,16 @@ public class Vector {
         return this;
     }
 
+    public Vector subtractX(int x) {
+        this.x -= x;
+        return this;
+    }
+
+    public Vector subtractY(int y) {
+        this.y -= y;
+        return this;
+    }
+
     public Vector subtract(Vector other) {
         x -= other.x;
         y -= other.y;

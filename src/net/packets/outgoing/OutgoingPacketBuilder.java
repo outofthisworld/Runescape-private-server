@@ -22,6 +22,7 @@ import net.buffers.OutputBuffer;
 import net.impl.session.Client;
 import world.entity.player.Player;
 import world.entity.update.player.PlayerUpdateBlock;
+import world.entity.update.player.PlayerUpdateMask;
 import world.storage.SimpleCache;
 
 import java.util.*;
@@ -413,7 +414,7 @@ public class OutgoingPacketBuilder {
             Player other = iterator.next();
 
             boolean isWithinViewableDistance = player.getPosition().isWithinXY(other.getPosition(), 15)
-                    && player.getPosition().isWithinZ(other.getPosition(), 0);
+                    && player.getPosition().isWithinZ(other.getPosition(),0);
             if (other.getWorld().getPlayer(other.getSlotId()) != null && isWithinViewableDistance) {
                 updatePlayerMovement(other, false);
                 appendPlayerUpdateBlock(other, update);
@@ -426,6 +427,8 @@ public class OutgoingPacketBuilder {
 
         Player awaitingLocalPlayer;
         while ((awaitingLocalPlayer = player.getLocalPlayersQueue().poll()) != null) {
+            System.out.println("Updating local list for player: " + player.getUsername());
+            System.out.println("Adding player : " + awaitingLocalPlayer.getUsername());
             //Adds a players to the local player list, and in-view of other players.
             outputBuffer.writeBits(awaitingLocalPlayer.getSlotId(), 11)
                     .writeBit(true)
@@ -433,6 +436,8 @@ public class OutgoingPacketBuilder {
                     .writeBits(awaitingLocalPlayer.getPosition().getVector().getY() - player.getPosition().getVector().getY(), 5)
                     .writeBits(awaitingLocalPlayer.getPosition().getVector().getX() - player.getPosition().getVector().getX(), 5);
 
+            player.getLocalPlayers().add(awaitingLocalPlayer);
+            awaitingLocalPlayer.getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
             appendPlayerUpdateBlock(awaitingLocalPlayer, update);
         }
 

@@ -35,6 +35,7 @@ import world.task.Task;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -216,11 +217,38 @@ public class World {
      * The set returned is unmodifiable.
      */
     public Optional<Set<Player>> getPlayersByRegion(Position regionPosition) {
+        Preconditions.notNull(regionPosition);
         if (!playersByRegion.containsKey(regionPosition)) {
             return Optional.empty();
         }
 
         return Optional.of(Collections.unmodifiableSet(playersByRegion.get(regionPosition)));
+    }
+
+    public Set<Player> getPlayersByQuadRegion(Position regionPosition) {
+        Set<Player> playersInQuadRegion = new HashSet<>();
+
+        Consumer<Set<Player>> addPlayersToQuadRegion =  (players)-> playersInQuadRegion.addAll(players);
+
+        getPlayersByRegion(regionPosition).ifPresent(addPlayersToQuadRegion);
+
+        Position rightRegion = regionPosition.copy();
+        rightRegion.getVector().addX(1);
+        getPlayersByRegion(rightRegion).ifPresent(addPlayersToQuadRegion);
+
+        Position leftRegion = regionPosition.copy();
+        leftRegion.getVector().subtractX(1);
+        getPlayersByRegion(leftRegion).ifPresent(addPlayersToQuadRegion);
+
+        Position topRegion = regionPosition.copy();
+        topRegion.getVector().addY(1);
+        getPlayersByRegion(topRegion).ifPresent(addPlayersToQuadRegion);
+
+        Position bottomRegion = regionPosition.copy();
+        topRegion.getVector().subtractY(1);
+        getPlayersByRegion(bottomRegion).ifPresent(addPlayersToQuadRegion);
+
+        return playersInQuadRegion;
     }
 
     private void addPlayerToRegion(Player p, Position regionPosition) {
@@ -463,6 +491,7 @@ public class World {
         updatePlayerRegion(p);
         p.getClient().getOutgoingPacketBuilder().updateRegion();
         p.setRegionChanged(true);
+        p.setTeleporting(true);
     }
 
 

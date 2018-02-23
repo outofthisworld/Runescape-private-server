@@ -117,15 +117,12 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
         }
         c.setOutCipher(new ISAACCipher(sessionKey));
 
-        World world = WorldManager.getWorld(0);
-
-
         Player p = new Player();
         p.setUsername(username);
         p.setClient(c);
 
         LoginSessionDecoder.logger.log(Level.INFO, "Firing player login event");
-        world.getEventBus().fire(new PlayerLoginEvent(p, username, password, this));
+        p.send(new PlayerLoginEvent(p, username, password, this));
     }
 
     public void sendResponse(Client c, int responseCode, int playerRights) {
