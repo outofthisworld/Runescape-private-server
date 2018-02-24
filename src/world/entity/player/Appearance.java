@@ -9,15 +9,16 @@ public class Appearance {
      */
     public static final int[] DEFAULT_APPEARANCE = {3, 19, 29, 35, 39, 44};
 
-    /**	pHead = 3;
-     pTorso = 19;
-     pArms = 29;
-     pHands = 35;
-     pLegs = 39;
-     pFeet = 44;
+    /**
+     * pHead = 3;
+     * pTorso = 19;
+     * pArms = 29;
+     * pHands = 35;
+     * pLegs = 39;
+     * pFeet = 44;
      * The default clothes color indices.
      */
-    public static final int[] DEFAULT_COLORS = { 0, 5, 6, 4, 7, 10};
+    public static final int[] DEFAULT_COLORS = {0, 5, 6, 4, 7, 10};
 
     /**
      * The appearance indices.

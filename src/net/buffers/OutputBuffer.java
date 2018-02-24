@@ -279,6 +279,14 @@ public class OutputBuffer extends AbstractBuffer {
         return this;
     }
 
+    public int limit() {
+        return out.limit();
+    }
+
+    public int capacity() {
+        return out.capacity();
+    }
+
     /**
      * Pipe to output buffer.
      *

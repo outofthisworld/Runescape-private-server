@@ -89,7 +89,7 @@ public class Container<T> extends AbstractList<T> implements List<T> {
      * @return the int
      */
     public int getNextFreeSlot() {
-        if(remaining() == 0){
+        if (remaining() == 0) {
             return -1;
         }
         return removedIndex.isEmpty() ? cursor : removedIndex.toArray(new Integer[]{})[0];

@@ -9,9 +9,11 @@ public enum AppearanceSlot {
     FEET(5);
 
     private int id;
-    AppearanceSlot(int id){
+
+    AppearanceSlot(int id) {
         this.id = id;
     }
+
     public int getId() {
         return id;
     }

@@ -45,27 +45,31 @@ public class PlayerCommandPacket extends IncomingPacket {
         if (!scanner.hasNext()) return;
 
         String input = scanner.next().toLowerCase().trim();
+
+        System.out.println("Received player command : " + input);
         switch (input) {
             case "tele":
-
-                int count = 0;
-                while (scanner.hasNextInt()) {
-                    count++;
-                }
-
-                if (count < 2) {
-                    c.getOutgoingPacketBuilder()
-                            .sendMessage("Invalid command format, usage - ::tele x y [z]").send();
-                }
 
                 int x = scanner.nextInt();
                 int y = scanner.nextInt();
                 int z = 0;
 
-                if (count == 3) z = scanner.nextInt();
+                if (scanner.hasNextInt()) z = scanner.nextInt();
 
                 p.getPosition().getVector().setX(x).setY(y).setZ(z);
                 p.getWorld().getEventBus().fire(new RegionUpdateEvent(p, null));
+                break;
+            case "spawn":
+                System.out.println("in spawn cmd");
+
+
+                int itemId = scanner.nextInt();
+                System.out.println("item id: " + itemId);
+                // System.out.println(scanner.nextInt());
+                // int amount = scanner.nextInt();
+
+
+                p.getClient().getOutgoingPacketBuilder().updateSingleItem(3214, 1, itemId, 1).send();
                 break;
             case "coords":
                 c.getOutgoingPacketBuilder()

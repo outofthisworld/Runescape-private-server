@@ -48,6 +48,10 @@ public class WalkingPacket extends IncomingPacket {
             return;
         }
 
+        if (steps < 0) {
+            return;
+        }
+
         int[][] path = new int[steps][2];
 
         int targetX = in.readLittleUnsignedWordTypeA();
@@ -60,7 +64,9 @@ public class WalkingPacket extends IncomingPacket {
         int targetY = in.readLittleUnsignedWORD();
         int run = in.readUnsignedByte(ByteTransformationType.C);
         boolean shouldRun = run == 1;
+        System.out.println("should run: " + shouldRun);
 
+        c.getPlayer().getMovement().setRunning(true);
         c.getPlayer().getMovement().beginMovement();
         c.getPlayer().getMovement().stepTo(targetX, targetY);
         for (int i = 0; i < steps; i++) {

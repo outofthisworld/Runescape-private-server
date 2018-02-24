@@ -54,6 +54,9 @@ public abstract class WorldTask implements Task {
 
     @Override
     public boolean check() {
+        if (repeatTimes <= 0) {
+            return false;
+        }
 
         //Wait until the initial delay has finished
         if (initialDelayCount > 0) {
@@ -61,14 +64,11 @@ public abstract class WorldTask implements Task {
             return false;
         }
 
-
         if (initialDelayCount == 0 && numExecutionsCount > 0) {
             numExecutionsCount--;
+            initialDelayCount--;
+            handleReset();
             return true;
-        }
-
-        if (initialDelayCount == 0 && numExecutionsCount == 0) {
-            numExecutionsCount = numExecutions;
         }
 
         if (repeatedDelayCount > 0) {
@@ -78,24 +78,25 @@ public abstract class WorldTask implements Task {
 
         if (repeatedDelayCount == 0 && numExecutionsCount > 0) {
             numExecutionsCount--;
+            repeatedDelayCount = repeatedDelayTicks;
+            handleReset();
             return true;
         }
 
-        if (repeatedDelayCount == 0 && numExecutionsCount == 0) {
+        return false;
+    }
+
+    private void handleReset() {
+        if (numExecutionsCount == 0) {
+            repeatTimes--;
             if (repeatTimes > 0) {
-                repeatTimes--;
-            }
-            if (repeatInitialDelay) {
-                initialDelayCount = initialDelayTicks;
-            }
-            numExecutionsCount = numExecutions;
-            repeatedDelayCount = repeatedDelayTicks;
-            if (repeatTimes != 0) {
-                return true;
+                if (repeatInitialDelay) {
+                    initialDelayCount = initialDelayTicks;
+                }
+                numExecutionsCount = numExecutions;
+                repeatedDelayCount = repeatedDelayTicks;
             }
         }
-
-        return false;
     }
 
     @Override

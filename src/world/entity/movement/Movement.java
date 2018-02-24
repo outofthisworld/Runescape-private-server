@@ -18,11 +18,12 @@ public class Movement {
     public static final int SOUTH = 6;
     public static final int SOUTH_EAST = 7;
     private final Entity e;
-    private final boolean isRunning = false;
     private final Deque<Position> movementQueue = new LinkedList<>();
+    private boolean isRunning = false;
     private Position lastPosition = null;
-    private Position lastRegion = null;
-    private int direction = -1;
+    private int walkDirection = -1;
+    private int runDirection = -1;
+    private int runEnergy = 100;
 
     public Movement(Entity e) {
         this.e = e;
@@ -32,21 +33,41 @@ public class Movement {
         return lastPosition;
     }
 
+    public int getRunDirection() {
+        return runDirection;
+    }
+
+    public int getRunEnergy() {
+        return runEnergy;
+    }
+
     public void poll() {
         Position movementPosition = movementQueue.poll();
 
         if (movementPosition == null) {
-            resetMovement();
+            walkDirection = -1;
+            runDirection = -1;
             return;
         }
 
-        System.out.println("Movement position x: " + movementPosition.getVector());
-
-        direction = parseDirection(movementPosition.getVector().getX() - lastPosition.getVector().getX(),
+        walkDirection = parseDirection(movementPosition.getVector().getX() - lastPosition.getVector().getX(),
                 movementPosition.getVector().getY() - lastPosition.getVector().getY());
 
+        Position runPosition = null;
 
-        e.getPosition().setVector(movementPosition.getVector());
+        if (isRunning) {
+            runPosition = movementQueue.poll();
+
+            if (runPosition != null) {
+                runDirection = parseDirection(runPosition.getVector().getX() - movementPosition.getVector().getX(),
+                        runPosition.getVector().getY() - movementPosition.getVector().getY());
+            } else {
+                runDirection = -1;
+            }
+        }
+
+
+        e.getPosition().setVector(runPosition == null ? movementPosition.getVector().copy() : runPosition.getVector().copy());
 
         if (e.isPlayer()) {
             Player player = (Player) e;
@@ -55,8 +76,6 @@ public class Movement {
 
             int deltaY = player.getPosition().getMapOffsetY();
 
-            System.out.println(deltaX);
-            System.out.println(deltaY);
 
            /* Position regionPosition = player.getPosition().getRegionPosition();
             if (deltaX <= 16 || deltaX >= 88 || deltaY <= 16 || deltaY >= 88) {
@@ -79,22 +98,24 @@ public class Movement {
     }
 
     public boolean isMoving() {
-        return direction != -1;
+        return walkDirection != -1;
     }
 
     public boolean isRunning() {
-        return isRunning;
+        return runDirection != -1;
     }
 
-    public int getDirection() {
-        return direction;
+    public void setRunning(boolean running) {
+        isRunning = running;
+    }
+
+    public int getWalkDirection() {
+        return walkDirection;
     }
 
     public void resetMovement() {
         lastPosition = null;
-        lastRegion = null;
         movementQueue.clear();
-        direction = -1;
     }
 
     public void beginMovement() {
@@ -109,7 +130,6 @@ public class Movement {
             throw new IllegalStateException("Movement has not begun");
         }
         lastPosition = movementQueue.poll();
-        lastRegion = e.getPosition().getRegionPosition();
     }
 
     public void stepTo(int x, int y) {
@@ -122,8 +142,6 @@ public class Movement {
 
         int dx = x - entityPosition.getVector().getX();
         int dy = y - entityPosition.getVector().getY();
-        System.out.println("dx : " + dx);
-        System.out.println("dy: " + dy);
 
         int max = Math.max(Math.abs(dx), Math.abs(dy));
 
@@ -143,11 +161,6 @@ public class Movement {
             }
             movementQueue.addLast(new Position(x - dx, y - dy, 0));
         }
-
-        System.out.println("Built movement queue:");
-        movementQueue.forEach(e -> {
-            System.out.println("x: " + e.getVector().getX() + " y: " + e.getVector().getY());
-        });
     }
 
     private int parseDirection(int deltaX, int deltaY) {

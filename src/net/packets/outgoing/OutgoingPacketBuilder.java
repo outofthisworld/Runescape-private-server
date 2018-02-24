@@ -20,6 +20,7 @@ import net.buffers.IBufferReserve;
 import net.buffers.Order;
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
+import util.Preconditions;
 import world.entity.player.Player;
 import world.entity.update.player.PlayerUpdateBlock;
 import world.entity.update.player.PlayerUpdateMask;
@@ -286,6 +287,13 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
+    public OutgoingPacketBuilder setRunEnergy(int runEnergy) {
+        Preconditions.inRangeClosed(runEnergy, 0, 100);
+        createHeader(OutgoingPacket.Opcodes.SEND_RUN_ENERGY_LEVEL)
+                .writeByte(runEnergy);
+        return this;
+    }
+
     /**
      * 97: Displays a normal interface.
      *
@@ -334,7 +342,44 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
-    private void appendPlayerUpdateBlock(Player player, OutputBuffer update, boolean useCache) {
+    /*
+            needDrawTabArea = true;
+				int i9 = inStream.readUnsignedWord(); //interface id
+				RSInterface rSInterface_2 = RSInterface.interfaceCache[i9];
+				while (inStream.currentOffset < pktSize) {
+					int j20 = inStream.method422(); //slot
+					int i23 = inStream.readUnsignedWord(); //item id
+					int l25 = inStream.readUnsignedByte();//amount
+					if (l25 == 255) {
+						l25 = inStream.readDWord();
+					}
+					if (j20 >= 0 && j20 < rSInterface_2.inv.length) {
+						rSInterface_2.inv[j20] = i23;
+						rSInterface_2.invStackSizes[j20] = l25;
+					}
+				}
+				pktType = -1;
+     */
+    public OutgoingPacketBuilder updateSingleItem(int interfaceId, int slot, int itemId, int amount) {
+        IBufferReserve<OutputBuffer> res = createHeader(34, 2);
+        outputBuffer.writeBigWord(interfaceId);
+        if (slot < 128) {
+            outputBuffer.writeByte(slot);
+        } else {
+            outputBuffer.writeBigWord(slot); // + 32768??
+        }
+        outputBuffer.writeBigWord(itemId);
+        if (amount > 254) {
+            outputBuffer.writeByte(255);
+            outputBuffer.writeBigDWORD(itemId);
+        } else {
+            outputBuffer.writeByte(amount);
+        }
+        res.writeBytesSinceReserve();
+        return this;
+    }
+
+    private void appendPlayerUpdateBlock(Player player, OutputBuffer update) {
         Objects.requireNonNull(player);
 
         /*
@@ -352,13 +397,18 @@ public class OutgoingPacketBuilder {
         /*
             The player update block, either built or retrieved from the cache.
          */
-        PlayerUpdateBlock pUpdateBlock;
+        PlayerUpdateBlock pUpdateBlock = null;
 
 
-        if (useCache && playerUpdateBlockCache.contains(player.getUsername())) {
-            System.out.println("Retrieve player from update block cache");
+        if (playerUpdateBlockCache.contains(player.getUsername())) {
             pUpdateBlock = playerUpdateBlockCache.load(player.getUsername());
-        } else {
+
+            if (pUpdateBlock.getMask() != player.getUpdateFlags().getMask()) {
+                pUpdateBlock = null;
+            }
+        }
+
+        if (pUpdateBlock == null) {
             /*
                 Build the player update block from the flags.
             */
@@ -370,7 +420,7 @@ public class OutgoingPacketBuilder {
         }
 
         //Pipe the update block to the current outputBuffer and rewind so the update block can be used again.
-        pUpdateBlock.getBlock().pipeTo(update, false).rewind();
+        pUpdateBlock.getBlock().pipeTo(update, false);
     }
 
     public OutgoingPacketBuilder updateRegion() {
@@ -404,7 +454,7 @@ public class OutgoingPacketBuilder {
         /*
             Append the current players update block.
          */
-        appendPlayerUpdateBlock(player, update, false);
+        appendPlayerUpdateBlock(player, update);
 
 
         outputBuffer.writeBits(player.getLocalPlayers().size(), 8);
@@ -419,7 +469,7 @@ public class OutgoingPacketBuilder {
                     other.getWorld().getPlayer(other.getSlotId()).getUsername().equals(other.getUsername()) &&
                     player.getPosition().isInViewingDistance(other.getPosition())) {
                 updatePlayerMovement(other, false);
-                appendPlayerUpdateBlock(other, update, false);
+                appendPlayerUpdateBlock(other, update);
             } else {
                 iterator.remove();
                 outputBuffer.writeBit(true);
@@ -430,8 +480,6 @@ public class OutgoingPacketBuilder {
         //Find players in the surrounding area to this player
         Set<Player> playersInRegion = player.getWorld().getPlayersByQuadRegion(player.getPosition().getRegionPosition());
 
-
-        //Add close players to the localPLayersQueue
         playersInRegion.forEach(p -> {
             if (p == player) {
                 return;
@@ -458,7 +506,7 @@ public class OutgoingPacketBuilder {
 
                 player.getLocalPlayers().add(p);
                 p.getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
-                appendPlayerUpdateBlock(p, update, false);
+                appendPlayerUpdateBlock(p, update);
             }
         });
 
@@ -541,7 +589,7 @@ public class OutgoingPacketBuilder {
                     outputBuffer.writeBit(false);
                 }
             } else if (!player.getMovement().isRunning()) {
-                System.out.println("In update sending player direction : " + player.getMovement().getDirection());
+                System.out.println("Sending move . " + player.getMovement().getWalkDirection());
                   /*
                    * The player moved but didn't run. Signify that an update is required.
                    */
@@ -555,7 +603,7 @@ public class OutgoingPacketBuilder {
                   /*
                    * Write the primary sprite (i.e. walk direction).
                    */
-                        .writeBits(player.getMovement().getDirection(), 3)
+                        .writeBits(player.getMovement().getWalkDirection(), 3)
 
                   /*
                    * Write a flag indicating if a block update happened.
@@ -564,6 +612,9 @@ public class OutgoingPacketBuilder {
 
 
             } else {
+                System.out.println("Running : ");
+                System.out.println("Walk dir : " + player.getMovement().getWalkDirection());
+                System.out.println("Run dir : " + player.getMovement().getRunDirection());
                   /*
                    * The player ran. Signify that an update happened.
                    */
@@ -577,12 +628,12 @@ public class OutgoingPacketBuilder {
                   /*
                    * Write the primary sprite (i.e. walk direction).
                    */
-                        .writeBits(3, player.getMovement().getDirection())
+                        .writeBits(player.getMovement().getWalkDirection(), 3)
 
                   /*
                    * Write the secondary sprite (i.e. run direction).
                    */
-                        .writeBits(3, player.getMovement().getDirection())
+                        .writeBits(player.getMovement().getRunDirection(), 3)
 
                   /*
                    * Write a flag indicating if a block update happened.

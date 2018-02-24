@@ -39,6 +39,7 @@ import world.interfaces.SidebarInterface;
 import world.storage.AsyncPlayerStore;
 
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -58,7 +59,7 @@ public class Player extends Entity {
      * Players local to this player
      * e.g they fall within 15 x and y in the coordinate space.
      */
-    private final HashSet<Player> localPlayers = new HashSet<>();
+    private final HashSet<Player> localPlayers = new LinkedHashSet<>();
     /**
      * The players skills
      */
@@ -423,6 +424,11 @@ public class Player extends Entity {
         for (SidebarInterface i : SidebarInterface.values()) {
             getClient().getOutgoingPacketBuilder().setSidebarInterface(i.ordinal(), i.getInterfaceId());
         }
+
+        getClient().getOutgoingPacketBuilder().setRunEnergy(getMovement().getRunEnergy());
+
+        getClient().getOutgoingPacketBuilder().sendMessage("Welcome to TriScape");
+        getClient().getOutgoingPacketBuilder().sendMessage("Enjoy your time on the server!");
 
         //System.out.println(getClient().getOutgoingPacketBuilder().bytesWritten());
         getClient().getOutgoingPacketBuilder().send();

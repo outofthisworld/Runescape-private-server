@@ -40,7 +40,7 @@ public class Equipment implements IContainer<Item> {
 
     public void equip(EquipmentSlot e, int itemId) {
         Preconditions.notNull(e);
-        Preconditions.greaterThan(itemId,0);
+        Preconditions.greaterThan(itemId, 0);
     }
 
     public void unEquip(EquipmentSlot e, int itemId) {

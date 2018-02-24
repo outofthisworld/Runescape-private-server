@@ -6,16 +6,14 @@ import net.buffers.Order;
 import net.buffers.OutputBuffer;
 import util.Preconditions;
 import util.RsUtils;
+import world.entity.player.AppearanceSlot;
 import world.entity.player.EquipmentSlot;
 import world.entity.player.Player;
-import world.entity.player.containers.Container;
 import world.entity.update.IFlag;
 import world.entity.update.UpdateBlock;
-import world.item.Item;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -44,7 +42,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
                     put(PlayerUpdateMask.APPEARANCE, (entity, outputBuffer) -> {
                         IBufferReserve<OutputBuffer> reserve = outputBuffer.createByteReserve(1);
                         outputBuffer.writeByte(entity.getAppearance().getGender());
-
+                        outputBuffer.writeByte(0);
                         /*
                             HEAD(0),
                             CAPE(1),
@@ -58,42 +56,76 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
                             RING(12),
                             ARROWS(13);
                          */
-                        outputBuffer.writeByte(0); //head
-                        outputBuffer.writeByte(0); //cape
-                        outputBuffer.writeByte(0); //amulet
-                        outputBuffer.writeByte(0); //weapon
-                        outputBuffer.writeByte(0); //chest - torso
-                        outputBuffer.writeByte(0); // shield
-                        outputBuffer.writeByte(0); // legs
-                        outputBuffer.writeByte(0); // hands
-                        outputBuffer.writeByte(0); // feet
-
-
-                        /*if (!Equipment.isPlate(playerEquipment[playerChest])) {
-                            playerProps.writeWord(0x100 + pArms);
+                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.HEAD.getSlotId())) {
+                            outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearence(AppearanceSlot.HEAD)); //head
                         } else {
-                            playerProps.writeByte(0);
-                        }*/
+                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.HEAD.getSlotId()).getItemDefinition().getId());
+                        }
 
+                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.CAPE.getSlotId())) {
+                            outputBuffer.writeByte(0);
+                        } else {
+                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.CAPE.getSlotId()).getItemDefinition().getId());
+                        }
 
-                        outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(0));
-                        outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(1));
-                        outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(2));
-                        outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(3));
-                        outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(4));
-                        outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(5));
+                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.AMULET.getSlotId())) {
+                            outputBuffer.writeByte(0);
+                        } else {
+                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.AMULET.getSlotId()).getItemDefinition().getId());
+                        }
 
-                        if (entity.getAppearance().getGender() == 0) {
-                            outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearenceIndice(6));
+                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.WEAPON.getSlotId())) {
+                            outputBuffer.writeByte(0);
+                        } else {
+                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.WEAPON.getSlotId()).getItemDefinition().getId());
+                        }
+
+                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.CHEST.getSlotId())) {
+                            outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearence(AppearanceSlot.TORSO)); //chest - torso
+                        } else {
+                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.CHEST.getSlotId()).getItemDefinition().getId());
+                        }
+
+                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.CHEST.getSlotId())) {
+                            outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearence(AppearanceSlot.ARMS));
                         } else {
                             outputBuffer.writeByte(0);
                         }
 
-                        outputBuffer.writeByte(entity.getAppearance().getColorIndice(0));
-                        outputBuffer.writeByte(entity.getAppearance().getColorIndice(1));
-                        outputBuffer.writeByte(entity.getAppearance().getColorIndice(2));
-                        outputBuffer.writeByte(entity.getAppearance().getColorIndice(3));
-                        outputBuffer.writeByte(entity.getAppearance().getColorIndice(4));
+                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.SHIELD.getSlotId())) {
+                            outputBuffer.writeByte(0);
+                        } else {
+                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.SHIELD.getSlotId()).getItemDefinition().getId());
+                        }
+
+                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.LEGS.getSlotId())) {
+                            outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearence(AppearanceSlot.LEGS));
+                        } else {
+                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.LEGS.getSlotId()).getItemDefinition().getId());
+                        }
+
+                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.HANDS.getSlotId())) {
+                            outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearence(AppearanceSlot.HANDS));
+                        } else {
+                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.HANDS.getSlotId()).getItemDefinition().getId());
+                        }
+
+                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.FEET.getSlotId())) {
+                            outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearence(AppearanceSlot.FEET));
+                        } else {
+                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.FEET.getSlotId()).getItemDefinition().getId());
+                        }
+
+
+                        outputBuffer.writeByte(0);
+
+
+                        outputBuffer.writeByte(entity.getAppearance().getColor(AppearanceSlot.HEAD));
+                        outputBuffer.writeByte(entity.getAppearance().getColor(AppearanceSlot.TORSO));
+                        outputBuffer.writeByte(entity.getAppearance().getColor(AppearanceSlot.ARMS));
+                        outputBuffer.writeByte(entity.getAppearance().getColor(AppearanceSlot.LEGS));
+                        outputBuffer.writeByte(entity.getAppearance().getColor(AppearanceSlot.HANDS));
+                        outputBuffer.writeByte(entity.getAppearance().getColor(AppearanceSlot.FEET));
 
                         //Dont know what these do
                         outputBuffer.writeBigWord(0x328);
@@ -181,7 +213,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
                                 .write(movement.getStartLocation().getY(), ByteModification.NEGATION)
                                 .write(movement.getEndLocation().getX(), ByteModification.SUBTRACTION).write(movement.getEndLocation().getY())
                                 .writeShort(movement.getDurationX()).write(movement.getDurationY(), ByteModification.ADDITION)
-                                .write(movement.getDirection().getId());*/
+                                .write(movement.getWalkDirection().getId());*/
                     });
 
                     /**
@@ -206,6 +238,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
     private static final int UPDATE_BLOCK_INCREASE_SIZE = 1024;
     private final Player player;
     private final OutputBuffer updateBlock = OutputBuffer.create(PlayerUpdateBlock.UPDATE_BLOCK_SIZE, PlayerUpdateBlock.UPDATE_BLOCK_INCREASE_SIZE);
+    private long mask;
 
     /**
      * Instantiates a new Player update block.
@@ -221,6 +254,8 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
     @Override
     public PlayerUpdateBlock build(IFlag<PlayerUpdateMask> updateFlags) {
         Preconditions.notNull(updateFlags);
+
+        this.mask = updateFlags.getMask();
 
         /*
             Clear the current update block.
@@ -247,6 +282,15 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
             }
         }
         return this;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    @Override
+    public long getMask() {
+        return mask;
     }
 
     @Override

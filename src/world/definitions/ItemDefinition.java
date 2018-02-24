@@ -62,6 +62,13 @@ public final class ItemDefinition {
         return ItemDefinition.itemDefinitions.get(id);
     }
 
+    public static void load() {
+        if (ItemDefinition.itemDefinitions != null) {
+            return;
+        }
+        ItemDefinition.itemDefinitions = Collections.unmodifiableList(ItemDefinition.itemDB.findAll());
+    }
+
     public int getId() {
         return id;
     }
@@ -148,12 +155,5 @@ public final class ItemDefinition {
 
     public int getSlotId() {
         return slotId;
-    }
-
-    public static void load(){
-        if (ItemDefinition.itemDefinitions != null) {
-            return;
-        }
-        ItemDefinition.itemDefinitions = Collections.unmodifiableList(ItemDefinition.itemDB.findAll());
     }
 }

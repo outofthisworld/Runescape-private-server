@@ -29,6 +29,10 @@ public class Inventory implements IContainer<Item> {
         bankItems = new Container<>(Inventory.INVENTORY_SIZE, Item.class);
     }
 
+    public void add(int itemId, int amount) {
+
+    }
+
 
     public int remaining() {
         return bankItems.remaining();

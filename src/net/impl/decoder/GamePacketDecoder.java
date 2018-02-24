@@ -3,12 +3,10 @@ package net.impl.decoder;
 import net.buffers.InputBuffer;
 import net.impl.session.Client;
 import net.packets.incoming.IncomingPacket;
-import util.Stopwatch;
 
 import java.util.Optional;
 
 public class GamePacketDecoder implements ProtocolDecoder {
-    private final Stopwatch stopWatch = new Stopwatch();
 
     @Override
     public void decode(Client c) {
@@ -41,14 +39,14 @@ public class GamePacketDecoder implements ProtocolDecoder {
 
             Optional<IncomingPacket> incoming = IncomingPacket.getForId(decodedOp);
             InputBuffer payload = new InputBuffer(c.getInputBuffer(), packetSize);
-            incoming.ifPresent(packet -> c.getPlayer().getWorld().submit(() -> {
-                try {
-                    packet.handle(c, decodedOp, payload);
-                    stopWatch.stop();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }));
+            incoming.ifPresent(packet ->
+                    c.getPlayer().getWorld().submit(() -> {
+                        try {
+                            packet.handle(c, decodedOp, payload);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }));
         }
     }
 }

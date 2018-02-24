@@ -105,7 +105,6 @@ public class ChannelHandler implements IChannelHandler {
 
             if (currentlySelected.attachment() == null) {
                 try {
-                    System.out.println("Attaching new client");
                     currentlySelected.attach(new Client(currentlySelected));
                 } catch (IOException e) {
                     e.printStackTrace();

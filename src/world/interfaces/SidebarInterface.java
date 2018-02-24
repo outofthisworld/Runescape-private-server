@@ -39,6 +39,11 @@ public enum SidebarInterface {
     ATTACK_TYPE(2433),
     STATS(3917),
     QUESTS(638),
+    /*
+        3214
+        6980
+        11130
+    */
     INVENTORY(3213),
     WEARING(1644),
     PRAYER(5608),
