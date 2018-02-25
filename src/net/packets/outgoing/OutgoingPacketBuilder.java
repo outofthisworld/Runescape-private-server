@@ -361,7 +361,7 @@ public class OutgoingPacketBuilder {
 				pktType = -1;
      */
     public OutgoingPacketBuilder updateItem(int interfaceId, int slot, int itemId, int amount) {
-        IBufferReserve<OutputBuffer> res = createHeader(34, 2);
+        IBufferReserve<OutputBuffer> res = createHeader(OutgoingPacket.Opcodes.UPDATE_INVENTORY_ITEM, 2);
         outputBuffer.writeBigWord(interfaceId);
          _updateItem(slot,itemId,amount);
          res.writeBytesSinceReserve();
@@ -384,18 +384,19 @@ public class OutgoingPacketBuilder {
         }
     }
 
-    public OutgoingPacketBuilder updateItems(int interfaceId, int[] itemIds, int[] stackSizes){
+    public OutgoingPacketBuilder updateItems(int interfaceId,int[] slots, int[] itemIds, int[] stackSizes,boolean ignoreNullItems){
         Preconditions.notNull(itemIds,stackSizes);
-        if( itemIds.length != stackSizes.length){
+        if( itemIds.length != stackSizes.length || stackSizes.length != slots.length){
             throw new IllegalArgumentException("Invalid lengths");
         }
-        IBufferReserve<OutputBuffer> res = createHeader(34, 2);
+        IBufferReserve<OutputBuffer> res = createHeader(OutgoingPacket.Opcodes.UPDATE_INVENTORY_ITEM, 2);
         outputBuffer.writeBigWord(interfaceId);
-        for(int i = 0; i < itemIds.length;i++){
-            if(itemIds[i] == -1){
+        for(int i = 0; i < slots.length;i++){
+            if(ignoreNullItems && itemIds[i] <= 0){
                 continue;
             }
-            _updateItem(i,itemIds[i],stackSizes[i]);
+
+            _updateItem(slots[i],itemIds[i],stackSizes[i]);
         }
         res.writeBytesSinceReserve();
         return this;
