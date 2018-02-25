@@ -70,7 +70,6 @@ public final class ItemDefinition {
         }
         itemDefinitions = new HashMap<>();
         ItemDefinition.itemDB.findAll().forEach(def->{
-            System.out.println(def.getId() + " ");
             itemDefinitions.put(def.getId(),def);
         });
         itemDefinitions = Collections.unmodifiableMap(itemDefinitions);

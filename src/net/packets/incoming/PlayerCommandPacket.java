@@ -40,7 +40,7 @@ public class PlayerCommandPacket extends IncomingPacket {
 
         Player p = c.getPlayer();
         Scanner scanner = new Scanner(new String(in.toArray()));
-        scanner.useDelimiter(" ");
+
 
         if (!scanner.hasNext()) return;
 
@@ -49,7 +49,6 @@ public class PlayerCommandPacket extends IncomingPacket {
         System.out.println("Received player command : " + input);
         switch (input) {
             case "tele":
-
                 int x = scanner.nextInt();
                 int y = scanner.nextInt();
                 int z = 0;
@@ -60,23 +59,30 @@ public class PlayerCommandPacket extends IncomingPacket {
                 p.getWorld().getEventBus().fire(new RegionUpdateEvent(p, null));
                 break;
             case "item":
-                System.out.println("in spawn cmd");
-
-
                 int itemId = scanner.nextInt();
-                // System.out.println(scanner.nextInt());
-                // int amount = scanner.nextInt();
+                int amount = scanner.nextInt();
 
-                int slot;
-                if((slot = p.getInventory().add(itemId,1)) != 1){
+                if(p.getInventory().add(itemId,amount)){
                     c.getOutgoingPacketBuilder()
                             .sendMessage(messageBuilder
                                     .append("Added ")
-                                    .append(itemId).append(" to slot ")
-                                    .append(slot).append(", remaining slots : ")
-                                    .append(p.getInventory().remaining()).toString())
+                                    .append(", remaining slots : ")
+                                    .append(p.getInventory().getContainer().remaining())
+                                    .toString())
+                            .send();
+                }else{
+                    c.getOutgoingPacketBuilder()
+                            .sendMessage(messageBuilder
+                                    .append("Could not add item ")
+                                    .append(itemId)
+                                    .append(" your inventory may be too full, or the item is invalid.")
+                                    .toString())
                             .send();
                 }
+
+                break;
+            case "remove":
+
 
                 break;
             case "coords":

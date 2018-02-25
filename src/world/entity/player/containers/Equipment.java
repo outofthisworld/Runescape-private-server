@@ -44,7 +44,7 @@ public class Equipment implements IContainer<Item> {
     }
 
     public void unEquip(EquipmentSlot e, int itemId) {
-        if (p.getInventory().remaining() == 0) {
+        if (p.getInventory().getContainer().remaining() == 0) {
             p.getClient().getOutgoingPacketBuilder().sendMessage("Your inventory is currently full");
         }
     }

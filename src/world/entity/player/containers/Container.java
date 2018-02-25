@@ -19,15 +19,12 @@ import sun.plugin.dom.exception.InvalidStateException;
 import util.Preconditions;
 
 import java.lang.reflect.Array;
-import java.util.AbstractList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class Container<T> extends AbstractList<T> implements List<T> {
 
     private T[] items;
-    private HashSet<Integer> removedIndex = new HashSet<>();
-    private int cursor = 0;
+    int itemCount = 0;
 
     /**
      * Instantiates a new Container.
@@ -58,11 +55,14 @@ public class Container<T> extends AbstractList<T> implements List<T> {
         }
         if (fromIndex == toIndex) {
             items[fromIndex] = null;
+            return;
         }
         for (int i = fromIndex; i < toIndex; i++) {
             remove(i);
         }
     }
+
+
 
     /**
      * Remaining int.
@@ -70,7 +70,7 @@ public class Container<T> extends AbstractList<T> implements List<T> {
      * @return the int
      */
     public int remaining() {
-        return items.length - cursor + removedIndex.size();
+        return items.length - itemCount;
     }
 
     /**
@@ -80,7 +80,6 @@ public class Container<T> extends AbstractList<T> implements List<T> {
      * @return the boolean
      */
     public boolean isEmpty(int index) {
-        Preconditions.inRangeClosed(index,0,items.length);
         return items[index] == null;
     }
 
@@ -90,26 +89,43 @@ public class Container<T> extends AbstractList<T> implements List<T> {
      *
      * @return the int
      */
-    public int getNextFreeSlot() {
-        if (remaining() == 0) {
+    public int getFirstFreeSlot() {
+        if(remaining() == 0){
             return -1;
         }
-        return removedIndex.isEmpty() ? cursor : removedIndex.toArray(new Integer[]{})[0];
+        for(int i = 0; i < items.length;i++){
+            if(items[i] == null){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int getLastFreeSlot(){
+        if(remaining() == 0){
+            return -1;
+        }
+        for(int i = items.length-1; i >=0;i--){
+            if(items[i] == null){
+                return i;
+            }
+        }
+        return -1;
     }
 
 
     @Override
     public boolean add(T t) {
-        if (remaining() == 0) {
+        if(remaining() == 0){
             return false;
         }
-        if (removedIndex.isEmpty()) {
-            items[cursor++] = t;
-        } else {
-            int index = removedIndex.toArray(new Integer[]{})[0];
-            items[index] = t;
-            removedIndex.remove(index);
+
+        int slot = getFirstFreeSlot();
+        if(slot == -1){
+            return false;
         }
+
+        items[slot] = t;
         return true;
     }
 
@@ -118,6 +134,12 @@ public class Container<T> extends AbstractList<T> implements List<T> {
                  T element
     ) {
         T cur = items[index];
+        if(cur == null && element != null){
+            itemCount++;
+        }
+        if(cur != null && element == null){
+            itemCount--;
+        }
         items[index] = element;
         return cur;
     }
@@ -126,37 +148,26 @@ public class Container<T> extends AbstractList<T> implements List<T> {
     public void add(int index,
                     T element
     ) {
-        throw new UnsupportedOperationException("Add not supported atm");
+
+        throw new UnsupportedOperationException("Method not supported by this collection");
     }
 
     @Override
     public T remove(int index) {
-        Preconditions.inRangeClosed(index,0,items.length);
         T t = items[index];
-        if (isEmpty(index)) {
-            throw new InvalidStateException("Attempting to remove null item");
-        }
         items[index] = null;
-        removedIndex.add(index);
+        itemCount--;
         return t;
     }
 
     @Override
-    public void clear() {
-        cursor = 0;
-        removedIndex.clear();
-        super.clear();
-    }
-
-    @Override
     public T get(int index) {
-        Preconditions.inRangeClosed(index,0,items.length);
         return items[index];
     }
 
 
     @Override
     public int size() {
-        return cursor - removedIndex.size();
+        return itemCount;
     }
 }

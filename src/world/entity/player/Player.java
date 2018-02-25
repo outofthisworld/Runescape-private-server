@@ -36,6 +36,7 @@ import world.entity.update.player.PlayerUpdateMask;
 import world.event.impl.AbstractEvent;
 import world.event.impl.RegionUpdateEvent;
 import world.interfaces.SidebarInterface;
+import world.item.Item;
 import world.storage.AsyncPlayerStore;
 
 import java.util.HashSet;
@@ -413,6 +414,12 @@ public class Player extends Entity {
         send(new RegionUpdateEvent(this, null));
 
         getClient().getOutgoingPacketBuilder().initPlayer(1, getSlotId());
+
+        getInventory().getContainer().add(new Item(123,1));
+
+
+        //Refresh our inventory
+        getInventory().refresh();
 
         getClient().getOutgoingPacketBuilder().setChatOptions(0, 0, 0);
 

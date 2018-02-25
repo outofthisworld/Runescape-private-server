@@ -360,20 +360,42 @@ public class OutgoingPacketBuilder {
 				}
 				pktType = -1;
      */
-    public OutgoingPacketBuilder updateSingleItem(int interfaceId, int slot, int itemId, int amount) {
+    public OutgoingPacketBuilder updateItem(int interfaceId, int slot, int itemId, int amount) {
         IBufferReserve<OutputBuffer> res = createHeader(34, 2);
         outputBuffer.writeBigWord(interfaceId);
+         _updateItem(slot,itemId,amount);
+         res.writeBytesSinceReserve();
+         return this;
+    }
+
+
+    private void _updateItem(int slot, int itemId, int amount){
         if (slot < 128) {
             outputBuffer.writeByte(slot);
         } else {
             outputBuffer.writeBigWord(slot); // + 32768??
         }
         outputBuffer.writeBigWord(itemId);
-        if (amount > 254) {
+        if (amount> 254) {
             outputBuffer.writeByte(255);
-            outputBuffer.writeBigDWORD(itemId);
+            outputBuffer.writeBigDWORD(amount);
         } else {
             outputBuffer.writeByte(amount);
+        }
+    }
+
+    public OutgoingPacketBuilder updateItems(int interfaceId, int[] itemIds, int[] stackSizes){
+        Preconditions.notNull(itemIds,stackSizes);
+        if( itemIds.length != stackSizes.length){
+            throw new IllegalArgumentException("Invalid lengths");
+        }
+        IBufferReserve<OutputBuffer> res = createHeader(34, 2);
+        outputBuffer.writeBigWord(interfaceId);
+        for(int i = 0; i < itemIds.length;i++){
+            if(itemIds[i] == -1){
+                continue;
+            }
+            _updateItem(i,itemIds[i],stackSizes[i]);
         }
         res.writeBytesSinceReserve();
         return this;
@@ -660,5 +682,9 @@ public class OutgoingPacketBuilder {
      */
     public void send() {
         c.write(build());
+    }
+
+    public void clearInventory(int inventoryId) {
+        createHeader(72).writeLittleWORD(inventoryId);
     }
 }
