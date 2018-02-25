@@ -299,7 +299,7 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
             fi = fi.skip(skip);
         }
 
-        MongoCursor<Document> cursor = fi.returnKey(true).showRecordId(true).iterator();
+        MongoCursor<Document> cursor = fi.showRecordId(true).iterator();
 
         List<T> found = new ArrayList<>();
         while (cursor.hasNext()) {

@@ -59,17 +59,25 @@ public class PlayerCommandPacket extends IncomingPacket {
                 p.getPosition().getVector().setX(x).setY(y).setZ(z);
                 p.getWorld().getEventBus().fire(new RegionUpdateEvent(p, null));
                 break;
-            case "spawn":
+            case "item":
                 System.out.println("in spawn cmd");
 
 
                 int itemId = scanner.nextInt();
-                System.out.println("item id: " + itemId);
                 // System.out.println(scanner.nextInt());
                 // int amount = scanner.nextInt();
 
+                int slot;
+                if((slot = p.getInventory().add(itemId,1)) != 1){
+                    c.getOutgoingPacketBuilder()
+                            .sendMessage(messageBuilder
+                                    .append("Added ")
+                                    .append(itemId).append(" to slot ")
+                                    .append(slot).append(", remaining slots : ")
+                                    .append(p.getInventory().remaining()).toString())
+                            .send();
+                }
 
-                p.getClient().getOutgoingPacketBuilder().updateSingleItem(3214, 1, itemId, 1).send();
                 break;
             case "coords":
                 c.getOutgoingPacketBuilder()

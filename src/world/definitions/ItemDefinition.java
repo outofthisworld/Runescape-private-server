@@ -21,12 +21,14 @@ import database.IDBAccessor;
 import database.serialization.GsonSerializer;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class ItemDefinition {
 
     private static final IDBAccessor<ItemDefinition> itemDB = new CollectionAccessor<>(new GsonSerializer<>(ItemDefinition.class), DatabaseConfig.ITEMS_COLLECTION);
-    private static List<ItemDefinition> itemDefinitions = null;
+    private static Map<Integer,ItemDefinition> itemDefinitions = null;
 
 
     private final int[] bonuses = new int[18];
@@ -55,8 +57,8 @@ public final class ItemDefinition {
     }
 
     public static ItemDefinition getForId(int id) {
-        if (ItemDefinition.itemDefinitions == null || id < 0 || id >= ItemDefinition.itemDefinitions.size()) {
-            throw new IllegalStateException("Invalid item definition id or item definitions were null");
+        if (ItemDefinition.itemDefinitions == null) {
+            throw new IllegalStateException("item definitions were null");
         }
 
         return ItemDefinition.itemDefinitions.get(id);
@@ -66,7 +68,12 @@ public final class ItemDefinition {
         if (ItemDefinition.itemDefinitions != null) {
             return;
         }
-        ItemDefinition.itemDefinitions = Collections.unmodifiableList(ItemDefinition.itemDB.findAll());
+        itemDefinitions = new HashMap<>();
+        ItemDefinition.itemDB.findAll().forEach(def->{
+            System.out.println(def.getId() + " ");
+            itemDefinitions.put(def.getId(),def);
+        });
+        itemDefinitions = Collections.unmodifiableMap(itemDefinitions);
     }
 
     public int getId() {

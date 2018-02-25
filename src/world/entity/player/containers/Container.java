@@ -16,6 +16,7 @@
 package world.entity.player.containers;
 
 import sun.plugin.dom.exception.InvalidStateException;
+import util.Preconditions;
 
 import java.lang.reflect.Array;
 import java.util.AbstractList;
@@ -79,6 +80,7 @@ public class Container<T> extends AbstractList<T> implements List<T> {
      * @return the boolean
      */
     public boolean isEmpty(int index) {
+        Preconditions.inRangeClosed(index,0,items.length);
         return items[index] == null;
     }
 
@@ -124,16 +126,14 @@ public class Container<T> extends AbstractList<T> implements List<T> {
     public void add(int index,
                     T element
     ) {
-        if (isEmpty(index)) {
-            throw new InvalidStateException("Cannot add over a non null container item, use set.");
-        }
-        set(index, element);
+        throw new UnsupportedOperationException("Add not supported atm");
     }
 
     @Override
     public T remove(int index) {
+        Preconditions.inRangeClosed(index,0,items.length);
         T t = items[index];
-        if (items[index] == null) {
+        if (isEmpty(index)) {
             throw new InvalidStateException("Attempting to remove null item");
         }
         items[index] = null;
@@ -150,8 +150,10 @@ public class Container<T> extends AbstractList<T> implements List<T> {
 
     @Override
     public T get(int index) {
+        Preconditions.inRangeClosed(index,0,items.length);
         return items[index];
     }
+
 
     @Override
     public int size() {

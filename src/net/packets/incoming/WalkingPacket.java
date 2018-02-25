@@ -43,10 +43,7 @@ public class WalkingPacket extends IncomingPacket {
 
         int steps = (size - 5) / 2;
 
-        if (in.remaining() < steps * 2 + 5) {
-            System.out.println("Not enough data sent in walk packet");
-            return;
-        }
+
 
         if (steps < 0) {
             return;
