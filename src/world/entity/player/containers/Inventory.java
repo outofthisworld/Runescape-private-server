@@ -21,6 +21,7 @@ import world.definitions.ItemDefinition;
 import world.entity.player.Player;
 import world.item.Item;
 
+
 public class Inventory implements IContainer<Item> {
     private static final int INVENTORY_SIZE = 28;
     private final Player p;
@@ -28,7 +29,9 @@ public class Inventory implements IContainer<Item> {
 
     public Inventory(Player p) {
         this.p = p;
-        inventoryItems = new Container<>(Inventory.INVENTORY_SIZE, Item.class);
+        inventoryItems = new Container<>(3214,Inventory.INVENTORY_SIZE, Item.class);
+        inventoryItems.setOnAddListener((slotId, containerId, item) -> p.getClient().getOutgoingPacketBuilder().updateItem(containerId,slotId,item.getAmount(),item.getItemDefinition().getId()));
+        inventoryItems.setOnRemoveListener((slotId, containerId, item) -> p.getClient().getOutgoingPacketBuilder().updateItem(containerId,slotId,-1,-1));
     }
 
     public boolean add(Item item) {

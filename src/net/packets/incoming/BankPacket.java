@@ -36,7 +36,7 @@ public class BankPacket extends IncomingPacket {
             //This packet is sent when a player attempts to bank 5 of a certain item.
             //Note: This packet is also used for buying/selling 1 of an item from a shop.
             //Little endian Short Special A - Frame ID
-            //Little endian Short Special A - Item ID
+            //Little endian Short Special A - SlotItem ID
             //Little endian Short - The slot ID
             case Opcodes.BANK_5:
                 break;

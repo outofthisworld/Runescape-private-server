@@ -15,12 +15,18 @@
 
 package world.entity.player.containers;
 
+import util.Preconditions;
+
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.BiConsumer;
 
-public class Container<T extends IContainerItem<T>> extends AbstractList<T> implements List<T> {
+public class Container<T> extends AbstractList<T> implements List<T> {
 
     private int containerId;
+    private ContainerChangeListener<T> addListener = null;
+    private ContainerChangeListener<T> removeListener = null;
+    private ContainerChangeListener<T> replaceListener = null;
     private T[] items;
     int itemCount = 0;
 
@@ -112,9 +118,23 @@ public class Container<T extends IContainerItem<T>> extends AbstractList<T> impl
         return -1;
     }
 
+    public void setOnAddListener(ContainerChangeListener<T>  addListner){
+        this.addListener = addListner;
+    }
+
+    public void setOnRemoveListener(ContainerChangeListener<T>  removeListener){
+        this.removeListener = removeListener;
+    }
+
+    public void setReplaceListener(ContainerChangeListener<T>  replaceListener){
+        this.replaceListener = replaceListener;
+    }
+
 
     @Override
     public boolean add(T t) {
+        Preconditions.notNull(t);
+
         if(remaining() == 0){
             return false;
         }
@@ -126,6 +146,9 @@ public class Container<T extends IContainerItem<T>> extends AbstractList<T> impl
 
         itemCount++;
         items[slot] = t;
+        if(this.addListener != null){
+            this.addListener.accept(slot,containerId,t);
+        }
         return true;
     }
 
@@ -134,13 +157,20 @@ public class Container<T extends IContainerItem<T>> extends AbstractList<T> impl
                  T element
     ) {
         T cur = items[index];
-        if(cur == null && element != null){
-            itemCount++;
-        }
-        if(cur != null && element == null){
+        if(cur != null){
             itemCount--;
+            if(replaceListener != null)
+            replaceListener.accept(index,containerId,cur);
         }
-        items[index] = element;
+
+        if(element == null){
+            items[index] = null;
+        }else{
+            itemCount++;
+            items[index] = element;
+            if(addListener != null)
+            addListener.accept(index,containerId,element);
+        }
         return cur;
     }
 
@@ -155,8 +185,14 @@ public class Container<T extends IContainerItem<T>> extends AbstractList<T> impl
     @Override
     public T remove(int index) {
         T t = items[index];
+        if(t == null){
+            return null;
+        }
+
         items[index] = null;
         itemCount--;
+        if(removeListener!= null)
+        removeListener.accept(index,containerId,t);
         return t;
     }
 
@@ -174,5 +210,4 @@ public class Container<T extends IContainerItem<T>> extends AbstractList<T> impl
     public int size() {
         return itemCount;
     }
-
 }

@@ -193,12 +193,12 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder removeGroundItem(int itemX, int itemY, int itemID) {
-        /*client.getOutStream().createHeader(85); // Phate: Item Position Frame
+        /*client.getOutStream().createHeader(85); // Phate: SlotItem Position Frame
         client.getOutStream().writeByteC((itemY - 8 * client.mapRegionY));
         client.getOutStream().writeByteC((itemX - 8 * client.mapRegionX));
-        client.getOutStream().createHeader(156); // Phate: Item Action: Delete
+        client.getOutStream().createHeader(156); // Phate: SlotItem Action: Delete
         client.getOutStream().writeByteS(0); // x(4 MSB) y(LSB) coords
-        client.getOutStream().writeWord(itemID); // Phate: Item ID*/
+        client.getOutStream().writeWord(itemID); // Phate: SlotItem ID*/
         return this;
     }
 

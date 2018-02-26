@@ -356,7 +356,7 @@ public abstract class IncomingPacket {
         /********************* END PLAYER OPTION PACKET************************/
         /********************* START ITEM ACTION PACKET************************/
         /**
-         * Item actions
+         * SlotItem actions
          * Sent when the player clicks the first option of an item, such as "Bury" for bones.
          * <p>
          * Length:6
@@ -369,7 +369,7 @@ public abstract class IncomingPacket {
          */
         public static final int ALTERNATE_ITEM_OPTION = 16;
         /**
-         * Item actions
+         * SlotItem actions
          * Sent when the player clicks the first option of an item, such as "Bury" for bones.
          * <p>
          * Length:6

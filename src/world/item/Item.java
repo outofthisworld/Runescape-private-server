@@ -15,20 +15,22 @@
 
 package world.item;
 
+import sun.plugin.dom.exception.InvalidStateException;
 import util.Preconditions;
 import world.definitions.ItemDefinition;
+import world.entity.player.Player;
 
 import java.util.Optional;
 
 public class Item {
-
-    private final ItemDefinition itemDefinition;
-    private int amount;
     private int id;
+    private int amount;
+    private final ItemDefinition itemDefinition;
 
     public Item(int id, int amount) {
         Preconditions.greaterThan(amount,0);
         itemDefinition = ItemDefinition.getForId(id);
+        Preconditions.notNull(itemDefinition);
         this.amount = amount;
         this.id = id;
     }
@@ -45,18 +47,7 @@ public class Item {
         return amount;
     }
 
-    public boolean addAmount(int amount){
-        long sum = this.amount + amount;
-
-        if(sum > Integer.MAX_VALUE || sum < 0){
-            return false;
-        }
-
-        this.amount = (int) sum;
-        return true;
-    }
-
-    public Optional<ItemDefinition> getItemDefinition() {
-        return Optional.ofNullable(itemDefinition);
+    public ItemDefinition getItemDefinition() {
+        return itemDefinition;
     }
 }

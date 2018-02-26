@@ -28,7 +28,7 @@ public class Equipment implements IContainer<Item> {
 
     public Equipment(Player p) {
         this.p = p;
-        equipment = new Container<>(EquipmentSlot.values().length, Item.class);
+        equipment = new Container<It>(EquipmentSlot.values().length, Item.class);
     }
 
 
@@ -88,7 +88,7 @@ public class Equipment implements IContainer<Item> {
                         return false;
                     }
                 }
-                
+
             }
         }
             //
