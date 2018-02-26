@@ -39,7 +39,7 @@ public class Bank implements IContainer<Item> {
             return false;
         }
 
-        int nextSlot = bankItems.getNextFreeSlot();
+        int nextSlot = bankItems.getFirstFreeSlot();
 
         return false;
     }

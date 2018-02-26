@@ -15,14 +15,12 @@
 
 package world.entity.player.containers;
 
-import sun.plugin.dom.exception.InvalidStateException;
-import util.Preconditions;
-
 import java.lang.reflect.Array;
 import java.util.*;
 
-public class Container<T> extends AbstractList<T> implements List<T> {
+public class Container<T extends IContainerItem<T>> extends AbstractList<T> implements List<T> {
 
+    private int containerId;
     private T[] items;
     int itemCount = 0;
 
@@ -32,10 +30,11 @@ public class Container<T> extends AbstractList<T> implements List<T> {
      * @param size  the size
      * @param klazz the klazz
      */
-    public Container(int size,
+    public Container(int containerId,int size,
                      Class<T> klazz
     ) {
         items = (T[]) Array.newInstance(klazz, size);
+        this.containerId = containerId;
     }
 
     @Override
@@ -125,6 +124,7 @@ public class Container<T> extends AbstractList<T> implements List<T> {
             return false;
         }
 
+        itemCount++;
         items[slot] = t;
         return true;
     }
@@ -165,9 +165,14 @@ public class Container<T> extends AbstractList<T> implements List<T> {
         return items[index];
     }
 
+    public int capacity(){
+        return items.length;
+    }
+
 
     @Override
     public int size() {
         return itemCount;
     }
+
 }
