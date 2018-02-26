@@ -62,7 +62,7 @@ public class PlayerCommandPacket extends IncomingPacket {
                 int itemId = scanner.nextInt();
                 int amount = scanner.nextInt();
 
-                if(p.getInventory().add(itemId,amount)){
+                if (p.getInventory().add(itemId, amount)) {
                     c.getOutgoingPacketBuilder()
                             .sendMessage(messageBuilder
                                     .append("Added ")
@@ -70,7 +70,7 @@ public class PlayerCommandPacket extends IncomingPacket {
                                     .append(p.getInventory().getContainer().remaining())
                                     .toString())
                             .send();
-                }else{
+                } else {
                     c.getOutgoingPacketBuilder()
                             .sendMessage(messageBuilder
                                     .append("Could not add item ")

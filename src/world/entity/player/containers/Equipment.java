@@ -21,7 +21,7 @@ import world.entity.player.EquipmentSlot;
 import world.entity.player.Player;
 import world.item.Item;
 
-public class Equipment implements IContainer<Item> {
+public class Equipment {
     private final Player p;
     private final Container<Item> equipment;
 
@@ -33,68 +33,68 @@ public class Equipment implements IContainer<Item> {
 
 
     /**
-        Equips an item in the specified slot.
-        Does not remove any items from the users inventory.
+     * Equips an item in the specified slot.
+     * Does not remove any items from the users inventory.
      */
-    public boolean equip(EquipmentSlot slot,Item item){
-        Preconditions.notNull(slot,item);
+    public boolean equip(EquipmentSlot slot, Item item) {
+        Preconditions.notNull(slot, item);
 
-        if(!item.getItemDefinition().isPresent()){
+        if (!item.getItemDefinition().isPresent()) {
             return false;
         }
 
-        equipment.set(slot.getSlotId(),item);
+        equipment.set(slot.getSlotId(), item);
 
     }
 
     /**
-        Equips an item in the users inventory at the specified slot.
+     * Equips an item in the users inventory at the specified slot.
      */
-    public boolean equip(int inventorySlotId){
+    public boolean equip(int inventorySlotId) {
         Inventory inventory = p.getInventory();
 
-        Item inventoryItem = inventory.getContainer().get(inventorySlotId);
+        Item inventoryItem = inventory.get(inventorySlotId);
 
-        if(inventoryItem == null || !inventoryItem.getItemDefinition().isPresent()){
+        if (inventoryItem == null || !inventoryItem.getItemDefinition().isPresent()) {
             return false;
         }
 
         ItemDefinition inventoryItemDefinition = inventoryItem.getItemDefinition().get();
 
-        if(!inventoryItemDefinition.isEquipable()){
+        if (!inventoryItemDefinition.isEquipable()) {
             return false;
         }
 
         int equipmentSlotId = inventoryItemDefinition.getSlotId();
         EquipmentSlot equipSlot = EquipmentSlot.fromIndex(equipmentSlotId);
 
-        if(equipSlot == null){
+        if (equipSlot == null) {
             return false;
         }
 
 
         //Check to see what we already have in that slot.
-        if(!equipment.isEmpty(equipmentSlotId)){
+        if (!equipment.isEmpty(equipmentSlotId)) {
             Item equipped = equipment.get(equipmentSlotId);
             ItemDefinition equippedItemDef = equipped.getItemDefinition().get();
 
             //Check to see if the item is stackable.
-            if(equipped.getItemDefinition().get().isStackable() &&
-                    inventoryItemDefinition.getId() == equippedItemDef.getId() ){
+            if (equipped.getItemDefinition().get().isStackable() &&
+                    inventoryItemDefinition.getId() == equippedItemDef.getId()) {
 
-                if(!equipped.addAmount(inventoryItem.getAmount())){
-                    int remaining = Math.min(Integer.MAX_VALUE - equipped.getAmount(),inventoryItem.getAmount());
-                    if(!inventoryItem.addAmount(-remaining) && equipped.addAmount(remaining)){
+                if (!equipped.addAmount(inventoryItem.getAmount())) {
+                    int remaining = Math.min(Integer.MAX_VALUE - equipped.getAmount(), inventoryItem.getAmount());
+                    if (!inventoryItem.addAmount(-remaining) && equipped.addAmount(remaining)) {
                         return false;
                     }
                 }
 
             }
         }
-            //
-            inventory.remove(inventorySlotId,inventoryItem.getAmount());
-            equip(equipSlot,inventoryItem);
-            return true;
+        //
+        inventory.remove(inventorySlotId, inventoryItem.getAmount());
+        equip(equipSlot, inventoryItem);
+        return true;
 
     }
 

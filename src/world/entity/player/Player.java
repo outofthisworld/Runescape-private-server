@@ -415,7 +415,7 @@ public class Player extends Entity {
 
         getClient().getOutgoingPacketBuilder().initPlayer(1, getSlotId());
 
-        getInventory().getContainer().add(new Item(123,1));
+        getInventory().getContainer().add(new Item(123, 1));
 
 
         //Refresh our inventory

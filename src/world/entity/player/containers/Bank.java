@@ -19,8 +19,6 @@ import util.Preconditions;
 import world.entity.player.Player;
 import world.item.Item;
 
-import java.util.Objects;
-
 public class Bank implements IContainer<Item> {
     private static final int BANK_SIZE = 200;
     private Player p;
@@ -35,7 +33,7 @@ public class Bank implements IContainer<Item> {
     public boolean addBankItem(Item item) {
         Preconditions.notNull(item);
 
-        if(bankItems.remaining() == 0){
+        if (bankItems.remaining() == 0) {
             return false;
         }
 
@@ -44,17 +42,17 @@ public class Bank implements IContainer<Item> {
         return false;
     }
 
-    public boolean addBankItem(int id, int amount){
-        Preconditions.greaterThanOrEqualTo(id,0);
-        Preconditions.greaterThanOrEqualTo(amount,1);
-        return addBankItem(new Item(id,amount));
+    public boolean addBankItem(int id, int amount) {
+        Preconditions.greaterThanOrEqualTo(id, 0);
+        Preconditions.greaterThanOrEqualTo(amount, 1);
+        return addBankItem(new Item(id, amount));
     }
 
     public void removeBankItem(Item item) {
 
     }
 
-    public void refresh(){
+    public void refresh() {
 
     }
 

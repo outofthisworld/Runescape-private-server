@@ -44,7 +44,6 @@ public class WalkingPacket extends IncomingPacket {
         int steps = (size - 5) / 2;
 
 
-
         if (steps < 0) {
             return;
         }

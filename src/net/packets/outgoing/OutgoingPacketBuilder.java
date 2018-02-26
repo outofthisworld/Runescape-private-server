@@ -363,20 +363,20 @@ public class OutgoingPacketBuilder {
     public OutgoingPacketBuilder updateItem(int interfaceId, int slot, int itemId, int amount) {
         IBufferReserve<OutputBuffer> res = createHeader(OutgoingPacket.Opcodes.UPDATE_INVENTORY_ITEM, 2);
         outputBuffer.writeBigWord(interfaceId);
-         _updateItem(slot,itemId,amount);
-         res.writeBytesSinceReserve();
-         return this;
+        _updateItem(slot, itemId, amount);
+        res.writeBytesSinceReserve();
+        return this;
     }
 
 
-    private void _updateItem(int slot, int itemId, int amount){
+    private void _updateItem(int slot, int itemId, int amount) {
         if (slot < 128) {
             outputBuffer.writeByte(slot);
         } else {
             outputBuffer.writeBigWord(slot); // + 32768??
         }
         outputBuffer.writeBigWord(itemId);
-        if (amount> 254) {
+        if (amount > 254) {
             outputBuffer.writeByte(255);
             outputBuffer.writeBigDWORD(amount);
         } else {
@@ -384,19 +384,19 @@ public class OutgoingPacketBuilder {
         }
     }
 
-    public OutgoingPacketBuilder updateItems(int interfaceId,int[] slots, int[] itemIds, int[] stackSizes,boolean ignoreNullItems){
-        Preconditions.notNull(itemIds,stackSizes);
-        if( itemIds.length != stackSizes.length || stackSizes.length != slots.length){
+    public OutgoingPacketBuilder updateItems(int interfaceId, int[] slots, int[] itemIds, int[] stackSizes, boolean ignoreNullItems) {
+        Preconditions.notNull(itemIds, stackSizes);
+        if (itemIds.length != stackSizes.length || stackSizes.length != slots.length) {
             throw new IllegalArgumentException("Invalid lengths");
         }
         IBufferReserve<OutputBuffer> res = createHeader(OutgoingPacket.Opcodes.UPDATE_INVENTORY_ITEM, 2);
         outputBuffer.writeBigWord(interfaceId);
-        for(int i = 0; i < slots.length;i++){
-            if(ignoreNullItems && itemIds[i] <= 0){
+        for (int i = 0; i < slots.length; i++) {
+            if (ignoreNullItems && itemIds[i] <= 0) {
                 continue;
             }
 
-            _updateItem(slots[i],itemIds[i],stackSizes[i]);
+            _updateItem(slots[i], itemIds[i], stackSizes[i]);
         }
         res.writeBytesSinceReserve();
         return this;

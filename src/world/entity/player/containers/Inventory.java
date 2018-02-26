@@ -22,16 +22,11 @@ import world.entity.player.Player;
 import world.item.Item;
 
 
-public class Inventory implements IContainer<Item> {
+public class Inventory extends AbstractGameContainer<Item> {
     private static final int INVENTORY_SIZE = 28;
-    private final Player p;
-    private final Container<Item> inventoryItems;
 
-    public Inventory(Player p) {
-        this.p = p;
-        inventoryItems = new Container<>(3214,Inventory.INVENTORY_SIZE, Item.class);
-        inventoryItems.setOnAddListener((slotId, containerId, item) -> p.getClient().getOutgoingPacketBuilder().updateItem(containerId,slotId,item.getAmount(),item.getItemDefinition().getId()));
-        inventoryItems.setOnRemoveListener((slotId, containerId, item) -> p.getClient().getOutgoingPacketBuilder().updateItem(containerId,slotId,-1,-1));
+    public Inventory(Player player) {
+        super(player, INVENTORY_SIZE, 3214, Item.class);
     }
 
     public boolean add(Item item) {
@@ -41,17 +36,11 @@ public class Inventory implements IContainer<Item> {
             return false;
         }
 
-
-        //If its not a valid item, return.
-        if (!item.getItemDefinition().isPresent()) {
-            return false;
-        }
-
-        ItemDefinition def = item.getItemDefinition().get();
+        ItemDefinition def = item.getItemDefinition();
         OutgoingPacketBuilder pBuilder = p.getClient().getOutgoingPacketBuilder();
 
         if (item.getAmount() > 1 && !def.isStackable() && !def.isNoted()) {
-            if (inventoryItems.remaining() < item.getAmount()) {
+            if (remaining() < item.getAmount()) {
                 return false;
             }
 
@@ -61,15 +50,15 @@ public class Inventory implements IContainer<Item> {
             int addCount = 0;
 
             for (int i = 0; i < item.getAmount(); i++) {
-                int freeSlot = inventoryItems.getFirstFreeSlot();
-                int itemId = item.getItemDefinition().get().getId();
+                int freeSlot = getContainer().getFirstFreeSlot();
+                int itemId = item.getItemDefinition().getId();
                 int amount = 1;
                 itemIds[i] = itemId;
                 slots[i] = freeSlot;
                 sizes[i] = amount;
 
                 //Maybe change this to add group items
-                if (inventoryItems.add(new Item(item.getId(), 1))) {
+                if (getContainer().add(new Item(item.getId(), 1))) {
                     addCount++;
                 } else {
                     break;
@@ -80,7 +69,7 @@ public class Inventory implements IContainer<Item> {
             if (addCount != item.getAmount()) {
                 for (int i = 0; i < slots.length; i++) {
                     //Remove any added items from inv.
-                    inventoryItems.remove(slots[i]);
+                    getContainer().remove(slots[i]);
                 }
                 return false;
             }
@@ -90,15 +79,15 @@ public class Inventory implements IContainer<Item> {
 
         }
 
-        int freeSlot = inventoryItems.getFirstFreeSlot();
+        int freeSlot = getContainer().getFirstFreeSlot();
 
-        if (!inventoryItems.add(item)) {
+        if (!getContainer().add(item)) {
             return false;
         }
 
         //Update one item
         pBuilder.updateItem(3214, freeSlot,
-                item.getItemDefinition().get().getId(), item.getAmount()).send();
+                item.getItemDefinition().getId(), item.getAmount()).send();
 
         return true;
     }
@@ -110,38 +99,60 @@ public class Inventory implements IContainer<Item> {
     }
 
 
-    public Item set(int slotId, int itemId, int amount) {
+    @Override
+    public boolean add(int slotId, int itemId, int amount) {
+        return false;
+    }
+
+    @Override
+    public boolean add(int slotId, Item item) {
+        return false;
+    }
+
+    @Override
+    public boolean remove(int slotId, int itemId, int amount) {
+        return false;
+    }
+
+    @Override
+    public boolean remove(int slotId, Item item) {
+        return false;
+    }
+
+    public boolean set(int slotId, int itemId, int amount) {
         return set(slotId, new Item(itemId, amount));
     }
 
-    public Item set(int slotId, Item item) {
-        OutgoingPacketBuilder pBuilder = p.getClient().getOutgoingPacketBuilder();
+    public boolean set(int slotId, Item item) {
+        Preconditions.notNull(item);
+        OutgoingPacketBuilder pBuilder = getOwner().getClient().getOutgoingPacketBuilder();
         Item replacedItem = null;
 
         //If the item is a valid item
-        if (item != null && item.getId() >= 0 && item.getAmount() > 0 && item.getItemDefinition().isPresent()) {
+        if (item != null && item.getId() >= 0 && item.getAmount() > 0) {
 
-            ItemDefinition itemDef = item.getItemDefinition().get();
+            ItemDefinition itemDef = item.getItemDefinition();
 
             if (!itemDef.isNoted() && !itemDef.isStackable() && item.getAmount() > 1) {
                 item = new Item(item.getId(), 1);
             }
 
-            replacedItem = inventoryItems.set(slotId, item);
+            replacedItem = getContainer().set(slotId, item);
             pBuilder.updateItem(3214, slotId, item.getId(), item.getAmount());
         }
 
         if (replacedItem == null) {
-            replacedItem = inventoryItems.set(slotId, null);
+            replacedItem = getContainer().set(slotId, null);
             pBuilder.updateItem(3214, slotId, 0, 0);
         }
 
         pBuilder.send();
-        return replacedItem;
+        return true;
     }
 
+
     public boolean remove(int slotId, int amount) {
-        if (inventoryItems.isEmpty(slotId)) {
+        if (getContainer().isEmpty(slotId)) {
             return false;
         }
 
@@ -162,33 +173,7 @@ public class Inventory implements IContainer<Item> {
     }
 
     public void clear() {
-        inventoryItems.clear();
-        refresh();
-    }
-
-    public void refresh() {
-        OutgoingPacketBuilder pBuilder = p.getClient().getOutgoingPacketBuilder();
-        pBuilder.clearInventory(3214);
-
-        Item[] items = getContainer().toArray(new Item[]{});
-
-        int[] itemIds = new int[items.length];
-        int[] stackSizes = new int[items.length];
-        int[] slots = new int[items.length];
-
-        for (int i = 0; i < items.length; i++) {
-            int itemId = items[i] == null ? 0 : items[i].getId();
-            int stackSize = items[i] == null ? 0 : items[i].getAmount();
-            slots[i] = i;
-            itemIds[i] = itemId;
-            stackSizes[i] = stackSize;
-        }
-
-        pBuilder.updateItems(3214, slots, itemIds, stackSizes, false).send();
-    }
-
-    @Override
-    public Container<Item> getContainer() {
-        return inventoryItems;
+        getContainer().clear();
+        syncAll();
     }
 }

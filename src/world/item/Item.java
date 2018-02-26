@@ -15,28 +15,24 @@
 
 package world.item;
 
-import sun.plugin.dom.exception.InvalidStateException;
 import util.Preconditions;
 import world.definitions.ItemDefinition;
-import world.entity.player.Player;
 
-import java.util.Optional;
-
-public class Item {
+public class Item implements IItem {
+    private final ItemDefinition itemDefinition;
     private int id;
     private int amount;
-    private final ItemDefinition itemDefinition;
 
     public Item(int id, int amount) {
-        Preconditions.greaterThan(amount,0);
+        Preconditions.greaterThan(amount, 0);
         itemDefinition = ItemDefinition.getForId(id);
         Preconditions.notNull(itemDefinition);
         this.amount = amount;
         this.id = id;
     }
 
-    public Item(Item item){
-        this(item.getId(),item.getAmount());
+    public Item(Item item) {
+        this(item.getId(), item.getAmount());
     }
 
     public int getId() {
