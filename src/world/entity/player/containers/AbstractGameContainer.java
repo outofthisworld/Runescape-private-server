@@ -24,11 +24,11 @@ public abstract class AbstractGameContainer<T extends IItem> {
 
     /**
      * Adds an item of the specified amount to the specified slot.
-     *
+     * <p>
      * This method will contain the login for adding an item to the specified slot.
      * For example, an equipment containers add method will only return true
      * if and only if the item is also present in the users inventory.
-     *
+     * <p>
      * If an item is to be added without logic, the set method can be used.
      *
      * @param slotId
@@ -50,7 +50,7 @@ public abstract class AbstractGameContainer<T extends IItem> {
 
     public abstract boolean removeRef(Item item);
 
-    public abstract boolean removeRef(Item item,int amount);
+    public abstract boolean removeRef(Item item, int amount);
 
     public abstract boolean set(int slotId, int itemId, int amount);
 
@@ -66,6 +66,26 @@ public abstract class AbstractGameContainer<T extends IItem> {
 
     public T get(int slot) {
         return container.get(slot);
+    }
+
+    public int indexOfRef(T item) {
+        Preconditions.notNull(item);
+        for (int i = 0; i < capacity(); i++) {
+            if (get(i) != null && item == get(i)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int indexOfEquals(T item) {
+        Preconditions.notNull(item);
+        for (int i = 0; i < capacity(); i++) {
+            if (get(i) != null && item.equals(get(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public int remaining() {
@@ -98,7 +118,7 @@ public abstract class AbstractGameContainer<T extends IItem> {
     }
 
 
-    public void syncAll(int[] slots,int[] itemIds,int[] stackSizes,boolean ignoreNulls){
+    public void syncAll(int[] slots, int[] itemIds, int[] stackSizes, boolean ignoreNulls) {
         player.getClient().getOutgoingPacketBuilder().updateItems(containerId, slots, itemIds, stackSizes, ignoreNulls).send();
     }
 
@@ -106,17 +126,17 @@ public abstract class AbstractGameContainer<T extends IItem> {
         return containerId;
     }
 
-    protected void sync(int slotId){
-        sync(slotId,get(slotId));
+    protected void sync(int slotId) {
+        sync(slotId, get(slotId));
     }
 
     protected void sync(int slotId, int containerId, T item) {
         int itemId = -1;
         int amount = -1;
 
-        if(item == null || item.getId() <= 0 || item.getAmount() <= 0) {
+        if (item == null || item.getId() <= 0 || item.getAmount() <= 0) {
             getContainer().set(slotId, null);
-        }else {
+        } else {
             getContainer().set(slotId, item);
             itemId = item.getId();
             amount = item.getAmount();

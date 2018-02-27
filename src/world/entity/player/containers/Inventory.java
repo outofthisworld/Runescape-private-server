@@ -15,7 +15,6 @@
 
 package world.entity.player.containers;
 
-import net.packets.outgoing.OutgoingPacketBuilder;
 import util.Preconditions;
 import world.definitions.ItemDefinition;
 import world.entity.player.Player;
@@ -30,7 +29,7 @@ public class Inventory extends AbstractGameContainer<Item> {
 
     @Override
     public boolean add(int itemId, int amount) {
-        return add(new Item(itemId,amount));
+        return add(new Item(itemId, amount));
     }
 
     public boolean add(Item item) {
@@ -72,76 +71,87 @@ public class Inventory extends AbstractGameContainer<Item> {
                 }
                 return false;
             }
-            syncAll(slots,itemIds,sizes,false);
+            syncAll(slots, itemIds, sizes, false);
             return true;
 
         }
 
         int freeSlot = getContainer().getFirstFreeSlot();
 
-        if(freeSlot == -1){
+        if (freeSlot == -1) {
             return false;
         }
 
-        sync(freeSlot,item);
+        sync(freeSlot, item);
         return true;
     }
 
     @Override
     public boolean remove(int slotId) {
-        return remove(slotId,get(slotId).getAmount());
+        return remove(slotId, get(slotId).getAmount());
     }
 
     @Override
     public boolean remove(int slotId, int amount) {
-        if(slotId < 0 || slotId >= capacity())
+        if (slotId < 0 || slotId >= capacity())
             return false;
 
         Item i = get(slotId);
-        if(i == null){
+        if (i == null) {
             return false;
         }
 
-        if(!i.subtractAmount(amount)){
+        if (!i.subtractAmount(amount)) {
             return false;
         }
 
-        sync(slotId,i);
+        sync(slotId, i);
         return true;
     }
 
     @Override
     public boolean removeRef(Item item) {
-        Preconditions.notNull(item);
-        return removeRef(item,item.getAmount());
+        return removeRef(item, item.getAmount());
     }
 
+    /**
+     * Removes the specified item from this inventory.
+     * The given item must be present in this inventory container, otherwise
+     * it will not be found.
+     *
+     * @param item
+     * @param amount
+     * @return
+     */
     @Override
     public boolean removeRef(Item item, int amount) {
-        Preconditions.notNull(item);
-        for(int i = 0; i < capacity();i++){
-            if(get(i) == item){
-                return remove(i,amount);
-            }
+        int index = indexOfRef(item);
+        if (index == -1) {
+            return false;
         }
-        return false;
+        return remove(index, amount);
     }
 
+    /**
+     * Removes the specified item from this inventory.
+     * Items are compared using the .equals() method, thus
+     * the first item with the same id and amount in the inventory will be removed.
+     *
+     * @param item
+     * @return
+     */
     @Override
     public boolean removeEqual(Item item) {
-        Preconditions.notNull(item);
-        return removeEqual(item,item.getAmount());
+        return removeEqual(item, item.getAmount());
     }
 
     @Override
     public boolean removeEqual(Item item, int amount) {
-        Preconditions.notNull(item);
-        for(int i = 0; i < capacity();i++){
-            if(get(i).equals(item)){
-                return remove(i,amount);
-            }
+        int index = indexOfEquals(item);
+        if (index == -1) {
+            return false;
         }
-        return false;
+        return remove(index, amount);
     }
 
     public boolean set(int slotId, int itemId, int amount) {
@@ -149,8 +159,6 @@ public class Inventory extends AbstractGameContainer<Item> {
     }
 
     public boolean set(int slotId, Item item) {
-        Preconditions.notNull(item);
-
         //If the item is a valid item
         if (item != null && item.getId() >= 0 && item.getAmount() > 0) {
 
@@ -161,7 +169,7 @@ public class Inventory extends AbstractGameContainer<Item> {
             }
         }
 
-        sync(slotId,item);
+        sync(slotId, item);
         return true;
     }
 

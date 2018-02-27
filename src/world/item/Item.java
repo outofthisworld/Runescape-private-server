@@ -43,10 +43,10 @@ public class Item implements IItem {
         return amount;
     }
 
-    public boolean addAmount(int amount){
+    public boolean addAmount(int amount) {
         long val = this.amount + amount;
 
-        if(val > Integer.MAX_VALUE || val < 0){
+        if (val > Integer.MAX_VALUE || val < 0) {
             return false;
         }
 
@@ -54,7 +54,7 @@ public class Item implements IItem {
         return true;
     }
 
-    public boolean subtractAmount(int amount){
+    public boolean subtractAmount(int amount) {
         return addAmount(-amount);
     }
 
