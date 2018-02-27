@@ -23,21 +23,20 @@ import world.item.Item;
 
 
 public class Inventory extends AbstractGameContainer<Item> {
-    private static final int INVENTORY_SIZE = 28;
 
     public Inventory(Player player) {
-        super(player, INVENTORY_SIZE, 3214, Item.class);
+        super(player, 28, 3214, Item.class);
+    }
+
+    @Override
+    public boolean add(int itemId, int amount) {
+        return add(new Item(itemId,amount));
     }
 
     public boolean add(Item item) {
         Preconditions.notNull(item);
 
-        if (item.getAmount() <= 0) {
-            return false;
-        }
-
         ItemDefinition def = item.getItemDefinition();
-        OutgoingPacketBuilder pBuilder = p.getClient().getOutgoingPacketBuilder();
 
         if (item.getAmount() > 1 && !def.isStackable() && !def.isNoted()) {
             if (remaining() < item.getAmount()) {
@@ -73,49 +72,75 @@ public class Inventory extends AbstractGameContainer<Item> {
                 }
                 return false;
             }
-            //Update many items at once, and send as one big packet
-            pBuilder.updateItems(3214, slots, itemIds, sizes, false).send();
+            syncAll(slots,itemIds,sizes,false);
             return true;
 
         }
 
         int freeSlot = getContainer().getFirstFreeSlot();
 
-        if (!getContainer().add(item)) {
+        if(freeSlot == -1){
             return false;
         }
 
-        //Update one item
-        pBuilder.updateItem(3214, freeSlot,
-                item.getItemDefinition().getId(), item.getAmount()).send();
-
+        sync(freeSlot,item);
         return true;
     }
 
-    public boolean add(int itemId, int amount) {
-        Preconditions.greaterThanOrEqualTo(itemId, 0);
-        Preconditions.greaterThanOrEqualTo(amount, 1);
-        return add(new Item(itemId, amount));
+    @Override
+    public boolean remove(int slotId) {
+        return remove(slotId,get(slotId).getAmount());
     }
 
+    @Override
+    public boolean remove(int slotId, int amount) {
+        if(slotId < 0 || slotId >= capacity())
+            return false;
+
+        Item i = get(slotId);
+        if(i == null){
+            return false;
+        }
+
+        if(!i.subtractAmount(amount)){
+            return false;
+        }
+
+        sync(slotId,i);
+        return true;
+    }
 
     @Override
-    public boolean add(int slotId, int itemId, int amount) {
+    public boolean removeRef(Item item) {
+        Preconditions.notNull(item);
+        return removeRef(item,item.getAmount());
+    }
+
+    @Override
+    public boolean removeRef(Item item, int amount) {
+        Preconditions.notNull(item);
+        for(int i = 0; i < capacity();i++){
+            if(get(i) == item){
+                return remove(i,amount);
+            }
+        }
         return false;
     }
 
     @Override
-    public boolean add(int slotId, Item item) {
-        return false;
+    public boolean removeEqual(Item item) {
+        Preconditions.notNull(item);
+        return removeEqual(item,item.getAmount());
     }
 
     @Override
-    public boolean remove(int slotId, int itemId, int amount) {
-        return false;
-    }
-
-    @Override
-    public boolean remove(int slotId, Item item) {
+    public boolean removeEqual(Item item, int amount) {
+        Preconditions.notNull(item);
+        for(int i = 0; i < capacity();i++){
+            if(get(i).equals(item)){
+                return remove(i,amount);
+            }
+        }
         return false;
     }
 
@@ -125,8 +150,6 @@ public class Inventory extends AbstractGameContainer<Item> {
 
     public boolean set(int slotId, Item item) {
         Preconditions.notNull(item);
-        OutgoingPacketBuilder pBuilder = getOwner().getClient().getOutgoingPacketBuilder();
-        Item replacedItem = null;
 
         //If the item is a valid item
         if (item != null && item.getId() >= 0 && item.getAmount() > 0) {
@@ -136,39 +159,9 @@ public class Inventory extends AbstractGameContainer<Item> {
             if (!itemDef.isNoted() && !itemDef.isStackable() && item.getAmount() > 1) {
                 item = new Item(item.getId(), 1);
             }
-
-            replacedItem = getContainer().set(slotId, item);
-            pBuilder.updateItem(3214, slotId, item.getId(), item.getAmount());
         }
 
-        if (replacedItem == null) {
-            replacedItem = getContainer().set(slotId, null);
-            pBuilder.updateItem(3214, slotId, 0, 0);
-        }
-
-        pBuilder.send();
-        return true;
-    }
-
-
-    public boolean remove(int slotId, int amount) {
-        if (getContainer().isEmpty(slotId)) {
-            return false;
-        }
-
-        Item item = inventoryItems.remove(slotId);
-        int remaining = item.getAmount() - amount;
-
-        if (remaining < 0) {
-            return false;
-        }
-
-        if (remaining == 0) {
-            set(slotId, null);
-        } else {
-            set(slotId, item.getItemDefinition().get().getId(), remaining);
-        }
-
+        sync(slotId,item);
         return true;
     }
 

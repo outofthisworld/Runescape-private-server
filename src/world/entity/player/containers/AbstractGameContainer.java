@@ -1,6 +1,7 @@
 package world.entity.player.containers;
 
 import net.packets.outgoing.OutgoingPacketBuilder;
+import util.Preconditions;
 import world.entity.player.Player;
 import world.item.IItem;
 import world.item.Item;
@@ -21,14 +22,35 @@ public abstract class AbstractGameContainer<T extends IItem> {
         containingType = klazz;
     }
 
+    /**
+     * Adds an item of the specified amount to the specified slot.
+     *
+     * This method will contain the login for adding an item to the specified slot.
+     * For example, an equipment containers add method will only return true
+     * if and only if the item is also present in the users inventory.
+     *
+     * If an item is to be added without logic, the set method can be used.
+     *
+     * @param slotId
+     * @param itemId
+     * @param amount
+     * @return
+     */
+    public abstract boolean add(int itemId, int amount);
 
-    public abstract boolean add(int slotId, int itemId, int amount);
+    public abstract boolean add(T item);
 
-    public abstract boolean add(int slotId, T item);
+    public abstract boolean remove(int slotId);
 
-    public abstract boolean remove(int slotId, int itemId, int amount);
+    public abstract boolean remove(int slotId, int amount);
 
-    public abstract boolean remove(int slotId, T item);
+    public abstract boolean removeEqual(Item item);
+
+    public abstract boolean removeEqual(Item item, int amount);
+
+    public abstract boolean removeRef(Item item);
+
+    public abstract boolean removeRef(Item item,int amount);
 
     public abstract boolean set(int slotId, int itemId, int amount);
 
@@ -56,7 +78,7 @@ public abstract class AbstractGameContainer<T extends IItem> {
 
     public void syncAll() {
         OutgoingPacketBuilder pBuilder = player.getClient().getOutgoingPacketBuilder();
-        pBuilder.clearInventory(3214);
+        pBuilder.clearInventory(containerId);
 
         T[] items = container.toArray((T[]) Array.newInstance(containingType, capacity()));
 
@@ -72,26 +94,38 @@ public abstract class AbstractGameContainer<T extends IItem> {
             stackSizes[i] = stackSize;
         }
 
-        pBuilder.updateItems(3214, slots, itemIds, stackSizes, false).send();
+        syncAll(slots, itemIds, stackSizes, false);
+    }
+
+
+    public void syncAll(int[] slots,int[] itemIds,int[] stackSizes,boolean ignoreNulls){
+        player.getClient().getOutgoingPacketBuilder().updateItems(containerId, slots, itemIds, stackSizes, ignoreNulls).send();
     }
 
     public int getContainerId() {
         return containerId;
     }
 
-    protected void sync(int slotId, int containerId, Item item) {
-        sync(slotId, containerId, item.getItemDefinition().getId(), item.getAmount());
+    protected void sync(int slotId){
+        sync(slotId,get(slotId));
     }
 
-    protected void sync(int slotId, int containerId, int itemId, int amount) {
+    protected void sync(int slotId, int containerId, T item) {
+        int itemId = -1;
+        int amount = -1;
+
+        if(item == null || item.getId() <= 0 || item.getAmount() <= 0) {
+            getContainer().set(slotId, null);
+        }else {
+            getContainer().set(slotId, item);
+            itemId = item.getId();
+            amount = item.getAmount();
+        }
+
         player.getClient().getOutgoingPacketBuilder().updateItem(containerId, slotId, itemId, amount).send();
     }
 
-    protected void sync(int slotId, int itemId, int amount) {
-        sync(slotId, containerId, itemId, amount);
-    }
-
-    protected void sync(int slotId, Item item) {
-        sync(slotId, containerId, item.getItemDefinition().getId(), item.getAmount());
+    protected void sync(int slotId, T item) {
+        sync(slotId, containerId, item);
     }
 }

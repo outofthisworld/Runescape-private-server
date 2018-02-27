@@ -21,31 +21,19 @@ import world.entity.player.EquipmentSlot;
 import world.entity.player.Player;
 import world.item.Item;
 
-public class Equipment {
-    private final Player p;
-    private final Container<Item> equipment;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
+
+public class Equipment extends AbstractGameContainer<Item> {
 
 
     public Equipment(Player p) {
-        this.p = p;
-        equipment = new Container<It>(EquipmentSlot.values().length, Item.class);
+        super(p, EquipmentSlot.values().length, 3214, Item.class);
     }
 
 
-    /**
-     * Equips an item in the specified slot.
-     * Does not remove any items from the users inventory.
-     */
-    public boolean equip(EquipmentSlot slot, Item item) {
-        Preconditions.notNull(slot, item);
 
-        if (!item.getItemDefinition().isPresent()) {
-            return false;
-        }
-
-        equipment.set(slot.getSlotId(), item);
-
-    }
 
     /**
      * Equips an item in the users inventory at the specified slot.
@@ -104,11 +92,90 @@ public class Equipment {
         }
     }
 
-    public Container<Item> getContainer() {
-        return equipment;
+    @Override
+    public boolean add(int itemId, int amount) {
+        return add(new Item(itemId,amount));
     }
 
-    public void refresh() {
+    /**
+     * Adds an item present from a users inventory into the specfied equipment slot.
+     * @param slotId
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean add(Item item) {
 
+        int slotId = item.getItemDefinition().getSlotId();
+
+        if(slotId < 0 || slotId >= capacity() || item.getAmount() <= 0 || item.getId() <= 0){
+            return false;
+        }
+
+        int slot = -1;
+
+        for(int i = 0; i < getOwner().getInventory().capacity();i++){
+            if(getOwner().getInventory().get(i) == item){
+                slot = i;
+                break;
+            }
+        }
+
+        if(slot == -1){
+            return false;
+        }
+
+        Item invItem = getOwner().getInventory().get(slot);
+        getOwner().getInventory().remove(slot);
+        sync(slotId,invItem);
+        return true;
+    }
+
+    @Override
+    public boolean remove(int slotId) {
+        if(slotId < 0 || slotId >= capacity())
+            return false;
+
+        Item item = getContainer().get(slotId);
+
+        if(item == null){
+            return false;
+        }
+
+        sync(slotId,null);
+
+        if(item.getItemDefinition().isStackable()){
+            Inventory inv = getOwner().getInventory();
+
+            OptionalInt slot = IntStream.range(0,capacity()).filter(i->{
+                //Filter the ones that aren't this item
+                if(inv.getContainer().get(i) == null || inv.get(i).getId() != item.getId()){
+                    return false;
+                }
+
+                long newAmount = item.getAmount() + inv.get(i).getAmount();
+                return newAmount <= Integer.MAX_VALUE;
+            }).findFirst();
+                if(slot.isPresent()){
+                    //Append to the found stackable item
+                    inv.set(slot.getAsInt(),new Item(item.getId(),
+                            item.getAmount()+inv.getContainer().get(slot.getAsInt()).getAmount()));
+                }else{
+                    inv.add(item);
+                }
+        }
+
+        return false;
+    }
+
+
+    @Override
+    public boolean set(int slotId, int itemId, int amount) {
+        return set(slotId,new Item(itemId,amount));
+    }
+
+    @Override
+    public boolean set(int slotId, Item item) {
+        return false;
     }
 }

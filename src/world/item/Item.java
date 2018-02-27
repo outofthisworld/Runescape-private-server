@@ -43,6 +43,21 @@ public class Item implements IItem {
         return amount;
     }
 
+    public boolean addAmount(int amount){
+        long val = this.amount + amount;
+
+        if(val > Integer.MAX_VALUE || val < 0){
+            return false;
+        }
+
+        this.amount = (int) val;
+        return true;
+    }
+
+    public boolean subtractAmount(int amount){
+        return addAmount(-amount);
+    }
+
     public ItemDefinition getItemDefinition() {
         return itemDefinition;
     }
