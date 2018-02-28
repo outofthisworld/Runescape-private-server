@@ -16,8 +16,8 @@ Features:
 - Pretty well documented, could be better but writing it is so boring >.<
 
 
-[[https://github.com/outofthisworld/NioServer/images/Untitled.png|alt=octocat]]
-[[https://github.com/outofthisworld/NioServer/images/Untitled1.png|alt=octocat]]
+[[https://raw.githubusercontent.com/outofthisworld/NioServer/master/images/Untitled.png]]
+[[https://github.com/outofthisworld/NioServer/blob/master/images/Untitled1.png|alt=octocat]]
 
 
 Next steps:
