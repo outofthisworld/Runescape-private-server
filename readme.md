@@ -16,9 +16,8 @@ Features:
 - Pretty well documented, could be better but writing it is so boring >.<
 
 
-[[https://raw.githubusercontent.com/outofthisworld/NioServer/master/images/Untitled.png]]
-[[https://github.com/outofthisworld/NioServer/blob/master/images/Untitled1.png]]
-
+![alt text](https://raw.githubusercontent.com/outofthisworld/NioServer/master/images/Untitled.png)
+![alt text](https://github.com/outofthisworld/NioServer/blob/master/images/Untitled1.png)
 
 Next steps:
 
