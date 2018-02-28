@@ -17,7 +17,7 @@ Features:
 
 
 [[https://raw.githubusercontent.com/outofthisworld/NioServer/master/images/Untitled.png]]
-[[https://github.com/outofthisworld/NioServer/blob/master/images/Untitled1.png|alt=octocat]]
+[[https://github.com/outofthisworld/NioServer/blob/master/images/Untitled1.png]]
 
 
 Next steps:
