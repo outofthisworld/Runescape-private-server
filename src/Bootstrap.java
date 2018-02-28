@@ -47,6 +47,7 @@ public class Bootstrap implements Runnable {
         WorldManager.createWorld();
         ItemDefinition.load();
         networkExecutor.submit(this);
+       //run();
     }
 
     /**

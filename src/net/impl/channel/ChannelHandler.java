@@ -21,23 +21,28 @@ import net.impl.events.NetworkWriteEvent;
 import net.impl.session.Client;
 
 import java.io.IOException;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 /**
  * The type Channel handler.
  */
 public class ChannelHandler implements IChannelHandler {
+    private static Executor ex = Executors.newCachedThreadPool();
     private static final Logger logger = Logger.getLogger(ChannelHandler.class.getName());
     private final Selector selector;
     private final NetworkEvent networkReadEvent = new NetworkReadEvent();
     private final NetworkEvent networkWriteEvent = new NetworkWriteEvent();
     private volatile boolean isRunning = false;
-    private int numChannels = 0;
+    private final AtomicInteger numChannel = new AtomicInteger();
 
     /**
      * Instantiates a new Channel handler.
@@ -49,17 +54,24 @@ public class ChannelHandler implements IChannelHandler {
     }
 
     @Override
-    public void handle(SocketChannel socketChannel) throws Exception {
-        if (!socketChannel.isConnected()) {
-            throw new Exception("ChannelHandler.java: Attempted to login an unconnected socket channel");
-        }
+    public void handle(final SocketChannel socketChannel)  {
+        ex.execute(()->{
+            if (!socketChannel.isConnected()) {
+                return;
+            }
 
-        if (socketChannel.isBlocking()) {
-            socketChannel.configureBlocking(false);
-        }
-
-        socketChannel.register(selector, SelectionKey.OP_READ);
-        numChannels++;
+            try {
+                if (socketChannel.isBlocking()) {
+                    socketChannel.configureBlocking(false);
+                }
+                socketChannel.register(selector, SelectionKey.OP_READ);
+                numChannel.getAndIncrement();
+            } catch (ClosedChannelException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override
@@ -70,7 +82,7 @@ public class ChannelHandler implements IChannelHandler {
 
     @Override
     public int getChannelCount() {
-        return numChannels;
+        return numChannel.get();
     }
 
     @Override
@@ -84,10 +96,10 @@ public class ChannelHandler implements IChannelHandler {
         while (selector.isOpen()) {
             try {
                 selector.select(500);
+                pollSelections();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            pollSelections();
         }
         isRunning = false;
     }
@@ -97,13 +109,16 @@ public class ChannelHandler implements IChannelHandler {
      */
     protected final void pollSelections() {
         Set<SelectionKey> selectionKeySet = selector.selectedKeys();
+
+        if(selectionKeySet.size() == 0) return;
+
         SelectionKey currentlySelected;
 
         for (Iterator<SelectionKey> it = selectionKeySet.iterator(); it.hasNext(); ) {
 
             currentlySelected = it.next();
 
-            if (currentlySelected.attachment() == null) {
+            if (currentlySelected.isValid() && currentlySelected.attachment() == null) {
                 try {
                     currentlySelected.attach(new Client(currentlySelected));
                 } catch (IOException e) {
@@ -115,6 +130,8 @@ public class ChannelHandler implements IChannelHandler {
                 Client c = (Client) currentlySelected.attachment();
                 c.execute(networkReadEvent);
             }
+
+
 
             if (currentlySelected.isValid() && currentlySelected.isWritable()) {
                 Client c = (Client) currentlySelected.attachment();

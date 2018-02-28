@@ -12,7 +12,7 @@ public final class NetworkConfig {
      * The constant MAX_CHANNELS_PER_HANDLER.
      */
     public static final int
-            MAX_CHANNELS_PER_HANDLER = 300,
+            MAX_CHANNELS_PER_HANDLER = 800,
     /**
      * The Default no channel handlers.
      */

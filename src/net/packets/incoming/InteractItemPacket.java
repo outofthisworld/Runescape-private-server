@@ -17,6 +17,7 @@ package net.packets.incoming;
 
 import net.buffers.InputBuffer;
 import net.impl.session.Client;
+import world.item.Item;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +34,56 @@ public class InteractItemPacket extends IncomingPacket {
 
     @Override
     public void handle(Client c, int packetOpcode, InputBuffer in) throws Exception {
+        System.out.println("handling packet interact item");
+        switch (packetOpcode){
+            case ITEM_ACTION_1:
+                System.out.println("Item action 1");
+                break;
+            case ITEM_ACTION_3:
+                System.out.println("Item action 3");
+                break;
+            case EQUIP_ITEM:
+                System.out.println("equip");
+                int itemId = in.readBigUnsignedWord() + 1;
+                int itemSlot = in.readBigUnsignedWordA();
+                int intefaceId = in.readBigUnsignedWordA();
 
+
+                if(intefaceId != 3214){
+                    return;
+                }
+                System.out.println(itemId);
+                System.out.println(itemSlot);
+                System.out.println(intefaceId);
+
+                Item item = c.getPlayer().getInventory().get(itemSlot);
+
+                if(item == null){
+                    System.out.println("Item was null");
+                    return;
+                }
+
+                if(itemId != item.getId()){
+                    System.out.println("Item id mismatch");
+                    System.out.println("our item id : " + item.getId());
+                    return;
+                }
+
+                c.getPlayer().getEquipment().add(item);
+                break;
+            case ALTERNATE_ITEM_OPTION:
+                System.out.println("alternate item opt");
+                break;
+            case UNEQUIP_ITEM:
+                System.out.println("uneuip");
+                break;
+            case MOVE_ITEM:
+                System.out.println("moveItem");
+                break;
+            case DROP_ITEM_GROUND:
+                System.out.println("drop item");
+                break;
+        }
     }
 
     @Override

@@ -26,9 +26,8 @@ import java.util.stream.IntStream;
 
 public class Equipment extends AbstractGameContainer<Item> {
 
-
     public Equipment(Player p) {
-        super(p, EquipmentSlot.values().length, 3214, Item.class);
+        super(p, EquipmentSlot.values().length, 1688, Item.class);
     }
 
 
@@ -40,8 +39,7 @@ public class Equipment extends AbstractGameContainer<Item> {
 
     /**
      * Adds an item present from a users inventory into the specfied equipment slot.
-     *
-     * @param slotId
+
      * @param item
      * @return
      */
@@ -53,7 +51,12 @@ public class Equipment extends AbstractGameContainer<Item> {
 
     @Override
     public boolean remove(int slotId) {
-        if (slotId < 0 || slotId >= capacity())
+        return remove(slotId,get(slotId) == null?0:get(slotId).getAmount());
+    }
+
+    @Override
+    public boolean remove(int slotId, int amount) {
+        if (slotId < 0 || slotId >= capacity() || amount <= 0)
             return false;
 
         Item item = getContainer().get(slotId);
@@ -89,30 +92,24 @@ public class Equipment extends AbstractGameContainer<Item> {
     }
 
     @Override
-    public boolean remove(int slotId, int amount) {
-        return false;
-    }
-
-    @Override
     public boolean removeEqual(Item item) {
-        return false;
+        return remove(indexOfEquals(item),item.getAmount());
     }
 
     @Override
     public boolean removeEqual(Item item, int amount) {
-        return false;
+        return remove(indexOfEquals(item),amount);
     }
 
     @Override
     public boolean removeRef(Item item) {
-        return false;
+        return remove(indexOfRef(item),item.getAmount());
     }
 
     @Override
     public boolean removeRef(Item item, int amount) {
-        return false;
+        return remove(indexOfRef(item),amount);
     }
-
 
     @Override
     public boolean set(int slotId, int itemId, int amount) {
@@ -122,7 +119,10 @@ public class Equipment extends AbstractGameContainer<Item> {
 
     private boolean set(int slotId, Item item, Predicate<Item> pred) {
         Preconditions.notNull(item, pred);
-        Preconditions.greaterThan(slotId, 0);
+
+        if(slotId < 0 || slotId >= capacity()){
+            return false;
+        }
 
         int inventoryItemSlot = -1;
         for (int i = 0; i < getOwner().getInventory().getContainer().capacity(); i++) {
@@ -150,7 +150,7 @@ public class Equipment extends AbstractGameContainer<Item> {
             return false;
         }
 
-        //Theres an item currently in that slot
+
         if (equipped == null) {
             getOwner().getInventory().removeRef(inventoryItem);
             sync(slotId, inventoryItem);
@@ -164,14 +164,14 @@ public class Equipment extends AbstractGameContainer<Item> {
 
         if (inventoryItem.getId() == equipped.getId() && inventoryItem.getItemDefinition().isStackable()) {
 
-            if (equipped.addAmount(inventoryItem.getAmount())) {
+            if (equipped.canAddAmount(inventoryItem.getAmount())) {
                 getOwner().getInventory().removeRef(inventoryItem);
                 sync(slotId, equipped);
             } else {
                 int remaining = Integer.MAX_VALUE - equipped.getAmount();
                 if (remaining > 0) {
                     getOwner().getInventory().removeRef(inventoryItem, remaining);
-                    equipped.addAmount(remaining);
+                    equipped.canAddAmount(remaining);
                     sync(slotId, equipped);
                 }
             }

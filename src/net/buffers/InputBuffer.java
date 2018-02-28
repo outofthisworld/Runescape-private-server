@@ -420,7 +420,7 @@ public class InputBuffer extends AbstractBuffer {
      *
      * @return the short
      */
-    public short readBigSignedWORD() {
+    public short readBigSignedWord() {
         return (short) inOrder(Order.BIG_ENDIAN).readBytes(2, ByteTransformationType.NONE);
     }
 
@@ -438,9 +438,19 @@ public class InputBuffer extends AbstractBuffer {
      *
      * @return the int
      */
-    public int readBigUnsignedWORD() {
+    public int readBigUnsignedWord() {
         return (int) (inOrder(Order.BIG_ENDIAN).readBytes(2, ByteTransformationType.NONE) & 0xFFFFL);
     }
+
+    /**
+     * Read big unsigned word int.
+     *
+     * @return the int
+     */
+    public int readBigUnsignedWordA() {
+        return (int) (inOrder(Order.BIG_ENDIAN).readBytes(2, ByteTransformationType.A) & 0xFFFFL);
+    }
+
 
     /**
      * Remaining int.

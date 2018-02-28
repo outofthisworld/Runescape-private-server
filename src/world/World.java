@@ -17,6 +17,7 @@ package world;
 
 import net.impl.decoder.GamePacketDecoder;
 import net.impl.decoder.LoginProtocolConstants;
+import net.stress.Flooder;
 import util.Preconditions;
 import util.Stopwatch;
 import world.entity.misc.Position;
@@ -311,8 +312,10 @@ public class World {
 
         Player p = players.get(slot);
 
-        if (p == null)
+        if (p == null) {
+            System.out.println("Null playeer when removing");
             throw new IllegalStateException("null player in players list");
+        }
 
         playersByRegion.get(p.getLastRegionPosition()).remove(p);
         players.remove(slot);

@@ -503,23 +503,31 @@ public class OutgoingPacketBuilder {
         //Find players in the surrounding area to this player
         Set<Player> playersInRegion = player.getWorld().getPlayersByQuadRegion(player.getPosition().getRegionPosition());
 
-        playersInRegion.forEach(p -> {
+        Iterator<Player> it = playersInRegion.iterator();
+        int playersAdded = 0;
+        for(;it.hasNext();){
+            Player p = it.next();
+
             if (p == player) {
-                return;
+                continue;
             }
 
             if (player.getLocalPlayers().contains(p)) {
-                return;
+                continue;
+            }
+
+            if (player.getLocalPlayers().size() >= 79
+                    || playersAdded >= 25) {
+                break;
             }
 
             if (player.getPosition().isInViewingDistance(p.getPosition())) {
-                System.out.println("Updating local list for player: " + player.getUsername());
-                System.out.println("Adding player : " + p.getUsername());
+
 
                 int offsetY = p.getPosition().getVector().getY() - player.getPosition().getVector().getY();
                 int offsetX = p.getPosition().getVector().getX() - player.getPosition().getVector().getX();
-                System.out.println(offsetX);
-                System.out.println(offsetY);
+                //System.out.println(offsetX);
+                //System.out.println(offsetY);
                 //Adds a players to the local player list, and in-view of other players.
                 outputBuffer.writeBits(p.getSlotId(), 11)
                         .writeBit(true)
@@ -528,10 +536,13 @@ public class OutgoingPacketBuilder {
                         .writeBits(offsetX, 5);
 
                 player.getLocalPlayers().add(p);
+                playersAdded++;
                 p.getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
                 appendPlayerUpdateBlock(p, update);
             }
-        });
+
+        }
+
 
 
         //1: our player movement
@@ -555,8 +566,6 @@ public class OutgoingPacketBuilder {
     private void updatePlayerMovement(Player player, boolean thisPlayer) {
 
         if (thisPlayer && (player.isTeleporting() || player.isRegionChanged())) {
-
-            System.out.println("Sending region changed movement.");
 
              /*
               * Update required bit
@@ -612,7 +621,7 @@ public class OutgoingPacketBuilder {
                     outputBuffer.writeBit(false);
                 }
             } else if (!player.getMovement().isRunning()) {
-                System.out.println("Sending move . " + player.getMovement().getWalkDirection());
+
                   /*
                    * The player moved but didn't run. Signify that an update is required.
                    */

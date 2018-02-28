@@ -24,7 +24,7 @@ public class Item implements IItem {
     private int amount;
 
     public Item(int id, int amount) {
-        Preconditions.greaterThan(amount, 0);
+        Preconditions.greaterThan(amount,0);
         itemDefinition = ItemDefinition.getForId(id);
         Preconditions.notNull(itemDefinition);
         this.amount = amount;
@@ -43,19 +43,18 @@ public class Item implements IItem {
         return amount;
     }
 
-    public boolean addAmount(int amount) {
+    public boolean canAddAmount(int amount) {
         long val = this.amount + amount;
 
         if (val > Integer.MAX_VALUE || val < 0) {
             return false;
         }
 
-        this.amount = (int) val;
         return true;
     }
 
-    public boolean subtractAmount(int amount) {
-        return addAmount(-amount);
+    public boolean canSubtractAmount(int amount) {
+        return canAddAmount(-amount);
     }
 
     public ItemDefinition getItemDefinition() {

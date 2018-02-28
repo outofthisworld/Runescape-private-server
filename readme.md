@@ -16,6 +16,10 @@ Features:
 - Pretty well documented, could be better but writing it is so boring >.<
 
 
+[[https://github.com/outofthisworld/NioServer/images/Untitled.png|alt=octocat]]
+[[https://github.com/outofthisworld/NioServer/images/Untitled1.png|alt=octocat]]
+
+
 Next steps:
 
 - JAGGRAB.
@@ -24,3 +28,4 @@ Next steps:
 - Player trading
 - Npc walking/movement
 - Minigames
+

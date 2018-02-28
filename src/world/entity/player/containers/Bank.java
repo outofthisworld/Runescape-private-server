@@ -16,48 +16,65 @@
 package world.entity.player.containers;
 
 import util.Preconditions;
+import world.entity.player.EquipmentSlot;
 import world.entity.player.Player;
 import world.item.Item;
 
-public class Bank implements IContainer<Item> {
-    private static final int BANK_SIZE = 200;
-    private Player p;
-    private Container<Item> bankItems;
-
+public class Bank extends AbstractGameContainer<Item> {
 
     public Bank(Player p) {
-        this.p = p;
-        bankItems = new Container<>(Bank.BANK_SIZE, Item.class);
+        super(p, 600, 3214, Item.class);
     }
 
-    public boolean addBankItem(Item item) {
-        Preconditions.notNull(item);
+    @Override
+    public boolean add(int itemId, int amount) {
+        return add(new Item(itemId,amount));
+    }
 
-        if (bankItems.remaining() == 0) {
-            return false;
-        }
+    @Override
+    public boolean add(Item item) {
 
-        int nextSlot = bankItems.getFirstFreeSlot();
 
         return false;
     }
 
-    public boolean addBankItem(int id, int amount) {
-        Preconditions.greaterThanOrEqualTo(id, 0);
-        Preconditions.greaterThanOrEqualTo(amount, 1);
-        return addBankItem(new Item(id, amount));
-    }
-
-    public void removeBankItem(Item item) {
-
-    }
-
-    public void refresh() {
-
+    @Override
+    public boolean remove(int slotId) {
+        return false;
     }
 
     @Override
-    public Container<Item> getContainer() {
-        return bankItems;
+    public boolean remove(int slotId, int amount) {
+        return false;
+    }
+
+    @Override
+    public boolean removeEqual(Item item) {
+        return false;
+    }
+
+    @Override
+    public boolean removeEqual(Item item, int amount) {
+        return false;
+    }
+
+    @Override
+    public boolean removeRef(Item item) {
+        return false;
+    }
+
+    @Override
+    public boolean removeRef(Item item, int amount) {
+        return false;
+    }
+
+    @Override
+    public boolean set(int slotId, int itemId, int amount) {
+        return false;
+    }
+
+    @Override
+    public boolean set(int slotId, Item item) {
+        return false;
     }
 }

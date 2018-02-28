@@ -415,11 +415,12 @@ public class Player extends Entity {
 
         getClient().getOutgoingPacketBuilder().initPlayer(1, getSlotId());
 
-        getInventory().getContainer().add(new Item(123, 1));
+        getInventory().add(new Item(123, 1));
 
 
         //Refresh our inventory
-        getInventory().refresh();
+        getInventory().syncAll();
+        //getEquipment().syncAll();
 
         getClient().getOutgoingPacketBuilder().setChatOptions(0, 0, 0);
 

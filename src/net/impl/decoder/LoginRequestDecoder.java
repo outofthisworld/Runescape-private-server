@@ -23,7 +23,8 @@ public class LoginRequestDecoder implements ProtocolDecoder {
             return;
         }
 
-        in.readUnsignedByte();
+        if(in.remaining() > 0)
+            in.readUnsignedByte();
 
         c.write(OutputBuffer.create(73, 10)
                 .writeBigQWORD(0)

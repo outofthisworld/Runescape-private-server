@@ -71,6 +71,9 @@ package net;/*------------------------------------------------------------------
 import net.impl.NetworkConfig;
 import net.impl.channel.ChannelGateway;
 import net.impl.channel.ChannelManager;
+import net.impl.events.NetworkReadEvent;
+import net.impl.events.NetworkWriteEvent;
+import net.impl.session.Client;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -78,8 +81,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -93,6 +95,7 @@ public final class Reactor {
     private ServerSocketChannel serverSocketChannel;
     private InetSocketAddress address;
     private Selector onAcceptableSelector;
+    private static final int MAX_INCOMING_THRESHOLD = 10;
 
     /**
      * Instantiates a new net.Reactor.
@@ -107,8 +110,6 @@ public final class Reactor {
     /**
      * Instantiates a new net.Reactor.
      *
-     * @param host the host
-     * @param port the port
      */
     public Reactor() {
         this(NetworkConfig.HOST, NetworkConfig.PORT, NetworkConfig.DEFAULT_NO_CHANNEL_HANDLERS);
@@ -178,6 +179,11 @@ public final class Reactor {
 
         while (serverSocketChannel.isOpen() && onAcceptableSelector.isOpen()) {
             acceptConnections();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         stop();
@@ -192,7 +198,14 @@ public final class Reactor {
             Set<SelectionKey> selectionKeySet = onAcceptableSelector.selectedKeys();
 
             SelectionKey currentlySelected;
+            int incomingAccepted = 0;
+
             for (Iterator<SelectionKey> it = selectionKeySet.iterator(); it.hasNext(); ) {
+
+                if(incomingAccepted >= MAX_INCOMING_THRESHOLD){
+                    break;
+                }
+
                 currentlySelected = it.next();
 
                 if (currentlySelected == null) {
@@ -213,6 +226,7 @@ public final class Reactor {
                         //Check we allow this connection
                         ChannelGateway.accept(socketChannel);
                         channelManager.register(socketChannel);
+                        incomingAccepted++;
                     }
                 }
 

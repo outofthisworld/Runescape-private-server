@@ -17,6 +17,7 @@ package net.packets.incoming;
 
 import net.buffers.InputBuffer;
 import net.impl.session.Client;
+import world.WorldManager;
 import world.entity.player.Player;
 import world.event.impl.RegionUpdateEvent;
 
@@ -48,6 +49,10 @@ public class PlayerCommandPacket extends IncomingPacket {
 
         System.out.println("Received player command : " + input);
         switch (input) {
+            case "players":
+                c.getOutgoingPacketBuilder()
+                        .sendMessage(String.valueOf(c.getPlayer().getWorld().getTotalPlayers()));
+                break;
             case "tele":
                 int x = scanner.nextInt();
                 int y = scanner.nextInt();
@@ -67,7 +72,7 @@ public class PlayerCommandPacket extends IncomingPacket {
                             .sendMessage(messageBuilder
                                     .append("Added ")
                                     .append(", remaining slots : ")
-                                    .append(p.getInventory().getContainer().remaining())
+                                    .append(p.getInventory().remaining())
                                     .toString())
                             .send();
                 } else {

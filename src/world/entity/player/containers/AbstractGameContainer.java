@@ -7,8 +7,11 @@ import world.item.IItem;
 import world.item.Item;
 
 import java.lang.reflect.Array;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
-public abstract class AbstractGameContainer<T extends IItem> {
+public abstract class AbstractGameContainer<T extends IItem> implements IContainer<T>{
     private int containerId;
     private Player player;
     private Container<T> container;
@@ -60,33 +63,44 @@ public abstract class AbstractGameContainer<T extends IItem> {
         return player;
     }
 
-    protected final Container<T> getContainer() {
+    public final Container<T> getContainer() {
         return container;
     }
 
     public T get(int slot) {
+        if(slot < 0 || slot >= capacity()) return null;
         return container.get(slot);
+    }
+
+    public int indexOf(Predicate<T> pred){
+        Preconditions.notNull(pred);
+        for (int i = 0; i < capacity(); i++) {
+            if (get(i) != null && pred.test(get(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public int indexOfRef(T item) {
         Preconditions.notNull(item);
-        for (int i = 0; i < capacity(); i++) {
-            if (get(i) != null && item == get(i)) {
-                return i;
-            }
-        }
-        return -1;
+        return indexOf((i)->i == item);
     }
 
     public int indexOfEquals(T item) {
         Preconditions.notNull(item);
-        for (int i = 0; i < capacity(); i++) {
-            if (get(i) != null && item.equals(get(i))) {
-                return i;
-            }
-        }
-        return -1;
+        return indexOf(item::equals);
     }
+
+   public void forEach(BiConsumer<Integer,T> consumer){
+        for(int i = 0; i < capacity();i++){
+            consumer.accept(i,get(i));
+        }
+   }
+
+   public Stream stream(){
+        return getContainer().stream();
+   }
 
     public int remaining() {
         return container.remaining();
@@ -131,10 +145,10 @@ public abstract class AbstractGameContainer<T extends IItem> {
     }
 
     protected void sync(int slotId, int containerId, T item) {
-        int itemId = -1;
-        int amount = -1;
+        int itemId = 0;
+        int amount = 0;
 
-        if (item == null || item.getId() <= 0 || item.getAmount() <= 0) {
+        if (item == null || item.getId() <= 0) {
             getContainer().set(slotId, null);
         } else {
             getContainer().set(slotId, item);
@@ -148,4 +162,5 @@ public abstract class AbstractGameContainer<T extends IItem> {
     protected void sync(int slotId, T item) {
         sync(slotId, containerId, item);
     }
+
 }

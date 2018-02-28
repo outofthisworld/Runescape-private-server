@@ -81,7 +81,7 @@ public class Client implements NetworkEventExecutor {
      */
     public Client() throws IOException {
         connectedAt = System.nanoTime();
-        inputBuffer = new InputBuffer(256, 256, 128, -1);
+        inputBuffer = new InputBuffer(1024, 1024, 512, -1);
         channel = (SocketChannel) selectionKey.channel();
         remoteAddress = (InetSocketAddress) getChannel().getRemoteAddress();
         serverSessionKey = ((long) (java.lang.Math.random() * 99999999D) << 32) + (long) (java.lang.Math.random() * 99999999D);

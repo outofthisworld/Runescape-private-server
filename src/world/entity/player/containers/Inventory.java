@@ -93,7 +93,7 @@ public class Inventory extends AbstractGameContainer<Item> {
 
     @Override
     public boolean remove(int slotId, int amount) {
-        if (slotId < 0 || slotId >= capacity())
+        if (slotId < 0 || slotId >= capacity() || amount <= 0)
             return false;
 
         Item i = get(slotId);
@@ -101,11 +101,18 @@ public class Inventory extends AbstractGameContainer<Item> {
             return false;
         }
 
-        if (!i.subtractAmount(amount)) {
+        if (!i.canSubtractAmount(amount)) {
             return false;
         }
 
-        sync(slotId, i);
+        int newAmount = i.getAmount() - amount;
+
+        if(newAmount <= 0){
+            sync(slotId, null);
+        }else{
+            sync(slotId, new Item(i.getId(),i.getAmount()-amount));
+        }
+
         return true;
     }
 
