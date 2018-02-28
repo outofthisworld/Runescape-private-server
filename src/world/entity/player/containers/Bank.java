@@ -15,8 +15,6 @@
 
 package world.entity.player.containers;
 
-import util.Preconditions;
-import world.entity.player.EquipmentSlot;
 import world.entity.player.Player;
 import world.item.Item;
 
@@ -28,7 +26,7 @@ public class Bank extends AbstractGameContainer<Item> {
 
     @Override
     public boolean add(int itemId, int amount) {
-        return add(new Item(itemId,amount));
+        return add(new Item(itemId, amount));
     }
 
     @Override

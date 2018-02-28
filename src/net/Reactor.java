@@ -19,7 +19,7 @@ package net;/*------------------------------------------------------------------
 
  BY EXERCISING ANY RIGHTS TO THE WORK PROVIDED HERE, YOU ACCEPT AND AGREE TO BE BOUND BY THE TERMS OF THIS LICENSE. TO THE EXTENT THIS LICENSE MAY BE CONSIDERED TO BE A CONTRACT, THE LICENSOR GRANTS YOU THE RIGHTS CONTAINED HERE IN CONSIDERATION OF YOUR ACCEPTANCE OF SUCH TERMS AND CONDITIONS.
 
- 1. Definitions
+ 1. DefinitionLoader
 
  "Adaptation" means a work based upon the Work, or upon the Work and other pre-existing works, such as a translation, adaptation, derivative work, arrangement of music or other alterations of a literary or artistic work, or phonogram or performance and includes cinematographic adaptations or any other form in which the Work may be recast, transformed, or adapted including in any form recognizably derived from the original, except that a work that constitutes a CollectionAccessor will not be considered an Adaptation for the purpose of this License. For the avoidance of doubt, where the Work is a musical work, performance or phonogram, the synchronization of the Work in timed-relation with a moving image ("synching") will be considered an Adaptation for the purpose of this License.
  "CollectionAccessor" means a collection of literary or artistic works, such as encyclopedias and anthologies, or performances, phonograms or broadcasts, or other works or subject matter other than works listed in Section 1(f) below, which, by reason of the selection and arrangement of their contents, constitute intellectual creations, in which the Work is included in its entirety in unmodified form along with one or more other contributions, each constituting separate and independent works in themselves, which together are assembled into a collective whole. A work that constitutes a CollectionAccessor will not be considered an Adaptation (as defined above) for the purposes of this License.
@@ -71,9 +71,6 @@ package net;/*------------------------------------------------------------------
 import net.impl.NetworkConfig;
 import net.impl.channel.ChannelGateway;
 import net.impl.channel.ChannelManager;
-import net.impl.events.NetworkReadEvent;
-import net.impl.events.NetworkWriteEvent;
-import net.impl.session.Client;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -81,7 +78,8 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
-import java.util.*;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -90,12 +88,12 @@ import java.util.logging.Logger;
  */
 public final class Reactor {
     private static final Logger logger = Logger.getLogger(Reactor.class.getName());
+    private static final int MAX_INCOMING_THRESHOLD = 10;
     private final ChannelManager channelManager = ChannelManager.create();
     private final int numConnectionHandlers;
     private ServerSocketChannel serverSocketChannel;
     private InetSocketAddress address;
     private Selector onAcceptableSelector;
-    private static final int MAX_INCOMING_THRESHOLD = 10;
 
     /**
      * Instantiates a new net.Reactor.
@@ -109,7 +107,6 @@ public final class Reactor {
 
     /**
      * Instantiates a new net.Reactor.
-     *
      */
     public Reactor() {
         this(NetworkConfig.HOST, NetworkConfig.PORT, NetworkConfig.DEFAULT_NO_CHANNEL_HANDLERS);
@@ -202,7 +199,7 @@ public final class Reactor {
 
             for (Iterator<SelectionKey> it = selectionKeySet.iterator(); it.hasNext(); ) {
 
-                if(incomingAccepted >= MAX_INCOMING_THRESHOLD){
+                if (incomingAccepted >= MAX_INCOMING_THRESHOLD) {
                     break;
                 }
 

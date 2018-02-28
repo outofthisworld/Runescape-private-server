@@ -35,6 +35,7 @@ public class Setup {
     private static final Gson builder = new GsonBuilder().setPrettyPrinting().create();
     private static ItemDefinition[] defs;
     private static NpcDefinition[] npcDefs;
+    //private static Equipment
 
 
     /**
@@ -86,7 +87,7 @@ public class Setup {
         //Database.init();
         Database.getClient().dropDatabase(DatabaseConfig.DB_NAME);
         try {
-            Setup.defs = Setup.builder.fromJson(Setup.loadDefAsString("src/database/data/item_def.json"), ItemDefinition[].class);
+            Setup.defs = Setup.builder.fromJson(Setup.loadDefAsString("src/database/data/json/item_def.json"), ItemDefinition[].class);
             Setup.npcDefs = Setup.builder.fromJson(Setup.loadDefAsString("src/database/data/npc_def.json"), NpcDefinition[].class);
 
             Setup.insertAll(Setup.defs, ItemDefinition.class, "id", DatabaseConfig.DB_NAME, DatabaseConfig.ITEMS_COLLECTION);

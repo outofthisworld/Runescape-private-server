@@ -16,6 +16,7 @@
 package world.item;
 
 import util.Preconditions;
+import world.definitions.DefinitionLoader;
 import world.definitions.ItemDefinition;
 
 public class Item implements IItem {
@@ -24,8 +25,8 @@ public class Item implements IItem {
     private int amount;
 
     public Item(int id, int amount) {
-        Preconditions.greaterThan(amount,0);
-        itemDefinition = ItemDefinition.getForId(id);
+        Preconditions.greaterThan(amount, 0);
+        itemDefinition = DefinitionLoader.getDefinition(DefinitionLoader.ITEM_DEFINITIONS, id);
         Preconditions.notNull(itemDefinition);
         this.amount = amount;
         this.id = id;

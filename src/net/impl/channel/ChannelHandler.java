@@ -36,13 +36,13 @@ import java.util.logging.Logger;
  * The type Channel handler.
  */
 public class ChannelHandler implements IChannelHandler {
-    private static Executor ex = Executors.newCachedThreadPool();
     private static final Logger logger = Logger.getLogger(ChannelHandler.class.getName());
+    private static Executor ex = Executors.newCachedThreadPool();
     private final Selector selector;
     private final NetworkEvent networkReadEvent = new NetworkReadEvent();
     private final NetworkEvent networkWriteEvent = new NetworkWriteEvent();
-    private volatile boolean isRunning = false;
     private final AtomicInteger numChannel = new AtomicInteger();
+    private volatile boolean isRunning = false;
 
     /**
      * Instantiates a new Channel handler.
@@ -54,8 +54,8 @@ public class ChannelHandler implements IChannelHandler {
     }
 
     @Override
-    public void handle(final SocketChannel socketChannel)  {
-        ex.execute(()->{
+    public void handle(final SocketChannel socketChannel) {
+        ex.execute(() -> {
             if (!socketChannel.isConnected()) {
                 return;
             }
@@ -110,7 +110,7 @@ public class ChannelHandler implements IChannelHandler {
     protected final void pollSelections() {
         Set<SelectionKey> selectionKeySet = selector.selectedKeys();
 
-        if(selectionKeySet.size() == 0) return;
+        if (selectionKeySet.size() == 0) return;
 
         SelectionKey currentlySelected;
 
@@ -130,7 +130,6 @@ public class ChannelHandler implements IChannelHandler {
                 Client c = (Client) currentlySelected.attachment();
                 c.execute(networkReadEvent);
             }
-
 
 
             if (currentlySelected.isValid() && currentlySelected.isWritable()) {

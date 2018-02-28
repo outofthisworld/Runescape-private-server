@@ -39,7 +39,7 @@ public class Equipment extends AbstractGameContainer<Item> {
 
     /**
      * Adds an item present from a users inventory into the specfied equipment slot.
-
+     *
      * @param item
      * @return
      */
@@ -51,7 +51,7 @@ public class Equipment extends AbstractGameContainer<Item> {
 
     @Override
     public boolean remove(int slotId) {
-        return remove(slotId,get(slotId) == null?0:get(slotId).getAmount());
+        return remove(slotId, get(slotId) == null ? 0 : get(slotId).getAmount());
     }
 
     @Override
@@ -93,22 +93,22 @@ public class Equipment extends AbstractGameContainer<Item> {
 
     @Override
     public boolean removeEqual(Item item) {
-        return remove(indexOfEquals(item),item.getAmount());
+        return remove(indexOfEquals(item), item.getAmount());
     }
 
     @Override
     public boolean removeEqual(Item item, int amount) {
-        return remove(indexOfEquals(item),amount);
+        return remove(indexOfEquals(item), amount);
     }
 
     @Override
     public boolean removeRef(Item item) {
-        return remove(indexOfRef(item),item.getAmount());
+        return remove(indexOfRef(item), item.getAmount());
     }
 
     @Override
     public boolean removeRef(Item item, int amount) {
-        return remove(indexOfRef(item),amount);
+        return remove(indexOfRef(item), amount);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class Equipment extends AbstractGameContainer<Item> {
     private boolean set(int slotId, Item item, Predicate<Item> pred) {
         Preconditions.notNull(item, pred);
 
-        if(slotId < 0 || slotId >= capacity()){
+        if (slotId < 0 || slotId >= capacity()) {
             return false;
         }
 

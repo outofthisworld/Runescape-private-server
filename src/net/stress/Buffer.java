@@ -6,16 +6,23 @@ import java.math.BigInteger;
 
 public final class Buffer {
 
-    public byte payload[];
-    public int currentPosition;
-    public int bitPosition;
-    private static final int[] BIT_MASKS = { 0, 1, 3, 7, 15, 31, 63, 127, 255,
+    private static final int[] BIT_MASKS = {0, 1, 3, 7, 15, 31, 63, 127, 255,
             511, 1023, 2047, 4095, 8191, 16383, 32767, 65535, 0x1ffff, 0x3ffff,
             0x7ffff, 0xfffff, 0x1fffff, 0x3fffff, 0x7fffff, 0xffffff,
             0x1ffffff, 0x3ffffff, 0x7ffffff, 0xfffffff, 0x1fffffff, 0x3fffffff,
-            0x7fffffff, -1 };
-
+            0x7fffffff, -1};
+    public byte payload[];
+    public int currentPosition;
+    public int bitPosition;
     public ISAACCipher encryption;
+
+    private Buffer() {
+    }
+
+    public Buffer(byte[] payload) {
+        this.payload = payload;
+        currentPosition = 0;
+    }
 
     public static Buffer create() {
         Buffer buffer = new Buffer();
@@ -36,15 +43,6 @@ public final class Buffer {
         return (0xff & payload[currentPosition - 3] << 16)
                 + (0xff & payload[currentPosition - 2] << 8)
                 + (0xff & payload[currentPosition - 1]);
-    }
-
-
-
-    private Buffer() {}
-
-    public Buffer(byte[] payload) {
-        this.payload = payload;
-        currentPosition = 0;
     }
 
     public int readUSmart2() {
@@ -131,7 +129,7 @@ public final class Buffer {
 
     public int method440() {
         currentPosition += 4;
-        return ((payload[currentPosition - 3] & 0xFF) << 24) + ((payload[currentPosition - 4] & 0xFF) << 16) + ((payload[currentPosition - 1] & 0xFF) << 8) + (payload[ - 2] & 0xFF);
+        return ((payload[currentPosition - 3] & 0xFF) << 24) + ((payload[currentPosition - 4] & 0xFF) << 16) + ((payload[currentPosition - 1] & 0xFF) << 8) + (payload[-2] & 0xFF);
     }
 
     public int readUnsignedByte() {
@@ -141,7 +139,7 @@ public final class Buffer {
     public int readShort2() {
         currentPosition += 2;
         int i = ((payload[currentPosition - 2] & 0xff) << 8) + (payload[currentPosition - 1] & 0xff);
-        if(i > 32767)
+        if (i > 32767)
             i -= 65537;
         return i;
     }

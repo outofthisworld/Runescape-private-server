@@ -1,0 +1,60 @@
+[
+  {
+    "ids": [
+      1615
+    ],
+    "unique": [
+      {
+        "id": 592,
+        "minimum": 1,
+        "maximum": 1,
+        "chance": "ALWAYS"
+      },
+      {
+        "id": 995,
+        "minimum": 1000,
+        "maximum": 100000,
+        "chance": "UNCOMMON"
+      },
+      {
+        "id": 4151,
+        "minimum": 1,
+        "maximum": 1,
+        "chance": "RARE"
+      }
+    ],
+    "common": [
+      "HIGH_HERBS",
+      "MED_RUNES"
+    ]
+  },
+  {
+    "ids": [
+      443
+    ],
+    "unique": [
+      {
+        "id": 1513,
+        "minimum": 1,
+        "maximum": 5,
+        "chance": "ALWAYS"
+      },
+      {
+        "id": 1359,
+        "minimum": 1,
+        "maximum": 1,
+        "chance": "UNCOMMON"
+      },
+      {
+        "id": 4151,
+        "minimum": 1,
+        "maximum": 1,
+        "chance": "RARE"
+      }
+    ],
+    "common": [
+      "HIGH_HERBS",
+      "MED_RUNES"
+    ]
+  }
+]

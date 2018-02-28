@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public abstract class AbstractGameContainer<T extends IItem> implements IContainer<T>{
+public abstract class AbstractGameContainer<T extends IItem> implements IContainer<T> {
     private int containerId;
     private Player player;
     private Container<T> container;
@@ -68,11 +68,11 @@ public abstract class AbstractGameContainer<T extends IItem> implements IContain
     }
 
     public T get(int slot) {
-        if(slot < 0 || slot >= capacity()) return null;
+        if (slot < 0 || slot >= capacity()) return null;
         return container.get(slot);
     }
 
-    public int indexOf(Predicate<T> pred){
+    public int indexOf(Predicate<T> pred) {
         Preconditions.notNull(pred);
         for (int i = 0; i < capacity(); i++) {
             if (get(i) != null && pred.test(get(i))) {
@@ -84,7 +84,7 @@ public abstract class AbstractGameContainer<T extends IItem> implements IContain
 
     public int indexOfRef(T item) {
         Preconditions.notNull(item);
-        return indexOf((i)->i == item);
+        return indexOf((i) -> i == item);
     }
 
     public int indexOfEquals(T item) {
@@ -92,15 +92,15 @@ public abstract class AbstractGameContainer<T extends IItem> implements IContain
         return indexOf(item::equals);
     }
 
-   public void forEach(BiConsumer<Integer,T> consumer){
-        for(int i = 0; i < capacity();i++){
-            consumer.accept(i,get(i));
+    public void forEach(BiConsumer<Integer, T> consumer) {
+        for (int i = 0; i < capacity(); i++) {
+            consumer.accept(i, get(i));
         }
-   }
+    }
 
-   public Stream stream(){
+    public Stream stream() {
         return getContainer().stream();
-   }
+    }
 
     public int remaining() {
         return container.remaining();

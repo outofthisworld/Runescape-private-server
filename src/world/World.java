@@ -17,7 +17,6 @@ package world;
 
 import net.impl.decoder.GamePacketDecoder;
 import net.impl.decoder.LoginProtocolConstants;
-import net.stress.Flooder;
 import util.Preconditions;
 import util.Stopwatch;
 import world.entity.misc.Position;

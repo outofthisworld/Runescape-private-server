@@ -1,0 +1,206 @@
+[
+  {
+    "name": "Cassie's Shield Shop",
+    "items": [
+      {
+        "id": 1191,
+        "amount": 15
+      },
+      {
+        "id": 1193,
+        "amount": 7
+      },
+      {
+        "id": 1197,
+        "amount": 5
+      },
+      {
+        "id": 1199,
+        "amount": 3
+      }
+    ],
+    "restock": true,
+    "can-sell-items": true,
+    "currency": "COINS"
+  },
+  {
+    "name": "Zaff's Staffs",
+    "items": [
+      {
+        "id": 1381,
+        "amount": 5
+      },
+      {
+        "id": 1383,
+        "amount": 5
+      },
+      {
+        "id": 1385,
+        "amount": 5
+      },
+      {
+        "id": 1387,
+        "amount": 5
+      },
+      {
+        "id": 1391,
+        "amount": 32
+      }
+    ],
+    "restock": true,
+    "can-sell-items": true,
+    "currency": "COINS"
+  },
+  {
+    "name": "Aubury's Rune Shop",
+    "items": [
+      {
+        "id": 554,
+        "amount": 5000
+      },
+      {
+        "id": 555,
+        "amount": 5000
+      },
+      {
+        "id": 556,
+        "amount": 5000
+      },
+      {
+        "id": 557,
+        "amount": 5000
+      },
+      {
+        "id": 559,
+        "amount": 5000
+      },
+      {
+        "id": 558,
+        "amount": 5000
+      },
+      {
+        "id": 562,
+        "amount": 1000
+      },
+      {
+        "id": 560,
+        "amount": 1000
+      },
+      {
+        "id": 565,
+        "amount": 1000
+      },
+      {
+        "id": 561,
+        "amount": 1000
+      }
+    ],
+    "restock": true,
+    "can-sell-items": true,
+    "currency": "COINS"
+  },
+  {
+    "name": "Lowe's Archery Shop",
+    "items": [
+      {
+        "id": 841,
+        "amount": 10
+      },
+      {
+        "id": 843,
+        "amount": 10
+      },
+      {
+        "id": 849,
+        "amount": 10
+      },
+      {
+        "id": 853,
+        "amount": 10
+      },
+      {
+        "id": 857,
+        "amount": 10
+      },
+      {
+        "id": 861,
+        "amount": 10
+      },
+      {
+        "id": 882,
+        "amount": 10000
+      },
+      {
+        "id": 884,
+        "amount": 10000
+      },
+      {
+        "id": 886,
+        "amount": 5000
+      },
+      {
+        "id": 888,
+        "amount": 5000
+      },
+      {
+        "id": 890,
+        "amount": 1000
+      },
+      {
+        "id": 892,
+        "amount": 1000
+      },
+      {
+        "id": 1135,
+        "amount": 10
+      },
+      {
+        "id": 1099,
+        "amount": 10
+      },
+      {
+        "id": 1065,
+        "amount": 10
+      }
+    ],
+    "restock": true,
+    "can-sell-items": true,
+    "currency": "COINS"
+  },
+  {
+    "name": "General Store",
+    "items": [
+      {
+        "id": 1349,
+        "amount": 10
+      },
+      {
+        "id": 1267,
+        "amount": 10
+      },
+      {
+        "id": 1755,
+        "amount": 10
+      },
+      {
+        "id": 2347,
+        "amount": 10
+      },
+      {
+        "id": 227,
+        "amount": 1000
+      },
+      {
+        "id": 1733,
+        "amount": 10
+      },
+      {
+        "id": 1734,
+        "amount": 1000
+      }
+    ],
+    "restock": true,
+    "can-sell-items": true,
+    "currency": "COINS"
+  }
+]

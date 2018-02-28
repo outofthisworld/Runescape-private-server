@@ -24,7 +24,6 @@ import net.impl.events.NetworkEvent;
 import net.impl.events.NetworkEventExecutor;
 import net.packets.outgoing.OutgoingPacket;
 import net.packets.outgoing.OutgoingPacketBuilder;
-import util.Preconditions;
 import world.entity.player.Player;
 import world.event.impl.ClientDisconnectEvent;
 import world.task.DefaultThreadFactory;
@@ -73,19 +72,6 @@ public class Client implements NetworkEventExecutor {
     private ProtocolDecoder protocolDecoder = new LoginRequestDecoder();
     private Future<?> outgoingBufferFuture;
 
-    /**
-     * Instantiates a new Client.
-     *
-     * @param key the key
-     * @throws IOException the io exception
-     */
-    public Client() throws IOException {
-        connectedAt = System.nanoTime();
-        inputBuffer = new InputBuffer(1024, 1024, 512, -1);
-        channel = (SocketChannel) selectionKey.channel();
-        remoteAddress = (InetSocketAddress) getChannel().getRemoteAddress();
-        serverSessionKey = ((long) (java.lang.Math.random() * 99999999D) << 32) + (long) (java.lang.Math.random() * 99999999D);
-    }
 
     /**
      * Instantiates a new Client.
@@ -95,7 +81,7 @@ public class Client implements NetworkEventExecutor {
      */
     public Client(SelectionKey key) throws IOException {
         connectedAt = System.nanoTime();
-        inputBuffer = new InputBuffer(256, 256, 128, -1);
+        inputBuffer = new InputBuffer(2056, 1024, 512, -1);
         selectionKey = key;
         channel = (SocketChannel) selectionKey.channel();
         remoteAddress = (InetSocketAddress) getChannel().getRemoteAddress();
@@ -134,18 +120,8 @@ public class Client implements NetworkEventExecutor {
      *
      * @return the selection key
      */
-    public SelectionKey getSelectionKey() {
+    private SelectionKey getSelectionKey() {
         return selectionKey;
-    }
-
-    /**
-     * Sets selection key.
-     *
-     * @param s the s
-     */
-    public void setSelectionKey(SelectionKey s) {
-        Preconditions.notNull(s);
-        selectionKey = s;
     }
 
     /**

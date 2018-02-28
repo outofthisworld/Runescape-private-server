@@ -17,7 +17,6 @@ package net.packets.incoming;
 
 import net.buffers.InputBuffer;
 import net.impl.session.Client;
-import world.WorldManager;
 import world.entity.player.Player;
 import world.event.impl.RegionUpdateEvent;
 

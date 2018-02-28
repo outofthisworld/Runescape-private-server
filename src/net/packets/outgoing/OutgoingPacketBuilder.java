@@ -505,7 +505,7 @@ public class OutgoingPacketBuilder {
 
         Iterator<Player> it = playersInRegion.iterator();
         int playersAdded = 0;
-        for(;it.hasNext();){
+        for (; it.hasNext(); ) {
             Player p = it.next();
 
             if (p == player) {
@@ -542,7 +542,6 @@ public class OutgoingPacketBuilder {
             }
 
         }
-
 
 
         //1: our player movement

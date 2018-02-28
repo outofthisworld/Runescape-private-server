@@ -15,18 +15,23 @@
 
 import net.Reactor;
 import world.WorldManager;
+import world.definitions.DefinitionLoader;
 import world.definitions.ItemDefinition;
 import world.task.DefaultThreadFactory;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
  * The type Bootstrap.
  */
 public class Bootstrap implements Runnable {
+    private static final Logger logger = Logger.getLogger(Bootstrap.class.getName());
     private final ExecutorService networkExecutor = Executors.newSingleThreadExecutor(new DefaultThreadFactory(10));
     private final Reactor reactor = new Reactor();
 
@@ -45,9 +50,14 @@ public class Bootstrap implements Runnable {
      */
     public void boot() {
         WorldManager.createWorld();
-        ItemDefinition.load();
-        networkExecutor.submit(this);
-       //run();
+        DefinitionLoader.load().whenComplete((t, ex) -> {
+            if (ex != null) {
+                ex.printStackTrace();
+            }
+            logger.log(Level.INFO,"Successfully loaded definitions");
+        });
+
+        CompletableFuture.runAsync(this, networkExecutor);
     }
 
     /**

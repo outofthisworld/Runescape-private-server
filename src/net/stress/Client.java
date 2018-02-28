@@ -4,8 +4,6 @@ package net.stress;
 import net.impl.NetworkConfig;
 import net.impl.decoder.LoginProtocolConstants;
 import net.impl.enc.ISAACCipher;
-import world.WorldConfig;
-import world.WorldManager;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -13,19 +11,20 @@ import java.net.Socket;
 
 public class Client {
 
-    public Client(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
     private final String username;
     private final String password;
+    public boolean loggedIn;
+    int pingCounter = 0;
     private Buffer incoming, login;
     private ByteBuffer outgoing;
     private BufferedConnection socketStream;
     private long serverSeed;
     private ISAACCipher encryption;
-    public boolean loggedIn;
+
+    public Client(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
     public void attemptLogin() throws Exception {
         login = Buffer.create();
@@ -95,20 +94,19 @@ public class Client {
         }
     }
 
-    int pingCounter = 0;
     public void process() throws Exception {
-        if(loggedIn) {
-			/*for(int i = 0; i < 5; i++) {
+        if (loggedIn) {
+            /*for(int i = 0; i < 5; i++) {
 				if(!readPacket())
 					break;
 			}*/
-            if(pingCounter++ >= 25) {
+            if (pingCounter++ >= 25) {
                 outgoing.resetPosition();
                 //Basic packet ping to keep connection alive
                 outgoing.putOpcode(0);
 
                 //outgoing.putOpcode();
-               // outgoing.put
+                // outgoing.put
 
                 if (socketStream != null) {
                     socketStream.queueBytes(outgoing.bufferLength(), outgoing.getBuffer());
@@ -132,7 +130,7 @@ public class Client {
         int packetSize = -1;
 
         //First we read opcode...
-        if(opcode == -1) {
+        if (opcode == -1) {
 
             socketStream.flushInputStream(incoming.payload, 1);
 
@@ -149,7 +147,7 @@ public class Client {
 
         }
 
-        if(!(opcode >= 0 && opcode < 256)) {
+        if (!(opcode >= 0 && opcode < 256)) {
             opcode = -1;
             return false;
         }
@@ -157,7 +155,7 @@ public class Client {
         incoming.currentPosition = 0;
         socketStream.flushInputStream(incoming.payload, packetSize);
 
-        switch(opcode) {
+        switch (opcode) {
 
         }
         return false;

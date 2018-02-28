@@ -24,12 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class ItemDefinition {
-
-    private static final IDBAccessor<ItemDefinition> itemDB = new CollectionAccessor<>(new GsonSerializer<>(ItemDefinition.class), DatabaseConfig.ITEMS_COLLECTION);
-    private static Map<Integer, ItemDefinition> itemDefinitions = null;
-
-
+public final class ItemDefinition implements IDefinition {
     private final int[] bonuses = new int[18];
     private int id;
     private String name;
@@ -53,25 +48,6 @@ public final class ItemDefinition {
     private int slotId;
 
     private ItemDefinition() {
-    }
-
-    public static ItemDefinition getForId(int id) {
-        if (ItemDefinition.itemDefinitions == null) {
-            throw new IllegalStateException("item definitions were null");
-        }
-
-        return ItemDefinition.itemDefinitions.get(id);
-    }
-
-    public static void load() {
-        if (ItemDefinition.itemDefinitions != null) {
-            return;
-        }
-        itemDefinitions = new HashMap<>();
-        ItemDefinition.itemDB.findAll().forEach(def -> {
-            itemDefinitions.put(def.getId(), def);
-        });
-        itemDefinitions = Collections.unmodifiableMap(itemDefinitions);
     }
 
     public int getId() {

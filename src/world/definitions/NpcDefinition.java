@@ -15,24 +15,9 @@
 
 package world.definitions;
 
-import database.CollectionAccessor;
-import database.DatabaseConfig;
-import database.IDBAccessor;
-import database.serialization.GsonSerializer;
 
-import java.util.Collections;
-import java.util.List;
 
-public final class NpcDefinition {
-    private static final IDBAccessor<NpcDefinition> npcDB = new CollectionAccessor<>(new GsonSerializer<>(NpcDefinition.class), DatabaseConfig.NPC_COLLECTION);
-    private static List<NpcDefinition> npcsDefinitions = null;
-
-    static {
-        if (NpcDefinition.npcsDefinitions == null) {
-            NpcDefinition.npcsDefinitions = Collections.unmodifiableList(NpcDefinition.npcDB.findAll());
-        }
-    }
-
+public final class NpcDefinition implements IDefinition {
     private final boolean attackable = false;
     private final boolean retreats = false;
     private final boolean aggressive = false;
@@ -55,16 +40,7 @@ public final class NpcDefinition {
     private int slayerLevel;
     private int combatFollowDistance;
 
-    private NpcDefinition() {
-    }
-
-    public static NpcDefinition getForId(int id) {
-        if (NpcDefinition.npcsDefinitions == null || id < 0 || id >= NpcDefinition.npcsDefinitions.size()) {
-            return null;
-        }
-
-        return NpcDefinition.npcsDefinitions.get(id);
-    }
+    private NpcDefinition() { }
 
     public int getId() {
         return id;

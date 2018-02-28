@@ -79,7 +79,7 @@ public class ChannelManager {
         if (readChannel == null) {
             readChannel = new ChannelHandler();
             addChannelHandler(readChannel, channelHandlers);
-        }else{
+        } else {
             System.out.println("found existing handler");
         }
 

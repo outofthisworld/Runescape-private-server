@@ -7,8 +7,17 @@ import java.net.Socket;
 
 public final class BufferedConnection implements Runnable {
 
+    private final Socket socket;
+    private InputStream inputStream;
+    private OutputStream outputStream;
+    private boolean closed;
+    private byte[] buffer;
+    private int writeIndex;
+    private int buffIndex;
+    private boolean isWriter;
+    private boolean hasIOError;
     public BufferedConnection(Socket socket1)
-            throws  IOException {
+            throws IOException {
         closed = false;
         isWriter = false;
         hasIOError = false;
@@ -142,14 +151,4 @@ public final class BufferedConnection implements Runnable {
         } catch (IOException _ex) {
         }
     }
-
-    private InputStream inputStream;
-    private OutputStream outputStream;
-    private final Socket socket;
-    private boolean closed;
-    private byte[] buffer;
-    private int writeIndex;
-    private int buffIndex;
-    private boolean isWriter;
-    private boolean hasIOError;
 }

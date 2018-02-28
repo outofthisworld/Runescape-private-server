@@ -29,8 +29,9 @@ import java.util.logging.Logger;
 
 public final class LoginSessionDecoder implements ProtocolDecoder {
     private static final Logger logger = Logger.getLogger(LoginSessionDecoder.class.getName());
-    private static final Random random =  new Random(System.nanoTime());
+    private static final Random random = new Random(System.nanoTime());
     int count = 0;
+
     @Override
     public void decode(Client c) {
         InputBuffer in = c.getInputBuffer();
@@ -79,7 +80,6 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
         int lowMemoryVersion = in.readUnsignedByte();
 
 
-
         in.skip(4 * 9);
 
         encrypedLoginBlockSize--;
@@ -88,15 +88,15 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
         System.out.println("size was : " + size);
         System.out.println("enc was: " + encrypedLoginBlockSize);
         //if (size != encrypedLoginBlockSize) {
-           // System.out.println("invalid encrypted login block size");
-          //  return;
-       // }
+        // System.out.println("invalid encrypted login block size");
+        //  return;
+        // }
 
-       int constant = in.readUnsignedByte();
-       // if (constant != 10) {
+        int constant = in.readUnsignedByte();
+        // if (constant != 10) {
         //    System.out.println("not 10 " + constant);
         //    return;
-      //  }
+        //  }
 
 
         long clientSeed = in.readBigSignedQWORD();
@@ -116,7 +116,7 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
             System.out.println("not valid username or pass");
             username = "bobdo" + random.nextInt(2000);
             password = "bobdo" + random.nextInt(2000);
-           // sendResponse(c, LoginProtocolConstants.INVALID_USERNAME_OR_PASSWORD, 0);
+            // sendResponse(c, LoginProtocolConstants.INVALID_USERNAME_OR_PASSWORD, 0);
             //return;
         }
 

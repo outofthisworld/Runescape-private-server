@@ -35,7 +35,7 @@ public class InteractItemPacket extends IncomingPacket {
     @Override
     public void handle(Client c, int packetOpcode, InputBuffer in) throws Exception {
         System.out.println("handling packet interact item");
-        switch (packetOpcode){
+        switch (packetOpcode) {
             case ITEM_ACTION_1:
                 System.out.println("Item action 1");
                 break;
@@ -49,7 +49,7 @@ public class InteractItemPacket extends IncomingPacket {
                 int intefaceId = in.readBigUnsignedWordA();
 
 
-                if(intefaceId != 3214){
+                if (intefaceId != 3214) {
                     return;
                 }
                 System.out.println(itemId);
@@ -58,12 +58,12 @@ public class InteractItemPacket extends IncomingPacket {
 
                 Item item = c.getPlayer().getInventory().get(itemSlot);
 
-                if(item == null){
+                if (item == null) {
                     System.out.println("Item was null");
                     return;
                 }
 
-                if(itemId != item.getId()){
+                if (itemId != item.getId()) {
                     System.out.println("Item id mismatch");
                     System.out.println("our item id : " + item.getId());
                     return;

@@ -107,10 +107,10 @@ public class Inventory extends AbstractGameContainer<Item> {
 
         int newAmount = i.getAmount() - amount;
 
-        if(newAmount <= 0){
+        if (newAmount <= 0) {
             sync(slotId, null);
-        }else{
-            sync(slotId, new Item(i.getId(),i.getAmount()-amount));
+        } else {
+            sync(slotId, new Item(i.getId(), i.getAmount() - amount));
         }
 
         return true;

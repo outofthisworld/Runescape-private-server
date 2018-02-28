@@ -32,7 +32,7 @@ public class Flooder implements Runnable {
      * been started already.
      */
     public void start() {
-        if(!running) {
+        if (!running) {
             running = true;
             new Thread(this).start();
         }
@@ -40,7 +40,7 @@ public class Flooder implements Runnable {
 
     /**
      * Stops this flooder.
-     *
+     * <p>
      * Any logged in clients will eventually be disconnected
      * from the server automatically for being idle.
      */
@@ -50,6 +50,7 @@ public class Flooder implements Runnable {
 
     /**
      * Attempts to login the amount of given clients.
+     *
      * @param amount
      */
     public void login(int amount) {
@@ -57,13 +58,13 @@ public class Flooder implements Runnable {
         start();
 
         //Attempt to login the amount of bots..
-        synchronized(clients) {
-            for(int i = 0; i < amount; i++) {
+        synchronized (clients) {
+            for (int i = 0; i < amount; i++) {
                 try {
                     String username = "bot" + Integer.toString(clients.size());
                     String password = "bot";
                     new Client(username, password).attemptLogin();
-                } catch(Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -72,20 +73,20 @@ public class Flooder implements Runnable {
 
     @Override
     public void run() {
-        while(running) {
+        while (running) {
             try {
                 Iterator<Entry<String, Client>> i = clients.entrySet().iterator();
-                while(i.hasNext()) {
+                while (i.hasNext()) {
                     Entry<String, Client> entry = i.next();
                     try {
                         entry.getValue().process();
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         i.remove();
                     }
                 }
                 Thread.sleep(300);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
