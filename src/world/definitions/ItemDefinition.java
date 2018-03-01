@@ -15,15 +15,6 @@
 
 package world.definitions;
 
-import database.CollectionAccessor;
-import database.DatabaseConfig;
-import database.IDBAccessor;
-import database.serialization.GsonSerializer;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 public final class ItemDefinition implements IDefinition {
     private final int[] bonuses = new int[18];
     private int id;
