@@ -17,7 +17,7 @@ package world.item;
 
 import util.Preconditions;
 import world.definitions.DefinitionLoader;
-import world.definitions.ItemDefinition;
+import world.definitions.item.ItemDefinition;
 
 public class Item implements IItem {
     private final ItemDefinition itemDefinition;

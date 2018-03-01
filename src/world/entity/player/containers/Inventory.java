@@ -1,22 +1,9 @@
-/*
- Project by outofthisworld24
- All rights reserved.
- */
 
-/*
- * Project by outofthisworld24
- * All rights reserved.
- */
-
-/*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- Project by outofthisworld24
- All rights reserved.
- -----------------------------------------------------------------------------*/
 
 package world.entity.player.containers;
 
 import util.Preconditions;
-import world.definitions.ItemDefinition;
+import world.definitions.item.ItemDefinition;
 import world.entity.player.Player;
 import world.item.Item;
 

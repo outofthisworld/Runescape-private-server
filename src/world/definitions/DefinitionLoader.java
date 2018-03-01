@@ -4,6 +4,8 @@ import database.CollectionAccessor;
 import database.DatabaseConfig;
 import database.IDBAccessor;
 import database.serialization.GsonSerializer;
+import world.definitions.item.ItemDefinition;
+import world.definitions.npc.NpcDefinition;
 
 import java.util.Collections;
 import java.util.HashMap;

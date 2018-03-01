@@ -20,7 +20,7 @@
       }
     ],
     "restock": true,
-    "can-sell-items": true,
+    "sellTo": true,
     "currency": "COINS"
   },
   {
@@ -48,7 +48,7 @@
       }
     ],
     "restock": true,
-    "can-sell-items": true,
+    "sellTo": true,
     "currency": "COINS"
   },
   {
@@ -96,7 +96,7 @@
       }
     ],
     "restock": true,
-    "can-sell-items": true,
+    "sellTo": true,
     "currency": "COINS"
   },
   {
@@ -164,7 +164,7 @@
       }
     ],
     "restock": true,
-    "can-sell-items": true,
+    "sellTo": true,
     "currency": "COINS"
   },
   {
@@ -200,7 +200,7 @@
       }
     ],
     "restock": true,
-    "can-sell-items": true,
+    "sellTo": true,
     "currency": "COINS"
   }
 ]

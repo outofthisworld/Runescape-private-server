@@ -1,6 +1,6 @@
 package world.item;
 
-import world.definitions.ItemDefinition;
+import world.definitions.item.ItemDefinition;
 
 public interface IItem {
     int getAmount();

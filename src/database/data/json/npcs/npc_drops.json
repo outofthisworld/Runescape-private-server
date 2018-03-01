@@ -1,9 +1,7 @@
 [
   {
-    "ids": [
-      1615
-    ],
-    "unique": [
+    "id": 1,
+    "drops": [
       {
         "id": 592,
         "minimum": 1,
@@ -17,22 +15,28 @@
         "chance": "UNCOMMON"
       },
       {
+        "id": 995,
+        "minimum": 1000,
+        "maximum": 100000,
+        "chance": "COMMON"
+      },
+      {
         "id": 4151,
         "minimum": 1,
         "maximum": 1,
         "chance": "RARE"
+      },
+      {
+        "id": 4151,
+        "minimum": 1,
+        "maximum": 1,
+        "chance": "NEAR_IMPOSSIBLE"
       }
-    ],
-    "common": [
-      "HIGH_HERBS",
-      "MED_RUNES"
     ]
   },
   {
-    "ids": [
-      443
-    ],
-    "unique": [
+    "id":1,
+    "drops": [
       {
         "id": 1513,
         "minimum": 1,

@@ -1,1650 +1,1650 @@
 [
   {
     "id": 3093,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 3094,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 3095,
-    "interface": "CLAWS"
+    "interfaceType": "CLAWS"
   },
   {
     "id": 3096,
-    "interface": "CLAWS"
+    "interfaceType": "CLAWS"
   },
   {
     "id": 3097,
-    "interface": "CLAWS"
+    "interfaceType": "CLAWS"
   },
   {
     "id": 3098,
-    "interface": "CLAWS"
+    "interfaceType": "CLAWS"
   },
   {
     "id": 3099,
-    "interface": "CLAWS"
+    "interfaceType": "CLAWS"
   },
   {
     "id": 3100,
-    "interface": "CLAWS"
+    "interfaceType": "CLAWS"
   },
   {
     "id": 3101,
-    "interface": "CLAWS"
+    "interfaceType": "CLAWS"
   },
   {
     "id": 35,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4151,
-    "interface": "WHIP"
+    "interfaceType": "WHIP"
   },
   {
     "id": 21003,
-    "interface": "WARHAMMER"
+    "interfaceType": "WARHAMMER"
   },
   {
     "id": 4153,
-    "interface": "WARHAMMER"
+    "interfaceType": "WARHAMMER"
   },
   {
     "id": 4158,
-    "interface": "SPEAR"
+    "interfaceType": "SPEAR"
   },
   {
     "id": 4170,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 4178,
-    "interface": "WHIP"
+    "interfaceType": "WHIP"
   },
   {
     "id": 3170,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 3171,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 3172,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 3173,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 3174,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 3175,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 3176,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4212,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 3190,
-    "interface": "HALBERD"
+    "interfaceType": "HALBERD"
   },
   {
     "id": 4214,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 4215,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 3192,
-    "interface": "HALBERD"
+    "interfaceType": "HALBERD"
   },
   {
     "id": 4216,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 4217,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 3194,
-    "interface": "HALBERD"
+    "interfaceType": "HALBERD"
   },
   {
     "id": 4218,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 4219,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 3196,
-    "interface": "HALBERD"
+    "interfaceType": "HALBERD"
   },
   {
     "id": 4220,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 4221,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 3198,
-    "interface": "HALBERD"
+    "interfaceType": "HALBERD"
   },
   {
     "id": 4222,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 4223,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 3200,
-    "interface": "HALBERD"
+    "interfaceType": "HALBERD"
   },
   {
     "id": 3202,
-    "interface": "HALBERD"
+    "interfaceType": "HALBERD"
   },
   {
     "id": 3204,
-    "interface": "HALBERD"
+    "interfaceType": "HALBERD"
   },
   {
     "id": 4236,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 1203,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1205,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1207,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1209,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1211,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1213,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1215,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1217,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1219,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1221,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1223,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1225,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1227,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1229,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1231,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1233,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1235,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 1237,
-    "interface": "SPEAR"
+    "interfaceType": "SPEAR"
   },
   {
     "id": 1239,
-    "interface": "SPEAR"
+    "interfaceType": "SPEAR"
   },
   {
     "id": 1241,
-    "interface": "SPEAR"
+    "interfaceType": "SPEAR"
   },
   {
     "id": 1243,
-    "interface": "SPEAR"
+    "interfaceType": "SPEAR"
   },
   {
     "id": 1245,
-    "interface": "SPEAR"
+    "interfaceType": "SPEAR"
   },
   {
     "id": 1247,
-    "interface": "SPEAR"
+    "interfaceType": "SPEAR"
   },
   {
     "id": 1249,
-    "interface": "SPEAR"
+    "interfaceType": "SPEAR"
   },
   {
     "id": 1251,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 1253,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 1255,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 1257,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 1259,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 1261,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 1263,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 1265,
-    "interface": "PICKAXE"
+    "interfaceType": "PICKAXE"
   },
   {
     "id": 1267,
-    "interface": "PICKAXE"
+    "interfaceType": "PICKAXE"
   },
   {
     "id": 1269,
-    "interface": "PICKAXE"
+    "interfaceType": "PICKAXE"
   },
   {
     "id": 1271,
-    "interface": "PICKAXE"
+    "interfaceType": "PICKAXE"
   },
   {
     "id": 1273,
-    "interface": "PICKAXE"
+    "interfaceType": "PICKAXE"
   },
   {
     "id": 1275,
-    "interface": "PICKAXE"
+    "interfaceType": "PICKAXE"
   },
   {
     "id": 1277,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 1279,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 21009,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 1281,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 1283,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 1285,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 1287,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 1289,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 1291,
-    "interface": "LONGSWORD"
+    "interfaceType": "LONGSWORD"
   },
   {
     "id": 1293,
-    "interface": "LONGSWORD"
+    "interfaceType": "LONGSWORD"
   },
   {
     "id": 1295,
-    "interface": "LONGSWORD"
+    "interfaceType": "LONGSWORD"
   },
   {
     "id": 1297,
-    "interface": "LONGSWORD"
+    "interfaceType": "LONGSWORD"
   },
   {
     "id": 1299,
-    "interface": "LONGSWORD"
+    "interfaceType": "LONGSWORD"
   },
   {
     "id": 1301,
-    "interface": "LONGSWORD"
+    "interfaceType": "LONGSWORD"
   },
   {
     "id": 1303,
-    "interface": "LONGSWORD"
+    "interfaceType": "LONGSWORD"
   },
   {
     "id": 7447,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 1305,
-    "interface": "LONGSWORD"
+    "interfaceType": "LONGSWORD"
   },
   {
     "id": 1307,
-    "interface": "TWO_HANDED_SWORD"
+    "interfaceType": "TWO_HANDED_SWORD"
   },
   {
     "id": 1309,
-    "interface": "TWO_HANDED_SWORD"
+    "interfaceType": "TWO_HANDED_SWORD"
   },
   {
     "id": 1311,
-    "interface": "TWO_HANDED_SWORD"
+    "interfaceType": "TWO_HANDED_SWORD"
   },
   {
     "id": 1313,
-    "interface": "TWO_HANDED_SWORD"
+    "interfaceType": "TWO_HANDED_SWORD"
   },
   {
     "id": 1315,
-    "interface": "TWO_HANDED_SWORD"
+    "interfaceType": "TWO_HANDED_SWORD"
   },
   {
     "id": 1317,
-    "interface": "TWO_HANDED_SWORD"
+    "interfaceType": "TWO_HANDED_SWORD"
   },
   {
     "id": 1319,
-    "interface": "TWO_HANDED_SWORD"
+    "interfaceType": "TWO_HANDED_SWORD"
   },
   {
     "id": 1321,
-    "interface": "SCIMITAR"
+    "interfaceType": "SCIMITAR"
   },
   {
     "id": 1323,
-    "interface": "SCIMITAR"
+    "interfaceType": "SCIMITAR"
   },
   {
     "id": 1325,
-    "interface": "SCIMITAR"
+    "interfaceType": "SCIMITAR"
   },
   {
     "id": 1327,
-    "interface": "SCIMITAR"
+    "interfaceType": "SCIMITAR"
   },
   {
     "id": 1329,
-    "interface": "SCIMITAR"
+    "interfaceType": "SCIMITAR"
   },
   {
     "id": 1331,
-    "interface": "SCIMITAR"
+    "interfaceType": "SCIMITAR"
   },
   {
     "id": 1333,
-    "interface": "SCIMITAR"
+    "interfaceType": "SCIMITAR"
   },
   {
     "id": 1335,
-    "interface": "WARHAMMER"
+    "interfaceType": "WARHAMMER"
   },
   {
     "id": 1337,
-    "interface": "WARHAMMER"
+    "interfaceType": "WARHAMMER"
   },
   {
     "id": 1339,
-    "interface": "WARHAMMER"
+    "interfaceType": "WARHAMMER"
   },
   {
     "id": 1341,
-    "interface": "WARHAMMER"
+    "interfaceType": "WARHAMMER"
   },
   {
     "id": 1343,
-    "interface": "WARHAMMER"
+    "interfaceType": "WARHAMMER"
   },
   {
     "id": 1345,
-    "interface": "WARHAMMER"
+    "interfaceType": "WARHAMMER"
   },
   {
     "id": 1347,
-    "interface": "WARHAMMER"
+    "interfaceType": "WARHAMMER"
   },
   {
     "id": 1349,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 1351,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 1353,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 1355,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 1357,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 1359,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 1361,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 1363,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 1365,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 1367,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 1369,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 1371,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 1373,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 1375,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 1377,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 2402,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 1379,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 1381,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 1383,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 1385,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 1387,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 1389,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 1391,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 2415,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 2416,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 1393,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 2417,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 1395,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 1397,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 1399,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 1401,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 2425,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 6522,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 1403,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 6523,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 1405,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 6525,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 6526,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 1407,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 6527,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 6528,
-    "interface": "WARHAMMER"
+    "interfaceType": "WARHAMMER"
   },
   {
     "id": 1409,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 1419,
-    "interface": "SCYTHE"
+    "interfaceType": "SCYTHE"
   },
   {
     "id": 1420,
-    "interface": "MACE"
+    "interfaceType": "MACE"
   },
   {
     "id": 1422,
-    "interface": "MACE"
+    "interfaceType": "MACE"
   },
   {
     "id": 1424,
-    "interface": "MACE"
+    "interfaceType": "MACE"
   },
   {
     "id": 1426,
-    "interface": "MACE"
+    "interfaceType": "MACE"
   },
   {
     "id": 1428,
-    "interface": "MACE"
+    "interfaceType": "MACE"
   },
   {
     "id": 1430,
-    "interface": "MACE"
+    "interfaceType": "MACE"
   },
   {
     "id": 4503,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 1432,
-    "interface": "MACE"
+    "interfaceType": "MACE"
   },
   {
     "id": 1434,
-    "interface": "MACE"
+    "interfaceType": "MACE"
   },
   {
     "id": 2460,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4508,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 2462,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 2464,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 2466,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 6562,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 6563,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 2468,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 2470,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 2472,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 2474,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 2476,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 6587,
-    "interface": "CLAWS"
+    "interfaceType": "CLAWS"
   },
   {
     "id": 6589,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 6591,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 6593,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 6595,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 6597,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 6599,
-    "interface": "HALBERD"
+    "interfaceType": "HALBERD"
   },
   {
     "id": 6601,
-    "interface": "MACE"
+    "interfaceType": "MACE"
   },
   {
     "id": 6603,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 6605,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 6607,
-    "interface": "LONGSWORD"
+    "interfaceType": "LONGSWORD"
   },
   {
     "id": 6609,
-    "interface": "TWO_HANDED_SWORD"
+    "interfaceType": "TWO_HANDED_SWORD"
   },
   {
     "id": 466,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 6611,
-    "interface": "SCIMITAR"
+    "interfaceType": "SCIMITAR"
   },
   {
     "id": 6613,
-    "interface": "WARHAMMER"
+    "interfaceType": "WARHAMMER"
   },
   {
     "id": 4580,
-    "interface": "SPEAR"
+    "interfaceType": "SPEAR"
   },
   {
     "id": 4582,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4584,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4587,
-    "interface": "SCIMITAR"
+    "interfaceType": "SCIMITAR"
   },
   {
     "id": 7668,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 7671,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 7673,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 7675,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 5628,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 5629,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 5630,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 5631,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 5632,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 5633,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 5634,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 5635,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 5636,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 5637,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 5638,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 5639,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 5640,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 5641,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 5642,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 5643,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 5644,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 5645,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 5646,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 5647,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 5648,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5649,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 5650,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 5651,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 5652,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 5653,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 5654,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 5655,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 5656,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 5657,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 5658,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 5659,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 5660,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 5661,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 5662,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 5663,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 5664,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 5665,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 5666,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 5667,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 5668,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5670,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5672,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5674,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5676,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5678,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5680,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5682,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5684,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5686,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5688,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5690,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5692,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5694,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5696,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5698,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 4675,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 5700,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 6724,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5702,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 5704,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5706,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5708,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5710,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5712,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5714,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 6739,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 5716,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5718,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5720,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 6745,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5722,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 6746,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5724,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5726,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5728,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5730,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4710,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 5734,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5736,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 6760,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 6762,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 6764,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4718,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 4726,
-    "interface": "SPEAR"
+    "interfaceType": "SPEAR"
   },
   {
     "id": 7804,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4734,
-    "interface": "CROSSBOW"
+    "interfaceType": "CROSSBOW"
   },
   {
     "id": 7806,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 7807,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 7808,
-    "interface": "MACE"
+    "interfaceType": "MACE"
   },
   {
     "id": 7809,
-    "interface": "SPEAR"
+    "interfaceType": "SPEAR"
   },
   {
     "id": 4747,
-    "interface": "WARHAMMER"
+    "interfaceType": "WARHAMMER"
   },
   {
     "id": 4755,
-    "interface": "WHIP"
+    "interfaceType": "WHIP"
   },
   {
     "id": 667,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 6818,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4827,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 746,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 747,
-    "interface": "DAGGER"
+    "interfaceType": "DAGGER"
   },
   {
     "id": 6897,
-    "interface": "LONGSWORD"
+    "interfaceType": "LONGSWORD"
   },
   {
     "id": 6908,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4862,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 6910,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 767,
-    "interface": "CROSSBOW"
+    "interfaceType": "CROSSBOW"
   },
   {
     "id": 4863,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4864,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 6912,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4865,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 6914,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 21006,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 772,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 4886,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4887,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4888,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4889,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 800,
-    "interface": "THROWNAXE"
+    "interfaceType": "THROWNAXE"
   },
   {
     "id": 801,
-    "interface": "THROWNAXE"
+    "interfaceType": "THROWNAXE"
   },
   {
     "id": 802,
-    "interface": "THROWNAXE"
+    "interfaceType": "THROWNAXE"
   },
   {
     "id": 803,
-    "interface": "THROWNAXE"
+    "interfaceType": "THROWNAXE"
   },
   {
     "id": 804,
-    "interface": "THROWNAXE"
+    "interfaceType": "THROWNAXE"
   },
   {
     "id": 805,
-    "interface": "THROWNAXE"
+    "interfaceType": "THROWNAXE"
   },
   {
     "id": 806,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 807,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 808,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 809,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 810,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 811,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 812,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 813,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 814,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 4910,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 815,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 4911,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 816,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 4912,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 817,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 4913,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 818,
-    "interface": "DART"
+    "interfaceType": "DART"
   },
   {
     "id": 825,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 826,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 827,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 3899,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 828,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 829,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 830,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 831,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 832,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 833,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 834,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 835,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 2883,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 836,
-    "interface": "JAVELIN"
+    "interfaceType": "JAVELIN"
   },
   {
     "id": 837,
-    "interface": "CROSSBOW"
+    "interfaceType": "CROSSBOW"
   },
   {
     "id": 4934,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 839,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4935,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4936,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 841,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 4937,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 843,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 845,
-    "interface": "LONGBOW"
+    "interfaceType": "LONGBOW"
   },
   {
     "id": 847,
-    "interface": "LONGBOW"
+    "interfaceType": "LONGBOW"
   },
   {
     "id": 849,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 851,
-    "interface": "LONGBOW"
+    "interfaceType": "LONGBOW"
   },
   {
     "id": 853,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 855,
-    "interface": "LONGBOW"
+    "interfaceType": "LONGBOW"
   },
   {
     "id": 857,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 859,
-    "interface": "LONGBOW"
+    "interfaceType": "LONGBOW"
   },
   {
     "id": 861,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   },
   {
     "id": 4958,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 863,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 4959,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 864,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 4960,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 865,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 4961,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 866,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 867,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 868,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 869,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 870,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 871,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 872,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 873,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 874,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 875,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 876,
-    "interface": "KNIFE"
+    "interfaceType": "KNIFE"
   },
   {
     "id": 4982,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4983,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4984,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4985,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 2952,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 2961,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 2963,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5016,
-    "interface": "SPEAR"
+    "interfaceType": "SPEAR"
   },
   {
     "id": 2997,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5056,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 5057,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 5058,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 6082,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 5059,
-    "interface": "BATTLEAXE"
+    "interfaceType": "BATTLEAXE"
   },
   {
     "id": 4037,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4039,
-    "interface": "UNARMED"
+    "interfaceType": "UNARMED"
   },
   {
     "id": 4068,
-    "interface": "SWORD"
+    "interfaceType": "SWORD"
   },
   {
     "id": 3053,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 3054,
-    "interface": "STAFF"
+    "interfaceType": "STAFF"
   },
   {
     "id": 7158,
-    "interface": "TWO_HANDED_SWORD"
+    "interfaceType": "TWO_HANDED_SWORD"
   },
   {
     "id": 20997,
-    "interface": "SHORTBOW"
+    "interfaceType": "SHORTBOW"
   }
 ]

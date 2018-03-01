@@ -19,8 +19,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
-import world.definitions.ItemDefinition;
-import world.definitions.NpcDefinition;
+import world.definitions.item.ItemDefinition;
+import world.definitions.npc.NpcDefinition;
 
 import java.io.File;
 import java.io.IOException;
