@@ -14,6 +14,7 @@
  -----------------------------------------------------------------------------*/
 
 import net.Reactor;
+import net.impl.channel.ChannelManager;
 import world.WorldConfig;
 import world.WorldManager;
 import world.definitions.DefinitionLoader;
@@ -88,19 +89,29 @@ public class Bootstrap implements Runnable {
                     .collect(Collectors.toList()).toArray(new CompletableFuture[]{})).join();
         }catch(Exception e){
             e.printStackTrace();
+            tearDown().join();
             System.exit(0);
         }
     }
 
-
-
     /**
-     * Stop.
+     * Tears down things in parallel.
      */
-    public void tearDown() {
-        reactor.stop();
-        WorldManager.shutdownWorlds();
-        networkExecutor.shutdownNow();
+    public CompletableFuture<Void> tearDown() {
+        return CompletableFuture.allOf(
+                /**
+                 Shutdown reactor,channels and channel handlers
+                 */
+                CompletableFuture.runAsync(reactor::stop),
+                /**
+                 Shutdown all game worlds
+                 */
+                CompletableFuture.runAsync(WorldManager::shutdownWorlds),
+                /**
+                 Shutdown the network executor
+                 */
+                CompletableFuture.runAsync(networkExecutor::shutdownNow)
+        );
     }
 
     @Override

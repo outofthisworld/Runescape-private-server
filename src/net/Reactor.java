@@ -95,6 +95,10 @@ public final class Reactor {
     private InetSocketAddress address;
     private Selector onAcceptableSelector;
 
+    public ChannelManager getChannelManager() {
+        return channelManager;
+    }
+
     /**
      * Instantiates a new net.Reactor.
      *
@@ -255,6 +259,12 @@ public final class Reactor {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        try {
+            channelManager.shutdown();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         onAcceptableSelector = null;
