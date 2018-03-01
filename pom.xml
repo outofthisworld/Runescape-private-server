@@ -49,5 +49,4 @@
             <artifactId>jsoup</artifactId>
             <version>1.9.1</version>
         </dependency>
-    </dependencies>
 </project>

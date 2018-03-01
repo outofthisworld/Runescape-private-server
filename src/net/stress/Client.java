@@ -51,7 +51,7 @@ public class Client {
             seed[3] = (int) serverSeed;
             outgoing.resetPosition();
             //outgoing.putBytes(new byte[36],36,0);
-            outgoing.putByte(10); //enc login block size
+            //outgoing.putByte(10); //enc login block size
             outgoing.putByte(10);
             outgoing.putInt(seed[0]);
             outgoing.putInt(seed[1]);

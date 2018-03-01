@@ -20,7 +20,7 @@ public final class NetworkConfig {
     /**
      * The Port.
      */
-    PORT = 43595;
+    PORT = 43594;
 
 
     private NetworkConfig() {
