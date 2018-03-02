@@ -70,7 +70,7 @@ public final class ByteBuffer {
         BigInteger decodedBigInteger = new BigInteger(decodeBuffer);
 
 		/*
-		 * This is going to be a mouthful... the encoded {@link BigInteger} is
+         * This is going to be a mouthful... the encoded {@link BigInteger} is
 		 * responsible of returning a value which is the value of {@code
 		 * #decodedBigInteger}^{@link #RSA_EXPONENT} mod (Modular arithmetic can
 		 * be handled mathematically by introducing a congruence relation on the

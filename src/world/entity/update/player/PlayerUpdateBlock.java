@@ -1,16 +1,13 @@
 package world.entity.update.player;
 
 import net.buffers.ByteTransformationType;
-import net.buffers.IBufferReserve;
 import net.buffers.Order;
 import net.buffers.OutputBuffer;
 import util.Preconditions;
-import util.RsUtils;
-import world.entity.player.AppearanceSlot;
-import world.entity.player.EquipmentSlot;
 import world.entity.player.Player;
 import world.entity.update.IFlag;
 import world.entity.update.UpdateBlock;
+import world.entity.update.player.impl.*;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,207 +27,52 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
                     /**
                      The animation portion of the update block.
                      */
-                    put(PlayerUpdateMask.ANIMATION, (entity, outputBuffer) -> {
-                        //Animation animation = entity.getAnimation();
-                        //outputBuffer.writeShort(animation.getId(), ByteOrder.LITTLE).write(animation.getDelay(), ByteModification.NEGATION);
-                    });
-
+                    put(PlayerUpdateMask.ANIMATION, new AnimationUpdateBlock());
 
                     /**
                      The appearance portion of the update block.
                      */
-                    put(PlayerUpdateMask.APPEARANCE, (entity, outputBuffer) -> {
-                        IBufferReserve<OutputBuffer> reserve = outputBuffer.createByteReserve(1);
-                        outputBuffer.writeByte(entity.getAppearance().getGender());
-                        outputBuffer.writeByte(0);
-                        /*
-                            HEAD(0),
-                            CAPE(1),
-                            AMULET(2),
-                            WEAPON(3),
-                            CHEST(4),
-                            SHIELD(5),
-                            LEGS(7),
-                            HANDS(9),
-                            FEET(10),
-                            RING(12),
-                            ARROWS(13);
-                         */
-                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.HEAD.getSlotId())) {
-                            outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearence(AppearanceSlot.HEAD)); //head
-                        } else {
-                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.HEAD.getSlotId()).getItemDefinition().getId());
-                        }
-
-                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.CAPE.getSlotId())) {
-                            outputBuffer.writeByte(0);
-                        } else {
-                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.CAPE.getSlotId()).getItemDefinition().getId());
-                        }
-
-                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.AMULET.getSlotId())) {
-                            outputBuffer.writeByte(0);
-                        } else {
-                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.AMULET.getSlotId()).getItemDefinition().getId());
-                        }
-
-                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.WEAPON.getSlotId())) {
-                            outputBuffer.writeByte(0);
-                        } else {
-                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.WEAPON.getSlotId()).getItemDefinition().getId());
-                        }
-
-                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.CHEST.getSlotId())) {
-                            outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearence(AppearanceSlot.TORSO)); //chest - torso
-                        } else {
-                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.CHEST.getSlotId()).getItemDefinition().getId());
-                        }
-
-                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.CHEST.getSlotId())) {
-                            outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearence(AppearanceSlot.ARMS));
-                        } else {
-                            outputBuffer.writeByte(0);
-                        }
-
-                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.SHIELD.getSlotId())) {
-                            outputBuffer.writeByte(0);
-                        } else {
-                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.SHIELD.getSlotId()).getItemDefinition().getId());
-                        }
-
-                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.LEGS.getSlotId())) {
-                            outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearence(AppearanceSlot.LEGS));
-                        } else {
-                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.LEGS.getSlotId()).getItemDefinition().getId());
-                        }
-
-                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.HANDS.getSlotId())) {
-                            outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearence(AppearanceSlot.HANDS));
-                        } else {
-                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.HANDS.getSlotId()).getItemDefinition().getId());
-                        }
-
-                        if (entity.getEquipment().getContainer().isEmpty(EquipmentSlot.FEET.getSlotId())) {
-                            outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearence(AppearanceSlot.FEET));
-                        } else {
-                            outputBuffer.writeBigWord(0x200 + entity.getEquipment().getContainer().get(EquipmentSlot.FEET.getSlotId()).getItemDefinition().getId());
-                        }
-
-
-                        outputBuffer.writeByte(0);
-
-
-                        outputBuffer.writeByte(entity.getAppearance().getColor(AppearanceSlot.HEAD));
-                        outputBuffer.writeByte(entity.getAppearance().getColor(AppearanceSlot.TORSO));
-                        outputBuffer.writeByte(entity.getAppearance().getColor(AppearanceSlot.ARMS));
-                        outputBuffer.writeByte(entity.getAppearance().getColor(AppearanceSlot.LEGS));
-                        outputBuffer.writeByte(entity.getAppearance().getColor(AppearanceSlot.HANDS));
-                        outputBuffer.writeByte(entity.getAppearance().getColor(AppearanceSlot.FEET));
-
-                        //Dont know what these do
-                        outputBuffer.writeBigWord(0x328);
-                        outputBuffer.writeBigWord(0x337);
-                        outputBuffer.writeBigWord(0x333);
-                        outputBuffer.writeBigWord(0x334);
-                        outputBuffer.writeBigWord(0x335);
-                        outputBuffer.writeBigWord(0x336);
-                        outputBuffer.writeBigWord(0x338);
-
-                        outputBuffer.writeBigQWORD(RsUtils.convertStringToLong(entity.getUsername()));
-                        outputBuffer.writeByte(3);
-                        outputBuffer.writeBigWord(0);
-                        reserve.writeValue(reserve.bytesSinceReserve(), ByteTransformationType.C);
-                    });
+                    put(PlayerUpdateMask.APPEARANCE, new AppearanceUpdateBlock());
 
                     /**
                      The chat portion of the update block.
                      */
-                    put(PlayerUpdateMask.CHAT, (entity, outputBuffer) -> {
-                        /*ChatMessage msg = entity.getChatMessage();
-                        byte[] bytes = msg.getText();
-
-                        writer.writeShort(((msg.getColor() & 0xFF) << 8) + (msg.getEffect() & 0xFF), ByteOrder.LITTLE)
-                                .write(entity.getRights().getProtocolValue()).write(bytes.length, ByteModification.NEGATION)
-                                .writeBytesReverse(bytes);*/
-                    });
+                    put(PlayerUpdateMask.CHAT, new ChatUpdateBlock());
 
                     /**
                      The double hit portion of the update block.
                      */
-                    put(PlayerUpdateMask.DOUBLE_HIT, (entity, outputBuffer) -> {
-                        /*builder.put(entity.getSecondaryHit().getDamage())
-                                .put(entity.getSecondaryHit().getType().getId(), ByteValue.SUBTRACTION)
-                                .put(entity.getSkill().getLevel(Skill.HITPOINTS))
-                                .put(entity.getSkill().getMaxLevel(Skill.HITPOINTS), ByteValue.NEGATION);*/
-                    });
+                    put(PlayerUpdateMask.DOUBLE_HIT, new DoubleHitUpdateBlock());
 
                     /**
                      The single hit portion of the update block.
                      */
-                    put(PlayerUpdateMask.SINGLE_HIT, (entity, outputBuffer) -> {
-                        /*builder.put(entity.getPrimaryHit().getDamage())
-                                .put(entity.getPrimaryHit().getType().getId(), ByteValue.ADDITION)
-                                .put(entity.getSkill().getLevel(Skill.HITPOINTS), ByteValue.NEGATION)
-                                .put(entity.getSkill().getMaxLevel(Skill.HITPOINTS));*/
-                    });
+                    put(PlayerUpdateMask.SINGLE_HIT, new SingleHitUpdateBlock());
 
                     /**
                      The entity interaction portion of the update block.
                      */
-                    put(PlayerUpdateMask.ENTITY_INTERACTION, (entity, outputBuffer) -> {
-                        /*Entity entity = target.getInteractingEntity();
-
-                        if (entity != null) {
-                            int index = entity.getSlot();
-
-                            if (entity instanceof Player) {
-                                index += +32768;
-                            }
-
-                            builder.writeShort(index, ByteOrder.LITTLE);
-                        } else {
-                            builder.writeShort(-1, ByteOrder.LITTLE);
-                        }*/
-                    });
+                    put(PlayerUpdateMask.ENTITY_INTERACTION, new EntityInteractionUpdateBlock());
 
                     /**
                      The face coordinate portion of the update block.
                      */
-                    put(PlayerUpdateMask.FACE_COORDINATE, (entity, outputBuffer) -> {
-                        /*builder.writeShort((Integer) entity.getAttributes().get(Attributes.FACING_COORDINATE_X),
-                                ByteModification.ADDITION, ByteOrder.LITTLE)
-                                .writeShort((Integer) entity.getAttributes()
-                                        .get(Attributes.FACING_COORDINATE_Y), ByteOrder.LITTLE);*/
-                    });
+                    put(PlayerUpdateMask.FACE_COORDINATE, new FaceCoordUpdateBlock());
 
                     /**
                      The force movement portion of the update block.
                      */
-                    put(PlayerUpdateMask.FORCE_MOVEMENT, (entity, outputBuffer) -> {
-                        /*ForceMovement movement = entity.getForceMovement();
-
-                        writer.write(movement.getStartLocation().getX(), ByteModification.ADDITION)
-                                .write(movement.getStartLocation().getY(), ByteModification.NEGATION)
-                                .write(movement.getEndLocation().getX(), ByteModification.SUBTRACTION).write(movement.getEndLocation().getY())
-                                .writeShort(movement.getDurationX()).write(movement.getDurationY(), ByteModification.ADDITION)
-                                .write(movement.getWalkDirection().getId());*/
-                    });
+                    put(PlayerUpdateMask.FORCE_MOVEMENT, new ForceMovementUpdateBlock());
 
                     /**
                      The forced chat portion of the update block.
                      */
-                    put(PlayerUpdateMask.FORCED_CHAT, (entity, outputBuffer) -> {
-                        /*builder.writeString(entity.getForcedChat());*/
-                    });
+                    put(PlayerUpdateMask.FORCED_CHAT, new ForcedChatUpdateBlock());
 
                     /**
                      The graphics portion of the update block.
                      */
-                    put(PlayerUpdateMask.GRAPHICS, (entity, outputBuffer) -> {
-                        /*Graphic graphic = entity.getGraphic();
-                        outputBuffer.writeShort(graphic.getId(), ByteOrder.LITTLE);
-                        outputBuffer.writeInt(graphic.getDelay() | graphic.getHeight());*/
-                    });
+                    put(PlayerUpdateMask.GRAPHICS, new GraphicsUpdateBlock());
                 }
             });
 
