@@ -1,18 +1,3 @@
-/*
- Project by outofthisworld24
- All rights reserved.
- */
-
-/*
- * Project by outofthisworld24
- * All rights reserved.
- */
-
-/*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- Project by outofthisworld24
- All rights reserved.
- -----------------------------------------------------------------------------*/
-
 import net.Reactor;
 import net.impl.NetworkConfig;
 import world.WorldConfig;
@@ -24,7 +9,6 @@ import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.BiConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -48,48 +32,6 @@ public class Bootstrap implements Runnable {
         new Bootstrap().boot();
     }
 
-    private enum BootTasks{
-        LOAD_WORLDS(){
-            @Override
-            public CompletableFuture<Void> boot(Bootstrap bootstrap) {
-                return CompletableFuture.runAsync(()->{
-                    for(int i = 0; i < WorldConfig.NUM_VIRTUAL_WORLDS; i++){
-                        WorldManager.createWorld();
-                    }
-                }).whenCompleteAsync((aVoid, throwable) -> {
-                    if(throwable != null){
-                        throw new RuntimeException(throwable);
-                    }
-                    bootstrap.logger.log(Level.INFO,"[" + Bootstrap.class.getName() + "] successfully created game worlds.");
-                });
-            }
-        },
-        LOAD_DEFINITIONS(){
-            @Override
-            public CompletableFuture<Void> boot(Bootstrap bootstrap) {
-                return DefinitionLoader.load().whenCompleteAsync((aVoid, throwable) -> {
-                    if(throwable != null){
-                        throw new RuntimeException(throwable);
-                    }
-                    bootstrap.logger.log(Level.INFO,"[" + Bootstrap.class.getName() + "] successfully loaded json definitions");
-                });
-            }
-        },
-        START_REACTOR(){
-            @Override
-            public CompletableFuture<Void> boot(Bootstrap bootstrap) {
-                return CompletableFuture.runAsync(bootstrap, bootstrap.networkExecutor).whenCompleteAsync((aVoid, throwable) -> {
-                    if(throwable != null){
-                        throw new RuntimeException(throwable);
-                    }
-                    bootstrap.logger.log(Level.INFO,"[" + Bootstrap.class.getName() + "] reactor finished on " + NetworkConfig.HOST + " " + NetworkConfig.PORT);
-                });
-            }
-        };
-        public abstract CompletableFuture<Void> boot(Bootstrap bootstrap);
-    }
-
-
     /**
      * Start.
      */
@@ -101,7 +43,7 @@ public class Bootstrap implements Runnable {
             CompletableFuture.allOf(Stream.of(BootTasks.values()).map(e -> e.boot(this))
                     .collect(Collectors.toList()).toArray(new CompletableFuture[]{})).join();
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             tearDown().join();
             System.exit(0);
@@ -136,5 +78,47 @@ public class Bootstrap implements Runnable {
             //Caught later down the line when boot tasks are joined.
             throw new RuntimeException(e);
         }
+    }
+
+    private enum BootTasks {
+        LOAD_WORLDS() {
+            @Override
+            public CompletableFuture<Void> boot(Bootstrap bootstrap) {
+                return CompletableFuture.runAsync(() -> {
+                    for (int i = 0; i < WorldConfig.NUM_VIRTUAL_WORLDS; i++) {
+                        WorldManager.createWorld();
+                    }
+                }).whenCompleteAsync((aVoid, throwable) -> {
+                    if (throwable != null) {
+                        throw new RuntimeException(throwable);
+                    }
+                    bootstrap.logger.log(Level.INFO, "[" + Bootstrap.class.getName() + "] successfully created game worlds.");
+                });
+            }
+        },
+        LOAD_DEFINITIONS() {
+            @Override
+            public CompletableFuture<Void> boot(Bootstrap bootstrap) {
+                return DefinitionLoader.load().whenCompleteAsync((aVoid, throwable) -> {
+                    if (throwable != null) {
+                        throw new RuntimeException(throwable);
+                    }
+                    bootstrap.logger.log(Level.INFO, "[" + Bootstrap.class.getName() + "] successfully loaded json definitions");
+                });
+            }
+        },
+        START_REACTOR() {
+            @Override
+            public CompletableFuture<Void> boot(Bootstrap bootstrap) {
+                return CompletableFuture.runAsync(bootstrap, bootstrap.networkExecutor).whenCompleteAsync((aVoid, throwable) -> {
+                    if (throwable != null) {
+                        throw new RuntimeException(throwable);
+                    }
+                    bootstrap.logger.log(Level.INFO, "[" + Bootstrap.class.getName() + "] reactor finished on " + NetworkConfig.HOST + " " + NetworkConfig.PORT);
+                });
+            }
+        };
+
+        public abstract CompletableFuture<Void> boot(Bootstrap bootstrap);
     }
 }

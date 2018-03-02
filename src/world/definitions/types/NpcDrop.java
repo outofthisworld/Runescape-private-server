@@ -2,12 +2,12 @@ package world.definitions.types;
 
 
 /**
- *  {
-     "id": 4151,
-     "minimum": 1,
-     "maximum": 1,
-     "chance": "RARE"
-     }
+ * {
+ * "id": 4151,
+ * "minimum": 1,
+ * "maximum": 1,
+ * "chance": "RARE"
+ * }
  */
 public class NpcDrop {
     private int id;
@@ -31,9 +31,9 @@ public class NpcDrop {
         return chance;
     }
 
-    public DropChance getChance(){
+    public DropChance getChance() {
         DropChance dChance = DropChance.valueOf(chance);
-        if(dChance == null){
+        if (dChance == null) {
             throw new RuntimeException("Invalid drop chance");
         }
         return dChance;

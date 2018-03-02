@@ -1,5 +1,3 @@
-
-
 package world.entity;
 
 import world.World;

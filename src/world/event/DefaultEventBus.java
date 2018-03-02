@@ -1,18 +1,3 @@
-/*
- Project by outofthisworld24
- All rights reserved.
- */
-
-/*
- * Project by outofthisworld24
- * All rights reserved.
- */
-
-/*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- Project by outofthisworld24
- All rights reserved.
- -----------------------------------------------------------------------------*/
-
 package world.event;
 
 import world.event.impl.AbstractEvent;

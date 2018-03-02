@@ -1,4 +1,3 @@
-
 package net.packets.incoming;
 
 import net.buffers.InputBuffer;

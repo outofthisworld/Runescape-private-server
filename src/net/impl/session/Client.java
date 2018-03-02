@@ -1,5 +1,3 @@
-
-
 package net.impl.session;
 
 import net.buffers.InputBuffer;

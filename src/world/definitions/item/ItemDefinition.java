@@ -1,10 +1,10 @@
-
 package world.definitions.item;
 
 import world.definitions.IDefinition;
 
 
 public final class ItemDefinition implements IDefinition {
+    private final int[] bonuses = new int[18];
     private int id;
     private String name;
     private String examine;
@@ -20,7 +20,6 @@ public final class ItemDefinition implements IDefinition {
     private int lowAlchValue;
     private int highAlchValue;
     private int weight;
-    private final int[] bonuses = new int[18];
     private boolean twoHanded;
     private boolean platebody;
     private boolean fullHelm;

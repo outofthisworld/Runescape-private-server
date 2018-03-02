@@ -27,10 +27,6 @@ public final class Reactor {
     private InetSocketAddress address;
     private Selector onAcceptableSelector;
 
-    public ChannelManager getChannelManager() {
-        return channelManager;
-    }
-
     /**
      * Instantiates a new net.Reactor.
      *
@@ -48,7 +44,6 @@ public final class Reactor {
         this(NetworkConfig.HOST, NetworkConfig.PORT, NetworkConfig.DEFAULT_NO_CHANNEL_HANDLERS);
     }
 
-
     /**
      * Instantiates a new net.Reactor.
      *
@@ -62,6 +57,10 @@ public final class Reactor {
             throw new IllegalArgumentException("Invalid numConnection handlers");
         }
         this.numConnectionHandlers = numConnectionHandlers;
+    }
+
+    public ChannelManager getChannelManager() {
+        return channelManager;
     }
 
     /**

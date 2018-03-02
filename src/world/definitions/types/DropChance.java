@@ -59,6 +59,8 @@ public enum DropChance {
             return WorldConfig.DROP_NEAR_IMPOSSIBLE;
         }
     };
+
     abstract boolean shouldDrop();
+
     abstract double getDropRate();
 }

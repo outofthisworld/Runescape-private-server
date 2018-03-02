@@ -8,27 +8,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/*
- {
-    "id": 4097,
-    "requirements": [
-      {
-        "level": 20,
-        "skill": "DEFENCE"
-      },
-      {
-        "level": 40,
-        "skill": "MAGIC"
-      }
-    ]
-  },
- */
 public class ItemRequirementDefinition implements IDefinition {
+    private final ArrayList<ItemRequirement> requirements = new ArrayList();
     /*
         The item id of this requirement.
     */
     private int id;
-    private final ArrayList<ItemRequirement> requirements = new ArrayList();
 
     public int getId() {
         return id;
@@ -36,6 +21,7 @@ public class ItemRequirementDefinition implements IDefinition {
 
     /**
      * Returns an unmodifiable list of requirements.
+     *
      * @return
      */
     public List<ItemRequirement> getRequirementsImmutable() {
@@ -44,6 +30,7 @@ public class ItemRequirementDefinition implements IDefinition {
 
     /**
      * Returns an unmodifiable list of requirements.
+     *
      * @return
      */
     public List<ItemRequirement> getRequirementsMutable() {

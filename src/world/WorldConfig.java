@@ -1,18 +1,3 @@
-/*
- Project by outofthisworld24
- All rights reserved.
- */
-
-/*
- * Project by outofthisworld24
- * All rights reserved.
- */
-
-/*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- Project by outofthisworld24
- All rights reserved.
- -----------------------------------------------------------------------------*/
-
 package world;
 
 public final class WorldConfig {
@@ -36,7 +21,7 @@ public final class WorldConfig {
     public static final int PLAYER_START_Z = 0;
 
     /**
-        Npc drop percentage settings
+     * Npc drop percentage settings
      */
     public static final double DROP_ALWAYS = 100.0d;
     public static final double DROP_UNCOMMON = 30.0d;
@@ -46,5 +31,6 @@ public final class WorldConfig {
 
     public static final boolean DEBUG = false;
 
-    private WorldConfig() { }
+    private WorldConfig() {
+    }
 }

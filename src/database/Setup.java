@@ -1,18 +1,3 @@
-/*
- Project by outofthisworld24
- All rights reserved.
- */
-
-/*
- * Project by outofthisworld24
- * All rights reserved.
- */
-
-/*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- Project by outofthisworld24
- All rights reserved.
- -----------------------------------------------------------------------------*/
-
 package database;
 
 import com.google.gson.Gson;
@@ -24,7 +9,6 @@ import world.definitions.item.*;
 import world.definitions.npc.NpcDefinition;
 import world.definitions.npc.NpcDropDefinition;
 import world.definitions.npc.ShopDefinition;
-import world.definitions.types.NpcDrop;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,12 +39,12 @@ public class Setup {
      * @param dbName         the db name
      * @param collectionName the collection name
      */
-    public static <T extends IDefinition> void insertAll(T[] items, Class<T> klazz, String dbName, String collectionName,boolean useId) {
+    public static <T extends IDefinition> void insertAll(T[] items, Class<T> klazz, String dbName, String collectionName, boolean useId) {
         MongoCollection<Document> collection = Database.getClient().getDatabase(dbName).getCollection(collectionName);
         for (T t : items) {
             try {
                 Document d = Document.parse(Setup.builder.toJson(t, klazz));
-                if(useId) {
+                if (useId) {
                     d.put("_id", t.getId());
                 }
                 collection.insertOne(d);
@@ -79,7 +63,7 @@ public class Setup {
      */
     public static String loadDefAsString(String file) throws IOException {
         File f = new File(file);
-        if(!f.exists()){
+        if (!f.exists()) {
             throw new RuntimeException("Invalid definitions file");
         }
         return new String(Files.readAllBytes(Paths.get(f.getAbsolutePath())));
@@ -110,14 +94,14 @@ public class Setup {
             /*
                 Insert into db.
              */
-            Setup.insertAll(Setup.defs, ItemDefinition.class,  DatabaseConfig.DB_NAME, DatabaseConfig.ITEMS_COLLECTION,true);
-            Setup.insertAll(Setup.npcDefs, NpcDefinition.class,  DatabaseConfig.DB_NAME, DatabaseConfig.NPC_COLLECTION,true);
-            Setup.insertAll(Setup.itemRequirements, ItemRequirementDefinition.class,  DatabaseConfig.DB_NAME, DatabaseConfig.ITEM_REQUIRMENTS,true);
-            Setup.insertAll(Setup.weaponAnimations, WeaponAnimationDefinition.class,  DatabaseConfig.DB_NAME, DatabaseConfig.WEAPON_ANIMATIONS,true);
-            Setup.insertAll(Setup.weaponInterfaces, WeaponInterfaceDefinition.class,  DatabaseConfig.DB_NAME, DatabaseConfig.WEAPON_INTERFACES,true);
-            Setup.insertAll(Setup.weaponPoisons, WeaponPoisonDefinition.class,  DatabaseConfig.DB_NAME, DatabaseConfig.WEAPON_POISONS,true);
-            Setup.insertAll(Setup.npcDrops, NpcDropDefinition.class,  DatabaseConfig.DB_NAME, DatabaseConfig.NPC_DROPS,true);
-            Setup.insertAll(Setup.shops, ShopDefinition.class,  DatabaseConfig.DB_NAME, DatabaseConfig.SHOPS,true);
+            Setup.insertAll(Setup.defs, ItemDefinition.class, DatabaseConfig.DB_NAME, DatabaseConfig.ITEMS_COLLECTION, true);
+            Setup.insertAll(Setup.npcDefs, NpcDefinition.class, DatabaseConfig.DB_NAME, DatabaseConfig.NPC_COLLECTION, true);
+            Setup.insertAll(Setup.itemRequirements, ItemRequirementDefinition.class, DatabaseConfig.DB_NAME, DatabaseConfig.ITEM_REQUIRMENTS, true);
+            Setup.insertAll(Setup.weaponAnimations, WeaponAnimationDefinition.class, DatabaseConfig.DB_NAME, DatabaseConfig.WEAPON_ANIMATIONS, true);
+            Setup.insertAll(Setup.weaponInterfaces, WeaponInterfaceDefinition.class, DatabaseConfig.DB_NAME, DatabaseConfig.WEAPON_INTERFACES, true);
+            Setup.insertAll(Setup.weaponPoisons, WeaponPoisonDefinition.class, DatabaseConfig.DB_NAME, DatabaseConfig.WEAPON_POISONS, true);
+            Setup.insertAll(Setup.npcDrops, NpcDropDefinition.class, DatabaseConfig.DB_NAME, DatabaseConfig.NPC_DROPS, true);
+            Setup.insertAll(Setup.shops, ShopDefinition.class, DatabaseConfig.DB_NAME, DatabaseConfig.SHOPS, true);
         } catch (IOException e) {
             e.printStackTrace();
         }

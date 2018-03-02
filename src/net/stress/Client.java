@@ -97,7 +97,7 @@ public class Client {
     public void process() throws Exception {
         if (loggedIn) {
             /*for(int i = 0; i < 5; i++) {
-				if(!readPacket())
+                if(!readPacket())
 					break;
 			}*/
             if (pingCounter++ >= 25) {

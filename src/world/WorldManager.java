@@ -1,18 +1,3 @@
-/*
- Project by outofthisworld24
- All rights reserved.
- */
-
-/*
- * Project by outofthisworld24
- * All rights reserved.
- */
-
-/*------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- Project by outofthisworld24
- All rights reserved.
- -----------------------------------------------------------------------------*/
-
 package world;
 
 import sun.plugin.dom.exception.InvalidStateException;

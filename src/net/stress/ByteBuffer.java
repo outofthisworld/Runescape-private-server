@@ -58,13 +58,13 @@ public final class ByteBuffer {
         byte[] decodeBuffer = new byte[currentPosition];
 
 		/*
-		 * Gets bytes up to the current position from the buffer and populates
+         * Gets bytes up to the current position from the buffer and populates
 		 * the {@code #decodeBuffer}
 		 */
         getBytes(currentPosition, 0, decodeBuffer);
 
 		/*
-		 * The decoded big integer which translates the {@code #decodeBuffer}
+         * The decoded big integer which translates the {@code #decodeBuffer}
 		 * into a {@link BigInteger}
 		 */
         BigInteger decodedBigInteger = new BigInteger(decodeBuffer);

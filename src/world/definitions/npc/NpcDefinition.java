@@ -1,5 +1,3 @@
-
-
 package world.definitions.npc;
 
 
@@ -7,26 +5,26 @@ import world.definitions.IDefinition;
 
 
 public final class NpcDefinition implements IDefinition {
-   private int id;
-   private String name;
-   private String examine;
-   private int combat;
-   private int size;
-   private boolean attackable;
-   private boolean agressive;
-   private boolean retreats;
-   private boolean poisonous;
-   private int respawn;
-   private int maxhit;
-   private int hitpoints;
-   private int attackSpeed;
-   private int attackAnim;
-   private int defenceAnim;
-   private int deathAnim;
-   private int attackBonus;
-   private int defenceMelee;
-   private int defenceRange;
-   private int defenceMage;
+    private int id;
+    private String name;
+    private String examine;
+    private int combat;
+    private int size;
+    private boolean attackable;
+    private boolean agressive;
+    private boolean retreats;
+    private boolean poisonous;
+    private int respawn;
+    private int maxhit;
+    private int hitpoints;
+    private int attackSpeed;
+    private int attackAnim;
+    private int defenceAnim;
+    private int deathAnim;
+    private int attackBonus;
+    private int defenceMelee;
+    private int defenceRange;
+    private int defenceMage;
 
     @Override
     public int getId() {

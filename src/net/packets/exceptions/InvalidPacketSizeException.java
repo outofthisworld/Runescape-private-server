@@ -1,5 +1,3 @@
-
-
 package net.packets.exceptions;
 
 public class InvalidPacketSizeException extends Exception {

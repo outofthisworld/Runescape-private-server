@@ -1,5 +1,3 @@
-
-
 package world.entity.player.containers;
 
 import world.entity.player.Player;

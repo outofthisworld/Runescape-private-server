@@ -16,6 +16,7 @@ public final class BufferedConnection implements Runnable {
     private int buffIndex;
     private boolean isWriter;
     private boolean hasIOError;
+
     public BufferedConnection(Socket socket1)
             throws IOException {
         closed = false;

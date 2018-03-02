@@ -1,6 +1,6 @@
 package world.definitions.types;
 
-public class WeaponAnimation{
+public class WeaponAnimation {
     private int standing;
     private int walking;
     private int running;

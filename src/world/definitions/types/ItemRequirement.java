@@ -1,6 +1,6 @@
 package world.definitions.types;
 
-public class ItemRequirement{
+public class ItemRequirement {
     private int level;
     private String skill;
 

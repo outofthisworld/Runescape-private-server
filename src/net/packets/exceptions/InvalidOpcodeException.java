@@ -1,5 +1,3 @@
-
-
 package net.packets.exceptions;
 
 public class InvalidOpcodeException extends Exception {

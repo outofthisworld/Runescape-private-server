@@ -15,9 +15,9 @@ public class WeaponInterfaceDefinition implements IDefinition {
         return interfaceType;
     }
 
-    public WeaponInterfaceType getWeaponInterfaceType(){
+    public WeaponInterfaceType getWeaponInterfaceType() {
         WeaponInterfaceType type = WeaponInterfaceType.valueOf(interfaceType);
-        if(type == null){
+        if (type == null) {
             throw new RuntimeException("Invalid weapon interface type");
         }
         return type;

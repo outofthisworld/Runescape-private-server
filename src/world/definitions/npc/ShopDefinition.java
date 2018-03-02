@@ -32,9 +32,9 @@ public class ShopDefinition implements IDefinition {
         return currency;
     }
 
-    public GameCurrency getCurrency(){
+    public GameCurrency getCurrency() {
         GameCurrency currency = GameCurrency.valueOf(getCurrencyName());
-        if(currency == null){
+        if (currency == null) {
             throw new RuntimeException("Invalid game currency");
         }
         return currency;
