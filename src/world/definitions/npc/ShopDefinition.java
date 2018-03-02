@@ -9,6 +9,7 @@ import java.util.List;
 
 
 public class ShopDefinition implements IDefinition {
+    private int id;
     private List<Item> items = new ArrayList();
     private String name;
     private boolean restock;
@@ -39,13 +40,12 @@ public class ShopDefinition implements IDefinition {
         return currency;
     }
 
+    @Override
+    public int getId() {
+        return id;
+    }
 
     public List<Item> getItems() {
         return items;
-    }
-
-    @Override
-    public int getId() {
-        return name.hashCode();
     }
 }

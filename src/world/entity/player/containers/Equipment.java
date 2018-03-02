@@ -21,7 +21,7 @@ public class Equipment extends AbstractGameContainer<Item> {
     @Override
     public boolean add(int itemId, int amount) {
         Item i = new Item(itemId, amount);
-        return set(i.getItemDefinition().getSlotId(), i, i::equals);
+        return set(i.getItemDefinition().getEquipmentType(), i, i::equals);
     }
 
     /**
@@ -33,7 +33,7 @@ public class Equipment extends AbstractGameContainer<Item> {
     @Override
     public boolean add(Item item) {
         Preconditions.notNull(item);
-        return set(item.getItemDefinition().getSlotId(), item, (i) -> i == item);
+        return set(item.getItemDefinition().getEquipmentType(), item, (i) -> i == item);
     }
 
     @Override

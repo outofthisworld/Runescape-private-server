@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class DefinitionLoader {
     public static final IDBAccessor<ItemDefinition> ITEM_DEFINITIONS = new CollectionAccessor<>(new GsonSerializer<>(ItemDefinition.class), DatabaseConfig.ITEMS_COLLECTION);
     public static final IDBAccessor<NpcDefinition> NPC_DEFINITIONS = new CollectionAccessor<>(new GsonSerializer<>(NpcDefinition.class), DatabaseConfig.NPC_COLLECTION);
-    public static final IDBAccessor<ItemRequirmentDefinition> ITEM_REQUIREMENTS = new CollectionAccessor<>(new GsonSerializer<>(ItemRequirmentDefinition.class), DatabaseConfig.ITEM_REQUIRMENTS);
+    public static final IDBAccessor<ItemRequirementDefinition> ITEM_REQUIREMENTS = new CollectionAccessor<>(new GsonSerializer<>(ItemRequirementDefinition.class), DatabaseConfig.ITEM_REQUIRMENTS);
     public static final IDBAccessor<WeaponAnimationDefinition> WEAPON_ANIMATIONS = new CollectionAccessor<>(new GsonSerializer<>(WeaponAnimationDefinition.class), DatabaseConfig.WEAPON_ANIMATIONS);
     public static final IDBAccessor<WeaponInterfaceDefinition> WEAPON_INTERFACES = new CollectionAccessor<>(new GsonSerializer<>(WeaponInterfaceDefinition.class), DatabaseConfig.WEAPON_INTERFACES);
     public static final IDBAccessor<WeaponPoisonDefinition> WEAPON_POISONS = new CollectionAccessor<>(new GsonSerializer<>(WeaponPoisonDefinition.class), DatabaseConfig.WEAPON_POISONS);
@@ -30,7 +30,7 @@ public class DefinitionLoader {
     private static Map<IDBAccessor<?>, Map<Integer, ? extends IDefinition>> definitions = new HashMap<>();
     private static Map<Integer, ItemDefinition> itemDefinitions = new HashMap<>();
     private static Map<Integer, NpcDefinition> npcDefinitions = new HashMap<>();
-    private static Map<Integer, ItemRequirmentDefinition> itemRequirements = new HashMap<>();
+    private static Map<Integer, ItemRequirementDefinition> itemRequirements = new HashMap<>();
     private static Map<Integer, WeaponAnimationDefinition> weaponAnimations = new HashMap<>();
     private static Map<Integer, WeaponInterfaceDefinition> weaponInterfaces = new HashMap<>();
     private static Map<Integer, WeaponPoisonDefinition> weaponPoisons = new HashMap<>();

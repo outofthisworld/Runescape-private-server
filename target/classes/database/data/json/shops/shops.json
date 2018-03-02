@@ -1,6 +1,7 @@
 [
   {
     "name": "Cassie's Shield Shop",
+    "id":1,
     "items": [
       {
         "id": 1191,
@@ -20,11 +21,12 @@
       }
     ],
     "restock": true,
-    "can-sell-items": true,
+    "sellTo": true,
     "currency": "COINS"
   },
   {
     "name": "Zaff's Staffs",
+    "id":2,
     "items": [
       {
         "id": 1381,
@@ -48,11 +50,12 @@
       }
     ],
     "restock": true,
-    "can-sell-items": true,
+    "sellTo": true,
     "currency": "COINS"
   },
   {
     "name": "Aubury's Rune Shop",
+    "id":3,
     "items": [
       {
         "id": 554,
@@ -96,11 +99,12 @@
       }
     ],
     "restock": true,
-    "can-sell-items": true,
+    "sellTo": true,
     "currency": "COINS"
   },
   {
     "name": "Lowe's Archery Shop",
+    "id":4,
     "items": [
       {
         "id": 841,
@@ -164,11 +168,12 @@
       }
     ],
     "restock": true,
-    "can-sell-items": true,
+    "sellTo": true,
     "currency": "COINS"
   },
   {
     "name": "General Store",
+    "id":5,
     "items": [
       {
         "id": 1349,
@@ -200,7 +205,7 @@
       }
     ],
     "restock": true,
-    "can-sell-items": true,
+    "sellTo": true,
     "currency": "COINS"
   }
 ]

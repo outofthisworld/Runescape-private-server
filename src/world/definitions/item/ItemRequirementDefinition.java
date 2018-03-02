@@ -23,7 +23,7 @@ import java.util.List;
     ]
   },
  */
-public class ItemRequirmentDefinition implements IDefinition {
+public class ItemRequirementDefinition implements IDefinition {
     /*
         The item id of this requirement.
     */
