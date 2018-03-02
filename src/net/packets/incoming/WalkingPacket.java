@@ -43,7 +43,11 @@ public class WalkingPacket extends IncomingPacket {
         }
 
         int targetY = in.readLittleUnsignedWORD();
-        int run = in.readUnsignedByte(ByteTransformationType.C);
+        int run = 0;
+
+        if(in.remaining() >= 1)
+          run = in.readUnsignedByte(ByteTransformationType.C);
+
         boolean shouldRun = run == 1;
         System.out.println("should run: " + shouldRun);
 

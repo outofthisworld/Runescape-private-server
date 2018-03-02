@@ -2,11 +2,12 @@ package world.entity.player;
 
 public enum AppearanceSlot {
     HEAD(0),
-    TORSO(1),
+    CHEST(1),
     ARMS(2),
     HANDS(3),
     LEGS(4),
-    FEET(5);
+    FEET(5),
+    BEARD(6);
 
     private int id;
 

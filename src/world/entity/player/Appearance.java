@@ -16,30 +16,9 @@ import world.entity.update.player.PlayerUpdateMask;
  */
 public class Appearance {
     /**
-     * The default appearance indices.
-     */
-    public static final int[] DEFAULT_APPEARANCE = {3, 19, 29, 35, 39, 44};
-
-    /**
-     * pHead = 3;
-     * pTorso = 19;
-     * pArms = 29;
-     * pHands = 35;
-     * pLegs = 39;
-     * pFeet = 44;
-     * The default clothes color indices.
-     */
-    public static final int[] DEFAULT_COLORS = {0, 5, 6, 4, 7, 10};
-
-    /**
      * The appearance indices.
      */
-    private final int[] appearance = new int[DEFAULT_APPEARANCE.length];
-
-    /**
-     * The clothes color indicates.
-     */
-    private final int[] colors = new int[DEFAULT_COLORS.length];
+    private final int[] appearance = new int[AppearanceSlot.values().length];
 
     /**
      * The player this apperaence belongs to.
@@ -58,9 +37,23 @@ public class Appearance {
      */
     private SkullIcon skullIcon = SkullIcon.NONE;
 
+    private int hairColor = 7;
+    private int torsoColor = 8;
+    private int legColor = 9;
+    private int feetColor = 5;
+    private int skinColor = 0;
+
 
     public Appearance(Player p) {
+        Preconditions.notNull(p);
         this.p = p;
+        appearance[AppearanceSlot.HEAD.getId()] = 0;
+        appearance[AppearanceSlot.CHEST.getId()] = 18;
+        appearance[AppearanceSlot.ARMS.getId()] = 26;
+        appearance[AppearanceSlot.HANDS.getId()] = 33;
+        appearance[AppearanceSlot.LEGS.getId()] = 36;
+        appearance[AppearanceSlot.FEET.getId()] = 42;
+        appearance[AppearanceSlot.BEARD.getId()] = 10;
     }
 
     public Gender getGender() {
@@ -72,7 +65,6 @@ public class Appearance {
      */
     public void setGender(Gender gender) {
         this.gender = gender;
-        p.getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
     }
 
     public HeadIcon getHeadIcon() {
@@ -81,7 +73,6 @@ public class Appearance {
 
     public void setHeadIcon(HeadIcon headIcon) {
         this.headIcon = headIcon;
-        p.getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
     }
 
     public SkullIcon getSkullIcon() {
@@ -90,7 +81,6 @@ public class Appearance {
 
     public void setSkullIcon(SkullIcon skullIcon) {
         this.skullIcon = skullIcon;
-        p.getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
     }
 
     public int getAppearance(AppearanceSlot slot) {
@@ -98,30 +88,55 @@ public class Appearance {
         return appearance[slot.getId()];
     }
 
-    public int getColor(AppearanceSlot slot) {
-        Preconditions.notNull(slot);
-        return colors[slot.getId()];
+    public void setHairColor(int hairColor) {
+        this.hairColor = hairColor;
     }
 
-    public void setDefault() {
-        /*
-         * The default appearance indices.
-		 */
-
-
-        for (int i = 0; i < Appearance.DEFAULT_APPEARANCE.length; i++) {
-
-            appearance[i] = Appearance.DEFAULT_APPEARANCE[i];
-        }
-
-		/*
-         * The default clothes color indices.
-		 */
-        for (int i = 0; i < Appearance.DEFAULT_COLORS.length; i++) {
-
-            colors[i] = Appearance.DEFAULT_COLORS[i];
-        }
+    public void setTorsoColor(int torsoColor) {
+        this.torsoColor = torsoColor;
     }
+
+    public void setLegColor(int legColor) {
+        this.legColor = legColor;
+    }
+
+    public void setFeetColor(int feetColor) {
+        this.feetColor = feetColor;
+    }
+
+    public void setSkinColor(int skinColor) {
+        this.skinColor = skinColor;
+    }
+
+    public int getHairColor() {
+        return hairColor;
+    }
+
+    public int getTorsoColor() {
+        return torsoColor;
+    }
+
+    public int getLegColor() {
+        return legColor;
+    }
+
+    public int getFeetColor() {
+        return feetColor;
+    }
+
+    public int getSkinColor() {
+        return skinColor;
+    }
+
+    /**
+        Called when players appearance has finished being modified to append
+        the appearance update flag, which will sync the appearance with
+        the client on the next update.
+     */
+    public void finishUpdateAppearance(){
+        p.getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
+    }
+
 
     public enum Gender {
         MALE(0),
@@ -170,7 +185,7 @@ public class Appearance {
             this.headIconId = headIconId;
         }
 
-        public int getHeadIconId() {
+        public int getId() {
             return headIconId;
         }
     }

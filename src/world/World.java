@@ -369,7 +369,6 @@ public class World {
             } else {
                 deserialized = lEvent.getPlayer();
                 deserialized.setPassword(lEvent.getPassword());
-                deserialized.getAppearance().setDefault();
                 if (useDb) {
                     Player.asyncPlayerStore().store(deserialized.getUsername(), deserialized).whenComplete((aBoolean, throwable) -> {
                         if (throwable != null) {

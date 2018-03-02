@@ -391,9 +391,9 @@ public class Player extends Entity {
      */
     public void init() {
         /*
-            Update appearance when first logging in
+            Do initial appearance update.
          */
-        getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
+        appearance.finishUpdateAppearance();
 
         //Updates this players region in the world and sends region update packet
         send(new RegionUpdateEvent(this, null));
@@ -401,12 +401,9 @@ public class Player extends Entity {
         getClient().getOutgoingPacketBuilder().initPlayer(1, getSlotId());
 
         getInventory().add(new Item(123, 1));
-
-
         //Refresh our inventory
         getInventory().syncAll();
         //getEquipment().syncAll();
-
         getClient().getOutgoingPacketBuilder().setChatOptions(0, 0, 0);
 
         Skill[] skills = Skill.values();
