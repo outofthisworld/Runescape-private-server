@@ -22,6 +22,14 @@ public class DatabaseConfig {
     public static final String ITEMS_COLLECTION = "Items";
     public static final String NPC_COLLECTION = "Npcs";
     public static final String PLAYERS_COLLECTION = "Players";
+    public static final String ITEM_REQUIRMENTS = "ItemRequirements";
+    public static final String WEAPON_ANIMATIONS = "WeaponAnimations";
+    public static final String WEAPON_INTERFACES = "WeaponInterfaces";
+    public static final String WEAPON_POISONS = "WeaponPoisons";
+    public static final String NPC_DROPS = "NpcDrops";
+    public static final String SHOPS = "Shops";
+
+
     private static final Logger logger = Logger.getLogger(DatabaseConfig.class.getName());
     public static String DB_HOST = "127.0.0.1";
     public static int DB_PORT = 27017;

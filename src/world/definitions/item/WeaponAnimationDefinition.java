@@ -12,7 +12,7 @@ public class WeaponAnimationDefinition implements IDefinition {
 
     @Override
     public int getId() {
-        return 0;
+        return id;
     }
 
     public Animation getWeaponAnim() {
