@@ -1,5 +1,6 @@
 package world.definitions.npc;
 
+import world.definitions.IDefinition;
 import world.definitions.types.GameCurrency;
 import world.item.Item;
 
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ShopDefinition {
+public class ShopDefinition implements IDefinition {
     private List<Item> items = new ArrayList();
     private String name;
     private boolean restock;
@@ -41,5 +42,10 @@ public class ShopDefinition {
 
     public List<Item> getItems() {
         return items;
+    }
+
+    @Override
+    public int getId() {
+        return name.hashCode();
     }
 }

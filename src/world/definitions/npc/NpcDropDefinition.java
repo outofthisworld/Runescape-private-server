@@ -1,5 +1,6 @@
 package world.definitions.npc;
 
+import world.definitions.IDefinition;
 import world.definitions.types.NpcDrop;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class NpcDropDefinition {
+public class NpcDropDefinition implements IDefinition {
     private int id;
     private ArrayList<NpcDrop> drops = new ArrayList();
 
