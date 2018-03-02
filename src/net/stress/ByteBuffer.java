@@ -82,7 +82,7 @@ public final class ByteBuffer {
         BigInteger encodedBigInteger = decodedBigInteger.modPow(RSA_EXPONENT, RSA_MODULUS);
 
 		/*
-		 * Returns the value of the {@code #encodedBigInteger} translated to a
+         * Returns the value of the {@code #encodedBigInteger} translated to a
 		 * byte array in big-endian byte-order
 		 */
         byte[] encodedBuffer = encodedBigInteger.toByteArray();
