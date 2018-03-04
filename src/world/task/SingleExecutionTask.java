@@ -19,7 +19,6 @@ public class SingleExecutionTask implements Task {
 
     @Override
     public void execute() {
-        System.out.println("running task");
         r.run();
     }
 

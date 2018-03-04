@@ -164,9 +164,4 @@ public class Inventory extends AbstractGameContainer<Item> {
         sync(slotId, item);
         return true;
     }
-
-    public void clear() {
-        getContainer().clear();
-        syncAll();
-    }
 }

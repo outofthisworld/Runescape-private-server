@@ -88,7 +88,15 @@ public enum Skill {
     /**
      * The constant RUNECRAFTING.
      */
-    RUNECRAFTING;
+    RUNECRAFTING,
+    /**
+     * The constant CONSTRUCTION.
+     */
+    CONSTRUCTION,
+    /**
+     * The constant HUNTING.
+     */
+    HUNTING;
 
     /**
      * Gets exp from level.

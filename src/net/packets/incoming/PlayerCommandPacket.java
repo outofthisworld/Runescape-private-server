@@ -51,6 +51,8 @@ public class PlayerCommandPacket extends IncomingPacket {
                 int itemId = scanner.nextInt();
                 int amount = scanner.nextInt();
 
+                System.out.println("adding " + itemId + " " + amount);
+
                 if (p.getInventory().add(itemId, amount)) {
                     c.getOutgoingPacketBuilder()
                             .sendMessage(messageBuilder

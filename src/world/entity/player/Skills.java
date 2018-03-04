@@ -1,5 +1,7 @@
 package world.entity.player;
 
+import java.util.Arrays;
+
 public class Skills {
     private final int[] skills = new int[world.entity.player.Skill.values().length];
     private final int[] skillExp = new int[world.entity.player.Skill.values().length];
@@ -7,6 +9,7 @@ public class Skills {
 
     public Skills(Player p) {
         this.p = p;
+        Arrays.fill(skills,1);
     }
 
     /**

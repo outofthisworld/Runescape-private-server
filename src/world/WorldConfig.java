@@ -24,10 +24,10 @@ public final class WorldConfig {
      * Npc drop percentage settings
      */
     public static final double DROP_ALWAYS = 100.0d;
-    public static final double DROP_UNCOMMON = 30.0d;
-    public static final double DROP_COMMON = 70.0d;
-    public static final double DROP_RARE = 93.33d;
-    public static final double DROP_NEAR_IMPOSSIBLE = 97.9;
+    public static final double DROP_COMMON = 30.3d;
+    public static final double DROP_UNCOMMON = 13.33d;
+    public static final double DROP_RARE = 4.77d;
+    public static final double DROP_NEAR_IMPOSSIBLE = 0.5d;
 
     public static final boolean DEBUG = false;
 

@@ -64,6 +64,7 @@ public class Equipment extends AbstractGameContainer<Item> {
                 long newAmount = item.getAmount() + inv.get(i).getAmount();
                 return newAmount <= Integer.MAX_VALUE;
             }).findFirst();
+
             if (slot.isPresent()) {
                 //Append to the found stackable item
                 inv.set(slot.getAsInt(), new Item(item.getId(),
@@ -71,6 +72,8 @@ public class Equipment extends AbstractGameContainer<Item> {
             } else {
                 inv.add(item);
             }
+        }else{
+            getOwner().getInventory().add(item);
         }
 
         return false;
@@ -106,6 +109,7 @@ public class Equipment extends AbstractGameContainer<Item> {
         Preconditions.notNull(item, pred);
 
         if (slotId < 0 || slotId >= capacity()) {
+            System.out.println("slot id wrong " + slotId);
             return false;
         }
 
@@ -118,13 +122,16 @@ public class Equipment extends AbstractGameContainer<Item> {
         }
 
         if (inventoryItemSlot == -1) {
+            System.out.println("failed to find inventoryItemSlot");
             return false;
         }
 
+        System.out.println("slot:"+slotId);
         //Check to see its a valid slot
         EquipmentSlot slot = EquipmentSlot.fromIndex(slotId);
 
         if (slot == null) {
+            System.out.println("slot was null");
             return false;
         }
 
@@ -132,6 +139,7 @@ public class Equipment extends AbstractGameContainer<Item> {
         Item inventoryItem = getOwner().getInventory().get(inventoryItemSlot);
 
         if (inventoryItem == null) {
+            System.out.println("inventoryItem was null");
             return false;
         }
 

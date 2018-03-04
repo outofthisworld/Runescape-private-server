@@ -4,10 +4,14 @@ import util.Chance;
 import world.WorldConfig;
 
 public enum DropChance {
+    /**
+        Represents a drop chance that always drops.
+        100% drop rate.
+     */
     ALWAYS() {
         @Override
         boolean shouldDrop() {
-            return Chance.chanceWithin(WorldConfig.DROP_ALWAYS);
+            return true;
         }
 
         @Override
@@ -15,6 +19,10 @@ public enum DropChance {
             return WorldConfig.DROP_ALWAYS;
         }
     },
+    /**
+         Represents a drop chance that always drops.
+         30% drop rate.
+     */
     UNCOMMON() {
         @Override
         boolean shouldDrop() {
@@ -26,6 +34,10 @@ public enum DropChance {
             return WorldConfig.DROP_UNCOMMON;
         }
     },
+    /**
+         Represents a drop chance that always drops.
+         70% drop rate.
+     */
     COMMON() {
         @Override
         boolean shouldDrop() {
@@ -37,6 +49,10 @@ public enum DropChance {
             return WorldConfig.DROP_COMMON;
         }
     },
+    /**
+         Represents a drop chance that always drops.
+         70% drop rate.
+     */
     RARE() {
         @Override
         boolean shouldDrop() {

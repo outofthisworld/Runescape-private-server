@@ -1,8 +1,10 @@
 package world.entity.movement;
 
+import world.WorldConfig;
 import world.entity.Entity;
 import world.entity.misc.Position;
 import world.entity.player.Player;
+import world.entity.player.Skill;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -23,7 +25,7 @@ public class Movement {
     private Position lastPosition = null;
     private int walkDirection = -1;
     private int runDirection = -1;
-    private int runEnergy = 100;
+    private double runEnergy = 100;
 
     public Movement(Entity e) {
         this.e = e;
@@ -38,34 +40,37 @@ public class Movement {
     }
 
     public int getRunEnergy() {
-        return runEnergy;
+        return (int) runEnergy;
     }
 
     public void poll() {
         Position movementPosition = movementQueue.poll();
 
         if (movementPosition == null) {
-            walkDirection = -1;
-            runDirection = -1;
+            resetMovement();
             return;
         }
 
         walkDirection = parseDirection(movementPosition.getVector().getX() - lastPosition.getVector().getX(),
                 movementPosition.getVector().getY() - lastPosition.getVector().getY());
+        lastPosition = movementPosition;
+
 
         Position runPosition = null;
 
         if (isRunning) {
             runPosition = movementQueue.poll();
-
-            if (runPosition != null) {
-                runDirection = parseDirection(runPosition.getVector().getX() - movementPosition.getVector().getX(),
-                        runPosition.getVector().getY() - movementPosition.getVector().getY());
-            } else {
-                runDirection = -1;
-            }
         }
 
+        if (runPosition != null) {
+            runDirection = parseDirection(runPosition.getVector().getX() - movementPosition.getVector().getX(),
+                    runPosition.getVector().getY() - movementPosition.getVector().getY());
+            lastPosition = runPosition;
+            decreaseRunEnergy();
+        } else {
+            runDirection = -1;
+            increaseRunEnergy();
+        }
 
         e.getPosition().setVector(runPosition == null ? movementPosition.getVector().copy() : runPosition.getVector().copy());
 
@@ -91,10 +96,50 @@ public class Movement {
             //Send movement event
             /// player.send(new PlayerMoveEvent(player, this));
         }
+    }
 
+    private void decreaseRunEnergy(){
+        if(e.isPlayer() && runEnergy > 0) {
+            Player p = (Player) e;
+            runEnergy -= calculateDecreaseRunEnergy(e.getWeight());
+            runEnergy = Math.max(0,runEnergy);
+            p.getClient().getOutgoingPacketBuilder()
+                    .setRunEnergy((int)runEnergy)
+                    .sendMessage("Your run energy is now: " + (int) runEnergy)
+                    .send();
 
-        lastPosition = movementPosition;
+        }
+    }
 
+    private void increaseRunEnergy(){
+        if(e.isPlayer() && runEnergy < 100){
+            Player p = (Player) e;
+            runEnergy += calculateIncreaseRunEnergy(p.getSkills().getSkillLevel(Skill.AGILITY));
+            runEnergy = Math.min(100,runEnergy);
+            p.getClient().getOutgoingPacketBuilder().setRunEnergy((int)runEnergy);
+            p.getClient().getOutgoingPacketBuilder()
+                    .setRunEnergy((int)runEnergy)
+                    .sendMessage("Your run energy is now: " + (int) runEnergy)
+                    .send();
+        }
+    }
+
+    /**
+     * The formula for increase in run energy per second. As this is called every 600ms it is scaled to be
+     * that of one world tick, or 600ms -> 6/10ths of a second.
+     * @param agilityLevel
+     * @return
+     */
+    private double calculateIncreaseRunEnergy(int agilityLevel){
+        return ((8 + (agilityLevel / 6)) / 0.6 / 100) * (WorldConfig.WORLD_TICK_RATE_MS / 1000);
+    }
+    /**
+     * The forumla for decrease run energy, called every time a player is running and has scaled two tiles.
+     * @param playerWeight
+     * @return
+     */
+    private double calculateDecreaseRunEnergy(int playerWeight){
+        return (Math.min(playerWeight,64) / 100)  + 0.64;
     }
 
     public boolean isMoving() {
@@ -116,12 +161,12 @@ public class Movement {
     public void resetMovement() {
         lastPosition = null;
         movementQueue.clear();
+        walkDirection = -1;
+        runDirection = -1;
     }
 
     public void beginMovement() {
-        if (movementQueue.size() > 0) {
-            resetMovement();
-        }
+        resetMovement();
         movementQueue.addFirst(e.getPosition());
     }
 
@@ -133,6 +178,8 @@ public class Movement {
     }
 
     public void stepTo(int x, int y) {
+        System.out.println("target x : " + x);
+        System.out.println("target y : " + y);
 
         Position entityPosition = movementQueue.peekLast();
 

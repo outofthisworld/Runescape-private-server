@@ -446,6 +446,9 @@ public class World {
      */
     private void poll() {
         loopTimer.restart();
+
+        doWorldTasks();
+
         for (Player player : players.values()) {
             if (player.getClient().isDisconnected()) {
                 removePlayerFromWorld(player);
@@ -459,7 +462,6 @@ public class World {
             player.poll();
         }
 
-        doWorldTasks();
         /*
            Clear the player update block cache.
         */
@@ -481,7 +483,7 @@ public class World {
 
     private void doWorldTasks() {
         Task t;
-        ArrayList<Task> incompleteTasks = new ArrayList<>();
+        LinkedList<Task> incompleteTasks = new LinkedList<>();
 
         while ((t = worldTasks.poll()) != null) {
             if (!t.isFinished() && t.check()) {
@@ -489,7 +491,7 @@ public class World {
                 t.execute();
             }
             if (!t.isFinished()) {
-                incompleteTasks.add(t);
+                incompleteTasks.addLast(t);
             }
         }
         worldTasks.addAll(incompleteTasks);

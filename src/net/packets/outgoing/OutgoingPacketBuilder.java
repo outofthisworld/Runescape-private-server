@@ -338,7 +338,12 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder closeInterfaces() {
-        createHeader(219);
+        createHeader(OutgoingPacket.Opcodes.CLOSE_ALL_INTERFACES);
+        return this;
+    }
+
+    public OutgoingPacketBuilder resetDestination() {
+        createHeader(OutgoingPacket.Opcodes.RESET_PLAYER_DESTINATION);
         return this;
     }
 

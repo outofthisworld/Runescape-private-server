@@ -28,39 +28,15 @@ public class InteractItemPacket extends IncomingPacket {
                 System.out.println("Item action 3");
                 break;
             case EQUIP_ITEM:
-                System.out.println("equip");
-                int itemId = in.readBigUnsignedWord() + 1;
-                int itemSlot = in.readBigUnsignedWordA();
-                int intefaceId = in.readBigUnsignedWordA();
-
-
-                if (intefaceId != 3214) {
-                    return;
-                }
-                System.out.println(itemId);
-                System.out.println(itemSlot);
-                System.out.println(intefaceId);
-
-                Item item = c.getPlayer().getInventory().get(itemSlot);
-
-                if (item == null) {
-                    System.out.println("Item was null");
-                    return;
-                }
-
-                if (itemId != item.getId()) {
-                    System.out.println("Item id mismatch");
-                    System.out.println("our item id : " + item.getId());
-                    return;
-                }
-
-                c.getPlayer().getEquipment().add(item);
+                if(in.remaining() < 6) return;
+                equipItem(c,in.readBigUnsignedWord(),in.readBigUnsignedWordA(),in.readBigUnsignedWordA());
                 break;
             case ALTERNATE_ITEM_OPTION:
                 System.out.println("alternate item opt");
                 break;
             case UNEQUIP_ITEM:
-                System.out.println("uneuip");
+                if(in.remaining() < 6) return;
+                unequipItem(c,in.readBigUnsignedWordA(),in.readBigUnsignedWordA(),in.readBigUnsignedWordA());
                 break;
             case MOVE_ITEM:
                 System.out.println("moveItem");
@@ -69,6 +45,48 @@ public class InteractItemPacket extends IncomingPacket {
                 System.out.println("drop item");
                 break;
         }
+    }
+
+    private void equipItem(Client c,int itemId, int itemSlot, int interfaceId){
+        if (interfaceId != 3214) {
+            return;
+        }
+        System.out.println(itemId);
+        System.out.println(itemSlot);
+        System.out.println(interfaceId);
+
+        Item item = c.getPlayer().getInventory().get(itemSlot);
+
+        if (item == null) {
+            System.out.println("item was null");
+            return;
+        }
+
+        if (itemId != item.getId()) {
+            System.out.println(item.getId());
+            System.out.println("invalid item id");
+            return;
+        }
+
+        System.out.println("adding item to equip");
+        if(c.getPlayer().getEquipment().add(item)){
+            System.out.println("added item");
+        }else{
+            System.out.println("failed to add item");
+        }
+    }
+
+    private void unequipItem(Client c,int interfaceId,int itemSlot,int itemId){
+        System.out.println(interfaceId);
+        System.out.println(itemSlot);
+        System.out.println(itemId);
+        Item item = c.getPlayer().getEquipment().get(itemSlot);
+        System.out.println(item == null);
+        if(item == null) return;
+
+        if(item.getId() != itemId) return;
+
+        c.getPlayer().getEquipment().removeRef(item);
     }
 
     @Override

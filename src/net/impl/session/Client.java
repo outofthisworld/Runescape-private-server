@@ -283,7 +283,7 @@ public class Client implements NetworkEventExecutor {
      * @return the completable future
      */
     public void write(OutgoingPacket packet) {
-        write(packet.toOutputBuffer());
+        write(packet.encode(this));
     }
 
     /**

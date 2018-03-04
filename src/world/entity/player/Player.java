@@ -108,6 +108,7 @@ public class Player extends Entity {
      */
     private boolean regionChanged = false;
 
+
     /**
      * Instantiates a new Player.
      *
@@ -196,7 +197,6 @@ public class Player extends Entity {
     public PlayerUpdateFlags getUpdateFlags() {
         return updateFlags;
     }
-
 
     /**
      * Gets skills.
@@ -400,17 +400,28 @@ public class Player extends Entity {
 
         getClient().getOutgoingPacketBuilder().initPlayer(1, getSlotId());
 
-        getInventory().add(new Item(123, 1));
+        getInventory().getContainer().add(new Item(123, 1));
+
+
         //Refresh our inventory
         getInventory().syncAll();
-        //getEquipment().syncAll();
+        //Refresh our equipment
+        getEquipment().syncAll();
+
+
         getClient().getOutgoingPacketBuilder().setChatOptions(0, 0, 0);
 
+        /*
+            Skills levels
+         */
         Skill[] skills = Skill.values();
         for (int i = 0; i < skills.length; i++) {
             getClient().getOutgoingPacketBuilder().setSkillLevel(i, getSkills().getSkillLevel(skills[i]), getSkills().getSkillExp(skills[i]));
         }
-        getClient().getOutgoingPacketBuilder().send();
+
+        /*
+            Sidebar interfaces
+        */
         for (SidebarInterface i : SidebarInterface.values()) {
             getClient().getOutgoingPacketBuilder().setSidebarInterface(i.ordinal(), i.getInterfaceId());
         }

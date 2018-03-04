@@ -27,6 +27,28 @@ public abstract class Entity {
      * The world the player currently belongs to
      */
     protected int worldId;
+    /**
+     *  The weight of this player
+     **/
+    private int weight;
+
+    /**
+     * Gets weight.
+     *
+     * @return the weight
+     */
+    public int getWeight() {
+        return weight;
+    }
+
+    /**
+     * Sets weight.
+     *
+     * @param weight the weight
+     */
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
 
     /**
      * Gets movement.

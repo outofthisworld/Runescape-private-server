@@ -453,7 +453,7 @@ public class OutputBuffer extends AbstractBuffer {
      * @param numBytes the num bytes
      * @return the buffer reserve
      */
-    public IBufferReserve createByteReserve(int numBytes) {
+    public IBufferReserve<OutputBuffer> createByteReserve(int numBytes) {
         if (numBytes <= 0 || out.position() + numBytes >= out.limit()) {
             throw new IllegalArgumentException("Invalid numBytes, must be > 0 && < out.limit");
         }

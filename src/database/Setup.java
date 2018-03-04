@@ -13,7 +13,9 @@ import world.definitions.npc.ShopDefinition;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 /**
  * The type Setup.
@@ -69,6 +71,7 @@ public class Setup {
         return new String(Files.readAllBytes(Paths.get(f.getAbsolutePath())));
     }
 
+
     /**
      * The entry point of application.
      *
@@ -78,6 +81,7 @@ public class Setup {
         //Database.init();
         Database.getClient().dropDatabase(DatabaseConfig.DB_NAME);
         try {
+
             /*
                 Load json files into array.
              */
@@ -89,11 +93,6 @@ public class Setup {
             Setup.weaponPoisons = Setup.builder.fromJson(Setup.loadDefAsString("src/database/data/json/equipment/weapon_poison.json"), WeaponPoisonDefinition[].class);
             Setup.npcDrops = Setup.builder.fromJson(Setup.loadDefAsString("src/database/data/json/npcs/npc_drops.json"), NpcDropDefinition[].class);
             Setup.shops = Setup.builder.fromJson(Setup.loadDefAsString("src/database/data/json/shops/shops.json"), ShopDefinition[].class);
-
-
-            /*
-                Insert into db.
-             */
             Setup.insertAll(Setup.defs, ItemDefinition.class, DatabaseConfig.DB_NAME, DatabaseConfig.ITEMS_COLLECTION, true);
             Setup.insertAll(Setup.npcDefs, NpcDefinition.class, DatabaseConfig.DB_NAME, DatabaseConfig.NPC_COLLECTION, true);
             Setup.insertAll(Setup.itemRequirements, ItemRequirementDefinition.class, DatabaseConfig.DB_NAME, DatabaseConfig.ITEM_REQUIRMENTS, true);
@@ -102,6 +101,7 @@ public class Setup {
             Setup.insertAll(Setup.weaponPoisons, WeaponPoisonDefinition.class, DatabaseConfig.DB_NAME, DatabaseConfig.WEAPON_POISONS, true);
             Setup.insertAll(Setup.npcDrops, NpcDropDefinition.class, DatabaseConfig.DB_NAME, DatabaseConfig.NPC_DROPS, true);
             Setup.insertAll(Setup.shops, ShopDefinition.class, DatabaseConfig.DB_NAME, DatabaseConfig.SHOPS, true);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

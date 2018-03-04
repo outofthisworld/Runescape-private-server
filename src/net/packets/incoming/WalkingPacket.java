@@ -20,6 +20,9 @@ public class WalkingPacket extends IncomingPacket {
             return;
         }
 
+        /* Clear any open interfaces */
+        c.getOutgoingPacketBuilder().closeInterfaces().send();
+
         int size = in.remaining();
 
         if (packetOpcode == 248) {
@@ -51,7 +54,7 @@ public class WalkingPacket extends IncomingPacket {
         boolean shouldRun = run == 1;
         System.out.println("should run: " + shouldRun);
 
-        c.getPlayer().getMovement().setRunning(true);
+        c.getPlayer().getMovement().setRunning(shouldRun);
         c.getPlayer().getMovement().beginMovement();
         c.getPlayer().getMovement().stepTo(targetX, targetY);
         for (int i = 0; i < steps; i++) {

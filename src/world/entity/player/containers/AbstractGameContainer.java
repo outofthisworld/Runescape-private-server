@@ -145,7 +145,7 @@ public abstract class AbstractGameContainer<T extends IItem> implements IContain
     }
 
     protected void sync(int slotId, int containerId, T item) {
-        int itemId = 0;
+        int itemId = -1;
         int amount = 0;
 
         if (item == null || item.getId() <= 0) {
@@ -156,11 +156,15 @@ public abstract class AbstractGameContainer<T extends IItem> implements IContain
             amount = item.getAmount();
         }
 
-        player.getClient().getOutgoingPacketBuilder().updateItem(containerId, slotId, itemId, amount).send();
+        player.getClient().getOutgoingPacketBuilder().updateItem(containerId, slotId, itemId+1, amount).send();
     }
 
     protected void sync(int slotId, T item) {
         sync(slotId, containerId, item);
     }
 
+    public void clear() {
+        getContainer().clear();
+        syncAll();
+    }
 }

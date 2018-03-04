@@ -15,26 +15,34 @@
 
 package net.packets.outgoing;
 
+import net.buffers.IBufferReserve;
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
+import util.Preconditions;
 
 /**
  * The type Outgoing packet.
  */
-public class OutgoingPacket {
+public abstract class OutgoingPacket {
 
-    /**
-     * The Output buffer.
-     */
-    protected final OutputBuffer outputBuffer;
 
     /**
      * Instantiates a new Outgoing packet.
      *
-     * @param out the out
+     * @param client the client
+     * @param out    the out
      */
-    public OutgoingPacket(OutputBuffer out) {
-        outputBuffer = out;
+    public OutgoingPacket() {
+    }
+
+    /**
+     * Write opcode.
+     *
+     * @param opcode the opcode
+     */
+    protected OutputBuffer writeOpcode(Client c, OutputBuffer out, int opcode){
+        byte b = (byte) (opcode + c.getOutCipher().getNextValue());
+        return out.writeByte(b);
     }
 
     /**
@@ -46,14 +54,8 @@ public class OutgoingPacket {
         c.write(this);
     }
 
-    /**
-     * Gets output buffer.
-     *
-     * @return the output buffer
-     */
-    public OutputBuffer toOutputBuffer() {
-        return OutputBuffer.wrap(outputBuffer.toArray());
-    }
+
+    public abstract OutputBuffer encode(Client c);
 
     /**
      * The type Opcodes.

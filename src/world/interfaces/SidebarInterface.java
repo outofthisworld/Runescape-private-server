@@ -21,7 +21,7 @@ public enum SidebarInterface {
      * 12	Emotes	147
      * 13	Music
      */
-    ATTACK_TYPE(2433),
+    ATTACK_TYPE(5855),
     STATS(3917),
     QUESTS(638),
     /*
@@ -33,7 +33,7 @@ public enum SidebarInterface {
     WEARING(1644),
     PRAYER(5608),
     MAGIC(1151),
-    EMPTY(0),
+    CLAN_CHAT(0),
     FRIENDS_LIST(5065),
     IGNORE_LIST(5715),
     LOG_OUT(2449),

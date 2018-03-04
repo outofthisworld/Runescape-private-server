@@ -1,1650 +1,1070 @@
 [
   {
-    "id": 3093,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 3094,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 3095,
-    "interfaceType": "CLAWS"
-  },
-  {
-    "id": 3096,
-    "interfaceType": "CLAWS"
-  },
-  {
-    "id": 3097,
-    "interfaceType": "CLAWS"
-  },
-  {
-    "id": 3098,
-    "interfaceType": "CLAWS"
-  },
-  {
-    "id": 3099,
-    "interfaceType": "CLAWS"
-  },
-  {
-    "id": 3100,
-    "interfaceType": "CLAWS"
-  },
-  {
-    "id": 3101,
-    "interfaceType": "CLAWS"
-  },
-  {
-    "id": 35,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4151,
-    "interfaceType": "WHIP"
-  },
-  {
-    "id": 21003,
-    "interfaceType": "WARHAMMER"
-  },
-  {
-    "id": 4153,
-    "interfaceType": "WARHAMMER"
-  },
-  {
-    "id": 4158,
-    "interfaceType": "SPEAR"
-  },
-  {
-    "id": 4170,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 4178,
-    "interfaceType": "WHIP"
-  },
-  {
-    "id": 3170,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 3171,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 3172,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 3173,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 3174,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 3175,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 3176,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4212,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 3190,
-    "interfaceType": "HALBERD"
-  },
-  {
-    "id": 4214,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 4215,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 3192,
-    "interfaceType": "HALBERD"
-  },
-  {
-    "id": 4216,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 4217,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 3194,
-    "interfaceType": "HALBERD"
-  },
-  {
-    "id": 4218,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 4219,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 3196,
-    "interfaceType": "HALBERD"
-  },
-  {
-    "id": 4220,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 4221,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 3198,
-    "interfaceType": "HALBERD"
-  },
-  {
-    "id": 4222,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 4223,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 3200,
-    "interfaceType": "HALBERD"
-  },
-  {
-    "id": 3202,
-    "interfaceType": "HALBERD"
-  },
-  {
-    "id": 3204,
-    "interfaceType": "HALBERD"
-  },
-  {
-    "id": 4236,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 1203,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1205,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1207,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1209,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1211,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1213,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1215,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1217,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1219,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1221,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1223,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1225,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1227,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1229,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1231,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1233,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1235,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 1237,
-    "interfaceType": "SPEAR"
-  },
-  {
-    "id": 1239,
-    "interfaceType": "SPEAR"
-  },
-  {
-    "id": 1241,
-    "interfaceType": "SPEAR"
-  },
-  {
-    "id": 1243,
-    "interfaceType": "SPEAR"
-  },
-  {
-    "id": 1245,
-    "interfaceType": "SPEAR"
-  },
-  {
-    "id": 1247,
-    "interfaceType": "SPEAR"
-  },
-  {
-    "id": 1249,
-    "interfaceType": "SPEAR"
-  },
-  {
-    "id": 1251,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 1253,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 1255,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 1257,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 1259,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 1261,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 1263,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 1265,
-    "interfaceType": "PICKAXE"
-  },
-  {
-    "id": 1267,
-    "interfaceType": "PICKAXE"
-  },
-  {
-    "id": 1269,
-    "interfaceType": "PICKAXE"
-  },
-  {
-    "id": 1271,
-    "interfaceType": "PICKAXE"
-  },
-  {
-    "id": 1273,
-    "interfaceType": "PICKAXE"
-  },
-  {
-    "id": 1275,
-    "interfaceType": "PICKAXE"
-  },
-  {
-    "id": 1277,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 1279,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 21009,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 1281,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 1283,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 1285,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 1287,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 1289,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 1291,
-    "interfaceType": "LONGSWORD"
-  },
-  {
-    "id": 1293,
-    "interfaceType": "LONGSWORD"
-  },
-  {
-    "id": 1295,
-    "interfaceType": "LONGSWORD"
-  },
-  {
-    "id": 1297,
-    "interfaceType": "LONGSWORD"
-  },
-  {
-    "id": 1299,
-    "interfaceType": "LONGSWORD"
-  },
-  {
-    "id": 1301,
-    "interfaceType": "LONGSWORD"
-  },
-  {
-    "id": 1303,
-    "interfaceType": "LONGSWORD"
-  },
-  {
-    "id": 7447,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 1305,
-    "interfaceType": "LONGSWORD"
-  },
-  {
-    "id": 1307,
-    "interfaceType": "TWO_HANDED_SWORD"
-  },
-  {
-    "id": 1309,
-    "interfaceType": "TWO_HANDED_SWORD"
-  },
-  {
-    "id": 1311,
-    "interfaceType": "TWO_HANDED_SWORD"
-  },
-  {
-    "id": 1313,
-    "interfaceType": "TWO_HANDED_SWORD"
-  },
-  {
-    "id": 1315,
-    "interfaceType": "TWO_HANDED_SWORD"
-  },
-  {
-    "id": 1317,
-    "interfaceType": "TWO_HANDED_SWORD"
-  },
-  {
-    "id": 1319,
-    "interfaceType": "TWO_HANDED_SWORD"
-  },
-  {
-    "id": 1321,
-    "interfaceType": "SCIMITAR"
-  },
-  {
-    "id": 1323,
-    "interfaceType": "SCIMITAR"
-  },
-  {
-    "id": 1325,
-    "interfaceType": "SCIMITAR"
-  },
-  {
-    "id": 1327,
-    "interfaceType": "SCIMITAR"
-  },
-  {
-    "id": 1329,
-    "interfaceType": "SCIMITAR"
-  },
-  {
-    "id": 1331,
-    "interfaceType": "SCIMITAR"
-  },
-  {
-    "id": 1333,
-    "interfaceType": "SCIMITAR"
-  },
-  {
-    "id": 1335,
-    "interfaceType": "WARHAMMER"
-  },
-  {
-    "id": 1337,
-    "interfaceType": "WARHAMMER"
-  },
-  {
-    "id": 1339,
-    "interfaceType": "WARHAMMER"
-  },
-  {
-    "id": 1341,
-    "interfaceType": "WARHAMMER"
-  },
-  {
-    "id": 1343,
-    "interfaceType": "WARHAMMER"
-  },
-  {
-    "id": 1345,
-    "interfaceType": "WARHAMMER"
-  },
-  {
-    "id": 1347,
-    "interfaceType": "WARHAMMER"
-  },
-  {
-    "id": 1349,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 1351,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 1353,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 1355,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 1357,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 1359,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 1361,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 1363,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 1365,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 1367,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 1369,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 1371,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 1373,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 1375,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 1377,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 2402,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 1379,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 1381,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 1383,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 1385,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 1387,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 1389,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 1391,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 2415,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 2416,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 1393,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 2417,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 1395,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 1397,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 1399,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 1401,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 2425,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 6522,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 1403,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 6523,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 1405,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 6525,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 6526,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 1407,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 6527,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 6528,
-    "interfaceType": "WARHAMMER"
-  },
-  {
-    "id": 1409,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 1419,
-    "interfaceType": "SCYTHE"
-  },
-  {
-    "id": 1420,
-    "interfaceType": "MACE"
-  },
-  {
-    "id": 1422,
-    "interfaceType": "MACE"
-  },
-  {
-    "id": 1424,
-    "interfaceType": "MACE"
-  },
-  {
-    "id": 1426,
-    "interfaceType": "MACE"
-  },
-  {
-    "id": 1428,
-    "interfaceType": "MACE"
-  },
-  {
-    "id": 1430,
-    "interfaceType": "MACE"
-  },
-  {
-    "id": 4503,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 1432,
-    "interfaceType": "MACE"
-  },
-  {
-    "id": 1434,
-    "interfaceType": "MACE"
-  },
-  {
-    "id": 2460,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4508,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 2462,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 2464,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 2466,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 6562,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 6563,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 2468,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 2470,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 2472,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 2474,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 2476,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 6587,
-    "interfaceType": "CLAWS"
-  },
-  {
-    "id": 6589,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 6591,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 6593,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 6595,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 6597,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 6599,
-    "interfaceType": "HALBERD"
-  },
-  {
-    "id": 6601,
-    "interfaceType": "MACE"
-  },
-  {
-    "id": 6603,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 6605,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 6607,
-    "interfaceType": "LONGSWORD"
-  },
-  {
-    "id": 6609,
-    "interfaceType": "TWO_HANDED_SWORD"
-  },
-  {
-    "id": 466,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 6611,
-    "interfaceType": "SCIMITAR"
-  },
-  {
-    "id": 6613,
-    "interfaceType": "WARHAMMER"
-  },
-  {
-    "id": 4580,
-    "interfaceType": "SPEAR"
-  },
-  {
-    "id": 4582,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4584,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4587,
-    "interfaceType": "SCIMITAR"
-  },
-  {
-    "id": 7668,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 7671,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 7673,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 7675,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 5628,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 5629,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 5630,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 5631,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 5632,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 5633,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 5634,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 5635,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 5636,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 5637,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 5638,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 5639,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 5640,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 5641,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 5642,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 5643,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 5644,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 5645,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 5646,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 5647,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 5648,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5649,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 5650,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 5651,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 5652,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 5653,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 5654,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 5655,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 5656,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 5657,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 5658,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 5659,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 5660,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 5661,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 5662,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 5663,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 5664,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 5665,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 5666,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 5667,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 5668,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5670,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5672,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5674,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5676,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5678,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5680,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5682,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5684,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5686,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5688,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5690,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5692,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5694,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5696,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5698,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 4675,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 5700,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 6724,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5702,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 5704,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5706,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5708,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5710,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5712,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5714,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 6739,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 5716,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5718,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5720,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 6745,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5722,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 6746,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5724,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5726,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5728,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5730,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4710,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 5734,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5736,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 6760,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 6762,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 6764,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4718,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 4726,
-    "interfaceType": "SPEAR"
-  },
-  {
-    "id": 7804,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4734,
-    "interfaceType": "CROSSBOW"
-  },
-  {
-    "id": 7806,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 7807,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 7808,
-    "interfaceType": "MACE"
-  },
-  {
-    "id": 7809,
-    "interfaceType": "SPEAR"
-  },
-  {
-    "id": 4747,
-    "interfaceType": "WARHAMMER"
-  },
-  {
-    "id": 4755,
-    "interfaceType": "WHIP"
-  },
-  {
-    "id": 667,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 6818,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4827,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 746,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 747,
-    "interfaceType": "DAGGER"
-  },
-  {
-    "id": 6897,
-    "interfaceType": "LONGSWORD"
-  },
-  {
-    "id": 6908,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4862,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 6910,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 767,
-    "interfaceType": "CROSSBOW"
-  },
-  {
-    "id": 4863,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4864,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 6912,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4865,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 6914,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 21006,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 772,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 4886,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4887,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4888,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4889,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 800,
-    "interfaceType": "THROWNAXE"
-  },
-  {
-    "id": 801,
-    "interfaceType": "THROWNAXE"
-  },
-  {
-    "id": 802,
-    "interfaceType": "THROWNAXE"
-  },
-  {
-    "id": 803,
-    "interfaceType": "THROWNAXE"
-  },
-  {
-    "id": 804,
-    "interfaceType": "THROWNAXE"
-  },
-  {
-    "id": 805,
-    "interfaceType": "THROWNAXE"
-  },
-  {
-    "id": 806,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 807,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 808,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 809,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 810,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 811,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 812,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 813,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 814,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 4910,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 815,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 4911,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 816,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 4912,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 817,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 4913,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 818,
-    "interfaceType": "DART"
-  },
-  {
-    "id": 825,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 826,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 827,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 3899,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 828,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 829,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 830,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 831,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 832,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 833,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 834,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 835,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 2883,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 836,
-    "interfaceType": "JAVELIN"
-  },
-  {
-    "id": 837,
-    "interfaceType": "CROSSBOW"
-  },
-  {
-    "id": 4934,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 839,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4935,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4936,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 841,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 4937,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 843,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 845,
-    "interfaceType": "LONGBOW"
-  },
-  {
-    "id": 847,
-    "interfaceType": "LONGBOW"
-  },
-  {
-    "id": 849,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 851,
-    "interfaceType": "LONGBOW"
-  },
-  {
-    "id": 853,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 855,
-    "interfaceType": "LONGBOW"
-  },
-  {
-    "id": 857,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 859,
-    "interfaceType": "LONGBOW"
-  },
-  {
-    "id": 861,
-    "interfaceType": "SHORTBOW"
-  },
-  {
-    "id": 4958,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 863,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 4959,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 864,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 4960,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 865,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 4961,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 866,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 867,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 868,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 869,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 870,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 871,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 872,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 873,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 874,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 875,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 876,
-    "interfaceType": "KNIFE"
-  },
-  {
-    "id": 4982,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4983,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4984,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4985,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 2952,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 2961,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 2963,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5016,
-    "interfaceType": "SPEAR"
-  },
-  {
-    "id": 2997,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5056,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 5057,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 5058,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 6082,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 5059,
-    "interfaceType": "BATTLEAXE"
-  },
-  {
-    "id": 4037,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4039,
-    "interfaceType": "UNARMED"
-  },
-  {
-    "id": 4068,
-    "interfaceType": "SWORD"
-  },
-  {
-    "id": 3053,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 3054,
-    "interfaceType": "STAFF"
-  },
-  {
-    "id": 7158,
-    "interfaceType": "TWO_HANDED_SWORD"
-  },
-  {
-    "id": 20997,
-    "interfaceType": "SHORTBOW"
+    "interfaceId": 4446,
+    "interfaceType": "JAVELIN",
+    "attackSpeed": 6,
+    "nameLineId": 4449,
+    "specialBarId": 7649,
+    "specialMeterId": 7661,
+    "weaponIds": [
+      825,
+      826,
+      827,
+      828,
+      829,
+      830,
+      831,
+      832,
+      833,
+      834,
+      835,
+      836,
+      5642,
+      5643,
+      5644,
+      5645,
+      5646,
+      5647,
+      5649,
+      5650,
+      5651,
+      5652,
+      5653
+
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      }
+    ]
+  },
+  {
+    "interfaceId": 4446,
+    "interfaceType": "DART",
+    "attackSpeed": 3,
+    "nameLineId": 4449,
+    "specialBarId": 7649,
+    "specialMeterId": 7661,
+    "weaponIds": [
+      806,
+      807,
+      808,
+      809,
+      810,
+      811,
+      812,
+      813,
+      814,
+      815,
+      816,
+      817,
+      818,
+      3093,
+      3094,
+      5628,
+      5629,
+      5630,
+      5631,
+      5632,
+      5633,
+      5634,
+      5635,
+      5636,
+      5637,
+      5638,
+      5639,
+      5640,
+      5641
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      }
+    ]
+  },
+  {
+    "interfaceId": 4446,
+    "interfaceType": "THROWNAXE",
+    "attackSpeed": 6,
+    "nameLineId": 4449,
+    "specialBarId": 7649,
+    "specialMeterId": 7661,
+    "weaponIds": [
+      800,
+      801,
+      802,
+      803,
+      804,
+      805
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      }
+    ]
+  },
+  {
+    "interfaceId": 12290,
+    "interfaceType": "WHIP",
+    "attackSpeed": 4,
+    "nameLineId": 12293,
+    "specialBarId": 12323,
+    "specialMeterId": 12335,
+    "weaponIds": [
+      4151,
+      4178,
+      4755
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 1658,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "CONTROLLED",
+        "animationId": 1658,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 1658,
+        "bonusModifier": "ATTACK_SLASH"
+      }
+    ]
+  },
+  {
+    "interfaceId": 5855,
+    "interfaceType": "UNARMED",
+    "attackSpeed": 6,
+    "nameLineId": 5857,
+    "specialBarId": -1,
+    "specialMeterId": -1,
+    "weaponIds": [
+      4236,
+      1251,
+      1253,
+      1255,
+      1257,
+      1259,
+      1261,
+      1263,
+      2402,
+      6523,
+      6525,
+      6526,
+      6527,
+      2460,
+      2462,
+      2464,
+      2466,
+      2468,
+      2470,
+      2472,
+      2474,
+      2476,
+      466,
+      4582,
+      4584,
+      7668,
+      7671,
+      7673,
+      5648,
+      6724,
+      5704,
+      5706,
+      5708,
+      5710,
+      5712,
+      5714,
+      5716,
+      5718,
+      5720,
+      6745,
+      5722,
+      6746,
+      5724,
+      5726,
+      5728,
+      5730,
+      5734,
+      5736,
+      6760,
+      6762,
+      6764,
+      7804,
+      6818,
+      4827,
+      6908,
+      4862,
+      6910,
+      4863,
+      4864,
+      6912,
+      4865,
+      6914,
+      21006,
+      4886,
+      4887,
+      4888,
+      4889,
+      4910,
+      4911,
+      4912,
+      4913,
+      3899,
+      2883,
+      4934,
+      839,
+      4935,
+      4936,
+      4937,
+      4958,
+      4959,
+      4960,
+      4961,
+      4982,
+      4983,
+      4984,
+      4985,
+      2952,
+      2961,
+      2963,
+      2997,
+      6082,
+      4039
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 422,
+        "bonusModifier": "ATTACK_CRUSH"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 423,
+        "bonusModifier": "ATTACK_CRUSH"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 422,
+        "bonusModifier": "ATTACK_CRUSH"
+      }
+    ]
+  },
+  {
+    "interfaceId": 8460,
+    "interfaceType": "HALBERD",
+    "attackSpeed": 6,
+    "nameLineId": 8463,
+    "specialBarId": 8493,
+    "specialMeterId": 8505,
+    "weaponIds": [
+      3190,
+      3192,
+      3194,
+      3196,
+      3198,
+      3200,
+      3202,
+      3204,
+      6599
+    ],
+    "combatStyles": [
+      {
+        "style": "CONTROLLED",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 440,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB"
+      }
+    ]
+  },
+  {
+    "interfaceId": 5570,
+    "interfaceType": "PICKAXE",
+    "attackSpeed": 6,
+    "nameLineId": 5573,
+    "specialBarId": -1,
+    "specialMeterId": -1,
+    "weaponIds": [
+      1265,
+      1267,
+      1269,
+      1271,
+      1273,
+      1275
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 401,
+        "bonusModifier": "ATTACK_CRUSH"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB"
+      }
+    ]
+  },
+  {
+    "interfaceId": 4705,
+    "interfaceType": "TWO_HANDED_SWORD",
+    "attackSpeed": 6,
+    "nameLineId": 4708,
+    "specialBarId": 7699,
+    "specialMeterId": 7711,
+    "weaponIds": [
+      1307,
+      1309,
+      1311,
+      1313,
+      1315,
+      1317,
+      1319,
+      6609,
+      7158
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 407,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 407,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 406,
+        "bonusModifier": "ATTACK_CRUSH"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 407,
+        "bonusModifier": "ATTACK_SLASH"
+      }
+    ]
+  },
+  {
+    "interfaceId": 4679,
+    "interfaceType": "SPEAR",
+    "attackSpeed": 6,
+    "nameLineId": 4682,
+    "specialBarId": 7674,
+    "specialMeterId": 7686,
+    "weaponIds": [
+      4580,
+      4726,
+      7809,
+      5016,
+      4158,
+      1237,
+      1239,
+      1241,
+      1243,
+      1245,
+      1247,
+      1249
+    ],
+    "combatStyles": [
+      {
+        "style": "CONTROLLED",
+        "animationId": 2080,
+        "bonusModifier": "ATTACK_STAB"
+      },
+      {
+        "style": "CONTROLLED",
+        "animationId": 2081,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "CONTROLLED",
+        "animationId": 2082,
+        "bonusModifier": "ATTACK_CRUSH"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 2080,
+        "bonusModifier": "ATTACK_STAB"
+      }
+    ]
+  },
+  {
+    "interfaceId": 4446,
+    "interfaceType": "KNIFE",
+    "attackSpeed": 4,
+    "nameLineId": 4449,
+    "specialBarId": 7649,
+    "specialMeterId": 7661,
+    "weaponIds": [
+      7447,
+      2425,
+      6522,
+      5654,
+      5655,
+      5656,
+      5657,
+      5658,
+      5659,
+      5660,
+      5661,
+      5662,
+      5663,
+      5664,
+      5665,
+      5666,
+      5667,
+      863,
+      864,
+      865,
+      866,
+      867,
+      868,
+      869,
+      870,
+      871,
+      872,
+      873,
+      874,
+      875,
+      876
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      }
+    ]
+  },
+  {
+    "interfaceId": 3796,
+    "interfaceType": "MACE",
+    "attackSpeed": 4,
+    "nameLineId": 3799,
+    "specialBarId": 7624,
+    "specialMeterId": 7636,
+    "weaponIds": [
+      1420,
+      1422,
+      1424,
+      1426,
+      1428,
+      1430,
+      1432,
+      1434,
+      6601,
+      7808
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 1833,
+        "bonusModifier": "ATTACK_CRUSH"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 401,
+        "bonusModifier": "ATTACK_CRUSH"
+      },
+      {
+        "style": "CONTROLLED",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 401,
+        "bonusModifier": "ATTACK_CRUSH"
+      }
+    ]
+  },
+  {
+    "interfaceId": 2423,
+    "interfaceType": "LONGSWORD",
+    "attackSpeed": 6,
+    "nameLineId": 2426,
+    "specialBarId": 7599,
+    "specialMeterId": 7611,
+    "weaponIds": [
+      1291,
+      1293,
+      1295,
+      1297,
+      1299,
+      1301,
+      1303,
+      1305,
+      6607,
+      6897
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "CONTROLLED",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH"
+      }
+    ]
+  },
+  {
+    "interfaceId": 2423,
+    "interfaceType": "SCIMITAR",
+    "attackSpeed": 5,
+    "nameLineId": 2426,
+    "specialBarId": 7599,
+    "specialMeterId": 7611,
+    "weaponIds": [
+      1321,
+      1323,
+      1325,
+      1327,
+      1329,
+      1331,
+      1333,
+      6611,
+      4587
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "CONTROLLED",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH"
+      }
+    ]
+  },
+  {
+    "interfaceId": 2276,
+    "interfaceType": "SWORD",
+    "attackSpeed": 5,
+    "nameLineId": 2279,
+    "specialBarId": 7574,
+    "specialMeterId": 7586,
+    "weaponIds": [
+      1277,
+      1279,
+      21009,
+      1281,
+      1283,
+      1285,
+      1287,
+      1289,
+      4503,
+      4508,
+      6605,
+      7675,
+      7806,
+      667,
+      4068
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB"
+      }
+    ]
+  },
+  {
+    "interfaceId": 2276,
+    "interfaceType": "DAGGER",
+    "attackSpeed": 5,
+    "nameLineId": 2279,
+    "specialBarId": 7574,
+    "specialMeterId": 7586,
+    "weaponIds": [
+      1203,
+      1205,
+      1207,
+      1209,
+      1211,
+      1213,
+      1215,
+      1217,
+      1219,
+      1221,
+      1223,
+      1225,
+      1227,
+      1229,
+      1231,
+      1233,
+      1235,
+      6591,
+      6593,
+      6595,
+      6597,
+      5668,
+      5670,
+      5672,
+      5674,
+      5676,
+      5678,
+      5680,
+      5682,
+      5684,
+      5686,
+      5688,
+      5690,
+      5692,
+      5694,
+      5696,
+      5698,
+      5700,
+      5702,
+      746,
+      747
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 400,
+        "bonusModifier": "ATTACK_STAB"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 400,
+        "bonusModifier": "ATTACK_STAB"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_STAB"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 400,
+        "bonusModifier": "ATTACK_STAB"
+      }
+    ]
+  },
+  {
+    "interfaceId": 1764,
+    "interfaceType": "LONGBOW",
+    "attackSpeed": 6,
+    "nameLineId": 1767,
+    "specialBarId": 7549,
+    "specialMeterId": 7561,
+    "weaponIds": [
+      845,
+      847,
+      851,
+      855,
+      859
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 426,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 426,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 426,
+        "bonusModifier": "ATTACK_RANGED"
+      }
+    ]
+  },
+  {
+    "interfaceId": 1764,
+    "interfaceType": "SHORTBOW",
+    "attackSpeed": 5,
+    "nameLineId": 1767,
+    "specialBarId": 7549,
+    "specialMeterId": 7561,
+    "weaponIds": [
+      841,
+      843,
+      849,
+      853,
+      857,
+      861,
+      20997
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 426,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 426,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 426,
+        "bonusModifier": "ATTACK_RANGED"
+      }
+    ]
+  },
+  {
+    "interfaceId": 1749,
+    "interfaceType": "CROSSBOW",
+    "attackSpeed": 5,
+    "nameLineId": 1752,
+    "specialBarId": 7524,
+    "specialMeterId": 7536,
+    "weaponIds": [
+      4734,
+      767,
+      837
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 427,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 427,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 427,
+        "bonusModifier": "ATTACK_RANGED"
+      }
+    ]
+  },
+  {
+    "interfaceId": 1698,
+    "interfaceType": "BATTLEAXE",
+    "attackSpeed": 6,
+    "nameLineId": 1701,
+    "specialBarId": 7499,
+    "specialMeterId": 7511,
+    "weaponIds": [
+      6589,
+      6739,
+      4718,
+      7807,
+      5056,
+      5057,
+      5058,
+      5059,
+      1349,
+      1351,
+      1353,
+      1355,
+      1357,
+      1359,
+      1361,
+      1363,
+      1365,
+      1367,
+      1369,
+      1371,
+      1373,
+      1375,
+      1377
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 1833,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 1833,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 401,
+        "bonusModifier": "ATTACK_CRUSH"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 1833,
+        "bonusModifier": "ATTACK_SLASH"
+      }
+    ]
+  },
+  {
+    "interfaceId": 776,
+    "interfaceType": "SCYTHE",
+    "attackSpeed": 6,
+    "nameLineId": 779,
+    "specialBarId": -1,
+    "specialMeterId": -1,
+    "weaponIds": [
+      1419
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 408,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_STAB"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_CRUSH"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 408,
+        "bonusModifier": "ATTACK_SLASH"
+      }
+    ]
+  },
+  {
+    "interfaceId": 425,
+    "interfaceType": "WARHAMMER",
+    "attackSpeed": 6,
+    "nameLineId": 428,
+    "specialBarId": 7474,
+    "specialMeterId": 7486,
+    "weaponIds": [
+      21003,
+      4153,
+      1335,
+      1337,
+      1339,
+      1341,
+      1343,
+      1345,
+      1347,
+      6528,
+      6613,
+      4747
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 401,
+        "bonusModifier": "ATTACK_CRUSH"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 401,
+        "bonusModifier": "ATTACK_CRUSH"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 401,
+        "bonusModifier": "ATTACK_CRUSH"
+      }
+    ]
+  },
+  {
+    "interfaceId": 328,
+    "interfaceType": "STAFF",
+    "attackSpeed": 6,
+    "nameLineId": 331,
+    "specialBarId": -1,
+    "specialMeterId": -1,
+    "weaponIds": [
+      4170,
+      1379,
+      1381,
+      1383,
+      1385,
+      1387,
+      1389,
+      1391,
+      2415,
+      2416,
+      1393,
+      2417,
+      1395,
+      1397,
+      1399,
+      1401,
+      1403,
+      1405,
+      1407,
+      1409,
+      6562,
+      6563,
+      6603,
+      4675,
+      4710,
+      772,
+      3053,
+      3054
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 406,
+        "bonusModifier": "ATTACK_CRUSH"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 406,
+        "bonusModifier": "ATTACK_CRUSH"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 406,
+        "bonusModifier": "ATTACK_CRUSH"
+      }
+    ]
+  },
+  {
+    "interfaceId": 7762,
+    "interfaceType": "CLAWS",
+    "attackSpeed": 4,
+    "nameLineId": 7765,
+    "specialBarId": 7800,
+    "specialMeterId": 7812,
+    "weaponIds": [
+      3095,
+      3096,
+      3097,
+      3098,
+      3099,
+      3100,
+      3101
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH"
+      },
+      {
+        "style": "CONTROLLED",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH"
+      }
+    ]
   }
 ]
