@@ -98,27 +98,27 @@ public class Movement {
         }
     }
 
-    private void decreaseRunEnergy(){
-        if(e.isPlayer() && runEnergy > 0) {
+    private void decreaseRunEnergy() {
+        if (e.isPlayer() && runEnergy > 0) {
             Player p = (Player) e;
             runEnergy -= calculateDecreaseRunEnergy(e.getWeight());
-            runEnergy = Math.max(0,runEnergy);
+            runEnergy = Math.max(0, runEnergy);
             p.getClient().getOutgoingPacketBuilder()
-                    .setRunEnergy((int)runEnergy)
+                    .setRunEnergy((int) runEnergy)
                     .sendMessage("Your run energy is now: " + (int) runEnergy)
                     .send();
 
         }
     }
 
-    private void increaseRunEnergy(){
-        if(e.isPlayer() && runEnergy < 100){
+    private void increaseRunEnergy() {
+        if (e.isPlayer() && runEnergy < 100) {
             Player p = (Player) e;
             runEnergy += calculateIncreaseRunEnergy(p.getSkills().getSkillLevel(Skill.AGILITY));
-            runEnergy = Math.min(100,runEnergy);
-            p.getClient().getOutgoingPacketBuilder().setRunEnergy((int)runEnergy);
+            runEnergy = Math.min(100, runEnergy);
+            p.getClient().getOutgoingPacketBuilder().setRunEnergy((int) runEnergy);
             p.getClient().getOutgoingPacketBuilder()
-                    .setRunEnergy((int)runEnergy)
+                    .setRunEnergy((int) runEnergy)
                     .sendMessage("Your run energy is now: " + (int) runEnergy)
                     .send();
         }
@@ -127,19 +127,22 @@ public class Movement {
     /**
      * The formula for increase in run energy per second. As this is called every 600ms it is scaled to be
      * that of one world tick, or 600ms -> 6/10ths of a second.
+     *
      * @param agilityLevel
      * @return
      */
-    private double calculateIncreaseRunEnergy(int agilityLevel){
+    private double calculateIncreaseRunEnergy(int agilityLevel) {
         return ((8 + (agilityLevel / 6)) / 0.6 / 100) * (WorldConfig.WORLD_TICK_RATE_MS / 1000);
     }
+
     /**
      * The forumla for decrease run energy, called every time a player is running and has scaled two tiles.
+     *
      * @param playerWeight
      * @return
      */
-    private double calculateDecreaseRunEnergy(int playerWeight){
-        return (Math.min(playerWeight,64) / 100)  + 0.64;
+    private double calculateDecreaseRunEnergy(int playerWeight) {
+        return (Math.min(playerWeight, 64) / 100) + 0.64;
     }
 
     public boolean isMoving() {

@@ -88,52 +88,52 @@ public class Appearance {
         return appearance[slot.getId()];
     }
 
-    public void setHairColor(int hairColor) {
-        this.hairColor = hairColor;
-    }
-
-    public void setTorsoColor(int torsoColor) {
-        this.torsoColor = torsoColor;
-    }
-
-    public void setLegColor(int legColor) {
-        this.legColor = legColor;
-    }
-
-    public void setFeetColor(int feetColor) {
-        this.feetColor = feetColor;
-    }
-
-    public void setSkinColor(int skinColor) {
-        this.skinColor = skinColor;
-    }
-
     public int getHairColor() {
         return hairColor;
+    }
+
+    public void setHairColor(int hairColor) {
+        this.hairColor = hairColor;
     }
 
     public int getTorsoColor() {
         return torsoColor;
     }
 
+    public void setTorsoColor(int torsoColor) {
+        this.torsoColor = torsoColor;
+    }
+
     public int getLegColor() {
         return legColor;
+    }
+
+    public void setLegColor(int legColor) {
+        this.legColor = legColor;
     }
 
     public int getFeetColor() {
         return feetColor;
     }
 
+    public void setFeetColor(int feetColor) {
+        this.feetColor = feetColor;
+    }
+
     public int getSkinColor() {
         return skinColor;
     }
 
+    public void setSkinColor(int skinColor) {
+        this.skinColor = skinColor;
+    }
+
     /**
-        Called when players appearance has finished being modified to append
-        the appearance update flag, which will sync the appearance with
-        the client on the next update.
+     * Called when players appearance has finished being modified to append
+     * the appearance update flag, which will sync the appearance with
+     * the client on the next update.
      */
-    public void finishUpdateAppearance(){
+    public void finishUpdateAppearance() {
         p.getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
     }
 

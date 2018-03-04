@@ -24,12 +24,12 @@ public class ServerMessage extends OutgoingPacket {
 
     public ServerMessage(String message) {
         super();
-        this.message = message == null? "":message;
+        this.message = message == null ? "" : message;
     }
 
     @Override
     public OutputBuffer encode(Client c) {
-        return   writeOpcode(c,OutputBuffer.create(message.getBytes().length + 3), Opcodes.SEND_MESSAGE)
+        return writeOpcode(c, OutputBuffer.create(message.getBytes().length + 3), Opcodes.SEND_MESSAGE)
                 .createByteReserve(1)
                 .toBuffer()
                 .writeBytes(message.getBytes())

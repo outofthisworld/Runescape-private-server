@@ -72,7 +72,7 @@ public class Equipment extends AbstractGameContainer<Item> {
             } else {
                 inv.add(item);
             }
-        }else{
+        } else {
             getOwner().getInventory().add(item);
         }
 
@@ -126,7 +126,7 @@ public class Equipment extends AbstractGameContainer<Item> {
             return false;
         }
 
-        System.out.println("slot:"+slotId);
+        System.out.println("slot:" + slotId);
         //Check to see its a valid slot
         EquipmentSlot slot = EquipmentSlot.fromIndex(slotId);
 

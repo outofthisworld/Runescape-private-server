@@ -91,7 +91,7 @@ public final class ByteBuffer {
         position = reserve_packet_slots ? pkt_content_start : pkt_opcode_slot;
 
 		/*
-		 * We put the length of the {@code #encodedBuffer} to the buffer as a
+         * We put the length of the {@code #encodedBuffer} to the buffer as a
 		 * standard byte. (Ignore the naming, that really writes a byte...)
 		 */
         putByte(encodedBuffer.length);

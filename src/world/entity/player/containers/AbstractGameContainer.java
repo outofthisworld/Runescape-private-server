@@ -156,7 +156,7 @@ public abstract class AbstractGameContainer<T extends IItem> implements IContain
             amount = item.getAmount();
         }
 
-        player.getClient().getOutgoingPacketBuilder().updateItem(containerId, slotId, itemId+1, amount).send();
+        player.getClient().getOutgoingPacketBuilder().updateItem(containerId, slotId, itemId + 1, amount).send();
     }
 
     protected void sync(int slotId, T item) {

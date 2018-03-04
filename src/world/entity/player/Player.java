@@ -17,7 +17,6 @@ import world.entity.player.containers.Equipment;
 import world.entity.player.containers.Inventory;
 import world.entity.update.player.PlayerUpdateBlock;
 import world.entity.update.player.PlayerUpdateFlags;
-import world.entity.update.player.PlayerUpdateMask;
 import world.event.impl.AbstractEvent;
 import world.event.impl.RegionUpdateEvent;
 import world.interfaces.SidebarInterface;

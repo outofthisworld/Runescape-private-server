@@ -112,7 +112,7 @@ public class AppearanceUpdateBlock implements BiConsumer<Player, OutputBuffer> {
 
                     ) {
 
-                    outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearance(AppearanceSlot.BEARD)
+                outputBuffer.writeBigWord(0x100 + entity.getAppearance().getAppearance(AppearanceSlot.BEARD)
                 );
             } else {
                 outputBuffer.writeByte(0);

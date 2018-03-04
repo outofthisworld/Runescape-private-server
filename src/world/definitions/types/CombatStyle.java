@@ -1,6 +1,6 @@
 package world.definitions.types;
 
-public class CombatStyle{
+public class CombatStyle {
     private AttackStyle style;
     private int animationId;
     private AttackBonusModifier bonusModifier;

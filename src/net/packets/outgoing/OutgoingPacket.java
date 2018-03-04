@@ -15,10 +15,8 @@
 
 package net.packets.outgoing;
 
-import net.buffers.IBufferReserve;
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
-import util.Preconditions;
 
 /**
  * The type Outgoing packet.
@@ -40,7 +38,7 @@ public abstract class OutgoingPacket {
      *
      * @param opcode the opcode
      */
-    protected OutputBuffer writeOpcode(Client c, OutputBuffer out, int opcode){
+    protected OutputBuffer writeOpcode(Client c, OutputBuffer out, int opcode) {
         byte b = (byte) (opcode + c.getOutCipher().getNextValue());
         return out.writeByte(b);
     }

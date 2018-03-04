@@ -9,7 +9,7 @@ public class Skills {
 
     public Skills(Player p) {
         this.p = p;
-        Arrays.fill(skills,1);
+        Arrays.fill(skills, 1);
     }
 
     /**

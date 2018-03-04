@@ -28,7 +28,7 @@ public abstract class Entity {
      */
     protected int worldId;
     /**
-     *  The weight of this player
+     * The weight of this player
      **/
     private int weight;
 

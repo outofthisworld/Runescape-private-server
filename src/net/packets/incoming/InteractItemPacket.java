@@ -28,15 +28,15 @@ public class InteractItemPacket extends IncomingPacket {
                 System.out.println("Item action 3");
                 break;
             case EQUIP_ITEM:
-                if(in.remaining() < 6) return;
-                equipItem(c,in.readBigUnsignedWord(),in.readBigUnsignedWordA(),in.readBigUnsignedWordA());
+                if (in.remaining() < 6) return;
+                equipItem(c, in.readBigUnsignedWord(), in.readBigUnsignedWordA(), in.readBigUnsignedWordA());
                 break;
             case ALTERNATE_ITEM_OPTION:
                 System.out.println("alternate item opt");
                 break;
             case UNEQUIP_ITEM:
-                if(in.remaining() < 6) return;
-                unequipItem(c,in.readBigUnsignedWordA(),in.readBigUnsignedWordA(),in.readBigUnsignedWordA());
+                if (in.remaining() < 6) return;
+                unequipItem(c, in.readBigUnsignedWordA(), in.readBigUnsignedWordA(), in.readBigUnsignedWordA());
                 break;
             case MOVE_ITEM:
                 System.out.println("moveItem");
@@ -47,7 +47,7 @@ public class InteractItemPacket extends IncomingPacket {
         }
     }
 
-    private void equipItem(Client c,int itemId, int itemSlot, int interfaceId){
+    private void equipItem(Client c, int itemId, int itemSlot, int interfaceId) {
         if (interfaceId != 3214) {
             return;
         }
@@ -69,22 +69,22 @@ public class InteractItemPacket extends IncomingPacket {
         }
 
         System.out.println("adding item to equip");
-        if(c.getPlayer().getEquipment().add(item)){
+        if (c.getPlayer().getEquipment().add(item)) {
             System.out.println("added item");
-        }else{
+        } else {
             System.out.println("failed to add item");
         }
     }
 
-    private void unequipItem(Client c,int interfaceId,int itemSlot,int itemId){
+    private void unequipItem(Client c, int interfaceId, int itemSlot, int itemId) {
         System.out.println(interfaceId);
         System.out.println(itemSlot);
         System.out.println(itemId);
         Item item = c.getPlayer().getEquipment().get(itemSlot);
         System.out.println(item == null);
-        if(item == null) return;
+        if (item == null) return;
 
-        if(item.getId() != itemId) return;
+        if (item.getId() != itemId) return;
 
         c.getPlayer().getEquipment().removeRef(item);
     }

@@ -5,8 +5,8 @@ import world.WorldConfig;
 
 public enum DropChance {
     /**
-        Represents a drop chance that always drops.
-        100% drop rate.
+     * Represents a drop chance that always drops.
+     * 100% drop rate.
      */
     ALWAYS() {
         @Override
@@ -20,8 +20,8 @@ public enum DropChance {
         }
     },
     /**
-         Represents a drop chance that always drops.
-         30% drop rate.
+     * Represents a drop chance that always drops.
+     * 30% drop rate.
      */
     UNCOMMON() {
         @Override
@@ -35,8 +35,8 @@ public enum DropChance {
         }
     },
     /**
-         Represents a drop chance that always drops.
-         70% drop rate.
+     * Represents a drop chance that always drops.
+     * 70% drop rate.
      */
     COMMON() {
         @Override
@@ -50,8 +50,8 @@ public enum DropChance {
         }
     },
     /**
-         Represents a drop chance that always drops.
-         70% drop rate.
+     * Represents a drop chance that always drops.
+     * 70% drop rate.
      */
     RARE() {
         @Override
