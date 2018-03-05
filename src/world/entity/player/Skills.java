@@ -125,6 +125,13 @@ public class Skills {
 
         skills[skillId] = world.entity.player.Skill.getLevelFromExp(exp);
         skillExp[skillId] = exp;
-        //c.getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
+        //p.getClient().getOutgoingPacketBuilder().updateSkill(skillId, skills[skillId], skillExp[skillId]);
+    }
+
+    public void syncAll() {
+        Skill[] skills = Skill.values();
+        for (int i = 0; i < skills.length; i++) {
+            p.getClient().getOutgoingPacketBuilder().setSkillLevel(i, getSkillLevel(skills[i]), getSkillExp(skills[i]));
+        }
     }
 }

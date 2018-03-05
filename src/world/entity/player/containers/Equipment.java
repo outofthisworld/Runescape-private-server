@@ -7,11 +7,13 @@ import util.Preconditions;
 import world.definitions.DefinitionLoader;
 import world.definitions.item.ItemRequirementDefinition;
 import world.definitions.item.WeaponInterfaceDefinition;
-import world.definitions.types.ItemRequirement;
 import world.entity.player.EquipmentSlot;
 import world.entity.player.Player;
 import world.entity.player.Skill;
+import world.interfaces.SidebarInterface;
+import world.interfaces.WeaponInterfaceType;
 import world.item.Item;
+import world.item.ItemRequirement;
 
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -175,17 +177,6 @@ public class Equipment extends AbstractGameContainer<Item> {
             Debug.writeLine("Did not find item requirement for item " + inventoryItem.getItemDefinition().getName() + "(" + inventoryItem.getId() + ")");
         }
 
-        if (slot == EquipmentSlot.WEAPON) {
-            WeaponInterfaceDefinition def = DefinitionLoader.getDefinition(DefinitionLoader.WEAPON_INTERFACES, inventoryItem.getId());
-            OutgoingPacketBuilder out = getOwner().getClient().getOutgoingPacketBuilder();
-            if (def != null) {
-                out.setSidebarInterface(0, def.getInterfaceId());
-            } else {
-                //Unarmed.
-                out.setSidebarInterface(0, 5855);
-            }
-        }
-
 
         if (equipped == null) {
             getOwner().getInventory().removeRef(inventoryItem);
@@ -216,11 +207,40 @@ public class Equipment extends AbstractGameContainer<Item> {
             getContainer().set(slotId, inventoryItem);
             getOwner().getInventory().set(inventoryItemSlot, equipped);
         }
+
+        if (slot == EquipmentSlot.WEAPON) {
+            setWeaponInterface(inventoryItem);
+        }
         return true;
     }
 
     @Override
     public boolean set(int slotId, Item item) {
         return set(slotId, item, (i) -> i == item);
+    }
+
+    private void setWeaponInterface(Item item) {
+        if (item != null) {
+            WeaponInterfaceDefinition def = DefinitionLoader.getDefinition(DefinitionLoader.WEAPON_INTERFACES, item.getId());
+            if (def != null) {
+                OutgoingPacketBuilder out = getOwner().getClient().getOutgoingPacketBuilder();
+                out.setSidebarInterface(SidebarInterface.ATTACK_TYPE.ordinal(), def.getInterfaceId());
+                out.sendInterfaceText(item.getItemDefinition().getName(), def.getNameLineId());
+                return;
+            }
+        }
+
+        //Unarmed.
+        OutgoingPacketBuilder out = getOwner().getClient().getOutgoingPacketBuilder();
+        WeaponInterfaceDefinition weaponIDef = DefinitionLoader.getDefinition(DefinitionLoader.WEAPON_INTERFACES, WeaponInterfaceType.UNARMED.getId());
+        out.sendInterfaceText(Character.toUpperCase(weaponIDef.getInterfaceName().toCharArray()[0])
+                + weaponIDef.getInterfaceName().toLowerCase().substring(1, weaponIDef.getInterfaceName().length()), weaponIDef.getNameLineId());
+        out.setSidebarInterface(SidebarInterface.ATTACK_TYPE.ordinal(), weaponIDef.getId());
+    }
+
+    @Override
+    public void syncAll() {
+        super.syncAll();
+        setWeaponInterface(get(EquipmentSlot.WEAPON.getSlotId()));
     }
 }

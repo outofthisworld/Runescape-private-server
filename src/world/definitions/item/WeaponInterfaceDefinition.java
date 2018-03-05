@@ -1,8 +1,8 @@
 package world.definitions.item;
 
 import world.definitions.IDefinition;
-import world.definitions.types.CombatStyle;
-import world.definitions.types.WeaponInterfaceType;
+import world.entity.player.combat.CombatStyle;
+import world.interfaces.WeaponInterfaceType;
 
 import java.util.ArrayList;
 import java.util.Objects;

@@ -5,9 +5,9 @@ import net.impl.session.Client;
 import util.Debug;
 import world.definitions.DefinitionLoader;
 import world.definitions.item.WeaponInterfaceDefinition;
-import world.definitions.types.CombatStyle;
-import world.definitions.types.WeaponInterfaceType;
 import world.entity.player.EquipmentSlot;
+import world.entity.player.combat.CombatStyle;
+import world.interfaces.WeaponInterfaceType;
 import world.item.Item;
 
 import java.util.*;

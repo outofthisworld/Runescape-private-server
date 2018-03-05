@@ -10,11 +10,11 @@ import net.impl.session.Client;
 import net.packets.outgoing.OutgoingPacket;
 import sun.plugin.dom.exception.InvalidStateException;
 import util.Preconditions;
-import world.definitions.types.AttackBonusModifier;
-import world.definitions.types.AttackStyle;
-import world.definitions.types.CombatStyle;
 import world.entity.Entity;
 import world.entity.misc.Position;
+import world.entity.player.combat.AttackBonusModifier;
+import world.entity.player.combat.AttackStyle;
+import world.entity.player.combat.CombatStyle;
 import world.entity.player.containers.Bank;
 import world.entity.player.containers.Equipment;
 import world.entity.player.containers.Inventory;
@@ -426,22 +426,15 @@ public class Player extends Entity {
 
         getInventory().getContainer().add(new Item(123, 1));
 
+        getClient().getOutgoingPacketBuilder().setChatOptions(0, 0, 0);
+
 
         //Refresh our inventory
         getInventory().syncAll();
         //Refresh our equipment
         getEquipment().syncAll();
-
-
-        getClient().getOutgoingPacketBuilder().setChatOptions(0, 0, 0);
-
-        /*
-            Skills levels
-         */
-        Skill[] skills = Skill.values();
-        for (int i = 0; i < skills.length; i++) {
-            getClient().getOutgoingPacketBuilder().setSkillLevel(i, getSkills().getSkillLevel(skills[i]), getSkills().getSkillExp(skills[i]));
-        }
+        //Refresh our skills
+        getSkills().syncAll();
 
         /*
             Sidebar interfaces

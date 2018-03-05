@@ -2,7 +2,7 @@ package world.definitions.item;
 
 
 import world.definitions.IDefinition;
-import world.definitions.types.ItemRequirement;
+import world.item.ItemRequirement;
 
 import java.util.ArrayList;
 import java.util.Collections;

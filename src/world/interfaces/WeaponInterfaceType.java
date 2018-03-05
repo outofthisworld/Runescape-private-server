@@ -1,4 +1,4 @@
-package world.definitions.types;
+package world.interfaces;
 
 import java.util.Objects;
 

@@ -1,4 +1,4 @@
-package world.definitions.types;
+package world.item;
 
 public class ItemRequirement {
     private int level;

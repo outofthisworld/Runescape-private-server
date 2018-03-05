@@ -1,4 +1,4 @@
-package world.definitions.types;
+package world.entity.npc;
 
 import util.Chance;
 import world.WorldConfig;

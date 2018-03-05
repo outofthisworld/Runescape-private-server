@@ -1,4 +1,4 @@
-package world.definitions.types;
+package world.entity.player.combat;
 
 public enum AttackStyle {
     ACCURATE,

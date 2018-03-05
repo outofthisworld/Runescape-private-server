@@ -19,6 +19,7 @@
         "maximumHit": 2,
         "animation": 711,
         "baseExperience": 5.0,
+        "buttonId": 19210,
         "projectile": {
           "id": 91,
           "startHeight": 43,
@@ -828,18 +829,6 @@
           }
         ],
         "equipmentRequired": [
-          {
-            "itemId": 556,
-            "amount": 4
-          },
-          {
-            "itemId": 565,
-            "amount": 2
-          },
-          {
-            "itemId": 554,
-            "amount": 2
-          }
         ]
       },
       {
@@ -880,18 +869,6 @@
           }
         ],
         "equipmentRequired": [
-          {
-            "itemId": 556,
-            "amount": 4
-          },
-          {
-            "itemId": 565,
-            "amount": 2
-          },
-          {
-            "itemId": 554,
-            "amount": 2
-          }
         ]
       },
       {
@@ -932,18 +909,6 @@
           }
         ],
         "equipmentRequired": [
-          {
-            "itemId": 556,
-            "amount": 4
-          },
-          {
-            "itemId": 565,
-            "amount": 2
-          },
-          {
-            "itemId": 554,
-            "amount": 2
-          }
         ]
       },
       {
