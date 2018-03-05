@@ -468,7 +468,7 @@ public final class ByteBuffer {
     public int bufferLength() {
         int size = position;
         if (reserve_packet_slots) {
-			/* Update the pkt_size slot and encrypt it */
+            /* Update the pkt_size slot and encrypt it */
             buffer[pkt_size_slot] = (byte) (size + cipher.getNextValue());
         }
         return size;

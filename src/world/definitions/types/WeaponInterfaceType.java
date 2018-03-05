@@ -1,5 +1,7 @@
 package world.definitions.types;
 
+import java.util.Objects;
+
 public enum WeaponInterfaceType {
     DART(),
     CLAWS(),
@@ -22,5 +24,14 @@ public enum WeaponInterfaceType {
     JAVELIN(),
     THROWNAXE(),
     KNIFE(),
-    LONG_BOW()
+    SCYTHE(),
+    LONGBOW();
+
+    WeaponInterfaceType() {
+
+    }
+
+    public int getId() {
+        return Objects.hash(this.name());
+    }
 }

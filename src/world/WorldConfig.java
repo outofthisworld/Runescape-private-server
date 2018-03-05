@@ -1,5 +1,7 @@
 package world;
 
+import util.AppMode;
+
 public final class WorldConfig {
     /**
      * Misc settings
@@ -29,7 +31,11 @@ public final class WorldConfig {
     public static final double DROP_RARE = 4.77d;
     public static final double DROP_NEAR_IMPOSSIBLE = 0.5d;
 
-    public static final boolean DEBUG = false;
+
+    /**
+     * The app mode/server mode. Development when not in production.
+     */
+    public static final AppMode APP_MODE = AppMode.DEVELOPMENT;
 
     private WorldConfig() {
     }

@@ -1,10 +1,18 @@
 package world.entity.player.containers;
 
+import net.packets.outgoing.OutgoingPacketBuilder;
+import util.Debug;
 import util.Preconditions;
+import world.definitions.DefinitionLoader;
+import world.definitions.item.ItemRequirementDefinition;
+import world.definitions.item.WeaponInterfaceDefinition;
+import world.definitions.types.ItemRequirement;
 import world.entity.player.EquipmentSlot;
 import world.entity.player.Player;
+import world.entity.player.Skill;
 import world.item.Item;
 
+import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
@@ -141,6 +149,38 @@ public class Equipment extends AbstractGameContainer<Item> {
         if (inventoryItem == null) {
             System.out.println("inventoryItem was null");
             return false;
+        }
+
+        ItemRequirementDefinition itemReqDef = DefinitionLoader.getDefinition(DefinitionLoader.ITEM_REQUIREMENTS, inventoryItem.getId());
+
+        if (itemReqDef != null) {
+            Debug.writeLine("Found item requirement for item " + inventoryItem.getItemDefinition().getName() + "(" + inventoryItem.getId() + ")");
+            Optional<ItemRequirement> requirement = itemReqDef.getRequirementsImmutable().stream().filter(e -> {
+                Skill skill = Skill.valueOf(e.getSkill());
+                int level = getOwner().getSkills().getSkillLevel(skill);
+                int requiredLevel = e.getLevel();
+                return level < requiredLevel;
+            }).findFirst();
+
+            if (requirement.isPresent()) {
+                ItemRequirement iReq = requirement.get();
+                getOwner().getClient().getOutgoingPacketBuilder().sendMessage(iReq.getLevel() + " " + iReq.getSkill()
+                        + " is required in order to wear " + inventoryItem.getItemDefinition().getName()).send();
+                return false;
+            }
+        } else {
+            Debug.writeLine("Did not find item requirement for item " + inventoryItem.getItemDefinition().getName() + "(" + inventoryItem.getId() + ")");
+        }
+
+        if (slot == EquipmentSlot.WEAPON) {
+            WeaponInterfaceDefinition def = DefinitionLoader.getDefinition(DefinitionLoader.WEAPON_INTERFACES, inventoryItem.getId());
+            OutgoingPacketBuilder out = getOwner().getClient().getOutgoingPacketBuilder();
+            if (def != null) {
+                out.setSidebarInterface(0, def.getInterfaceId());
+            } else {
+                //Unarmed.
+                out.setSidebarInterface(0, 5855);
+            }
         }
 
 

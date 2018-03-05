@@ -5,6 +5,7 @@ import world.definitions.types.CombatStyle;
 import world.definitions.types.WeaponInterfaceType;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 
 public class WeaponInterfaceDefinition implements IDefinition {
@@ -19,7 +20,7 @@ public class WeaponInterfaceDefinition implements IDefinition {
 
 
     public int getId() {
-        return interfaceId;
+        return Objects.hash(interfaceType.name());
     }
 
     public int getInterfaceId() {

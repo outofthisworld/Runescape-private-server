@@ -91,17 +91,20 @@
       {
         "style": "ACCURATE",
         "animationId": 806,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4454
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 806,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4453
       },
       {
         "style": "DEFENSIVE",
         "animationId": 806,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4452
       }
     ]
   },
@@ -124,17 +127,20 @@
       {
         "style": "ACCURATE",
         "animationId": 806,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4454
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 806,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4453
       },
       {
         "style": "DEFENSIVE",
         "animationId": 806,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4452
       }
     ]
   },
@@ -154,17 +160,20 @@
       {
         "style": "ACCURATE",
         "animationId": 1658,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 12298
       },
       {
         "style": "CONTROLLED",
         "animationId": 1658,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 12297
       },
       {
         "style": "DEFENSIVE",
         "animationId": 1658,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 12296
       }
     ]
   },
@@ -273,17 +282,20 @@
       {
         "style": "ACCURATE",
         "animationId": 422,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 5860
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 423,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 5862
       },
       {
         "style": "DEFENSIVE",
         "animationId": 422,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 5861
       }
     ]
   },
@@ -309,17 +321,20 @@
       {
         "style": "CONTROLLED",
         "animationId": 412,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 8466
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 440,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 8468
       },
       {
         "style": "DEFENSIVE",
         "animationId": 412,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 8467
       }
     ]
   },
@@ -342,22 +357,26 @@
       {
         "style": "ACCURATE",
         "animationId": 412,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 5576
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 412,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 5579
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 401,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 5578
       },
       {
         "style": "DEFENSIVE",
         "animationId": 412,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 5577
       }
     ]
   },
@@ -377,28 +396,35 @@
       1317,
       1319,
       6609,
-      7158
+      7158,
+      21060,
+      20782,
+      20593
     ],
     "combatStyles": [
       {
         "style": "ACCURATE",
         "animationId": 407,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 4711
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 407,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 4714
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 406,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 4713
       },
       {
         "style": "DEFENSIVE",
         "animationId": 407,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 4712
       }
     ]
   },
@@ -427,22 +453,26 @@
       {
         "style": "CONTROLLED",
         "animationId": 2080,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 4685
       },
       {
         "style": "CONTROLLED",
         "animationId": 2081,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 4688
       },
       {
         "style": "CONTROLLED",
         "animationId": 2082,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 4687
       },
       {
         "style": "DEFENSIVE",
         "animationId": 2080,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 4686
       }
     ]
   },
@@ -490,17 +520,20 @@
       {
         "style": "ACCURATE",
         "animationId": 806,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4454
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 806,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4453
       },
       {
         "style": "DEFENSIVE",
         "animationId": 806,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4452
       }
     ]
   },
@@ -527,22 +560,26 @@
       {
         "style": "ACCURATE",
         "animationId": 1833,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 3802
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 401,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 3805
       },
       {
         "style": "CONTROLLED",
         "animationId": 412,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 3804
       },
       {
         "style": "DEFENSIVE",
         "animationId": 401,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 3803
       }
     ]
   },
@@ -569,22 +606,26 @@
       {
         "style": "ACCURATE",
         "animationId": 451,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 2429
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 451,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 2432
       },
       {
         "style": "CONTROLLED",
         "animationId": 412,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2431
       },
       {
         "style": "DEFENSIVE",
         "animationId": 451,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 2430
       }
     ]
   },
@@ -610,22 +651,26 @@
       {
         "style": "ACCURATE",
         "animationId": 451,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 2429
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 451,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 2432
       },
       {
         "style": "CONTROLLED",
         "animationId": 412,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2431
       },
       {
         "style": "DEFENSIVE",
         "animationId": 451,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 2430
       }
     ]
   },
@@ -657,22 +702,26 @@
       {
         "style": "ACCURATE",
         "animationId": 412,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2282
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 412,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2285
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 451,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 2284
       },
       {
         "style": "DEFENSIVE",
         "animationId": 412,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2283
       }
     ]
   },
@@ -730,22 +779,26 @@
       {
         "style": "ACCURATE",
         "animationId": 400,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2282
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 400,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2285
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 451,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2284
       },
       {
         "style": "DEFENSIVE",
         "animationId": 400,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2283
       }
     ]
   },
@@ -767,17 +820,20 @@
       {
         "style": "ACCURATE",
         "animationId": 426,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1172
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 426,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1171
       },
       {
         "style": "DEFENSIVE",
         "animationId": 426,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1170
       }
     ]
   },
@@ -801,17 +857,20 @@
       {
         "style": "ACCURATE",
         "animationId": 426,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1172
       },
       {
-        "style": "AGGRESSIVE",
+        "style": "RAPID",
         "animationId": 426,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1171
       },
       {
-        "style": "DEFENSIVE",
+        "style": "LONGRANGE",
         "animationId": 426,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1170
       }
     ]
   },
@@ -831,17 +890,20 @@
       {
         "style": "ACCURATE",
         "animationId": 427,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1757
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 427,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1756
       },
       {
         "style": "DEFENSIVE",
         "animationId": 427,
-        "bonusModifier": "ATTACK_RANGED"
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1755
       }
     ]
   },
@@ -881,22 +943,26 @@
       {
         "style": "ACCURATE",
         "animationId": 1833,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 1704
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 1833,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 1707
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 401,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 1706
       },
       {
         "style": "DEFENSIVE",
         "animationId": 1833,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 1705
       }
     ]
   },
@@ -914,22 +980,26 @@
       {
         "style": "ACCURATE",
         "animationId": 408,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 5861
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 451,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 5861
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 412,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 5861
       },
       {
         "style": "DEFENSIVE",
         "animationId": 408,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 5861
       }
     ]
   },
@@ -958,17 +1028,20 @@
       {
         "style": "ACCURATE",
         "animationId": 401,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 433
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 401,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 432
       },
       {
         "style": "DEFENSIVE",
         "animationId": 401,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 431
       }
     ]
   },
@@ -1013,17 +1086,20 @@
       {
         "style": "ACCURATE",
         "animationId": 406,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 336
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 406,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 335
       },
       {
         "style": "DEFENSIVE",
         "animationId": 406,
-        "bonusModifier": "ATTACK_CRUSH"
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 334
       }
     ]
   },
@@ -1047,22 +1123,26 @@
       {
         "style": "ACCURATE",
         "animationId": 451,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 7768
       },
       {
         "style": "AGGRESSIVE",
         "animationId": 451,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 7771
       },
       {
         "style": "CONTROLLED",
         "animationId": 412,
-        "bonusModifier": "ATTACK_STAB"
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 7770
       },
       {
         "style": "DEFENSIVE",
         "animationId": 451,
-        "bonusModifier": "ATTACK_SLASH"
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 7769
       }
     ]
   }

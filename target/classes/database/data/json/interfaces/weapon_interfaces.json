@@ -1,0 +1,1149 @@
+[
+  {
+    "interfaceId": 4446,
+    "interfaceType": "JAVELIN",
+    "attackSpeed": 6,
+    "nameLineId": 4449,
+    "specialBarId": 7649,
+    "specialMeterId": 7661,
+    "weaponIds": [
+      825,
+      826,
+      827,
+      828,
+      829,
+      830,
+      831,
+      832,
+      833,
+      834,
+      835,
+      836,
+      5642,
+      5643,
+      5644,
+      5645,
+      5646,
+      5647,
+      5649,
+      5650,
+      5651,
+      5652,
+      5653
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED"
+      }
+    ]
+  },
+  {
+    "interfaceId": 4446,
+    "interfaceType": "DART",
+    "attackSpeed": 3,
+    "nameLineId": 4449,
+    "specialBarId": 7649,
+    "specialMeterId": 7661,
+    "weaponIds": [
+      806,
+      807,
+      808,
+      809,
+      810,
+      811,
+      812,
+      813,
+      814,
+      815,
+      816,
+      817,
+      818,
+      3093,
+      3094,
+      5628,
+      5629,
+      5630,
+      5631,
+      5632,
+      5633,
+      5634,
+      5635,
+      5636,
+      5637,
+      5638,
+      5639,
+      5640,
+      5641
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4454
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4453
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4452
+      }
+    ]
+  },
+  {
+    "interfaceId": 4446,
+    "interfaceType": "THROWNAXE",
+    "attackSpeed": 6,
+    "nameLineId": 4449,
+    "specialBarId": 7649,
+    "specialMeterId": 7661,
+    "weaponIds": [
+      800,
+      801,
+      802,
+      803,
+      804,
+      805
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4454
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4453
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4452
+      }
+    ]
+  },
+  {
+    "interfaceId": 12290,
+    "interfaceType": "WHIP",
+    "attackSpeed": 4,
+    "nameLineId": 12293,
+    "specialBarId": 12323,
+    "specialMeterId": 12335,
+    "weaponIds": [
+      4151,
+      4178,
+      4755
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 1658,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 12298
+      },
+      {
+        "style": "CONTROLLED",
+        "animationId": 1658,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 12297
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 1658,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 12296
+      }
+    ]
+  },
+  {
+    "interfaceId": 5855,
+    "interfaceType": "UNARMED",
+    "attackSpeed": 6,
+    "nameLineId": 5857,
+    "specialBarId": -1,
+    "specialMeterId": -1,
+    "weaponIds": [
+      4236,
+      1251,
+      1253,
+      1255,
+      1257,
+      1259,
+      1261,
+      1263,
+      2402,
+      6523,
+      6525,
+      6526,
+      6527,
+      2460,
+      2462,
+      2464,
+      2466,
+      2468,
+      2470,
+      2472,
+      2474,
+      2476,
+      466,
+      4582,
+      4584,
+      7668,
+      7671,
+      7673,
+      5648,
+      6724,
+      5704,
+      5706,
+      5708,
+      5710,
+      5712,
+      5714,
+      5716,
+      5718,
+      5720,
+      6745,
+      5722,
+      6746,
+      5724,
+      5726,
+      5728,
+      5730,
+      5734,
+      5736,
+      6760,
+      6762,
+      6764,
+      7804,
+      6818,
+      4827,
+      6908,
+      4862,
+      6910,
+      4863,
+      4864,
+      6912,
+      4865,
+      6914,
+      21006,
+      4886,
+      4887,
+      4888,
+      4889,
+      4910,
+      4911,
+      4912,
+      4913,
+      3899,
+      2883,
+      4934,
+      839,
+      4935,
+      4936,
+      4937,
+      4958,
+      4959,
+      4960,
+      4961,
+      4982,
+      4983,
+      4984,
+      4985,
+      2952,
+      2961,
+      2963,
+      2997,
+      6082,
+      4039
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 422,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 5860
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 423,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 5862
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 422,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 5861
+      }
+    ]
+  },
+  {
+    "interfaceId": 8460,
+    "interfaceType": "HALBERD",
+    "attackSpeed": 6,
+    "nameLineId": 8463,
+    "specialBarId": 8493,
+    "specialMeterId": 8505,
+    "weaponIds": [
+      3190,
+      3192,
+      3194,
+      3196,
+      3198,
+      3200,
+      3202,
+      3204,
+      6599
+    ],
+    "combatStyles": [
+      {
+        "style": "CONTROLLED",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 8466
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 440,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 8468
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 8467
+      }
+    ]
+  },
+  {
+    "interfaceId": 5570,
+    "interfaceType": "PICKAXE",
+    "attackSpeed": 6,
+    "nameLineId": 5573,
+    "specialBarId": -1,
+    "specialMeterId": -1,
+    "weaponIds": [
+      1265,
+      1267,
+      1269,
+      1271,
+      1273,
+      1275
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 5576
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 5579
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 401,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 5578
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 5577
+      }
+    ]
+  },
+  {
+    "interfaceId": 4705,
+    "interfaceType": "TWO_HANDED_SWORD",
+    "attackSpeed": 6,
+    "nameLineId": 4708,
+    "specialBarId": 7699,
+    "specialMeterId": 7711,
+    "weaponIds": [
+      1307,
+      1309,
+      1311,
+      1313,
+      1315,
+      1317,
+      1319,
+      6609,
+      7158,
+      21060,
+      20782,
+      20593
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 407,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 4711
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 407,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 4714
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 406,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 4713
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 407,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 4712
+      }
+    ]
+  },
+  {
+    "interfaceId": 4679,
+    "interfaceType": "SPEAR",
+    "attackSpeed": 6,
+    "nameLineId": 4682,
+    "specialBarId": 7674,
+    "specialMeterId": 7686,
+    "weaponIds": [
+      4580,
+      4726,
+      7809,
+      5016,
+      4158,
+      1237,
+      1239,
+      1241,
+      1243,
+      1245,
+      1247,
+      1249
+    ],
+    "combatStyles": [
+      {
+        "style": "CONTROLLED",
+        "animationId": 2080,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 4685
+      },
+      {
+        "style": "CONTROLLED",
+        "animationId": 2081,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 4688
+      },
+      {
+        "style": "CONTROLLED",
+        "animationId": 2082,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 4687
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 2080,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 4686
+      }
+    ]
+  },
+  {
+    "interfaceId": 4446,
+    "interfaceType": "KNIFE",
+    "attackSpeed": 4,
+    "nameLineId": 4449,
+    "specialBarId": 7649,
+    "specialMeterId": 7661,
+    "weaponIds": [
+      7447,
+      2425,
+      6522,
+      5654,
+      5655,
+      5656,
+      5657,
+      5658,
+      5659,
+      5660,
+      5661,
+      5662,
+      5663,
+      5664,
+      5665,
+      5666,
+      5667,
+      863,
+      864,
+      865,
+      866,
+      867,
+      868,
+      869,
+      870,
+      871,
+      872,
+      873,
+      874,
+      875,
+      876
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4454
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4453
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 806,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 4452
+      }
+    ]
+  },
+  {
+    "interfaceId": 3796,
+    "interfaceType": "MACE",
+    "attackSpeed": 4,
+    "nameLineId": 3799,
+    "specialBarId": 7624,
+    "specialMeterId": 7636,
+    "weaponIds": [
+      1420,
+      1422,
+      1424,
+      1426,
+      1428,
+      1430,
+      1432,
+      1434,
+      6601,
+      7808
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 1833,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 3802
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 401,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 3805
+      },
+      {
+        "style": "CONTROLLED",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 3804
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 401,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 3803
+      }
+    ]
+  },
+  {
+    "interfaceId": 2423,
+    "interfaceType": "LONGSWORD",
+    "attackSpeed": 6,
+    "nameLineId": 2426,
+    "specialBarId": 7599,
+    "specialMeterId": 7611,
+    "weaponIds": [
+      1291,
+      1293,
+      1295,
+      1297,
+      1299,
+      1301,
+      1303,
+      1305,
+      6607,
+      6897
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 2429
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 2432
+      },
+      {
+        "style": "CONTROLLED",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2431
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 2430
+      }
+    ]
+  },
+  {
+    "interfaceId": 2423,
+    "interfaceType": "SCIMITAR",
+    "attackSpeed": 5,
+    "nameLineId": 2426,
+    "specialBarId": 7599,
+    "specialMeterId": 7611,
+    "weaponIds": [
+      1321,
+      1323,
+      1325,
+      1327,
+      1329,
+      1331,
+      1333,
+      6611,
+      4587
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 2429
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 2432
+      },
+      {
+        "style": "CONTROLLED",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2431
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 2430
+      }
+    ]
+  },
+  {
+    "interfaceId": 2276,
+    "interfaceType": "SWORD",
+    "attackSpeed": 5,
+    "nameLineId": 2279,
+    "specialBarId": 7574,
+    "specialMeterId": 7586,
+    "weaponIds": [
+      1277,
+      1279,
+      21009,
+      1281,
+      1283,
+      1285,
+      1287,
+      1289,
+      4503,
+      4508,
+      6605,
+      7675,
+      7806,
+      667,
+      4068
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2282
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2285
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 2284
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2283
+      }
+    ]
+  },
+  {
+    "interfaceId": 2276,
+    "interfaceType": "DAGGER",
+    "attackSpeed": 5,
+    "nameLineId": 2279,
+    "specialBarId": 7574,
+    "specialMeterId": 7586,
+    "weaponIds": [
+      1203,
+      1205,
+      1207,
+      1209,
+      1211,
+      1213,
+      1215,
+      1217,
+      1219,
+      1221,
+      1223,
+      1225,
+      1227,
+      1229,
+      1231,
+      1233,
+      1235,
+      6591,
+      6593,
+      6595,
+      6597,
+      5668,
+      5670,
+      5672,
+      5674,
+      5676,
+      5678,
+      5680,
+      5682,
+      5684,
+      5686,
+      5688,
+      5690,
+      5692,
+      5694,
+      5696,
+      5698,
+      5700,
+      5702,
+      746,
+      747
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 400,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2282
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 400,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2285
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2284
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 400,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 2283
+      }
+    ]
+  },
+  {
+    "interfaceId": 1764,
+    "interfaceType": "LONGBOW",
+    "attackSpeed": 6,
+    "nameLineId": 1767,
+    "specialBarId": 7549,
+    "specialMeterId": 7561,
+    "weaponIds": [
+      845,
+      847,
+      851,
+      855,
+      859
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 426,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1172
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 426,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1171
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 426,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1170
+      }
+    ]
+  },
+  {
+    "interfaceId": 1764,
+    "interfaceType": "SHORTBOW",
+    "attackSpeed": 5,
+    "nameLineId": 1767,
+    "specialBarId": 7549,
+    "specialMeterId": 7561,
+    "weaponIds": [
+      841,
+      843,
+      849,
+      853,
+      857,
+      861,
+      20997
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 426,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1172
+      },
+      {
+        "style": "RAPID",
+        "animationId": 426,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1171
+      },
+      {
+        "style": "LONGRANGE",
+        "animationId": 426,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1170
+      }
+    ]
+  },
+  {
+    "interfaceId": 1749,
+    "interfaceType": "CROSSBOW",
+    "attackSpeed": 5,
+    "nameLineId": 1752,
+    "specialBarId": 7524,
+    "specialMeterId": 7536,
+    "weaponIds": [
+      4734,
+      767,
+      837
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 427,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1757
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 427,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1756
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 427,
+        "bonusModifier": "ATTACK_RANGED",
+        "gameButtonId": 1755
+      }
+    ]
+  },
+  {
+    "interfaceId": 1698,
+    "interfaceType": "BATTLEAXE",
+    "attackSpeed": 6,
+    "nameLineId": 1701,
+    "specialBarId": 7499,
+    "specialMeterId": 7511,
+    "weaponIds": [
+      6589,
+      6739,
+      4718,
+      7807,
+      5056,
+      5057,
+      5058,
+      5059,
+      1349,
+      1351,
+      1353,
+      1355,
+      1357,
+      1359,
+      1361,
+      1363,
+      1365,
+      1367,
+      1369,
+      1371,
+      1373,
+      1375,
+      1377
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 1833,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 1704
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 1833,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 1707
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 401,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 1706
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 1833,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 1705
+      }
+    ]
+  },
+  {
+    "interfaceId": 776,
+    "interfaceType": "SCYTHE",
+    "attackSpeed": 6,
+    "nameLineId": 779,
+    "specialBarId": -1,
+    "specialMeterId": -1,
+    "weaponIds": [
+      1419
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 408,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 5861
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 5861
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 5861
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 408,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 5861
+      }
+    ]
+  },
+  {
+    "interfaceId": 425,
+    "interfaceType": "WARHAMMER",
+    "attackSpeed": 6,
+    "nameLineId": 428,
+    "specialBarId": 7474,
+    "specialMeterId": 7486,
+    "weaponIds": [
+      21003,
+      4153,
+      1335,
+      1337,
+      1339,
+      1341,
+      1343,
+      1345,
+      1347,
+      6528,
+      6613,
+      4747
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 401,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 433
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 401,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 432
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 401,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 431
+      }
+    ]
+  },
+  {
+    "interfaceId": 328,
+    "interfaceType": "STAFF",
+    "attackSpeed": 6,
+    "nameLineId": 331,
+    "specialBarId": -1,
+    "specialMeterId": -1,
+    "weaponIds": [
+      4170,
+      1379,
+      1381,
+      1383,
+      1385,
+      1387,
+      1389,
+      1391,
+      2415,
+      2416,
+      1393,
+      2417,
+      1395,
+      1397,
+      1399,
+      1401,
+      1403,
+      1405,
+      1407,
+      1409,
+      6562,
+      6563,
+      6603,
+      4675,
+      4710,
+      772,
+      3053,
+      3054
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 406,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 336
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 406,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 335
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 406,
+        "bonusModifier": "ATTACK_CRUSH",
+        "gameButtonId": 334
+      }
+    ]
+  },
+  {
+    "interfaceId": 7762,
+    "interfaceType": "CLAWS",
+    "attackSpeed": 4,
+    "nameLineId": 7765,
+    "specialBarId": 7800,
+    "specialMeterId": 7812,
+    "weaponIds": [
+      3095,
+      3096,
+      3097,
+      3098,
+      3099,
+      3100,
+      3101
+    ],
+    "combatStyles": [
+      {
+        "style": "ACCURATE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 7768
+      },
+      {
+        "style": "AGGRESSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 7771
+      },
+      {
+        "style": "CONTROLLED",
+        "animationId": 412,
+        "bonusModifier": "ATTACK_STAB",
+        "gameButtonId": 7770
+      },
+      {
+        "style": "DEFENSIVE",
+        "animationId": 451,
+        "bonusModifier": "ATTACK_SLASH",
+        "gameButtonId": 7769
+      }
+    ]
+  }
+]

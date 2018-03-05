@@ -4,5 +4,7 @@ public enum AttackStyle {
     ACCURATE,
     AGGRESSIVE,
     DEFENSIVE,
-    CONTROLLED
+    CONTROLLED,
+    RAPID,
+    LONGRANGE
 }

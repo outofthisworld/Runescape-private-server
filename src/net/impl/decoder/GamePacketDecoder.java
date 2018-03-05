@@ -3,6 +3,7 @@ package net.impl.decoder;
 import net.buffers.InputBuffer;
 import net.impl.session.Client;
 import net.packets.incoming.IncomingPacket;
+import util.Debug;
 
 import java.util.Optional;
 
@@ -39,6 +40,7 @@ public class GamePacketDecoder implements ProtocolDecoder {
 
             Optional<IncomingPacket> incoming = IncomingPacket.getForId(decodedOp);
             InputBuffer payload = new InputBuffer(c.getInputBuffer(), packetSize);
+            Debug.writeLine("Received incoming packet, decoded opcode is " + decodedOp);
             incoming.ifPresent(packet ->
                     c.getPlayer().getWorld().submit(() -> {
                         try {

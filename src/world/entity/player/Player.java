@@ -10,6 +10,9 @@ import net.impl.session.Client;
 import net.packets.outgoing.OutgoingPacket;
 import sun.plugin.dom.exception.InvalidStateException;
 import util.Preconditions;
+import world.definitions.types.AttackBonusModifier;
+import world.definitions.types.AttackStyle;
+import world.definitions.types.CombatStyle;
 import world.entity.Entity;
 import world.entity.misc.Position;
 import world.entity.player.containers.Bank;
@@ -106,6 +109,10 @@ public class Player extends Entity {
      * The last region this player belonged to.
      */
     private boolean regionChanged = false;
+    /**
+     * The players combat style.
+     */
+    private CombatStyle combatStyle = new CombatStyle(422, 5860, AttackStyle.ACCURATE, AttackBonusModifier.ATTACK_CRUSH);
 
 
     /**
@@ -141,6 +148,24 @@ public class Player extends Entity {
      */
     public static CompletableFuture<Optional<Player>> load(Player p) {
         return Player.asyncPlayerStore().load(p).thenApplyAsync(Optional::ofNullable);
+    }
+
+    /**
+     * Gets combat style.
+     *
+     * @return the combat style
+     */
+    public CombatStyle getCombatStyle() {
+        return combatStyle;
+    }
+
+    /**
+     * Sets combat style.
+     *
+     * @param combatStyle the combat style
+     */
+    public void setCombatStyle(CombatStyle combatStyle) {
+        this.combatStyle = combatStyle;
     }
 
     /**

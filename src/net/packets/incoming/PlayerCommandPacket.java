@@ -2,10 +2,14 @@ package net.packets.incoming;
 
 import net.buffers.InputBuffer;
 import net.impl.session.Client;
+import world.definitions.DefinitionLoader;
+import world.definitions.item.ItemDefinition;
+import world.entity.player.EquipmentSlot;
 import world.entity.player.Player;
 import world.event.impl.RegionUpdateEvent;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -33,6 +37,25 @@ public class PlayerCommandPacket extends IncomingPacket {
 
         System.out.println("Received player command : " + input);
         switch (input) {
+            case "search":
+                String keyword = scanner.nextLine().trim().toLowerCase();
+                Map<Integer, ItemDefinition> map = DefinitionLoader.getDefinitionMap(DefinitionLoader.ITEM_DEFINITIONS);
+                map.forEach((k, v) -> {
+                    if (v.getName().toLowerCase().contains(keyword)) {
+                        messageBuilder.append("Name: ")
+                                .append(v.getName())
+                                .append("(")
+                                .append(v.getId())
+                                .append(")")
+                                .append("(")
+                                .append(EquipmentSlot.fromIndex(v.getEquipmentType()) != null ? EquipmentSlot.fromIndex(v.getEquipmentType()).toString() : v.isNoted() ? "Noted" : "Cannot equip")
+                                .append(")");
+                        c.getOutgoingPacketBuilder()
+                                .sendMessage(messageBuilder.toString()).send();
+                        messageBuilder.delete(0, messageBuilder.length());
+                    }
+                });
+                break;
             case "players":
                 c.getOutgoingPacketBuilder()
                         .sendMessage(String.valueOf(c.getPlayer().getWorld().getTotalPlayers()));

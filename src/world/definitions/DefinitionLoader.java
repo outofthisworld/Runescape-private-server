@@ -43,11 +43,28 @@ public class DefinitionLoader {
         loadDefinition(NPC_DEFINITIONS, npcDefinitions);
         loadDefinition(ITEM_REQUIREMENTS, itemRequirements);
         loadDefinition(WEAPON_ANIMATIONS, weaponAnimations);
-        loadDefinition(WEAPON_INTERFACES, weaponInterfaces);
+
+        //Load WeaponInterfaces slightly differently
+        buildDefinitionsMap(WEAPON_INTERFACES, weaponInterfaces);
+        futures[cursor++] = CompletableFuture.runAsync(() -> {
+            WEAPON_INTERFACES.findAll().forEach(def -> {
+                def.getWeaponIds().forEach(wepId -> {
+                    if (weaponInterfaces.containsKey(wepId)) {
+                        throw new IllegalStateException("Duplicate key for " + wepId + " found when loading weapon interfaces");
+                    }
+                    weaponInterfaces.put(wepId, def);
+                });
+                int defId = def.getId();
+                if (weaponInterfaces.containsKey(defId)) {
+                    throw new IllegalStateException("Duplicate key for " + def + " found when loading weapon interfaces");
+                }
+                weaponInterfaces.put(defId, def);
+            });
+        });
+
         loadDefinition(WEAPON_POISONS, weaponPoisons);
         loadDefinition(NPC_DROPS, npcDrops);
         loadDefinition(SHOPS, shops);
-
         return CompletableFuture.allOf(futures);
     }
 
@@ -62,12 +79,17 @@ public class DefinitionLoader {
 
     private static <T extends IDefinition> void buildDefinitionsMap(IDBAccessor<T> accessor, Map<Integer, T> map) {
         if (definitions.containsKey(accessor)) {
+            System.out.println("dup key in definitions");
             throw new IllegalStateException("Definitions contains duplicate key.");
         }
         definitions.put(accessor, map);
     }
 
-    public static <T extends IDefinition> Map<Integer, T> getDefinitionMap(IDBAccessor<?> accessor) {
+    public static <T extends IDefinition> Map<Integer, T> getDefinitionMap(IDBAccessor<T> accessor) {
+        if (definitions.get(accessor) == null) {
+            System.out.println("get was null");
+            System.out.println(accessor == ITEM_DEFINITIONS);
+        }
         return (Map<Integer, T>) definitions.get(accessor);
     }
 
