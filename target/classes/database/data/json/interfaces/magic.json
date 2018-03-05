@@ -1,0 +1,56 @@
+[
+  {
+    "spellBookId": 1,
+    "spellBookName": "NORMAL",
+    "teleportSpells": [
+      {
+        "spellName": "Lumbridge Home Teleport",
+        "requiredLevel": 0,
+        "animationId": 1,
+        "spellType": "TELEPORT",
+        "baseExperience": 5,
+        "buttonId": 19210
+      }
+    ],
+    "combatSpells": [
+      {
+        "spellName": "WIND_STRIKE",
+        "animationId": 711,
+        "startGraphic": {
+          "id": 90,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "id": 92,
+          "height": 0
+        },
+        "projectileId": 91,
+        "delay": 44,
+        "speed": 3,
+        "curve": 0,
+        "startHeight": 43,
+        "endHeight": 31,
+        "buttonId": 100
+      },
+      {
+        "spellName": "CONFUSE",
+        "animationId": 716,
+        "startGraphic": {
+          "id": 90,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "id": 92,
+          "height": 0
+        },
+        "projectileId": 103,
+        "delay": 44,
+        "speed": 3,
+        "curve": 0,
+        "startHeight": 43,
+        "endHeight": 31,
+        "buttonId": 100
+      }
+    ]
+  }
+]

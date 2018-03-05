@@ -95,6 +95,10 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
+    public OutgoingPacketBuilder sendMessage(StringBuilder sb) {
+        return sendMessage(sb.toString());
+    }
+
     /**
      * Add player options outgoing packet builder.
      *

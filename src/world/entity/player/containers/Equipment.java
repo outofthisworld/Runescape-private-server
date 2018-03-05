@@ -2,6 +2,7 @@ package world.entity.player.containers;
 
 import net.packets.outgoing.OutgoingPacketBuilder;
 import util.Debug;
+import util.FormatStrings;
 import util.Preconditions;
 import world.definitions.DefinitionLoader;
 import world.definitions.item.ItemRequirementDefinition;
@@ -164,8 +165,10 @@ public class Equipment extends AbstractGameContainer<Item> {
 
             if (requirement.isPresent()) {
                 ItemRequirement iReq = requirement.get();
-                getOwner().getClient().getOutgoingPacketBuilder().sendMessage(iReq.getLevel() + " " + iReq.getSkill()
-                        + " is required in order to wear " + inventoryItem.getItemDefinition().getName()).send();
+                getOwner().getClient().getOutgoingPacketBuilder().sendMessage(
+                        FormatStrings.itemRequirement(iReq.getSkill().toLowerCase(), iReq.getLevel(), inventoryItem.getItemDefinition().getName()))
+                        .send();
+
                 return false;
             }
         } else {

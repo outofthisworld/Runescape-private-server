@@ -1,0 +1,1957 @@
+[
+  {
+    "spellBookId": 1,
+    "spellBookName": "NORMAL",
+    "interfaceId": 1212,
+    "spells": [
+      {
+        "spellName": "Lumbridge Home Teleport",
+        "requiredLevel": 0,
+        "animationId": 1,
+        "spellType": "TELEPORT",
+        "baseExperience": 5,
+        "buttonId": 19210
+      },
+      {
+        "spellName": "WIND_STRIKE",
+        "spellType": "NORMAL",
+        "spellId": 1152,
+        "maximumHit": 2,
+        "animation": 711,
+        "baseExperience": 5.0,
+        "projectile": {
+          "id": 91,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 90,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 92,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 1
+          },
+          {
+            "itemId": 558,
+            "amount": 1
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "CONFUSE",
+        "spellType": "EFFECT",
+        "spellId": 1153,
+        "maximumHit": 2,
+        "animation": 716,
+        "baseExperience": 13.0,
+        "projectile": {
+          "id": 103,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 102,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 104,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 555,
+            "amount": 3
+          },
+          {
+            "itemId": 557,
+            "amount": 2
+          },
+          {
+            "itemId": 559,
+            "amount": 1
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "WATER_STRIKE",
+        "spellType": "NORMAL",
+        "spellId": 1154,
+        "maximumHit": 4,
+        "animation": 711,
+        "baseExperience": 7.0,
+        "projectile": {
+          "id": 94,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 93,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 95,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 555,
+            "amount": 1
+          },
+          {
+            "itemId": 556,
+            "amount": 1
+          },
+          {
+            "itemId": 558,
+            "amount": 1
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "EARTH_STRIKE",
+        "spellType": "NORMAL",
+        "spellId": 1156,
+        "maximumHit": 6,
+        "animation": 711,
+        "baseExperience": 9.0,
+        "projectile": {
+          "id": 97,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 96,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 98,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 1
+          },
+          {
+            "itemId": 558,
+            "amount": 1
+          },
+          {
+            "itemId": 557,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "WEAKEN",
+        "spellType": "EFFECT",
+        "spellId": 1157,
+        "maximumHit": 2,
+        "animation": 716,
+        "baseExperience": 21.0,
+        "projectile": {
+          "id": 106,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 105,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 107,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 555,
+            "amount": 3
+          },
+          {
+            "itemId": 557,
+            "amount": 2
+          },
+          {
+            "itemId": 559,
+            "amount": 1
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "FIRE_STRIKE",
+        "spellType": "NORMAL",
+        "spellId": 1158,
+        "maximumHit": 8,
+        "animation": 711,
+        "baseExperience": 11.0,
+        "projectile": {
+          "id": 100,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 99,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 101,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 1
+          },
+          {
+            "itemId": 558,
+            "amount": 1
+          },
+          {
+            "itemId": 554,
+            "amount": 3
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "WIND_BOLT",
+        "spellType": "NORMAL",
+        "spellId": 1160,
+        "maximumHit": 9,
+        "animation": 711,
+        "baseExperience": 13.0,
+        "projectile": {
+          "id": 118,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 117,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 119,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 2
+          },
+          {
+            "itemId": 562,
+            "amount": 1
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "CURSE",
+        "spellType": "EFFECT",
+        "spellId": 1161,
+        "maximumHit": 2,
+        "animation": 710,
+        "baseExperience": 29.0,
+        "projectile": {
+          "id": 109,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 108,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 110,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 555,
+            "amount": 2
+          },
+          {
+            "itemId": 557,
+            "amount": 3
+          },
+          {
+            "itemId": 559,
+            "amount": 1
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "BIND",
+        "spellType": "EFFECT",
+        "spellId": 1572,
+        "maximumHit": 2,
+        "animation": 710,
+        "baseExperience": 30.0,
+        "projectile": {
+          "id": 178,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 177,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 181,
+          "height": 6553600
+        },
+        "itemsRequired": [
+          {
+            "itemId": 555,
+            "amount": 3
+          },
+          {
+            "itemId": 557,
+            "amount": 3
+          },
+          {
+            "itemId": 561,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "WATER_BOLT",
+        "spellType": "NORMAL",
+        "spellId": 1163,
+        "maximumHit": 10,
+        "animation": 711,
+        "baseExperience": 16.0,
+        "projectile": {
+          "id": 121,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 120,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 122,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 2
+          },
+          {
+            "itemId": 562,
+            "amount": 1
+          },
+          {
+            "itemId": 555,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "EARTH_BOLT",
+        "spellType": "NORMAL",
+        "spellId": 1166,
+        "maximumHit": 11,
+        "animation": 711,
+        "baseExperience": 19.0,
+        "projectile": {
+          "id": 124,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 123,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 125,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 2
+          },
+          {
+            "itemId": 562,
+            "amount": 1
+          },
+          {
+            "itemId": 557,
+            "amount": 3
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "FIRE_BOLT",
+        "spellType": "NORMAL",
+        "spellId": 1169,
+        "maximumHit": 12,
+        "animation": 711,
+        "baseExperience": 22.0,
+        "projectile": {
+          "id": 127,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 126,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 128,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 3
+          },
+          {
+            "itemId": 562,
+            "amount": 1
+          },
+          {
+            "itemId": 554,
+            "amount": 4
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "CRUMBLE_UNDEAD",
+        "spellType": "NORMAL",
+        "spellId": 1171,
+        "maximumHit": 15,
+        "animation": 724,
+        "baseExperience": 24.0,
+        "projectile": {
+          "id": 146,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 145,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 147,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 2
+          },
+          {
+            "itemId": 562,
+            "amount": 1
+          },
+          {
+            "itemId": 557,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "WIND_BLAST",
+        "spellType": "NORMAL",
+        "spellId": 1172,
+        "maximumHit": 13,
+        "animation": 711,
+        "baseExperience": 25.0,
+        "projectile": {
+          "id": 133,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 132,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 134,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 3
+          },
+          {
+            "itemId": 560,
+            "amount": 1
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "WATER_BLAST",
+        "spellType": "NORMAL",
+        "spellId": 1175,
+        "maximumHit": 14,
+        "animation": 711,
+        "baseExperience": 28.0,
+        "projectile": {
+          "id": 136,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 135,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 137,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 555,
+            "amount": 3
+          },
+          {
+            "itemId": 556,
+            "amount": 3
+          },
+          {
+            "itemId": 560,
+            "amount": 1
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "IBAN_BLAST",
+        "spellType": "NORMAL",
+        "spellId": 1539,
+        "maximumHit": 25,
+        "animation": 708,
+        "baseExperience": 30.0,
+        "projectile": {
+          "id": 88,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 87,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 89,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 560,
+            "amount": 1
+          },
+          {
+            "itemId": 554,
+            "amount": 5
+          }
+        ],
+        "equipmentRequired": [
+          {
+            "itemId": 560,
+            "amount": 1
+          },
+          {
+            "itemId": 554,
+            "amount": 5
+          }
+        ]
+      },
+      {
+        "spellName": "SNARE",
+        "spellType": "EFFECT",
+        "spellId": 1582,
+        "maximumHit": 2,
+        "animation": 710,
+        "baseExperience": 60.0,
+        "projectile": {
+          "id": 178,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 177,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 180,
+          "height": 6553600
+        },
+        "itemsRequired": [
+          {
+            "itemId": 555,
+            "amount": 3
+          },
+          {
+            "itemId": 557,
+            "amount": 4
+          },
+          {
+            "itemId": 561,
+            "amount": 3
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "MAGIC_DART",
+        "spellType": "NORMAL",
+        "spellId": 12037,
+        "maximumHit": 19,
+        "animation": 1576,
+        "baseExperience": 30.0,
+        "projectile": {
+          "id": 328,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 327,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 329,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 558,
+            "amount": 4
+          },
+          {
+            "itemId": 560,
+            "amount": 1
+          }
+        ],
+        "equipmentRequired": [
+          {
+            "itemId": 558,
+            "amount": 4
+          },
+          {
+            "itemId": 560,
+            "amount": 1
+          }
+        ]
+      },
+      {
+        "spellName": "EARTH_BLAST",
+        "spellType": "NORMAL",
+        "spellId": 1177,
+        "maximumHit": 15,
+        "animation": 711,
+        "baseExperience": 31.0,
+        "projectile": {
+          "id": 139,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 138,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 140,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 3
+          },
+          {
+            "itemId": 560,
+            "amount": 1
+          },
+          {
+            "itemId": 557,
+            "amount": 4
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "FIRE_BLAST",
+        "spellType": "NORMAL",
+        "spellId": 1181,
+        "maximumHit": 16,
+        "animation": 711,
+        "baseExperience": 34.0,
+        "projectile": {
+          "id": 130,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 129,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 131,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 4
+          },
+          {
+            "itemId": 560,
+            "amount": 1
+          },
+          {
+            "itemId": 554,
+            "amount": 5
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "SARADOMIN_STRIKE",
+        "spellType": "NORMAL",
+        "spellId": 1190,
+        "maximumHit": 20,
+        "animation": 811,
+        "baseExperience": 35.0,
+        "projectile": {
+          "id": -1,
+          "startHeight": 0,
+          "endHeight": 0,
+          "curve": -1,
+          "speed": -1,
+          "delay": -1
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 76,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 4
+          },
+          {
+            "itemId": 565,
+            "amount": 2
+          },
+          {
+            "itemId": 554,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": [
+          {
+            "itemId": 556,
+            "amount": 4
+          },
+          {
+            "itemId": 565,
+            "amount": 2
+          },
+          {
+            "itemId": 554,
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "spellName": "CLAWS_OF_GUTHIX",
+        "spellType": "NORMAL",
+        "spellId": 1191,
+        "maximumHit": 20,
+        "animation": 811,
+        "baseExperience": 35.0,
+        "projectile": {
+          "id": -1,
+          "startHeight": 0,
+          "endHeight": 0,
+          "curve": -1,
+          "speed": -1,
+          "delay": -1
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 77,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 4
+          },
+          {
+            "itemId": 565,
+            "amount": 2
+          },
+          {
+            "itemId": 554,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": [
+          {
+            "itemId": 556,
+            "amount": 4
+          },
+          {
+            "itemId": 565,
+            "amount": 2
+          },
+          {
+            "itemId": 554,
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "spellName": "FLAMES_OF_ZAMORAK",
+        "spellType": "NORMAL",
+        "spellId": 1192,
+        "maximumHit": 20,
+        "animation": 811,
+        "baseExperience": 35.0,
+        "projectile": {
+          "id": -1,
+          "startHeight": 0,
+          "endHeight": 0,
+          "curve": -1,
+          "speed": -1,
+          "delay": -1
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 78,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 4
+          },
+          {
+            "itemId": 565,
+            "amount": 2
+          },
+          {
+            "itemId": 554,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": [
+          {
+            "itemId": 556,
+            "amount": 4
+          },
+          {
+            "itemId": 565,
+            "amount": 2
+          },
+          {
+            "itemId": 554,
+            "amount": 2
+          }
+        ]
+      },
+      {
+        "spellName": "WIND_WAVE",
+        "spellType": "NORMAL",
+        "spellId": 1183,
+        "maximumHit": 17,
+        "animation": 711,
+        "baseExperience": 36.0,
+        "projectile": {
+          "id": 159,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 158,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 160,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 5
+          },
+          {
+            "itemId": 565,
+            "amount": 1
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "WATER_WAVE",
+        "spellType": "NORMAL",
+        "spellId": 1185,
+        "maximumHit": 18,
+        "animation": 711,
+        "baseExperience": 37.0,
+        "projectile": {
+          "id": 162,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 161,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 163,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 5
+          },
+          {
+            "itemId": 565,
+            "amount": 1
+          },
+          {
+            "itemId": 555,
+            "amount": 7
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "VULNERABILITY",
+        "spellType": "EFFECT",
+        "spellId": 1542,
+        "maximumHit": 2,
+        "animation": 729,
+        "baseExperience": 76.0,
+        "projectile": {
+          "id": 168,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 167,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 169,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 557,
+            "amount": 5
+          },
+          {
+            "itemId": 555,
+            "amount": 5
+          },
+          {
+            "itemId": 566,
+            "amount": 1
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "EARTH_WAVE",
+        "spellType": "NORMAL",
+        "spellId": 1188,
+        "maximumHit": 19,
+        "animation": 711,
+        "baseExperience": 40.0,
+        "projectile": {
+          "id": 165,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 164,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 166,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 5
+          },
+          {
+            "itemId": 565,
+            "amount": 1
+          },
+          {
+            "itemId": 557,
+            "amount": 7
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "ENFEEBLE",
+        "spellType": "EFFECT",
+        "spellId": 1543,
+        "maximumHit": 2,
+        "animation": 729,
+        "baseExperience": 83.0,
+        "projectile": {
+          "id": 171,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 170,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 172,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 557,
+            "amount": 8
+          },
+          {
+            "itemId": 555,
+            "amount": 8
+          },
+          {
+            "itemId": 566,
+            "amount": 1
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "FIRE_WAVE",
+        "spellType": "NORMAL",
+        "spellId": 1189,
+        "maximumHit": 20,
+        "animation": 711,
+        "baseExperience": 42.0,
+        "projectile": {
+          "id": 156,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 155,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 157,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 5
+          },
+          {
+            "itemId": 565,
+            "amount": 1
+          },
+          {
+            "itemId": 554,
+            "amount": 7
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "ENTANGLE",
+        "spellType": "EFFECT",
+        "spellId": 1592,
+        "maximumHit": 2,
+        "animation": 710,
+        "baseExperience": 91.0,
+        "projectile": {
+          "id": 178,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 177,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 179,
+          "height": 6553600
+        },
+        "itemsRequired": [
+          {
+            "itemId": 555,
+            "amount": 5
+          },
+          {
+            "itemId": 557,
+            "amount": 5
+          },
+          {
+            "itemId": 561,
+            "amount": 4
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "STUN",
+        "spellType": "EFFECT",
+        "spellId": 1562,
+        "maximumHit": 2,
+        "animation": 729,
+        "baseExperience": 90.0,
+        "projectile": {
+          "id": 174,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": 173,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 107,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 557,
+            "amount": 12
+          },
+          {
+            "itemId": 555,
+            "amount": 12
+          },
+          {
+            "itemId": 556,
+            "amount": 1
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "TELEBLOCK",
+        "spellType": "EFFECT",
+        "spellId": 12445,
+        "maximumHit": 2,
+        "animation": 1819,
+        "baseExperience": 65.0,
+        "projectile": {
+          "id": 344,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 345,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 563,
+            "amount": 1
+          },
+          {
+            "itemId": 562,
+            "amount": 1
+          },
+          {
+            "itemId": 560,
+            "amount": 1
+          }
+        ],
+        "equipmentRequired": []
+      }
+    ]
+  },
+  {
+    "spellBookId": 1,
+    "spellBookName": "ANCIENT",
+    "interfaceId": 1212,
+    "spells": [
+      {
+        "spellName": "SMOKE_RUSH",
+        "spellType": "ANCIENT",
+        "spellId": 12939,
+        "maximumHit": 13,
+        "animation": 1978,
+        "baseExperience": 30.0,
+        "projectile": {
+          "id": 384,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 385,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 1
+          },
+          {
+            "itemId": 554,
+            "amount": 1
+          },
+          {
+            "itemId": 562,
+            "amount": 2
+          },
+          {
+            "itemId": 560,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "SHADOW_RUSH",
+        "spellType": "ANCIENT",
+        "spellId": 12987,
+        "maximumHit": 14,
+        "animation": 1978,
+        "baseExperience": 31.0,
+        "projectile": {
+          "id": 378,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 379,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 1
+          },
+          {
+            "itemId": 566,
+            "amount": 1
+          },
+          {
+            "itemId": 562,
+            "amount": 2
+          },
+          {
+            "itemId": 560,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "BLOOD_RUSH",
+        "spellType": "ANCIENT",
+        "spellId": 12901,
+        "maximumHit": 15,
+        "animation": 1978,
+        "baseExperience": 33.0,
+        "projectile": {
+          "id": 372,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 373,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 565,
+            "amount": 1
+          },
+          {
+            "itemId": 562,
+            "amount": 2
+          },
+          {
+            "itemId": 560,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "ICE_RUSH",
+        "spellType": "ANCIENT",
+        "spellId": 12861,
+        "maximumHit": 18,
+        "animation": 1978,
+        "baseExperience": 34.0,
+        "projectile": {
+          "id": 360,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 361,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 555,
+            "amount": 2
+          },
+          {
+            "itemId": 562,
+            "amount": 2
+          },
+          {
+            "itemId": 560,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "SMOKE_BURST",
+        "spellType": "ANCIENT",
+        "spellId": 12963,
+        "maximumHit": 13,
+        "animation": 1979,
+        "baseExperience": 36.0,
+        "projectile": {
+          "id": -1,
+          "startHeight": 0,
+          "endHeight": 0,
+          "curve": -1,
+          "speed": -1,
+          "delay": -1
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 389,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 2
+          },
+          {
+            "itemId": 554,
+            "amount": 2
+          },
+          {
+            "itemId": 562,
+            "amount": 4
+          },
+          {
+            "itemId": 560,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "SHADOW_BURST",
+        "spellType": "ANCIENT",
+        "spellId": 13011,
+        "maximumHit": 18,
+        "animation": 1979,
+        "baseExperience": 37.0,
+        "projectile": {
+          "id": -1,
+          "startHeight": 0,
+          "endHeight": 0,
+          "curve": -1,
+          "speed": -1,
+          "delay": -1
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 382,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 1
+          },
+          {
+            "itemId": 566,
+            "amount": 2
+          },
+          {
+            "itemId": 562,
+            "amount": 4
+          },
+          {
+            "itemId": 560,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "BLOOD_BURST",
+        "spellType": "ANCIENT",
+        "spellId": 12919,
+        "maximumHit": 21,
+        "animation": 1979,
+        "baseExperience": 39.0,
+        "projectile": {
+          "id": -1,
+          "startHeight": 0,
+          "endHeight": 0,
+          "curve": -1,
+          "speed": -1,
+          "delay": -1
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 376,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 565,
+            "amount": 2
+          },
+          {
+            "itemId": 562,
+            "amount": 4
+          },
+          {
+            "itemId": 560,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "ICE_BURST",
+        "spellType": "ANCIENT",
+        "spellId": 12881,
+        "maximumHit": 22,
+        "animation": 1979,
+        "baseExperience": 40.0,
+        "projectile": {
+          "id": -1,
+          "startHeight": 0,
+          "endHeight": 0,
+          "curve": -1,
+          "speed": -1,
+          "delay": -1
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 363,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 555,
+            "amount": 4
+          },
+          {
+            "itemId": 562,
+            "amount": 4
+          },
+          {
+            "itemId": 560,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "SMOKE_BLITZ",
+        "spellType": "ANCIENT",
+        "spellId": 12951,
+        "maximumHit": 23,
+        "animation": 1978,
+        "baseExperience": 42.0,
+        "projectile": {
+          "id": 386,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 387,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 2
+          },
+          {
+            "itemId": 554,
+            "amount": 2
+          },
+          {
+            "itemId": 565,
+            "amount": 2
+          },
+          {
+            "itemId": 560,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "SHADOW_BLITZ",
+        "spellType": "ANCIENT",
+        "spellId": 12999,
+        "maximumHit": 24,
+        "animation": 1978,
+        "baseExperience": 43.0,
+        "projectile": {
+          "id": 380,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 381,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 2
+          },
+          {
+            "itemId": 566,
+            "amount": 2
+          },
+          {
+            "itemId": 565,
+            "amount": 2
+          },
+          {
+            "itemId": 560,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "BLOOD_BLITZ",
+        "spellType": "ANCIENT",
+        "spellId": 12911,
+        "maximumHit": 25,
+        "animation": 1978,
+        "baseExperience": 45.0,
+        "projectile": {
+          "id": 374,
+          "startHeight": 43,
+          "endHeight": 31,
+          "curve": 0,
+          "speed": 44,
+          "delay": 44
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 375,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 565,
+            "amount": 4
+          },
+          {
+            "itemId": 560,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "ICE_BLITZ",
+        "spellType": "ANCIENT",
+        "spellId": 12871,
+        "maximumHit": 26,
+        "animation": 1978,
+        "baseExperience": 46.0,
+        "projectile": {
+          "id": -1,
+          "startHeight": 0,
+          "endHeight": 0,
+          "curve": -1,
+          "speed": -1,
+          "delay": -1
+        },
+        "startGraphic": {
+          "graphicId": 366,
+          "height": 6553600
+        },
+        "endGraphic": {
+          "graphicId": 367,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 555,
+            "amount": 3
+          },
+          {
+            "itemId": 565,
+            "amount": 2
+          },
+          {
+            "itemId": 560,
+            "amount": 2
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "SMOKE_BARRAGE",
+        "spellType": "ANCIENT",
+        "spellId": 12975,
+        "maximumHit": 27,
+        "animation": 1979,
+        "baseExperience": 48.0,
+        "projectile": {
+          "id": -1,
+          "startHeight": 0,
+          "endHeight": 0,
+          "curve": -1,
+          "speed": -1,
+          "delay": -1
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 391,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 4
+          },
+          {
+            "itemId": 554,
+            "amount": 4
+          },
+          {
+            "itemId": 565,
+            "amount": 2
+          },
+          {
+            "itemId": 560,
+            "amount": 4
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "SHADOW_BARRAGE",
+        "spellType": "ANCIENT",
+        "spellId": 13023,
+        "maximumHit": 28,
+        "animation": 1979,
+        "baseExperience": 49.0,
+        "projectile": {
+          "id": -1,
+          "startHeight": 0,
+          "endHeight": 0,
+          "curve": -1,
+          "speed": -1,
+          "delay": -1
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 383,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 556,
+            "amount": 4
+          },
+          {
+            "itemId": 566,
+            "amount": 3
+          },
+          {
+            "itemId": 565,
+            "amount": 2
+          },
+          {
+            "itemId": 560,
+            "amount": 4
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "BLOOD_BARRAGE",
+        "spellType": "ANCIENT",
+        "spellId": 12929,
+        "maximumHit": 29,
+        "animation": 1979,
+        "baseExperience": 51.0,
+        "projectile": {
+          "id": -1,
+          "startHeight": 0,
+          "endHeight": 0,
+          "curve": -1,
+          "speed": -1,
+          "delay": -1
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 377,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 560,
+            "amount": 4
+          },
+          {
+            "itemId": 566,
+            "amount": 1
+          },
+          {
+            "itemId": 565,
+            "amount": 4
+          }
+        ],
+        "equipmentRequired": []
+      },
+      {
+        "spellName": "ICE_BARRAGE",
+        "spellType": "ANCIENT",
+        "spellId": 12891,
+        "maximumHit": 30,
+        "animation": 1979,
+        "baseExperience": 52.0,
+        "projectile": {
+          "id": -1,
+          "startHeight": 0,
+          "endHeight": 0,
+          "curve": -1,
+          "speed": -1,
+          "delay": -1
+        },
+        "startGraphic": {
+          "graphicId": -1,
+          "height": 0
+        },
+        "endGraphic": {
+          "graphicId": 369,
+          "height": 0
+        },
+        "itemsRequired": [
+          {
+            "itemId": 555,
+            "amount": 6
+          },
+          {
+            "itemId": 565,
+            "amount": 2
+          },
+          {
+            "itemId": 560,
+            "amount": 4
+          }
+        ],
+        "equipmentRequired": []
+      }
+    ]
+  }
+]
