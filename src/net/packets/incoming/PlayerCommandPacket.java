@@ -6,6 +6,7 @@ import world.definitions.DefinitionLoader;
 import world.definitions.item.ItemDefinition;
 import world.entity.player.EquipmentSlot;
 import world.entity.player.Player;
+import world.entity.player.Skill;
 import world.event.impl.RegionUpdateEvent;
 import world.item.Item;
 
@@ -38,6 +39,14 @@ public class PlayerCommandPacket extends IncomingPacket {
 
         System.out.println("Received player command : " + input);
         switch (input) {
+            case "master":
+                Skill[] skills =  Skill.values();
+                for(Skill s:skills){
+                    c.getPlayer().getSkills().setSkillExp(s,14000000);
+                }
+                //Refresh all skills
+                c.getPlayer().getSkills().syncAll();
+                break;
             case "runes":
                 c.getPlayer().getInventory().add(new Item(554,10000));
                 c.getPlayer().getInventory().add(new Item(555,10000));

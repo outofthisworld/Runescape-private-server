@@ -427,8 +427,6 @@ public class Player extends Entity {
 
         getClient().getOutgoingPacketBuilder().setChatOptions(0, 0, 0);
 
-        getSkills().setSkillExp(Skill.MAGIC,14000000);
-
         //Refresh our inventory
         getInventory().syncAll();
         //Refresh our equipment
@@ -449,7 +447,6 @@ public class Player extends Entity {
         getClient().getOutgoingPacketBuilder().sendMessage(FormatStrings.welcomeMessage(this));
         getClient().getOutgoingPacketBuilder().sendMessage("Enjoy your time on the server!");
         getClient().getOutgoingPacketBuilder().sendMessage(FormatStrings.visitWebsite());
-
 
         /**
             Finally, send everything at once.
