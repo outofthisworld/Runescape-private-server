@@ -1,6 +1,6 @@
 package world.event.impl;
 
-import util.Preconditions;
+import util.integrity.Preconditions;
 import world.entity.movement.Movement;
 import world.entity.player.Player;
 

@@ -3,7 +3,7 @@ package net.impl.decoder;
 import net.buffers.InputBuffer;
 import net.impl.session.Client;
 import net.packets.incoming.IncomingPacket;
-import util.Debug;
+import util.integrity.Debug;
 
 import java.util.Optional;
 

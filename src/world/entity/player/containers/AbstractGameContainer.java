@@ -1,7 +1,7 @@
 package world.entity.player.containers;
 
 import net.packets.outgoing.OutgoingPacketBuilder;
-import util.Preconditions;
+import util.integrity.Preconditions;
 import world.entity.player.Player;
 import world.item.IItem;
 import world.item.Item;

@@ -1,6 +1,6 @@
 package world.entity.player.containers;
 
-import util.Preconditions;
+import util.integrity.Preconditions;
 
 import java.lang.reflect.Array;
 import java.util.AbstractList;

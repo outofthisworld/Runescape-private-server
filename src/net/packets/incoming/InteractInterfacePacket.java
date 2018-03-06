@@ -2,7 +2,7 @@ package net.packets.incoming;
 
 import net.buffers.InputBuffer;
 import net.impl.session.Client;
-import util.Debug;
+import util.integrity.Debug;
 import world.definitions.DefinitionLoader;
 import world.definitions.item.WeaponInterfaceDefinition;
 import world.entity.player.equipment.EquipmentSlot;
@@ -74,7 +74,7 @@ public class InteractInterfacePacket extends IncomingPacket {
                 /*End handling magic*/
 
 
-                /* Handle misc e.g anything that's not weapon,prayer and magic. */
+                /* Handle location e.g anything that's not weapon,prayer and magic. */
                 switch (interfaceButtonId) {
 
                 }

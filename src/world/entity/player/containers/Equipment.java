@@ -1,9 +1,9 @@
 package world.entity.player.containers;
 
 import net.packets.outgoing.OutgoingPacketBuilder;
-import util.Debug;
-import util.FormatStrings;
-import util.Preconditions;
+import util.integrity.Debug;
+import util.strings.FormatStrings;
+import util.integrity.Preconditions;
 import world.definitions.DefinitionLoader;
 import world.definitions.item.ItemRequirementDefinition;
 import world.definitions.item.WeaponInterfaceDefinition;

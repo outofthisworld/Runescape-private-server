@@ -8,7 +8,7 @@ import com.mongodb.client.result.UpdateResult;
 import com.sun.javaws.exceptions.InvalidArgumentException;
 import database.serialization.AbstractSerializer;
 import org.bson.Document;
-import util.Preconditions;
+import util.integrity.Preconditions;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -42,6 +42,14 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
 
     public CollectionAccessor(AbstractSerializer<T, String> serializer, String dbName, String collectionName) {
         this(serializer, dbName, collectionName, serializer.getSerializationClass());
+    }
+
+    public String getCollectionName() {
+        return collectionName;
+    }
+
+    public String getDbName() {
+        return dbName;
     }
 
     /**

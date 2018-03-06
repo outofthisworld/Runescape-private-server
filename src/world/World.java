@@ -2,10 +2,10 @@ package world;
 
 import net.impl.decoder.GamePacketDecoder;
 import net.impl.decoder.LoginProtocolConstants;
-import util.Preconditions;
-import util.Stopwatch;
+import util.integrity.Preconditions;
+import util.time.Stopwatch;
 import world.definitions.DefinitionLoader;
-import world.entity.misc.Position;
+import world.entity.location.Position;
 import world.entity.npc.Npc;
 import world.entity.player.Player;
 import world.entity.update.PlayerUpdateBlockCache;
@@ -118,8 +118,17 @@ public class World {
      * @return the scheduled future
      */
     ScheduledFuture<?> start() {
-        loadNpcs();
         return worldExecutionTask = worldExecutorService.scheduleAtFixedRate(this::poll, 0, WorldConfig.WORLD_TICK_RATE_MS, TimeUnit.MILLISECONDS);
+    }
+
+
+    /**
+     * Responsible for loading everything to do with the world.
+     *
+     * Called when all definitions have been loaded and all data is available.
+     */
+    public void load(){
+        loadNpcs();
     }
 
     /**
@@ -144,7 +153,8 @@ public class World {
      * Stop.
      */
     void stop() {
-        worldExecutionTask.cancel(true);
+        if(worldExecutionTask != null)
+            worldExecutionTask.cancel(true);
         worldTasks.clear();
     }
 

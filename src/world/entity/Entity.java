@@ -3,7 +3,7 @@ package world.entity;
 import world.World;
 import world.WorldConfig;
 import world.WorldManager;
-import world.entity.misc.Position;
+import world.entity.location.Position;
 import world.entity.movement.Movement;
 
 /**

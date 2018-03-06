@@ -1,6 +1,6 @@
 package world.item;
 
-import util.Preconditions;
+import util.integrity.Preconditions;
 import world.definitions.DefinitionLoader;
 import world.definitions.item.ItemDefinition;
 

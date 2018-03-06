@@ -1,6 +1,6 @@
 package world.entity.player.appearance;
 
-import util.Preconditions;
+import util.integrity.Preconditions;
 import world.entity.player.Player;
 import world.entity.player.update.PlayerUpdateMask;
 

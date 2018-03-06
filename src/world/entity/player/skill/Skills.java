@@ -1,6 +1,6 @@
 package world.entity.player.skill;
 
-import util.Preconditions;
+import util.integrity.Preconditions;
 import world.entity.player.Player;
 
 import java.util.Arrays;

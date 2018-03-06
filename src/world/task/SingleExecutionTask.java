@@ -1,6 +1,6 @@
 package world.task;
 
-import util.Preconditions;
+import util.integrity.Preconditions;
 
 public class SingleExecutionTask implements Task {
 

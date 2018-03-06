@@ -20,7 +20,7 @@ import net.buffers.IBufferReserve;
 import net.buffers.Order;
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
-import util.Preconditions;
+import util.integrity.Preconditions;
 import world.entity.player.Player;
 import world.entity.player.update.PlayerUpdateBlock;
 import world.entity.player.update.PlayerUpdateMask;

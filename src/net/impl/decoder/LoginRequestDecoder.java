@@ -3,6 +3,7 @@ package net.impl.decoder;
 import net.buffers.InputBuffer;
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
+import util.integrity.Debug;
 
 import java.util.logging.Logger;
 
@@ -11,6 +12,8 @@ public class LoginRequestDecoder implements ProtocolDecoder {
 
     @Override
     public void decode(Client c) {
+        Debug.writeLine("Received login attempt from " + c.getRemoteAddress().getHostString());
+
         InputBuffer in = c.getInputBuffer();
 
         if (in.remaining() < 1) {

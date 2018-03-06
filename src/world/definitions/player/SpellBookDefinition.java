@@ -1,6 +1,6 @@
 package world.definitions.player;
 
-import util.Preconditions;
+import util.integrity.Preconditions;
 import world.definitions.IDefinition;
 import world.entity.player.combat.magic.Spell;
 import world.entity.player.combat.magic.SpellBook;
@@ -9,7 +9,6 @@ import world.entity.player.combat.magic.spells.CombatSpell;
 import world.entity.player.combat.magic.spells.TeleportSpell;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * The type CombatSpell book definition.

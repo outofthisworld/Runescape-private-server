@@ -1,7 +1,5 @@
 package world;
 
-import util.AppMode;
-
 public final class WorldConfig {
     /**
      * Game settings /Misc settings
@@ -35,7 +33,7 @@ public final class WorldConfig {
     /**
      * The app mode/server mode. Development when not in production.
      */
-    public static final AppMode APP_MODE = AppMode.DEVELOPMENT;
+    public static final WorldMode APP_MODE = WorldMode.DEVELOPMENT;
 
     private WorldConfig() {
     }

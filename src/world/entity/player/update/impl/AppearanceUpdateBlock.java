@@ -3,7 +3,7 @@ package world.entity.player.update.impl;
 import net.buffers.ByteTransformationType;
 import net.buffers.IBufferReserve;
 import net.buffers.OutputBuffer;
-import util.RsUtils;
+import util.strings.RsStringUtils;
 import world.entity.player.appearance.Appearance;
 import world.entity.player.appearance.AppearanceSlot;
 import world.entity.player.equipment.EquipmentSlot;
@@ -148,7 +148,7 @@ public class AppearanceUpdateBlock implements BiConsumer<Player, OutputBuffer> {
         outputBuffer.writeBigWord(0x338);
 
         /* Player username encoded as long */
-        outputBuffer.writeBigQWORD(RsUtils.convertStringToLong(entity.getUsername()));
+        outputBuffer.writeBigQWORD(RsStringUtils.convertStringToLong(entity.getUsername()));
         /* Player combat level */
         outputBuffer.writeByte(3);
          /* Player combat level */

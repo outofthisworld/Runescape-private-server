@@ -15,7 +15,7 @@
 
 package net.buffers;
 
-import util.Preconditions;
+import util.integrity.Preconditions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

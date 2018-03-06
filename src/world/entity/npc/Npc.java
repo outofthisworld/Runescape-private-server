@@ -5,8 +5,8 @@ import world.definitions.npc.NpcDefinition;
 import world.definitions.npc.NpcDropDefinition;
 import world.definitions.npc.NpcSpawnDefinition;
 import world.entity.Entity;
-import world.entity.misc.Position;
-import world.entity.misc.Vector;
+import world.entity.location.Position;
+import world.entity.location.Vector;
 
 public class Npc extends Entity {
     private int id;

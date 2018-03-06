@@ -11,8 +11,7 @@ import world.definitions.npc.NpcSpawnDefinition;
 import world.definitions.npc.ShopDefinition;
 import world.definitions.player.SpellBookDefinition;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -85,6 +84,7 @@ public class DefinitionLoader {
         return CompletableFuture.allOf(futures);
     }
 
+
     private static <T extends IDefinition> void loadDefinition(IDBAccessor<T> accessor, Map<Integer, T> map) {
         buildDefinitionsMap(accessor, map);
         futures[cursor++] = CompletableFuture.runAsync(() -> {
@@ -105,7 +105,8 @@ public class DefinitionLoader {
     public static <T extends IDefinition> Map<Integer, T> getDefinitionMap(IDBAccessor<T> accessor) {
         if (definitions.get(accessor) == null) {
             System.out.println("get was null");
-            System.out.println(accessor == ITEM_DEFINITIONS);
+            System.out.println(accessor);
+            System.out.println(((CollectionAccessor<T>) accessor).getCollectionName());
         }
         return (Map<Integer, T>) definitions.get(accessor);
     }

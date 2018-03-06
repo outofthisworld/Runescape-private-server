@@ -16,7 +16,7 @@
 package net.buffers;
 
 import sun.plugin.dom.exception.InvalidStateException;
-import util.Preconditions;
+import util.integrity.Preconditions;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

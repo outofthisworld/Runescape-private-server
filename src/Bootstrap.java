@@ -1,5 +1,6 @@
 import net.Reactor;
 import net.impl.NetworkConfig;
+import util.integrity.Debug;
 import world.WorldConfig;
 import world.WorldManager;
 import world.definitions.DefinitionLoader;
@@ -40,12 +41,15 @@ public class Bootstrap implements Runnable {
             Run all boot tasks, and throw a runtime exception if any complete exceptionally.
          */
         try {
-            CompletableFuture.allOf(Stream.of(BootTasks.values()).map(e -> e.boot(this))
-                    .collect(Collectors.toList()).toArray(new CompletableFuture[]{})).join();
+            CompletableFuture.allOf(Stream.of(BootTasks.values()).map(e -> {
+                Debug.writeLine("Running bootstrap task : " + e.name());
+                return e.boot(this);
+            }).collect(Collectors.toList()).toArray(new CompletableFuture[]{})).join();
 
         } catch (Exception e) {
             e.printStackTrace();
             tearDown().join();
+            Debug.writeLine("Exception running bootstrap tasks");
             System.exit(0);
         }
     }
@@ -54,6 +58,7 @@ public class Bootstrap implements Runnable {
      * Tears down things in parallel.
      */
     public CompletableFuture<Void> tearDown() {
+        Debug.writeLine("Tearing down server tasks");
         return CompletableFuture.allOf(
                 /**
                  Shutdown reactor,channels and channel handlers
@@ -73,6 +78,7 @@ public class Bootstrap implements Runnable {
     @Override
     public void run() {
         try {
+            Debug.writeLine("Starting reactor " + NetworkConfig.HOST + " " + NetworkConfig.PORT);
             reactor.start();
         } catch (IOException e) {
             //Caught later down the line when boot tasks are joined.
@@ -90,6 +96,7 @@ public class Bootstrap implements Runnable {
                     }
                 }).whenCompleteAsync((aVoid, throwable) -> {
                     if (throwable != null) {
+                        Debug.writeLine("Exception loading worlds");
                         throw new RuntimeException(throwable);
                     }
                     bootstrap.logger.log(Level.INFO, "[" + Bootstrap.class.getName() + "] successfully created game worlds.");
@@ -101,9 +108,16 @@ public class Bootstrap implements Runnable {
             public CompletableFuture<Void> boot(Bootstrap bootstrap) {
                 return DefinitionLoader.load().whenCompleteAsync((aVoid, throwable) -> {
                     if (throwable != null) {
+                        Debug.writeLine("Exception loading definitions");
                         throw new RuntimeException(throwable);
                     }
                     bootstrap.logger.log(Level.INFO, "[" + Bootstrap.class.getName() + "] successfully loaded json definitions");
+
+                }).whenCompleteAsync((v,ex)->{
+                    for (int i = 0; i < WorldConfig.NUM_VIRTUAL_WORLDS; i++) {
+                        WorldManager.getWorld(i).load();
+                        Debug.writeLine("Loaded world: " + i);
+                    }
                 });
             }
         },
@@ -112,6 +126,7 @@ public class Bootstrap implements Runnable {
             public CompletableFuture<Void> boot(Bootstrap bootstrap) {
                 return CompletableFuture.runAsync(bootstrap, bootstrap.networkExecutor).whenCompleteAsync((aVoid, throwable) -> {
                     if (throwable != null) {
+                        Debug.writeLine("Exception starting reactor");
                         throw new RuntimeException(throwable);
                     }
                     bootstrap.logger.log(Level.INFO, "[" + Bootstrap.class.getName() + "] reactor finished on " + NetworkConfig.HOST + " " + NetworkConfig.PORT);

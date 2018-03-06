@@ -5,7 +5,8 @@ import net.buffers.OutputBuffer;
 import net.impl.NetworkConfig;
 import net.impl.enc.ISAACCipher;
 import net.impl.session.Client;
-import util.RsUtils;
+import util.integrity.Debug;
+import util.strings.RsStringUtils;
 import world.entity.player.Player;
 import world.event.impl.PlayerLoginEvent;
 
@@ -31,6 +32,7 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
 
 
         if (packetOpcode != LoginProtocolConstants.NEW_SESSION) {
+            Debug.writeLine("Invalid packet opcode for login session " + packetOpcode);
             c.disconnect();
             return;
         }
@@ -39,6 +41,7 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
         int loginBlockSize = in.readUnsignedByte();
 
         if (in.remaining() != loginBlockSize) {
+            Debug.writeLine("Invalid login block size actual " + in.remaining() + "expected: " + loginBlockSize);
             c.disconnect();
             return;
         }
@@ -47,6 +50,7 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
         int encrypedLoginBlockSize = loginBlockSize - LoginProtocolConstants.LOGIN_BLOCK_KEY;
 
         if (encrypedLoginBlockSize <= 0) {
+            Debug.writeLine("Invalid encrypted login block size: " + encrypedLoginBlockSize);
             c.disconnect();
             return;
         }
@@ -54,6 +58,7 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
         int magicNum = in.readUnsignedByte();
 
         if (LoginProtocolConstants.LOGIN_MAGIC_NUMBER != magicNum) {
+            Debug.writeLine("Invalid magic number " + magicNum);
             c.disconnect();
             return;
         }
@@ -61,6 +66,7 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
 
         int revision = in.readBigUnsignedWord();
         if (revision != LoginProtocolConstants.PROTOCOL_REVISION) {
+            Debug.writeLine("Invalid revision " + revision);
             c.disconnect();
             return;
         }
@@ -76,7 +82,7 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
 
         int size = in.readUnsignedByte();
         if (size != encrypedLoginBlockSize) {
-            System.out.println("invalid encrypted login block size");
+            Debug.writeLine("Invalid encrypted login block size " + size);
             c.disconnect();
             return;
         }
@@ -87,6 +93,7 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
         String password;
 
         if (NetworkConfig.DECODE_RSA) {
+            Debug.writeLine("Decoding RSA");
             byte[] encryptionBytes = new byte[encrypedLoginBlockSize];
             in.pipeTo(encryptionBytes, 0, encryptionBytes.length);
             InputBuffer rsaBuffer = new InputBuffer();
@@ -102,9 +109,10 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
                 isaacSeed[i] += 50;
             encryptor = new ISAACCipher(isaacSeed);
             rsaBuffer.readBigSignedDWORD();
-            username = RsUtils.readRSString(rsaBuffer);
-            password = RsUtils.readRSString(rsaBuffer);
+            username = RsStringUtils.readRSString(rsaBuffer);
+            password = RsStringUtils.readRSString(rsaBuffer);
         } else {
+            Debug.writeLine("Skipping RSA");
             in.readUnsignedByte();
             long clientSeed = in.readBigSignedQWORD();
             long serverSeed = in.readBigSignedQWORD();
@@ -121,18 +129,18 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
                 sessionKey[i] += 50;
             }
             encryptor = new ISAACCipher(sessionKey);
-            username = RsUtils.readRSString(in);
-            password = RsUtils.readRSString(in);
+            username = RsStringUtils.readRSString(in);
+            password = RsStringUtils.readRSString(in);
         }
 
 
-        System.out.println(username);
-        System.out.println(password);
+        Debug.writeLine("User " + username + " is logging in");
 
         boolean validUsername = LoginProtocolConstants.VALID_USERNAME_PREDICATE.test(username);
         boolean validPassword = LoginProtocolConstants.VALID_PASSWORD_PREDICATE.test(password);
 
         if ((!validUsername || !validPassword)) {
+            Debug.writeLine("Invalid username or password for user" + username);
             sendResponse(c, LoginProtocolConstants.INVALID_USERNAME_OR_PASSWORD, 0);
             return;
         }
@@ -153,6 +161,7 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
     }
 
     public void sendResponse(Client c, int responseCode, int playerRights) {
+        Debug.writeLine("Sending login response " + responseCode + " to " + c.getPlayer().getUsername());
         c.write(OutputBuffer.create(3).writeByte(responseCode).writeByte(playerRights).writeByte(0));
     }
 }

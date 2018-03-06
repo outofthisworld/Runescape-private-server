@@ -1,6 +1,6 @@
 package world.entity.npc.drop;
 
-import util.Chance;
+import util.random.Chance;
 import world.WorldConfig;
 
 public enum DropChance {

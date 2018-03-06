@@ -1,6 +1,6 @@
 package world.entity.player.containers;
 
-import util.Preconditions;
+import util.integrity.Preconditions;
 import world.definitions.item.ItemDefinition;
 import world.entity.player.Player;
 import world.item.Item;
