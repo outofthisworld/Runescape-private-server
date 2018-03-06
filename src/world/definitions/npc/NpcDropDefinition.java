@@ -9,7 +9,7 @@ import java.util.List;
 
 
 /**
- * The type Npc drop definition.
+ * The type NpcDefinition drop definition.
  */
 public class NpcDropDefinition implements IDefinition {
     private int id;

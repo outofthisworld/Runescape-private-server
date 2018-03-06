@@ -14,7 +14,6 @@ public abstract class Entity {
      * The entities position
      */
     protected final Position position = new Position(WorldConfig.PLAYER_START_X, WorldConfig.PLAYER_START_Y, WorldConfig.PLAYER_START_Z);
-
     /**
      * The Movement.
      */
@@ -30,7 +29,7 @@ public abstract class Entity {
     /**
      * The weight of this player
      **/
-    private int weight;
+    protected int weight;
 
     /**
      * Gets weight.

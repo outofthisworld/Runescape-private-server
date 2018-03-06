@@ -5,7 +5,7 @@ import world.definitions.IDefinition;
 
 
 /**
- * The type Npc definition.
+ * The type NpcDefinition definition.
  */
 public final class NpcDefinition implements IDefinition {
     private int id;
@@ -204,4 +204,5 @@ public final class NpcDefinition implements IDefinition {
     public int getDefenceMage() {
         return defenceMage;
     }
+
 }

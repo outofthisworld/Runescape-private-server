@@ -4,7 +4,9 @@ import net.impl.decoder.GamePacketDecoder;
 import net.impl.decoder.LoginProtocolConstants;
 import util.Preconditions;
 import util.Stopwatch;
+import world.definitions.DefinitionLoader;
 import world.entity.misc.Position;
+import world.entity.npc.Npc;
 import world.entity.player.Player;
 import world.entity.update.UpdateBlockCache;
 import world.entity.update.player.PlayerUpdateBlock;
@@ -45,6 +47,10 @@ public class World {
      * All players in the world.
      */
     private final HashMap<Integer, Player> players = new HashMap(WorldConfig.MAX_PLAYERS_IN_WORLD);
+    /**
+     * All npcs in the world.
+     */
+    private final HashMap<Integer, Npc> npcs = new HashMap();
     /**
      * Divides players up by region, to make processing of certain things easier. E.G
      * AOE spells.
@@ -100,12 +106,19 @@ public class World {
         getEventBus().register(this);
     }
 
+    private void loadNpcs(){
+        DefinitionLoader.getDefinitionMap(DefinitionLoader.NPC_SPAWNS).forEach((npcId,spawnDef)->{
+            npcs.put(npcId,new Npc(npcId,npcs.size(),worldId,spawnDef.getPosition()));
+        });
+    }
+
     /**
      * Start scheduled future.
      *
      * @return the scheduled future
      */
     ScheduledFuture<?> start() {
+        loadNpcs();
         return worldExecutionTask = worldExecutorService.scheduleAtFixedRate(this::poll, 0, WorldConfig.WORLD_TICK_RATE_MS, TimeUnit.MILLISECONDS);
     }
 

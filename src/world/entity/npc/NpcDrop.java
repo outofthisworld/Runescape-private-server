@@ -13,7 +13,7 @@ public class NpcDrop {
     private int id;
     private int minimum;
     private int maximum;
-    private String chance;
+    private DropChance chance;
 
     public int getId() {
         return id;
@@ -27,15 +27,8 @@ public class NpcDrop {
         return maximum;
     }
 
-    public String getChanceName() {
+    public DropChance getDropChance() {
         return chance;
     }
 
-    public DropChance getChance() {
-        DropChance dChance = DropChance.valueOf(chance);
-        if (dChance == null) {
-            throw new RuntimeException("Invalid drop chance");
-        }
-        return dChance;
-    }
 }

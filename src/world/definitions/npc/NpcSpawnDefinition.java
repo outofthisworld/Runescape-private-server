@@ -5,7 +5,7 @@ import world.entity.misc.Vector;
 
 
 /**
- * The type Npc spawn definition.
+ * The type NpcDefinition spawn definition.
  */
 public class NpcSpawnDefinition implements IDefinition {
     private int id;

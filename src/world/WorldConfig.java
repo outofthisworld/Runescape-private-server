@@ -25,7 +25,7 @@ public final class WorldConfig {
     public static final int PLAYER_START_Z = 0;
 
     /**
-     * Npc drop percentage settings
+     * NpcDefinition drop percentage settings
      */
     public static final double DROP_ALWAYS = 100.0d;
     public static final double DROP_COMMON = 30.3d;
