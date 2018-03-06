@@ -1,4 +1,4 @@
-package world.entity.location;
+package world.entity.area;
 
 public class Vector {
 

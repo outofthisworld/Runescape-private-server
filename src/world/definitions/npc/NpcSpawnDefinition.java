@@ -1,7 +1,7 @@
 package world.definitions.npc;
 
 import world.definitions.IDefinition;
-import world.entity.location.Vector;
+import world.entity.area.Vector;
 
 
 /**

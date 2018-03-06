@@ -74,7 +74,7 @@ public class InteractInterfacePacket extends IncomingPacket {
                 /*End handling magic*/
 
 
-                /* Handle location e.g anything that's not weapon,prayer and magic. */
+                /* Handle area e.g anything that's not weapon,prayer and magic. */
                 switch (interfaceButtonId) {
 
                 }

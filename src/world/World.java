@@ -5,7 +5,7 @@ import net.impl.decoder.LoginProtocolConstants;
 import util.integrity.Preconditions;
 import util.time.Stopwatch;
 import world.definitions.DefinitionLoader;
-import world.entity.location.Position;
+import world.entity.area.Position;
 import world.entity.npc.Npc;
 import world.entity.player.Player;
 import world.entity.player.update.PlayerUpdateBlock;

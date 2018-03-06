@@ -125,14 +125,14 @@ public abstract class OutgoingPacket {
          * Byte	Frequency (scaled by 100)
          * Other Information
          * The oscillate event enables the client to oscillate one of 5 of it's position parameters, i.e. corresponding
-         * to the camera's degrees of freedom; parameters 0, 1, and 2 refer to the location of the camera, while 3 and 4
+         * to the camera's degrees of freedom; parameters 0, 1, and 2 refer to the area of the camera, while 3 and 4
          * deal with the camera's orientation. Together, these enable complex effects involving manipulation of the
          * camera position to give rise to simulated earth-quakes and camera shock.
          * <p>
          * Parameter	Description
-         * 0	Camera location along world X axis (a horizontal axis, aligned with map grid X)
-         * 1	Camera location along world Z axis (vertical axis)
-         * 2	Camera location along world Y axis (a horizontal axis, aligned with map grid Y)
+         * 0	Camera area along world X axis (a horizontal axis, aligned with map grid X)
+         * 1	Camera area along world Z axis (vertical axis)
+         * 2	Camera area along world Y axis (a horizontal axis, aligned with map grid Y)
          * 3	Camera orientation in world X plane w.r.t. world Z axis, i.e. yaw
          * 4	Camera orientation in world Z plane w.r.t. world X axis, i.e. pitch
          * Note there is no built-in way to manipulate camera roll, as this is not one of the camera's degrees of

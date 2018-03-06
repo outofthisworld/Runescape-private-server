@@ -1,4 +1,4 @@
-package world.entity.location;
+package world.entity.area;
 
 /**
  * The type Position.
