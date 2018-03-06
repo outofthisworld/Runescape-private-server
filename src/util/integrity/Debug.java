@@ -1,7 +1,7 @@
 package util.integrity;
 
-import world.WorldMode;
 import world.WorldConfig;
+import world.WorldMode;
 
 import java.io.*;
 
@@ -26,7 +26,8 @@ public final class Debug {
         }
     }
 
-    private Debug() { }
+    private Debug() {
+    }
 
     public static void writeLine(String s) {
         if (out == null) return;

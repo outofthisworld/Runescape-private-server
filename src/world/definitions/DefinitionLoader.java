@@ -11,7 +11,8 @@ import world.definitions.npc.NpcSpawnDefinition;
 import world.definitions.npc.ShopDefinition;
 import world.definitions.player.SpellBookDefinition;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 

@@ -44,14 +44,6 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
         this(serializer, dbName, collectionName, serializer.getSerializationClass());
     }
 
-    public String getCollectionName() {
-        return collectionName;
-    }
-
-    public String getDbName() {
-        return dbName;
-    }
-
     /**
      * Instantiates a new Collection accessor.
      *
@@ -70,6 +62,13 @@ public class CollectionAccessor<T> implements IDBAccessor<T> {
         collection = Database.getClient().getDatabase(dbName).getCollection(collectionName);
     }
 
+    public String getCollectionName() {
+        return collectionName;
+    }
+
+    public String getDbName() {
+        return dbName;
+    }
 
     /**
      * Update boolean.

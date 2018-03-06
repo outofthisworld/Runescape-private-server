@@ -113,7 +113,7 @@ public class Bootstrap implements Runnable {
                     }
                     bootstrap.logger.log(Level.INFO, "[" + Bootstrap.class.getName() + "] successfully loaded json definitions");
 
-                }).whenCompleteAsync((v,ex)->{
+                }).whenCompleteAsync((v, ex) -> {
                     for (int i = 0; i < WorldConfig.NUM_VIRTUAL_WORLDS; i++) {
                         WorldManager.getWorld(i).load();
                         Debug.writeLine("Loaded world: " + i);

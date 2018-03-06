@@ -8,8 +8,8 @@ import world.definitions.DefinitionLoader;
 import world.entity.location.Position;
 import world.entity.npc.Npc;
 import world.entity.player.Player;
-import world.entity.update.PlayerUpdateBlockCache;
 import world.entity.player.update.PlayerUpdateBlock;
+import world.entity.update.PlayerUpdateBlockCache;
 import world.event.Event;
 import world.event.EventBus;
 import world.event.WorldEventBus;
@@ -106,9 +106,9 @@ public class World {
         getEventBus().register(this);
     }
 
-    private void loadNpcs(){
-        DefinitionLoader.getDefinitionMap(DefinitionLoader.NPC_SPAWNS).forEach((npcId,spawnDef)->{
-            npcs.put(npcId,new Npc(npcId,npcs.size(),worldId,spawnDef.getPosition()));
+    private void loadNpcs() {
+        DefinitionLoader.getDefinitionMap(DefinitionLoader.NPC_SPAWNS).forEach((npcId, spawnDef) -> {
+            npcs.put(npcId, new Npc(npcId, npcs.size(), worldId, spawnDef.getPosition()));
         });
     }
 
@@ -124,10 +124,10 @@ public class World {
 
     /**
      * Responsible for loading everything to do with the world.
-     *
+     * <p>
      * Called when all definitions have been loaded and all data is available.
      */
-    public void load(){
+    public void load() {
         loadNpcs();
     }
 
@@ -153,7 +153,7 @@ public class World {
      * Stop.
      */
     void stop() {
-        if(worldExecutionTask != null)
+        if (worldExecutionTask != null)
             worldExecutionTask.cancel(true);
         worldTasks.clear();
     }

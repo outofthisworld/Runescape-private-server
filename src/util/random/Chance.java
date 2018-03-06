@@ -1,7 +1,6 @@
 package util.random;
 
 import java.math.BigDecimal;
-import java.util.Random;
 
 public final class Chance {
 

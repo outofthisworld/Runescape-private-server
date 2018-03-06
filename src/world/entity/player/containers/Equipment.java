@@ -2,13 +2,13 @@ package world.entity.player.containers;
 
 import net.packets.outgoing.OutgoingPacketBuilder;
 import util.integrity.Debug;
-import util.strings.FormatStrings;
 import util.integrity.Preconditions;
+import util.strings.FormatStrings;
 import world.definitions.DefinitionLoader;
 import world.definitions.item.ItemRequirementDefinition;
 import world.definitions.item.WeaponInterfaceDefinition;
-import world.entity.player.equipment.EquipmentSlot;
 import world.entity.player.Player;
+import world.entity.player.equipment.EquipmentSlot;
 import world.entity.player.skill.Skill;
 import world.interfaces.SidebarInterface;
 import world.interfaces.WeaponInterfaceType;

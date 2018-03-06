@@ -158,21 +158,21 @@ public class SpellBookDefinition implements IDefinition {
      */
     public void load() {
 
-        if(initialized) return;
+        if (initialized) return;
 
-        getCombatSpells().stream().forEach(s-> {
-            if(combatSpellsHm.containsKey(s.getSpellId())){
+        getCombatSpells().stream().forEach(s -> {
+            if (combatSpellsHm.containsKey(s.getSpellId())) {
                 throw new RuntimeException("Duplicate key error for combat spell " + s.getSpellId());
             }
 
             combatSpellsHm.put(s.getSpellId(), s);
         });
 
-        getTeleportSpells().stream().forEach(s->{
-            if(teleportSpellsHm.containsKey(s.getSpellId())){
+        getTeleportSpells().stream().forEach(s -> {
+            if (teleportSpellsHm.containsKey(s.getSpellId())) {
                 throw new RuntimeException("Duplicate key error for teleport spell " + s.getSpellId());
             }
-            teleportSpellsHm.put(s.getSpellId(),s);
+            teleportSpellsHm.put(s.getSpellId(), s);
         });
 
         initialized = !initialized;

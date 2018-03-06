@@ -4,10 +4,10 @@ import net.buffers.ByteTransformationType;
 import net.buffers.IBufferReserve;
 import net.buffers.OutputBuffer;
 import util.strings.RsStringUtils;
+import world.entity.player.Player;
 import world.entity.player.appearance.Appearance;
 import world.entity.player.appearance.AppearanceSlot;
 import world.entity.player.equipment.EquipmentSlot;
-import world.entity.player.Player;
 
 import java.util.function.BiConsumer;
 
