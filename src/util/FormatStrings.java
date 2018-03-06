@@ -22,7 +22,7 @@ public final class FormatStrings {
 
 
     public static StringBuilder welcomeMessage(Player player) {
-        return new StringBuilder().append("Welcome to " )
+        return new StringBuilder().append("Welcome to ")
                 .append(WorldConfig.SERVER_NAME)
                 .append(", currently ")
                 .append(player.getWorld().getTotalPlayers())

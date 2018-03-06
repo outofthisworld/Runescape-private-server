@@ -5,7 +5,6 @@ import util.Preconditions;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Objects;
 
 /**
  * The type Skills.
@@ -86,8 +85,8 @@ public class Skills {
      */
     public void setSkillLevel(Skill skill, int skillLevel) {
         Preconditions.notNull(skill);
-        Preconditions.greaterThan(skillLevel,0);
-        Preconditions.lessThanOrEqualTo(skillLevel,99);
+        Preconditions.greaterThan(skillLevel, 0);
+        Preconditions.lessThanOrEqualTo(skillLevel, 99);
 
         skills[skill.ordinal()] = skillLevel;
         skillExp[skill.ordinal()] = world.entity.player.Skill.getExpFromLevel(skillLevel);
@@ -101,7 +100,7 @@ public class Skills {
      * @param skillLevel the skill level
      */
     public void setSkillLevel(int skillId, int skillLevel) {
-        setSkillLevel(Skill.fromIndex(skillId),skillLevel);
+        setSkillLevel(Skill.fromIndex(skillId), skillLevel);
     }
 
     /**
@@ -112,7 +111,7 @@ public class Skills {
      */
     public void setSkillExp(Skill skill, int exp) {
         Preconditions.notNull(skill);
-        Preconditions.greaterThan(exp,0);
+        Preconditions.greaterThan(exp, 0);
         skills[skill.ordinal()] = world.entity.player.Skill.getLevelFromExp(exp);
         skillExp[skill.ordinal()] = exp;
         changedSkills.add(skill.ordinal());
@@ -123,9 +122,9 @@ public class Skills {
      * Instead of sending a packet for every skill change, this method can be called
      * to update a set of skills in bulk.
      */
-    public void finishUpdating(){
+    public void finishUpdating() {
         Iterator<Integer> it = changedSkills.iterator();
-        for(;it.hasNext();){
+        for (; it.hasNext(); ) {
             Integer i = it.next();
             updateSkill(i);
             it.remove();
@@ -140,7 +139,7 @@ public class Skills {
      * @param exp     the exp
      */
     public void setSkillExp(int skillId, int exp) {
-        setSkillExp(Skill.fromIndex(skillId),exp);
+        setSkillExp(Skill.fromIndex(skillId), exp);
     }
 
     /**
@@ -153,12 +152,12 @@ public class Skills {
         }
     }
 
-    private void updateSkill(int skillId){
+    private void updateSkill(int skillId) {
         Preconditions.notNull(Skill.fromIndex(skillId));
         p.getClient().getOutgoingPacketBuilder().setSkillLevel(skillId, getSkillLevel(skillId), getSkillExp(skillId));
     }
 
-    private void updateSkill(int skillId,int level, int exp){
+    private void updateSkill(int skillId, int level, int exp) {
         p.getClient().getOutgoingPacketBuilder().setSkillLevel(skillId, level, exp);
     }
 }

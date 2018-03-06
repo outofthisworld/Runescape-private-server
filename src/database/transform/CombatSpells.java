@@ -2506,6 +2506,4 @@ public enum CombatSpells {
     public final CombatSpell getSpell() {
         return spell;
     }
-
-
 }

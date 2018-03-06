@@ -1,7 +1,8 @@
-package world.entity.player.combat.magic;
+package world.entity.player.combat.magic.spells;
 
 import world.entity.player.Player;
-import java.util.function.Consumer;
+
+import java.util.function.BiConsumer;
 
 
 /**
@@ -12,7 +13,7 @@ public class TeleportSpell extends AbstractSpell {
     private int y;
     private int z;
     private int interfaceButtonId;
-    private Consumer<Player> action;
+    private BiConsumer<TeleportSpell, Player> action;
 
     /**
      * Gets x.
@@ -55,31 +56,32 @@ public class TeleportSpell extends AbstractSpell {
      *
      * @param consumer the consumer
      */
-    public void setAction(Consumer<Player> consumer){
+    public void setAction(BiConsumer<TeleportSpell, Player> consumer) {
         this.action = consumer;
     }
 
     /**
      * Does the action assigned to this teleport spell.
-     *
+     * <p>
      * This will be used for opening interfaces/chatbox dialogues common in private servers.
      *
      * @param player the player
      */
-    public void doAction(Player player){
-        if(action != null){
-            action.accept(player);
+    public void doAction(Player player) {
+        if (action != null) {
+            action.accept(this, player);
         }
     }
 
     /**
      * Teleports the given player to the teleport spells x,y,z coordinates.
-     *
-     *
+     * <p>
+     * <p>
      * Extract to interface Teleportable at a future time.
+     *
      * @param player the player
      */
-    public void teleport(Player player){
-        player.teleport(x,y,z);
+    public void teleport(Player player) {
+        player.teleport(x, y, z);
     }
 }

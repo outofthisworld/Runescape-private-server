@@ -7,7 +7,9 @@ import database.serialization.GsonSerializer;
 import world.definitions.item.*;
 import world.definitions.npc.NpcDefinition;
 import world.definitions.npc.NpcDropDefinition;
+import world.definitions.npc.NpcSpawnDefinition;
 import world.definitions.npc.ShopDefinition;
+import world.definitions.player.SpellBookDefinition;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +25,10 @@ public class DefinitionLoader {
     public static final IDBAccessor<WeaponPoisonDefinition> WEAPON_POISONS = new CollectionAccessor<>(new GsonSerializer<>(WeaponPoisonDefinition.class), DatabaseConfig.WEAPON_POISONS);
     public static final IDBAccessor<NpcDropDefinition> NPC_DROPS = new CollectionAccessor<>(new GsonSerializer<>(NpcDropDefinition.class), DatabaseConfig.NPC_DROPS);
     public static final IDBAccessor<ShopDefinition> SHOPS = new CollectionAccessor<>(new GsonSerializer<>(ShopDefinition.class), DatabaseConfig.SHOPS);
+    public static final IDBAccessor<SpellBookDefinition> SPELL_BOOKS = new CollectionAccessor<>(new GsonSerializer<>(SpellBookDefinition.class), DatabaseConfig.SPELLS);
+    public static final IDBAccessor<NpcSpawnDefinition> NPC_SPAWNS = new CollectionAccessor<>(new GsonSerializer<>(NpcSpawnDefinition.class), DatabaseConfig.NPC_SPAWN);
 
-
-    private static int DEFINITIONS_COUNT = 8;
+    private static int DEFINITIONS_COUNT = 10;
     private static CompletableFuture<Void>[] futures = new CompletableFuture[DEFINITIONS_COUNT];
     private static Map<IDBAccessor<?>, Map<Integer, ? extends IDefinition>> definitions = new HashMap<>();
     private static Map<Integer, ItemDefinition> itemDefinitions = new HashMap<>();
@@ -36,6 +39,8 @@ public class DefinitionLoader {
     private static Map<Integer, WeaponPoisonDefinition> weaponPoisons = new HashMap<>();
     private static Map<Integer, NpcDropDefinition> npcDrops = new HashMap<>();
     private static Map<Integer, ShopDefinition> shops = new HashMap<>();
+    private static Map<Integer, SpellBookDefinition> spellBooks = new HashMap<>();
+    private static Map<Integer, NpcSpawnDefinition> npcSpawns = new HashMap<>();
     private static int cursor = 0;
 
     public static CompletableFuture<Void> load() {
@@ -62,6 +67,18 @@ public class DefinitionLoader {
             });
         });
 
+        buildDefinitionsMap(SPELL_BOOKS, spellBooks);
+        futures[cursor++] = CompletableFuture.runAsync(() -> {
+            SPELL_BOOKS.findAll().forEach(def -> {
+                if (spellBooks.containsKey(def.getId())) {
+                    throw new IllegalStateException("Duplicate key for " + def + " found when loading spells");
+                }
+                def.load();
+                spellBooks.put(def.getId(), def);
+            });
+        });
+
+        loadDefinition(NPC_SPAWNS, npcSpawns);
         loadDefinition(WEAPON_POISONS, weaponPoisons);
         loadDefinition(NPC_DROPS, npcDrops);
         loadDefinition(SHOPS, shops);

@@ -17,7 +17,7 @@ public class ShopDefinition implements IDefinition {
     private String name;
     private boolean restock;
     private boolean sellTo;
-    private String currency;
+    private GameCurrency currency;
 
     /**
      * Gets name.
@@ -33,7 +33,7 @@ public class ShopDefinition implements IDefinition {
      *
      * @return the boolean
      */
-    public boolean isRestock() {
+    public boolean doesRestock() {
         return restock;
     }
 
@@ -42,7 +42,7 @@ public class ShopDefinition implements IDefinition {
      *
      * @return the boolean
      */
-    public boolean isSellTo() {
+    public boolean canSellTo() {
         return sellTo;
     }
 
@@ -51,22 +51,10 @@ public class ShopDefinition implements IDefinition {
      *
      * @return the currency name
      */
-    public String getCurrencyName() {
+    public GameCurrency getCurrency() {
         return currency;
     }
 
-    /**
-     * Gets currency.
-     *
-     * @return the currency
-     */
-    public GameCurrency getCurrency() {
-        GameCurrency currency = GameCurrency.valueOf(getCurrencyName());
-        if (currency == null) {
-            throw new RuntimeException("Invalid game currency");
-        }
-        return currency;
-    }
 
     @Override
     public int getId() {

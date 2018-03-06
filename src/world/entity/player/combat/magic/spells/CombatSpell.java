@@ -1,15 +1,8 @@
-package world.entity.player.combat.magic;
+package world.entity.player.combat.magic.spells;
 
 
-import world.definitions.IDefinition;
 import world.definitions.types.Graphic;
 import world.entity.player.combat.magic.Projectile;
-import world.entity.player.combat.magic.SpellType;
-import world.item.Item;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 
 /**

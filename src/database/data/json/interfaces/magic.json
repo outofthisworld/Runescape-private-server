@@ -1,25 +1,25 @@
 [
   {
     "spellBookId": 1,
-    "spellBookName": "NORMAL",
+    "spellBook": "NORMAL",
     "interfaceId": 1212,
-    "teleportSpells":[
+    "teleportSpells": [
       {
-        "spellName": "Lumbridge Home Teleport",
+        "spell": "Lumbridge Home Teleport",
         "spellId": 19210,
         "requiredLevel": 0,
         "animation": 1,
         "spellType": "TELEPORT",
         "baseExperience": 5,
         "buttonId": 19210,
-        "x":2000,
-        "y":2000,
-        "z":0
+        "x": 2000,
+        "y": 2000,
+        "z": 0
       }
     ],
     "combatSpells": [
       {
-        "spellName": "WIND_STRIKE",
+        "spell": "WIND_STRIKE",
         "spellType": "NORMAL",
         "spellId": 1152,
         "maximumHit": 2,
@@ -55,7 +55,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "CONFUSE",
+        "spell": "CONFUSE",
         "spellType": "EFFECT",
         "spellId": 1153,
         "maximumHit": 2,
@@ -94,7 +94,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "WATER_STRIKE",
+        "spell": "WATER_STRIKE",
         "spellType": "NORMAL",
         "spellId": 1154,
         "maximumHit": 4,
@@ -133,7 +133,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "EARTH_STRIKE",
+        "spell": "EARTH_STRIKE",
         "spellType": "NORMAL",
         "spellId": 1156,
         "maximumHit": 6,
@@ -172,7 +172,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "WEAKEN",
+        "spell": "WEAKEN",
         "spellType": "EFFECT",
         "spellId": 1157,
         "maximumHit": 2,
@@ -211,7 +211,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "FIRE_STRIKE",
+        "spell": "FIRE_STRIKE",
         "spellType": "NORMAL",
         "spellId": 1158,
         "maximumHit": 8,
@@ -250,7 +250,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "WIND_BOLT",
+        "spell": "WIND_BOLT",
         "spellType": "NORMAL",
         "spellId": 1160,
         "maximumHit": 9,
@@ -285,7 +285,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "CURSE",
+        "spell": "CURSE",
         "spellType": "EFFECT",
         "spellId": 1161,
         "maximumHit": 2,
@@ -324,7 +324,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "BIND",
+        "spell": "BIND",
         "spellType": "EFFECT",
         "spellId": 1572,
         "maximumHit": 2,
@@ -363,7 +363,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "WATER_BOLT",
+        "spell": "WATER_BOLT",
         "spellType": "NORMAL",
         "spellId": 1163,
         "maximumHit": 10,
@@ -402,7 +402,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "EARTH_BOLT",
+        "spell": "EARTH_BOLT",
         "spellType": "NORMAL",
         "spellId": 1166,
         "maximumHit": 11,
@@ -441,7 +441,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "FIRE_BOLT",
+        "spell": "FIRE_BOLT",
         "spellType": "NORMAL",
         "spellId": 1169,
         "maximumHit": 12,
@@ -480,7 +480,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "CRUMBLE_UNDEAD",
+        "spell": "CRUMBLE_UNDEAD",
         "spellType": "NORMAL",
         "spellId": 1171,
         "maximumHit": 15,
@@ -519,7 +519,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "WIND_BLAST",
+        "spell": "WIND_BLAST",
         "spellType": "NORMAL",
         "spellId": 1172,
         "maximumHit": 13,
@@ -554,7 +554,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "WATER_BLAST",
+        "spell": "WATER_BLAST",
         "spellType": "NORMAL",
         "spellId": 1175,
         "maximumHit": 14,
@@ -593,7 +593,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "IBAN_BLAST",
+        "spell": "IBAN_BLAST",
         "spellType": "NORMAL",
         "spellId": 1539,
         "maximumHit": 25,
@@ -637,7 +637,7 @@
         ]
       },
       {
-        "spellName": "SNARE",
+        "spell": "SNARE",
         "spellType": "EFFECT",
         "spellId": 1582,
         "maximumHit": 2,
@@ -676,7 +676,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "MAGIC_DART",
+        "spell": "MAGIC_DART",
         "spellType": "NORMAL",
         "spellId": 12037,
         "maximumHit": 19,
@@ -720,7 +720,7 @@
         ]
       },
       {
-        "spellName": "EARTH_BLAST",
+        "spell": "EARTH_BLAST",
         "spellType": "NORMAL",
         "spellId": 1177,
         "maximumHit": 15,
@@ -759,7 +759,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "FIRE_BLAST",
+        "spell": "FIRE_BLAST",
         "spellType": "NORMAL",
         "spellId": 1181,
         "maximumHit": 16,
@@ -798,7 +798,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "SARADOMIN_STRIKE",
+        "spell": "SARADOMIN_STRIKE",
         "spellType": "NORMAL",
         "spellId": 1190,
         "maximumHit": 20,
@@ -838,7 +838,7 @@
         ]
       },
       {
-        "spellName": "CLAWS_OF_GUTHIX",
+        "spell": "CLAWS_OF_GUTHIX",
         "spellType": "NORMAL",
         "spellId": 1191,
         "maximumHit": 20,
@@ -878,7 +878,7 @@
         ]
       },
       {
-        "spellName": "FLAMES_OF_ZAMORAK",
+        "spell": "FLAMES_OF_ZAMORAK",
         "spellType": "NORMAL",
         "spellId": 1192,
         "maximumHit": 20,
@@ -918,7 +918,7 @@
         ]
       },
       {
-        "spellName": "WIND_WAVE",
+        "spell": "WIND_WAVE",
         "spellType": "NORMAL",
         "spellId": 1183,
         "maximumHit": 17,
@@ -953,7 +953,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "WATER_WAVE",
+        "spell": "WATER_WAVE",
         "spellType": "NORMAL",
         "spellId": 1185,
         "maximumHit": 18,
@@ -992,7 +992,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "VULNERABILITY",
+        "spell": "VULNERABILITY",
         "spellType": "EFFECT",
         "spellId": 1542,
         "maximumHit": 2,
@@ -1031,7 +1031,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "EARTH_WAVE",
+        "spell": "EARTH_WAVE",
         "spellType": "NORMAL",
         "spellId": 1188,
         "maximumHit": 19,
@@ -1070,7 +1070,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "ENFEEBLE",
+        "spell": "ENFEEBLE",
         "spellType": "EFFECT",
         "spellId": 1543,
         "maximumHit": 2,
@@ -1109,7 +1109,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "FIRE_WAVE",
+        "spell": "FIRE_WAVE",
         "spellType": "NORMAL",
         "spellId": 1189,
         "maximumHit": 20,
@@ -1148,7 +1148,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "ENTANGLE",
+        "spell": "ENTANGLE",
         "spellType": "EFFECT",
         "spellId": 1592,
         "maximumHit": 2,
@@ -1187,7 +1187,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "STUN",
+        "spell": "STUN",
         "spellType": "EFFECT",
         "spellId": 1562,
         "maximumHit": 2,
@@ -1226,7 +1226,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "TELEBLOCK",
+        "spell": "TELEBLOCK",
         "spellType": "EFFECT",
         "spellId": 12445,
         "maximumHit": 2,
@@ -1268,11 +1268,11 @@
   },
   {
     "spellBookId": 1,
-    "spellBookName": "ANCIENT",
+    "spellBook": "ANCIENT",
     "interfaceId": 1212,
     "spells": [
       {
-        "spellName": "SMOKE_RUSH",
+        "spell": "SMOKE_RUSH",
         "spellType": "ANCIENT",
         "spellId": 12939,
         "maximumHit": 13,
@@ -1315,7 +1315,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "SHADOW_RUSH",
+        "spell": "SHADOW_RUSH",
         "spellType": "ANCIENT",
         "spellId": 12987,
         "maximumHit": 14,
@@ -1358,7 +1358,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "BLOOD_RUSH",
+        "spell": "BLOOD_RUSH",
         "spellType": "ANCIENT",
         "spellId": 12901,
         "maximumHit": 15,
@@ -1397,7 +1397,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "ICE_RUSH",
+        "spell": "ICE_RUSH",
         "spellType": "ANCIENT",
         "spellId": 12861,
         "maximumHit": 18,
@@ -1436,7 +1436,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "SMOKE_BURST",
+        "spell": "SMOKE_BURST",
         "spellType": "ANCIENT",
         "spellId": 12963,
         "maximumHit": 13,
@@ -1479,7 +1479,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "SHADOW_BURST",
+        "spell": "SHADOW_BURST",
         "spellType": "ANCIENT",
         "spellId": 13011,
         "maximumHit": 18,
@@ -1522,7 +1522,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "BLOOD_BURST",
+        "spell": "BLOOD_BURST",
         "spellType": "ANCIENT",
         "spellId": 12919,
         "maximumHit": 21,
@@ -1561,7 +1561,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "ICE_BURST",
+        "spell": "ICE_BURST",
         "spellType": "ANCIENT",
         "spellId": 12881,
         "maximumHit": 22,
@@ -1600,7 +1600,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "SMOKE_BLITZ",
+        "spell": "SMOKE_BLITZ",
         "spellType": "ANCIENT",
         "spellId": 12951,
         "maximumHit": 23,
@@ -1643,7 +1643,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "SHADOW_BLITZ",
+        "spell": "SHADOW_BLITZ",
         "spellType": "ANCIENT",
         "spellId": 12999,
         "maximumHit": 24,
@@ -1686,7 +1686,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "BLOOD_BLITZ",
+        "spell": "BLOOD_BLITZ",
         "spellType": "ANCIENT",
         "spellId": 12911,
         "maximumHit": 25,
@@ -1721,7 +1721,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "ICE_BLITZ",
+        "spell": "ICE_BLITZ",
         "spellType": "ANCIENT",
         "spellId": 12871,
         "maximumHit": 26,
@@ -1760,7 +1760,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "SMOKE_BARRAGE",
+        "spell": "SMOKE_BARRAGE",
         "spellType": "ANCIENT",
         "spellId": 12975,
         "maximumHit": 27,
@@ -1803,7 +1803,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "SHADOW_BARRAGE",
+        "spell": "SHADOW_BARRAGE",
         "spellType": "ANCIENT",
         "spellId": 13023,
         "maximumHit": 28,
@@ -1846,7 +1846,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "BLOOD_BARRAGE",
+        "spell": "BLOOD_BARRAGE",
         "spellType": "ANCIENT",
         "spellId": 12929,
         "maximumHit": 29,
@@ -1885,7 +1885,7 @@
         "equipmentRequired": []
       },
       {
-        "spellName": "ICE_BARRAGE",
+        "spell": "ICE_BARRAGE",
         "spellType": "ANCIENT",
         "spellId": 12891,
         "maximumHit": 30,

@@ -24,7 +24,6 @@ import world.entity.update.player.PlayerUpdateFlags;
 import world.event.impl.AbstractEvent;
 import world.event.impl.RegionUpdateEvent;
 import world.interfaces.SidebarInterface;
-import world.item.Item;
 import world.storage.AsyncPlayerStore;
 
 import java.util.HashSet;
@@ -410,7 +409,7 @@ public class Player extends Entity {
         this.lastRegionPosition = lastRegionPosition;
     }
 
-    public void teleport(int x, int y, int z){
+    public void teleport(int x, int y, int z) {
         setTeleporting(true);
         //Update x,y,z
     }
@@ -454,7 +453,7 @@ public class Player extends Entity {
         getClient().getOutgoingPacketBuilder().sendMessage(FormatStrings.visitWebsite());
 
         /**
-            Finally, send everything at once.
+         Finally, send everything at once.
          */
         getClient().getOutgoingPacketBuilder().send();
     }

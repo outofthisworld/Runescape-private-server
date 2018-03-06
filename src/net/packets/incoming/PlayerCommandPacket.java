@@ -40,27 +40,27 @@ public class PlayerCommandPacket extends IncomingPacket {
         System.out.println("Received player command : " + input);
         switch (input) {
             case "master":
-                Skill[] skills =  Skill.values();
-                for(Skill s:skills){
-                    c.getPlayer().getSkills().setSkillExp(s,14000000);
+                Skill[] skills = Skill.values();
+                for (Skill s : skills) {
+                    c.getPlayer().getSkills().setSkillExp(s, 14000000);
                 }
                 //Refresh all skills
                 c.getPlayer().getSkills().syncAll();
                 break;
             case "runes":
-                c.getPlayer().getInventory().add(new Item(554,10000));
-                c.getPlayer().getInventory().add(new Item(555,10000));
-                c.getPlayer().getInventory().add(new Item(556,10000));
-                c.getPlayer().getInventory().add(new Item(557,10000));
-                c.getPlayer().getInventory().add(new Item(558,10000));
-                c.getPlayer().getInventory().add(new Item(559,10000));
-                c.getPlayer().getInventory().add(new Item(560,10000));
-                c.getPlayer().getInventory().add(new Item(561,10000));
-                c.getPlayer().getInventory().add(new Item(562,10000));
-                c.getPlayer().getInventory().add(new Item(563,10000));
-                c.getPlayer().getInventory().add(new Item(564,10000));
-                c.getPlayer().getInventory().add(new Item(565,10000));
-                c.getPlayer().getInventory().add(new Item(566,10000));
+                c.getPlayer().getInventory().add(new Item(554, 10000));
+                c.getPlayer().getInventory().add(new Item(555, 10000));
+                c.getPlayer().getInventory().add(new Item(556, 10000));
+                c.getPlayer().getInventory().add(new Item(557, 10000));
+                c.getPlayer().getInventory().add(new Item(558, 10000));
+                c.getPlayer().getInventory().add(new Item(559, 10000));
+                c.getPlayer().getInventory().add(new Item(560, 10000));
+                c.getPlayer().getInventory().add(new Item(561, 10000));
+                c.getPlayer().getInventory().add(new Item(562, 10000));
+                c.getPlayer().getInventory().add(new Item(563, 10000));
+                c.getPlayer().getInventory().add(new Item(564, 10000));
+                c.getPlayer().getInventory().add(new Item(565, 10000));
+                c.getPlayer().getInventory().add(new Item(566, 10000));
                 break;
             case "search":
                 String keyword = scanner.nextLine().trim().toLowerCase();

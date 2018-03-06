@@ -14,8 +14,7 @@ public class DatabaseConfig {
     public static final String NPC_DROPS = "NpcDrops";
     public static final String SHOPS = "Shops";
     public static final String NPC_SPAWN = "NpcSpawn";
-    public static final String SPELLS = "Spells";
-
+    public static final String SPELLS = "Spell";
 
 
     private static final Logger logger = Logger.getLogger(DatabaseConfig.class.getName());

@@ -11,7 +11,6 @@ import world.definitions.npc.NpcDropDefinition;
 import world.definitions.npc.NpcSpawnDefinition;
 import world.definitions.npc.ShopDefinition;
 import world.definitions.player.SpellBookDefinition;
-import world.entity.player.combat.magic.CombatSpell;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +46,7 @@ public class Setup {
      */
     public static <T extends IDefinition> void insertAll(T[] items, Class<T> klazz, String dbName, String collectionName) {
         MongoCollection<Document> collection = Database.getClient().getDatabase(dbName).getCollection(collectionName);
-        collection.insertMany(Arrays.stream(items).map(i->Document.parse(Setup.builder.toJson(i, klazz))).collect(Collectors.toList()));
+        collection.insertMany(Arrays.stream(items).map(i -> Document.parse(Setup.builder.toJson(i, klazz))).collect(Collectors.toList()));
     }
 
     /**

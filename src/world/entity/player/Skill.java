@@ -100,6 +100,16 @@ public enum Skill {
      */
     HUNTING;
 
+    private static final HashMap<Integer, Skill> hm;
+
+    static {
+        Skill[] skills = Skill.values();
+        hm = new HashMap<>(skills.length);
+        for (int i = 0; i < skills.length; i++) {
+            hm.put(i, skills[i]);
+        }
+    }
+
     /**
      * Gets exp from level.
      *
@@ -138,16 +148,6 @@ public enum Skill {
             }
         }
         return 99;
-    }
-
-    private static final HashMap<Integer, Skill> hm;
-
-    static {
-        Skill[] skills = Skill.values();
-        hm = new HashMap<>(skills.length);
-        for (int i = 0; i < skills.length; i++) {
-            hm.put(i, skills[i]);
-        }
     }
 
     public static Skill fromIndex(int i) {

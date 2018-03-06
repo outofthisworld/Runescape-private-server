@@ -268,7 +268,7 @@ public class OutgoingPacketBuilder {
         createHeader(OutgoingPacket.Opcodes.UPDATE_SKILL)
                 .writeByte(skillNum)
                 .order(Order.BIG_MIDDLE_ENDIAN)
-                .writeBytes(XP,4,ByteTransformationType.NONE)
+                .writeBytes(XP, 4, ByteTransformationType.NONE)
                 .writeByte(currentLevel);
         return this;
     }

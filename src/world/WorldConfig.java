@@ -4,7 +4,7 @@ import util.AppMode;
 
 public final class WorldConfig {
     /**
-     *     Game settings /Misc settings
+     * Game settings /Misc settings
      */
     public static final String SERVER_NAME = "TriScape";
     public static final String WEBSITE_URL = "http://www.TriScape.org";

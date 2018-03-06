@@ -1,5 +1,7 @@
-package world.entity.player.combat.magic;
+package world.entity.player.combat.magic.spells;
 
+import world.entity.player.combat.magic.Spell;
+import world.entity.player.combat.magic.SpellType;
 import world.item.Item;
 
 import java.util.ArrayList;
@@ -10,7 +12,7 @@ import java.util.List;
  */
 public class AbstractSpell {
     private int spellId;
-    private String spellName;
+    private Spell spell;
     private SpellType spellType;
     private int baseExperience;
     private int requiredLevel;
@@ -33,8 +35,8 @@ public class AbstractSpell {
      *
      * @return the spell name
      */
-    public String getSpellName() {
-        return spellName;
+    public Spell getSpell() {
+        return spell;
     }
 
     /**
