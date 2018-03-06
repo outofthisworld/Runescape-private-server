@@ -3,15 +3,21 @@
     "spellBookId": 1,
     "spellBookName": "NORMAL",
     "interfaceId": 1212,
-    "spells": [
+    "teleportSpells":[
       {
         "spellName": "Lumbridge Home Teleport",
+        "spellId": 19210,
         "requiredLevel": 0,
-        "animationId": 1,
+        "animation": 1,
         "spellType": "TELEPORT",
         "baseExperience": 5,
-        "buttonId": 19210
-      },
+        "buttonId": 19210,
+        "x":2000,
+        "y":2000,
+        "z":0
+      }
+    ],
+    "combatSpells": [
       {
         "spellName": "WIND_STRIKE",
         "spellType": "NORMAL",

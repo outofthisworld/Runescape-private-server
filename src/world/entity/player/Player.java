@@ -410,6 +410,11 @@ public class Player extends Entity {
         this.lastRegionPosition = lastRegionPosition;
     }
 
+    public void teleport(int x, int y, int z){
+        setTeleporting(true);
+        //Update x,y,z
+    }
+
 
     /**
      * Init.

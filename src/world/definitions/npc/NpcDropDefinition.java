@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.List;
 
 
+/**
+ * The type Npc drop definition.
+ */
 public class NpcDropDefinition implements IDefinition {
     private int id;
     private ArrayList<NpcDrop> drops = new ArrayList();
@@ -16,10 +19,20 @@ public class NpcDropDefinition implements IDefinition {
         return id;
     }
 
+    /**
+     * Gets drops immutable.
+     *
+     * @return the drops immutable
+     */
     public List<NpcDrop> getDropsImmutable() {
         return Collections.unmodifiableList(drops);
     }
 
+    /**
+     * Gets drops mutable.
+     *
+     * @return the drops mutable
+     */
     public List<NpcDrop> getDropsMutable() {
         return drops;
     }

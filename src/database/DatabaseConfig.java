@@ -7,12 +7,15 @@ public class DatabaseConfig {
     public static final String ITEMS_COLLECTION = "Items";
     public static final String NPC_COLLECTION = "Npcs";
     public static final String PLAYERS_COLLECTION = "Players";
-    public static final String ITEM_REQUIRMENTS = "ItemRequirements";
+    public static final String ITEM_REQUIREMENTS = "ItemRequirements";
     public static final String WEAPON_ANIMATIONS = "WeaponAnimations";
     public static final String WEAPON_INTERFACES = "WeaponInterfaces";
     public static final String WEAPON_POISONS = "WeaponPoisons";
     public static final String NPC_DROPS = "NpcDrops";
     public static final String SHOPS = "Shops";
+    public static final String NPC_SPAWN = "NpcSpawn";
+    public static final String SPELLS = "Spells";
+
 
 
     private static final Logger logger = Logger.getLogger(DatabaseConfig.class.getName());
