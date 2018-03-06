@@ -4,8 +4,10 @@ import util.AppMode;
 
 public final class WorldConfig {
     /**
-     * Misc settings
+     *     Game settings /Misc settings
      */
+    public static final String SERVER_NAME = "TriScape";
+    public static final String WEBSITE_URL = "http://www.TriScape.org";
     public static final int WORLD_TICK_RATE_MS = 600;
     public static final int MAX_PLAYERS_IN_WORLD = 20000;
 
@@ -30,8 +32,6 @@ public final class WorldConfig {
     public static final double DROP_UNCOMMON = 13.33d;
     public static final double DROP_RARE = 4.77d;
     public static final double DROP_NEAR_IMPOSSIBLE = 0.5d;
-
-
     /**
      * The app mode/server mode. Development when not in production.
      */

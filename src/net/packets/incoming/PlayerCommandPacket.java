@@ -7,6 +7,7 @@ import world.definitions.item.ItemDefinition;
 import world.entity.player.EquipmentSlot;
 import world.entity.player.Player;
 import world.event.impl.RegionUpdateEvent;
+import world.item.Item;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -37,6 +38,21 @@ public class PlayerCommandPacket extends IncomingPacket {
 
         System.out.println("Received player command : " + input);
         switch (input) {
+            case "runes":
+                c.getPlayer().getInventory().add(new Item(554,10000));
+                c.getPlayer().getInventory().add(new Item(555,10000));
+                c.getPlayer().getInventory().add(new Item(556,10000));
+                c.getPlayer().getInventory().add(new Item(557,10000));
+                c.getPlayer().getInventory().add(new Item(558,10000));
+                c.getPlayer().getInventory().add(new Item(559,10000));
+                c.getPlayer().getInventory().add(new Item(560,10000));
+                c.getPlayer().getInventory().add(new Item(561,10000));
+                c.getPlayer().getInventory().add(new Item(562,10000));
+                c.getPlayer().getInventory().add(new Item(563,10000));
+                c.getPlayer().getInventory().add(new Item(564,10000));
+                c.getPlayer().getInventory().add(new Item(565,10000));
+                c.getPlayer().getInventory().add(new Item(566,10000));
+                break;
             case "search":
                 String keyword = scanner.nextLine().trim().toLowerCase();
                 Map<Integer, ItemDefinition> map = DefinitionLoader.getDefinitionMap(DefinitionLoader.ITEM_DEFINITIONS);

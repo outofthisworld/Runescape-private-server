@@ -1,5 +1,8 @@
 package util;
 
+import world.WorldConfig;
+import world.entity.player.Player;
+
 public final class FormatStrings {
 
 
@@ -18,4 +21,16 @@ public final class FormatStrings {
     }
 
 
+    public static StringBuilder welcomeMessage(Player player) {
+        return new StringBuilder().append("Welcome to " )
+                .append(WorldConfig.SERVER_NAME)
+                .append(", currently ")
+                .append(player.getWorld().getTotalPlayers())
+                .append(" player is online.");
+    }
+
+    public static StringBuilder visitWebsite() {
+        return new StringBuilder().append("Dont forget to visit our website at ")
+                .append(WorldConfig.WEBSITE_URL);
+    }
 }

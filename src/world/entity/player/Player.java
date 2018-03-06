@@ -9,6 +9,7 @@ import net.impl.decoder.LoginProtocolConstants;
 import net.impl.session.Client;
 import net.packets.outgoing.OutgoingPacket;
 import sun.plugin.dom.exception.InvalidStateException;
+import util.FormatStrings;
 import util.Preconditions;
 import world.entity.Entity;
 import world.entity.misc.Position;
@@ -424,10 +425,9 @@ public class Player extends Entity {
 
         getClient().getOutgoingPacketBuilder().initPlayer(1, getSlotId());
 
-        getInventory().getContainer().add(new Item(123, 1));
-
         getClient().getOutgoingPacketBuilder().setChatOptions(0, 0, 0);
 
+        getSkills().setSkillExp(Skill.MAGIC,14000000);
 
         //Refresh our inventory
         getInventory().syncAll();
@@ -445,10 +445,15 @@ public class Player extends Entity {
 
         getClient().getOutgoingPacketBuilder().setRunEnergy(getMovement().getRunEnergy());
 
-        getClient().getOutgoingPacketBuilder().sendMessage("Welcome to TriScape");
-        getClient().getOutgoingPacketBuilder().sendMessage("Enjoy your time on the server!");
 
-        //System.out.println(getClient().getOutgoingPacketBuilder().bytesWritten());
+        getClient().getOutgoingPacketBuilder().sendMessage(FormatStrings.welcomeMessage(this));
+        getClient().getOutgoingPacketBuilder().sendMessage("Enjoy your time on the server!");
+        getClient().getOutgoingPacketBuilder().sendMessage(FormatStrings.visitWebsite());
+
+
+        /**
+            Finally, send everything at once.
+         */
         getClient().getOutgoingPacketBuilder().send();
     }
 

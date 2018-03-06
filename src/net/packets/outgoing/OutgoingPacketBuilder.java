@@ -266,14 +266,10 @@ public class OutgoingPacketBuilder {
      */
     public OutgoingPacketBuilder setSkillLevel(int skillNum, int currentLevel, int XP) {
         createHeader(OutgoingPacket.Opcodes.UPDATE_SKILL)
-                .writeByte(skillNum).
-                order(Order.BIG_MIDDLE_ENDIAN)
-                .writeBytes(XP, 4)
+                .writeByte(skillNum)
+                .order(Order.BIG_MIDDLE_ENDIAN)
+                .writeBytes(XP,4,ByteTransformationType.NONE)
                 .writeByte(currentLevel);
-        /*client.getOutStream().createHeader(134);
-        client.getOutStream().writeByte(skillNum);
-        client.getOutStream().writeDWord_v1(XP);
-        client.getOutStream().writeByte(currentLevel);*/
         return this;
     }
 
