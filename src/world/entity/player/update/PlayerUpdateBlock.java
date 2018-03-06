@@ -1,4 +1,4 @@
-package world.entity.update.player;
+package world.entity.player.update;
 
 import net.buffers.ByteTransformationType;
 import net.buffers.Order;
@@ -7,7 +7,6 @@ import util.Preconditions;
 import world.entity.player.Player;
 import world.entity.update.IFlag;
 import world.entity.update.UpdateBlock;
-import world.entity.update.player.impl.*;
 
 import java.util.Collections;
 import java.util.HashMap;

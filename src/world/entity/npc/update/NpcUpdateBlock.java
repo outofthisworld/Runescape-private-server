@@ -1,4 +1,4 @@
-package world.entity.update.npc;
+package world.entity.npc.update;
 
 public class NpcUpdateBlock {
 

@@ -1,7 +1,7 @@
 package world.definitions.npc;
 
 import world.definitions.IDefinition;
-import world.entity.npc.NpcDrop;
+import world.entity.npc.drop.NpcDrop;
 
 import java.util.ArrayList;
 import java.util.Collections;

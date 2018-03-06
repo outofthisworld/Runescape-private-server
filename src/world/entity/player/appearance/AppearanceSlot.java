@@ -1,4 +1,4 @@
-package world.entity.player;
+package world.entity.player.appearance;
 
 public enum AppearanceSlot {
     HEAD(0),

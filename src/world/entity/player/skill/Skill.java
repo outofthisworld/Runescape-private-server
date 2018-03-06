@@ -1,4 +1,4 @@
-package world.entity.player;
+package world.entity.player.skill;
 
 
 import java.util.HashMap;

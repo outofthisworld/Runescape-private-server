@@ -1,4 +1,4 @@
-package world.entity.npc;
+package world.entity.npc.drop;
 
 
 /**

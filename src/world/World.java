@@ -8,8 +8,8 @@ import world.definitions.DefinitionLoader;
 import world.entity.misc.Position;
 import world.entity.npc.Npc;
 import world.entity.player.Player;
-import world.entity.update.UpdateBlockCache;
-import world.entity.update.player.PlayerUpdateBlock;
+import world.entity.update.PlayerUpdateBlockCache;
+import world.entity.player.update.PlayerUpdateBlock;
 import world.event.Event;
 import world.event.EventBus;
 import world.event.WorldEventBus;
@@ -42,7 +42,7 @@ public class World {
      * The player update block cache. Used to cache player update blocks
      * to avoid reconstructing the block multiple times for different players.
      */
-    private final SimpleCache<String, PlayerUpdateBlock> playerUpdateBlockCache = new UpdateBlockCache();
+    private final SimpleCache<String, PlayerUpdateBlock> playerUpdateBlockCache = new PlayerUpdateBlockCache();
     /**
      * All players in the world.
      */

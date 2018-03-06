@@ -1,4 +1,4 @@
-package world.entity.update.player;
+package world.entity.player.update;
 
 
 public enum PlayerUpdateMask {

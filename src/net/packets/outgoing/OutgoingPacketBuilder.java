@@ -22,8 +22,8 @@ import net.buffers.OutputBuffer;
 import net.impl.session.Client;
 import util.Preconditions;
 import world.entity.player.Player;
-import world.entity.update.player.PlayerUpdateBlock;
-import world.entity.update.player.PlayerUpdateMask;
+import world.entity.player.update.PlayerUpdateBlock;
+import world.entity.player.update.PlayerUpdateMask;
 import world.storage.SimpleCache;
 
 import java.util.*;

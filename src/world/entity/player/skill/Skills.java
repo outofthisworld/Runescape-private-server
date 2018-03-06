@@ -1,6 +1,7 @@
-package world.entity.player;
+package world.entity.player.skill;
 
 import util.Preconditions;
+import world.entity.player.Player;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -10,8 +11,8 @@ import java.util.Iterator;
  * The type Skills.
  */
 public class Skills {
-    private final int[] skills = new int[world.entity.player.Skill.values().length];
-    private final int[] skillExp = new int[world.entity.player.Skill.values().length];
+    private final int[] skills = new int[Skill.values().length];
+    private final int[] skillExp = new int[Skill.values().length];
     private final Player p;
     private HashSet<Integer> changedSkills = new HashSet<>();
 
@@ -89,7 +90,7 @@ public class Skills {
         Preconditions.lessThanOrEqualTo(skillLevel, 99);
 
         skills[skill.ordinal()] = skillLevel;
-        skillExp[skill.ordinal()] = world.entity.player.Skill.getExpFromLevel(skillLevel);
+        skillExp[skill.ordinal()] = Skill.getExpFromLevel(skillLevel);
         changedSkills.add(skill.ordinal());
     }
 
@@ -112,7 +113,7 @@ public class Skills {
     public void setSkillExp(Skill skill, int exp) {
         Preconditions.notNull(skill);
         Preconditions.greaterThan(exp, 0);
-        skills[skill.ordinal()] = world.entity.player.Skill.getLevelFromExp(exp);
+        skills[skill.ordinal()] = Skill.getLevelFromExp(exp);
         skillExp[skill.ordinal()] = exp;
         changedSkills.add(skill.ordinal());
     }

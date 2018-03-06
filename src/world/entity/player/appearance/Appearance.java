@@ -1,7 +1,8 @@
-package world.entity.player;
+package world.entity.player.appearance;
 
 import util.Preconditions;
-import world.entity.update.player.PlayerUpdateMask;
+import world.entity.player.Player;
+import world.entity.player.update.PlayerUpdateMask;
 
 /**
  * A class which encapsulates everything to do with a players appearance

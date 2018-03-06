@@ -1,9 +1,9 @@
 package world.entity.update;
 
-import world.entity.update.player.PlayerUpdateBlock;
+import world.entity.player.update.PlayerUpdateBlock;
 import world.storage.SimpleCache;
 
-public class UpdateBlockCache extends SimpleCache<String, PlayerUpdateBlock> {
+public class PlayerUpdateBlockCache extends SimpleCache<String, PlayerUpdateBlock> {
     @Override
     public PlayerUpdateBlock load(String key) {
         return cache.get(key);

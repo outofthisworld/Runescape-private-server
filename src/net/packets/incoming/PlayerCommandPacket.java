@@ -4,9 +4,9 @@ import net.buffers.InputBuffer;
 import net.impl.session.Client;
 import world.definitions.DefinitionLoader;
 import world.definitions.item.ItemDefinition;
-import world.entity.player.EquipmentSlot;
+import world.entity.player.equipment.EquipmentSlot;
 import world.entity.player.Player;
-import world.entity.player.Skill;
+import world.entity.player.skill.Skill;
 import world.event.impl.RegionUpdateEvent;
 import world.item.Item;
 

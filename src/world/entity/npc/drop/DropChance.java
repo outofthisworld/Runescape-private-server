@@ -1,4 +1,4 @@
-package world.entity.npc;
+package world.entity.npc.drop;
 
 import util.Chance;
 import world.WorldConfig;

@@ -1,7 +1,7 @@
 package world.entity.player.combat.magic.spells;
 
 
-import world.definitions.types.Graphic;
+import world.entity.player.combat.Graphic;
 import world.entity.player.combat.magic.Projectile;
 
 

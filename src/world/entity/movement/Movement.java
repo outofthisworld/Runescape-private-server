@@ -4,7 +4,7 @@ import world.WorldConfig;
 import world.entity.Entity;
 import world.entity.misc.Position;
 import world.entity.player.Player;
-import world.entity.player.Skill;
+import world.entity.player.skill.Skill;
 
 import java.util.Deque;
 import java.util.LinkedList;

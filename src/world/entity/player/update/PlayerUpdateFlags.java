@@ -1,4 +1,4 @@
-package world.entity.update.player;
+package world.entity.player.update;
 
 
 import world.entity.update.Flags;

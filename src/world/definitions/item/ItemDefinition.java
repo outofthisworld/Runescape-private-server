@@ -1,7 +1,7 @@
 package world.definitions.item;
 
 import world.definitions.IDefinition;
-import world.entity.player.EquipmentSlot;
+import world.entity.player.equipment.EquipmentSlot;
 
 
 /**

@@ -1,12 +1,12 @@
-package world.entity.update.player.impl;
+package world.entity.player.update.impl;
 
 import net.buffers.ByteTransformationType;
 import net.buffers.IBufferReserve;
 import net.buffers.OutputBuffer;
 import util.RsUtils;
-import world.entity.player.Appearance;
-import world.entity.player.AppearanceSlot;
-import world.entity.player.EquipmentSlot;
+import world.entity.player.appearance.Appearance;
+import world.entity.player.appearance.AppearanceSlot;
+import world.entity.player.equipment.EquipmentSlot;
 import world.entity.player.Player;
 
 import java.util.function.BiConsumer;

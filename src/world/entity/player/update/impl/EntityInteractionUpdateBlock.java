@@ -1,4 +1,4 @@
-package world.entity.update.player.impl;
+package world.entity.player.update.impl;
 
 import net.buffers.OutputBuffer;
 import world.entity.player.Player;
