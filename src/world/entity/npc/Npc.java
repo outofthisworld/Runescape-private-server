@@ -2,6 +2,7 @@ package world.entity.npc;
 
 import util.random.Chance;
 import util.random.RandomUtils;
+import world.combat.CombatHandler;
 import world.definitions.DefinitionLoader;
 import world.definitions.npc.NpcDefinition;
 import world.definitions.npc.NpcDropDefinition;
@@ -52,8 +53,12 @@ public class Npc extends Entity {
         return respawnTimer != -1;
     }
 
+    public double getHealthPercentage(){
+        return (hitpoints / getNpcDefinition().getHitpoints()) * 100;
+    }
+
     private void doMovement(){
-        if(!isDead() && getSpawnDefinition().shouldRandomWalk() && !getCombat().isUnderAttack()){
+        if(!isDead() && getSpawnDefinition().shouldRandomWalk() && !getCombatHandler().isUnderAttack()){
             //30 percent chance that a npc will move given the above conditions
             if(Chance.chanceWithin(30)) {
                 Position p = getSpawnDefinition().getNpcCircleArea().generateRandomPosition();
@@ -61,6 +66,12 @@ public class Npc extends Entity {
                 getMovement().stepTo(p.getVector().getX(), p.getVector().getY());
                 getMovement().finishMovement();
             }
+        }
+    }
+
+    private void handleRetreat(){
+        if(!isDead() && getCombatHandler().isUnderAttack() && getNpcDefinition().doesRetreat() && getHealthPercentage() <= 15){
+
         }
     }
 
@@ -89,7 +100,7 @@ public class Npc extends Entity {
     }
 
     private void handleAggression(){
-        if(!isDead() && getNpcDefinition().isAgressive() && !getCombat().isUnderAttack()){
+        if(!isDead() && getNpcDefinition().isAgressive() && !getCombatHandler().isUnderAttack()){
             //Find local players and attack
             /**
              *
@@ -128,6 +139,7 @@ public class Npc extends Entity {
         handleRespawn();
         doMovement();
         handleAggression();
+        handleRetreat();
 
 
 

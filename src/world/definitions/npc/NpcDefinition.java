@@ -93,7 +93,7 @@ public final class NpcDefinition implements IDefinition {
      *
      * @return the boolean
      */
-    public boolean isRetreats() {
+    public boolean doesRetreat() {
         return retreats;
     }
 

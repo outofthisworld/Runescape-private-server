@@ -3,6 +3,7 @@ package world.entity;
 import world.World;
 import world.WorldConfig;
 import world.WorldManager;
+import world.combat.CombatHandler;
 import world.entity.area.Position;
 import world.entity.movement.Movement;
 
@@ -30,6 +31,13 @@ public abstract class Entity {
      * The weight of this player
      **/
     protected int weight;
+
+    private final CombatHandler combatHandler = new CombatHandler(this);
+
+
+    public CombatHandler getCombatHandler(){
+        return combatHandler;
+    }
 
     /**
      * Gets weight.
