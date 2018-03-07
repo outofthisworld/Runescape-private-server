@@ -8,17 +8,43 @@ import world.definitions.npc.NpcDefinition;
 import world.definitions.npc.NpcDropDefinition;
 import world.definitions.npc.NpcSpawnDefinition;
 import world.entity.Entity;
+import world.entity.area.Area;
 import world.entity.area.Position;
 import world.entity.area.Vector;
 import world.entity.npc.update.NpcUpdateBlock;
 import world.entity.npc.update.NpcUpdateFlags;
+import world.entity.npc.update.NpcUpdateMask;
+import world.entity.player.Player;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class Npc extends Entity {
+    /**
+     * The id of the npc.
+     */
     private int id;
+    /**
+     * The current hitpoitns level of the npc
+     */
     private int hitpoints;
+    /**
+     * The respawn timer, -1 if the npc is alive.
+     */
     private int respawnTimer = -1;
+    /**
+    * Update flags for this npc
+    **/
     private final NpcUpdateBlock updateBlock = new NpcUpdateBlock(this);
+    /**
+    * Update flags for this npc
+    **/
     private final NpcUpdateFlags updateFlags = new NpcUpdateFlags();
+
+    /**
+    * The players local to this npc.
+    * */
+    private Set<Player> localPlayers = new HashSet<>();
 
     public Npc(int npcId, int slotId, int worldId, Position position) {
         this(npcId, slotId, worldId, position.getVector());
@@ -62,16 +88,17 @@ public class Npc extends Entity {
             //30 percent chance that a npc will move given the above conditions
             if(Chance.chanceWithin(30)) {
                 Position p = getSpawnDefinition().getNpcCircleArea().generateRandomPosition();
-                getMovement().beginMovement();
-                getMovement().stepTo(p.getVector().getX(), p.getVector().getY());
-                getMovement().finishMovement();
+                walkTo(p.getVector().getX(), p.getVector().getY());
             }
         }
     }
 
     private void handleRetreat(){
         if(!isDead() && getCombatHandler().isUnderAttack() && getNpcDefinition().doesRetreat() && getHealthPercentage() <= 15){
-
+            Area.TwoDimensional.Circle c = getSpawnDefinition().getNpcCircleArea();
+            c.setRadius(getSpawnDefinition().getWalkRadius() * 3);
+            Position p = c.generateRandomPosition();
+            walkTo(p.getVector().getX(),p.getVector().getY());
         }
     }
 
@@ -100,7 +127,7 @@ public class Npc extends Entity {
     }
 
     private void handleAggression(){
-        if(!isDead() && getNpcDefinition().isAgressive() && !getCombatHandler().isUnderAttack()){
+        if(!isDead() && getNpcDefinition().isAgressive() && !getCombatHandler().isAttacking()){
             //Find local players and attack
             /**
              *
@@ -120,7 +147,7 @@ public class Npc extends Entity {
         return hitpoints;
     }
 
-    public int getRespawnTimer() {
+    public int getTicksTillRespawn() {
         return respawnTimer;
     }
 
@@ -145,7 +172,6 @@ public class Npc extends Entity {
 
         //Npc updating
         //Npc movement
-
         updateFlags.clear();
     }
 }

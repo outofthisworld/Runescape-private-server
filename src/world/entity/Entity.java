@@ -39,6 +39,13 @@ public abstract class Entity {
         return combatHandler;
     }
 
+    public void walkTo(int x, int y){
+        getMovement().beginMovement();
+        getMovement().stepTo(x, y);
+        getMovement().finishMovement();
+    }
+
+
     /**
      * Gets weight.
      *

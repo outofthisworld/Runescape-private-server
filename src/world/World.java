@@ -5,6 +5,7 @@ import net.impl.decoder.LoginProtocolConstants;
 import util.integrity.Preconditions;
 import util.time.Stopwatch;
 import world.definitions.DefinitionLoader;
+import world.definitions.npc.NpcSpawnDefinition;
 import world.entity.area.Position;
 import world.entity.npc.Npc;
 import world.entity.player.Player;
@@ -107,8 +108,11 @@ public class World {
     }
 
     private void loadNpcs() {
-        DefinitionLoader.getDefinitionMap(DefinitionLoader.NPC_SPAWNS).forEach((npcId, spawnDef) -> {
-            npcs.put(npcId, new Npc(npcId, npcs.size(), worldId, spawnDef.getPosition()));
+        Map<Integer,NpcSpawnDefinition> m = DefinitionLoader.getDefinitionMap(DefinitionLoader.NPC_SPAWNS);
+        int[] count = {0};
+        m.forEach((npcId, spawnDef) -> {
+            npcs.put(count[0], new Npc(npcId, count[0], worldId, spawnDef.getPosition()));
+            count[0]++;
         });
     }
 
@@ -485,10 +489,23 @@ public class World {
             player.poll();
         }
 
+        for (Npc npc : npcs.values()) {
+
+            /*
+                Update movement
+                Send update packet
+            */
+            npc.poll();
+        }
+
         /*
            Clear the player update block cache.
         */
         playerUpdateBlockCache.clear();
+
+        /*
+            Calculate how long it takes for one update.
+         */
         loopTimer.stop();
         // logger.log(Level.INFO, "Completed world poll in " + loopTimer.getTimePassed(TimeUnit.MILLISECONDS) + "ms");
     }
