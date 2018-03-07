@@ -1,5 +1,73 @@
 package world.entity.npc.update;
 
-public class NpcUpdateBlock {
+import net.buffers.ByteTransformationType;
+import net.buffers.Order;
+import net.buffers.OutputBuffer;
+import util.integrity.Preconditions;
+import world.entity.npc.Npc;
+import world.entity.player.Player;
+import world.entity.player.update.PlayerUpdateBlock;
+import world.entity.player.update.PlayerUpdateMask;
+import world.entity.update.IFlag;
+import world.entity.update.UpdateBlock;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
+public class NpcUpdateBlock extends UpdateBlock<IFlag<NpcUpdateMask>> {
+    private final Npc npc;
+
+    public NpcUpdateBlock(Npc npc){
+        super(2048,1024);
+        Preconditions.notNull(npc);
+        this.npc = npc;
+    }
+
+    private static Map<NpcUpdateMask,BiConsumer<Npc, OutputBuffer>> flagMap = new HashMap<NpcUpdateMask,BiConsumer<Npc, OutputBuffer>>(){
+        {
+
+        }
+    };
+
+    @Override
+    public UpdateBlock build(IFlag<NpcUpdateMask> updateFlags) {
+
+        this.mask = updateFlags.getMask();
+           /*
+            Clear the current update block.
+        */
+        updateBlock.clear();
+
+        /*
+            Write the mask as little endian.
+        */
+        updateBlock.order(Order.LITTLE_ENDIAN);
+
+        if (updateFlags.getMask() >= 0x100L) {
+            updateBlock.writeBytes(updateFlags.getMask(), 2, ByteTransformationType.NONE);
+        } else {
+            updateBlock.writeByte((int) (updateFlags.getMask()));
+        }
+
+        updateBlock.order(Order.BIG_ENDIAN);
+
+
+        for (NpcUpdateMask m : NpcUpdateMask.values()) {
+            if (updateFlags.isSet(m)) {
+                flagMap.get(m).accept(npc, updateBlock);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public OutputBuffer getBlock() {
+        return updateBlock;
+    }
+
+    @Override
+    public long getMask() {
+        return mask;
+    }
 }

@@ -178,9 +178,9 @@ public class Area {
     }
 
     public static class ThreeDimensional {
-        public static class Box extends TwoDimensional.Rectangle {
+        public static class Cuboid extends TwoDimensional.Rectangle {
 
-            public Box(int topLeftX, int topLeftY, int width, int height) {
+            public Cuboid(int topLeftX, int topLeftY, int width, int height) {
                 super(topLeftX, topLeftY, width, height);
             }
         }

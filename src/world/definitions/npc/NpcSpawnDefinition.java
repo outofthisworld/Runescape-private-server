@@ -1,6 +1,7 @@
 package world.definitions.npc;
 
 import world.definitions.IDefinition;
+import world.entity.area.Area;
 import world.entity.area.Vector;
 
 
@@ -42,5 +43,10 @@ public class NpcSpawnDefinition implements IDefinition {
      */
     public int getWalkRadius() {
         return walkRadius;
+    }
+
+
+    public Area.TwoDimensional.Circle getNpcCircleArea(){
+        return new Area.TwoDimensional.Circle(position.getX(),position.getY(),walkRadius);
     }
 }

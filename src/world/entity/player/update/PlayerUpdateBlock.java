@@ -18,7 +18,6 @@ import java.util.function.BiConsumer;
  * The type Player update block.
  */
 public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
-
     private static final Map<PlayerUpdateMask, BiConsumer<Player, OutputBuffer>> flagMap =
             Collections.unmodifiableMap(new HashMap<PlayerUpdateMask, BiConsumer<Player, OutputBuffer>>() {
                 {
@@ -76,11 +75,8 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
                 }
             });
 
-    private static final int UPDATE_BLOCK_SIZE = 2048;
-    private static final int UPDATE_BLOCK_INCREASE_SIZE = 1024;
+
     private final Player player;
-    private final OutputBuffer updateBlock = OutputBuffer.create(PlayerUpdateBlock.UPDATE_BLOCK_SIZE, PlayerUpdateBlock.UPDATE_BLOCK_INCREASE_SIZE);
-    private long mask;
 
     /**
      * Instantiates a new Player update block.
@@ -88,6 +84,7 @@ public class PlayerUpdateBlock extends UpdateBlock<IFlag<PlayerUpdateMask>> {
      * @param player the player
      */
     public PlayerUpdateBlock(Player player) {
+        super(2048,1024);
         Preconditions.notNull(player);
         this.player = player;
     }

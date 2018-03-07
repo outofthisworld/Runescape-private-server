@@ -10,12 +10,12 @@ public enum DropChance {
      */
     ALWAYS() {
         @Override
-        boolean shouldDrop() {
+        public boolean shouldDrop() {
             return true;
         }
 
         @Override
-        double getDropRate() {
+        public double getDropRate() {
             return WorldConfig.DROP_ALWAYS;
         }
     },
@@ -25,12 +25,12 @@ public enum DropChance {
      */
     UNCOMMON() {
         @Override
-        boolean shouldDrop() {
+        public boolean shouldDrop() {
             return Chance.chanceWithin(WorldConfig.DROP_UNCOMMON);
         }
 
         @Override
-        double getDropRate() {
+        public double getDropRate() {
             return WorldConfig.DROP_UNCOMMON;
         }
     },
@@ -40,12 +40,12 @@ public enum DropChance {
      */
     COMMON() {
         @Override
-        boolean shouldDrop() {
+        public boolean shouldDrop() {
             return Chance.chanceWithin(WorldConfig.DROP_COMMON);
         }
 
         @Override
-        double getDropRate() {
+        public double getDropRate() {
             return WorldConfig.DROP_COMMON;
         }
     },
@@ -55,28 +55,28 @@ public enum DropChance {
      */
     RARE() {
         @Override
-        boolean shouldDrop() {
+        public boolean shouldDrop() {
             return Chance.chanceWithin(WorldConfig.DROP_RARE);
         }
 
         @Override
-        double getDropRate() {
+        public double getDropRate() {
             return WorldConfig.DROP_RARE;
         }
     },
     NEAR_IMPOSSIBLE() {
         @Override
-        boolean shouldDrop() {
+        public boolean shouldDrop() {
             return Chance.chanceWithin(WorldConfig.DROP_NEAR_IMPOSSIBLE);
         }
 
         @Override
-        double getDropRate() {
+        public double getDropRate() {
             return WorldConfig.DROP_NEAR_IMPOSSIBLE;
         }
     };
 
-    abstract boolean shouldDrop();
+    public abstract boolean shouldDrop();
 
-    abstract double getDropRate();
+    public abstract double getDropRate();
 }

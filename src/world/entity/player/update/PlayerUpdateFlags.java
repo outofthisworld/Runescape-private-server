@@ -57,6 +57,4 @@ public class PlayerUpdateFlags implements IFlag<PlayerUpdateMask> {
         }
         return flags.getMask();
     }
-
-
 }
