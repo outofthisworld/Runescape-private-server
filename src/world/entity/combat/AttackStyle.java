@@ -1,10 +1,8 @@
-package world.entity.player.combat;
+package world.entity.combat;
 
 public enum AttackStyle {
     ACCURATE,
     AGGRESSIVE,
     DEFENSIVE,
     CONTROLLED,
-    RAPID,
-    LONGRANGE
 }

@@ -1,8 +1,8 @@
-package world.entity.player.combat.magic.spells;
+package world.entity.combat.magic.spells;
 
 
-import world.entity.player.combat.Graphic;
-import world.entity.player.combat.magic.Projectile;
+import world.entity.player.Graphic;
+import world.entity.combat.magic.Projectile;
 
 
 /**

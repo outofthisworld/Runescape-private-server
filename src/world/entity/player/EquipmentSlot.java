@@ -1,4 +1,4 @@
-package world.entity.player.equipment;
+package world.entity.player;
 
 import java.util.HashMap;
 

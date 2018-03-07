@@ -1,4 +1,4 @@
-package world.entity.player.combat.magic.spells;
+package world.entity.combat.magic.spells;
 
 import world.entity.player.Player;
 

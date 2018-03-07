@@ -2,7 +2,7 @@ package world.entity.npc;
 
 import util.random.Chance;
 import util.random.RandomUtils;
-import world.combat.CombatHandler;
+import world.entity.combat.CombatHandler;
 import world.definitions.DefinitionLoader;
 import world.definitions.npc.NpcDefinition;
 import world.definitions.npc.NpcDropDefinition;
@@ -13,7 +13,6 @@ import world.entity.area.Position;
 import world.entity.area.Vector;
 import world.entity.npc.update.NpcUpdateBlock;
 import world.entity.npc.update.NpcUpdateFlags;
-import world.entity.npc.update.NpcUpdateMask;
 import world.entity.player.Player;
 
 import java.util.HashSet;

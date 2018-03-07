@@ -1,7 +1,7 @@
-package world.entity.player.combat.magic.spells;
+package world.entity.combat.magic.spells;
 
-import world.entity.player.combat.magic.Spell;
-import world.entity.player.combat.magic.SpellType;
+import world.entity.combat.magic.Spell;
+import world.entity.combat.magic.SpellType;
 import world.item.Item;
 
 import java.util.ArrayList;

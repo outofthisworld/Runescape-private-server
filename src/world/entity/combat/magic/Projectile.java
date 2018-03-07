@@ -1,4 +1,4 @@
-package world.entity.player.combat.magic;
+package world.entity.combat.magic;
 
 /**
  * The type Projectile.

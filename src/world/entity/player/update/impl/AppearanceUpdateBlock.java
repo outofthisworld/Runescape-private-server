@@ -7,7 +7,7 @@ import util.strings.RsStringUtils;
 import world.entity.player.Player;
 import world.entity.player.appearance.Appearance;
 import world.entity.player.appearance.AppearanceSlot;
-import world.entity.player.equipment.EquipmentSlot;
+import world.entity.player.EquipmentSlot;
 
 import java.util.function.BiConsumer;
 

@@ -2,11 +2,11 @@ package world.definitions.player;
 
 import util.integrity.Preconditions;
 import world.definitions.IDefinition;
-import world.entity.player.combat.magic.Spell;
-import world.entity.player.combat.magic.SpellBook;
-import world.entity.player.combat.magic.spells.AbstractSpell;
-import world.entity.player.combat.magic.spells.CombatSpell;
-import world.entity.player.combat.magic.spells.TeleportSpell;
+import world.entity.combat.magic.Spell;
+import world.entity.combat.magic.SpellBook;
+import world.entity.combat.magic.spells.AbstractSpell;
+import world.entity.combat.magic.spells.CombatSpell;
+import world.entity.combat.magic.spells.TeleportSpell;
 
 import java.util.*;
 

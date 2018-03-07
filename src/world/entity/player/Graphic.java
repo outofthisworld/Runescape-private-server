@@ -1,4 +1,4 @@
-package world.entity.player.combat;
+package world.entity.player;
 
 public class Graphic {
     private int graphicId;

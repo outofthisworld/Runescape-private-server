@@ -1,4 +1,4 @@
-package world.entity.player.combat.magic;
+package world.entity.combat.magic;
 
 public enum SpellBook {
     NORMAL,

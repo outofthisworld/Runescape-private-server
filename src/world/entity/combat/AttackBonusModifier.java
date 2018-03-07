@@ -1,4 +1,4 @@
-package world.entity.player.combat;
+package world.entity.combat;
 
 public enum AttackBonusModifier {
     ATTACK_RANGED(1),

@@ -1,9 +1,10 @@
-package world.combat;
+package world.entity.combat;
 
 import world.entity.Entity;
+import world.entity.player.Player;
 
 public class CombatHandler {
-    private Entity entity;
+    private Entity e;
     private AttackHandler attackHandler;
     private boolean isUnderAttack;
     private boolean autoRetaliate;
@@ -18,18 +19,29 @@ public class CombatHandler {
     }
 
     public CombatHandler(Entity entity){
-        this.entity = entity;
+        this.e = entity;
     }
 
-    public boolean attack(Entity entity, AttackHandler attackHandler){
-        boolean attacked =  attackHandler.handleAttack(this.entity, entity);
-        if(!attacked){
-            this.attackingEntity = null;
-            this.attackHandler = null;
-        }else{
-            this.attackingEntity = entity;
-            this.attackHandler = attackHandler;
+
+    public boolean attack(Entity entity){
+
+        if(isUnderAttack){
+            return false;
         }
+        boolean attacked = false;
+
+        if(e.isPlayer()){
+            AttackType type = CombatAssistant.determinePlayerAttackType((Player) e);
+            attacked = attackHandler.handleAttack(e, entity);
+            if(!attacked){
+                this.attackingEntity = null;
+                this.attackHandler = null;
+            }else{
+                this.attackingEntity = entity;
+                this.attackHandler = attackHandler;
+            }
+        }
+
         return attacked;
     }
 

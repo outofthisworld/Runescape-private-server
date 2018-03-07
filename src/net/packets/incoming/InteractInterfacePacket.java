@@ -6,7 +6,7 @@ import util.integrity.Debug;
 import world.definitions.DefinitionLoader;
 import world.definitions.item.WeaponInterfaceDefinition;
 import world.entity.player.combat.CombatStyle;
-import world.entity.player.equipment.EquipmentSlot;
+import world.entity.player.EquipmentSlot;
 import world.interfaces.WeaponInterfaceType;
 import world.item.Item;
 

@@ -1,4 +1,4 @@
-package world.entity.player.combat;
+package world.entity.combat;
 
 public class CombatStyle {
     private AttackStyle style;

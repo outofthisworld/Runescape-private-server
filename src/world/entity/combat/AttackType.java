@@ -1,4 +1,4 @@
-package world.combat;
+package world.entity.combat;
 
 import world.definitions.DefinitionLoader;
 import world.definitions.item.ItemDefinition;
@@ -6,10 +6,8 @@ import world.definitions.item.WeaponInterfaceDefinition;
 import world.definitions.item.WeaponPoisonDefinition;
 import world.entity.Entity;
 import world.entity.player.Player;
-import world.entity.player.combat.AttackStyle;
-import world.entity.player.combat.CombatStyle;
-import world.entity.player.containers.Equipment;
-import world.entity.player.equipment.EquipmentSlot;
+
+import world.entity.player.EquipmentSlot;
 import world.interfaces.WeaponInterfaceType;
 import world.item.Item;
 
@@ -34,7 +32,7 @@ public enum AttackType implements CombatHandler.AttackHandler{
             underAttack.getCombatHandler().setUnderAttack(true);
 
             if(underAttack.getCombatHandler().shouldAutoRetaliate()) {
-                attacking.getCombatHandler().setUnderAttack(true);
+                //Determine correct combat type?
                 underAttack.getCombatHandler().attack(attacking, MELEE);
             }
 
@@ -44,6 +42,7 @@ public enum AttackType implements CombatHandler.AttackHandler{
 
             Player p = (Player) attacking;
             Item weapon = p.getEquipment().get(EquipmentSlot.WEAPON.getSlotId());
+
 
             ItemDefinition itemDefinition;
             WeaponInterfaceDefinition weaponInterfaceDefinition;

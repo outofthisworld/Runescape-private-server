@@ -13,14 +13,15 @@ import util.integrity.Preconditions;
 import util.strings.FormatStrings;
 import world.entity.Entity;
 import world.entity.area.Position;
+import world.entity.combat.CombatStyle;
 import world.entity.player.appearance.Appearance;
+import world.entity.player.appearance.AppearanceSlot;
 import world.entity.player.combat.AttackBonusModifier;
 import world.entity.player.combat.AttackStyle;
 import world.entity.player.combat.CombatStyle;
 import world.entity.player.containers.Bank;
 import world.entity.player.containers.Equipment;
 import world.entity.player.containers.Inventory;
-import world.entity.player.skill.Skills;
 import world.entity.player.update.PlayerUpdateBlock;
 import world.entity.player.update.PlayerUpdateFlags;
 import world.event.impl.AbstractEvent;
@@ -53,7 +54,7 @@ public class Player extends Entity {
     /**
      * The players skills
      */
-    private final Skills skills = new Skills(this);
+    private final AppearanceSlot.Skills skills = new AppearanceSlot.Skills(this);
     /*
             The players appearence.
          */
@@ -229,7 +230,7 @@ public class Player extends Entity {
      *
      * @return the skills
      */
-    public Skills getSkills() {
+    public AppearanceSlot.Skills getSkills() {
         return skills;
     }
 
