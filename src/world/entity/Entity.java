@@ -1,5 +1,6 @@
 package world.entity;
 
+import util.integrity.Preconditions;
 import world.World;
 import world.WorldConfig;
 import world.WorldManager;
@@ -14,7 +15,7 @@ public abstract class Entity {
     /**
      * The entities position
      */
-    protected final Position position = new Position(WorldConfig.PLAYER_START_X, WorldConfig.PLAYER_START_Y, WorldConfig.PLAYER_START_Z);
+    protected final Position position;
     /**
      * The Movement.
      */
@@ -22,17 +23,27 @@ public abstract class Entity {
     /**
      * The entities slot id
      */
-    protected int slotId;
+    protected int slotId = -1;
     /**
      * The world the player currently belongs to
      */
-    protected int worldId;
+    protected int worldId = -1;
     /**
      * The weight of this player
      **/
     protected int weight;
 
     private Position lastRegionPosition = null;
+
+
+    public Entity(int worldId, Position position){
+        Preconditions.notNull(position);
+        Preconditions.greaterThanOrEqualTo(worldId,0);
+        Preconditions.notNull(WorldManager.getWorld(worldId));
+        this.worldId = worldId;
+        this.position = position;
+    }
+
 
 
     private final CombatHandler combatHandler = new CombatHandler(this);

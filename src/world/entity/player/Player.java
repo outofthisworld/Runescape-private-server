@@ -11,6 +11,7 @@ import net.packets.outgoing.OutgoingPacket;
 import sun.plugin.dom.exception.InvalidStateException;
 import util.integrity.Preconditions;
 import util.strings.FormatStrings;
+import world.WorldConfig;
 import world.entity.Entity;
 import world.area.Position;
 import world.entity.combat.AttackBonusModifier;
@@ -125,17 +126,23 @@ public class Player extends Entity {
      *
      * @param c the c
      */
-    public Player() {
+    public Player(String username,String password,Client c, int worldId) {
+        super(worldId, new Position(WorldConfig.PLAYER_START_X,WorldConfig.PLAYER_START_Y,WorldConfig.PLAYER_START_Z));
+        this.username = username;
+        this.password = password;
         /*
             Set this players client
          */
         this.c = c;
         /*
+            Set this players client
+         */
+        c.setPlayer(this);
+        /*
             Register this player with the world event bus
         */
         getWorld().getEventBus().register(this);
     }
-
     /**
      * Async player store async player store.
      *
@@ -424,6 +431,13 @@ public class Player extends Entity {
         this.lastRegionPosition = lastRegionPosition;
     }
 
+    /**
+     * Teleport.
+     *
+     * @param x the x
+     * @param y the y
+     * @param z the z
+     */
     public void teleport(int x, int y, int z) {
         setTeleporting(true);
         //Update x,y,z

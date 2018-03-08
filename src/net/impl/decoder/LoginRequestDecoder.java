@@ -34,6 +34,6 @@ public class LoginRequestDecoder implements ProtocolDecoder {
                 .writeByte(0)// login response - 0 means exchange session key to establish encryption
                 .writeBigQWORD(c.getServerSessionKey()));// send the net.Reactor part of the session Id used (Client+net.Reactor part together are used as cryption key
 
-        c.setProtocolDecoder(new LoginSessionDecoder());
+        c.setProtocolDecoder(Decoders.LOGIN_SESSION_DECODER);
     }
 }

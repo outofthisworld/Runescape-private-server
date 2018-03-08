@@ -85,6 +85,10 @@ public class PlayerCommandPacket extends IncomingPacket {
                 c.getOutgoingPacketBuilder()
                         .sendMessage(String.valueOf(c.getPlayer().getWorld().getTotalPlayers()));
                 break;
+            case "npcs":
+                c.getOutgoingPacketBuilder()
+                        .sendMessage(String.valueOf(c.getPlayer().getWorld().getTotalNpcs()));
+                break;
             case "tele":
                 int x = scanner.nextInt();
                 int y = scanner.nextInt();

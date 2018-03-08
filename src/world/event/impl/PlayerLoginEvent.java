@@ -1,6 +1,7 @@
 package world.event.impl;
 
 import net.impl.decoder.LoginSessionDecoder;
+import net.impl.session.Client;
 import world.entity.player.Player;
 
 /**
@@ -8,24 +9,27 @@ import world.entity.player.Player;
  */
 public class PlayerLoginEvent extends AbstractEvent {
     private final LoginSessionDecoder decoder;
-    private final Player player;
     private final String username;
     private final String password;
+    private final Client c;
 
 
     /**
-     * Instantiates a new Player login event.
      *
-     * @param p        the p
-     * @param username the username
-     * @param password the password
-     * @param decoder  the decoder
+     * @param c
+     * @param username
+     * @param password
+     * @param decoder
      */
-    public PlayerLoginEvent(Player p, String username, String password, LoginSessionDecoder decoder) {
-        player = p;
+    public PlayerLoginEvent(Client c,String username, String password,LoginSessionDecoder decoder) {
         this.decoder = decoder;
         this.username = username;
         this.password = password;
+        this.c = c;
+    }
+
+    public Client getClient(){
+        return c;
     }
 
     /**
@@ -55,14 +59,6 @@ public class PlayerLoginEvent extends AbstractEvent {
         return password;
     }
 
-    /**
-     * Gets player.
-     *
-     * @return the player
-     */
-    public Player getPlayer() {
-        return player;
-    }
 
     @Override
     public LoginSessionDecoder getSender() {

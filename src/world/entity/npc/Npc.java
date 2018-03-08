@@ -1,5 +1,6 @@
 package world.entity.npc;
 
+import util.integrity.Preconditions;
 import util.random.Chance;
 import util.random.RandomUtils;
 import world.definitions.DefinitionLoader;
@@ -45,16 +46,21 @@ public class Npc extends Entity {
     private Set<Player> localPlayers = new HashSet<>();
 
     public Npc(int npcId, int slotId, int worldId, Position position) {
-        this(npcId, slotId, worldId, position.getVector());
+        this(npcId, slotId, worldId, position==null?null:position.getVector());
     }
 
     public Npc(int npcId, int slotId, int worldId, Vector position) {
+        super(worldId,position == null?null:new Position(position.copy()));
+        Preconditions.greaterThanOrEqualTo(0,npcId);
+        Preconditions.greaterThanOrEqualTo(0,slotId);
         this.id = npcId;
         this.weight = 0;
         this.slotId = slotId;
-        this.worldId = worldId;
-        this.position.setVector(position.copy());
         this.hitpoints = getNpcDefinition().getHitpoints();
+    }
+
+    public Npc(int npcId,int worldId, Vector position) {
+        this(npcId,-1,worldId,position);
     }
 
     public Npc(int npcId, int slotId, int worldId, int x, int y, int z) {

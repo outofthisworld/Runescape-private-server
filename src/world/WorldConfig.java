@@ -8,6 +8,7 @@ public final class WorldConfig {
     public static final String WEBSITE_URL = "http://www.TriScape.org";
     public static final int WORLD_TICK_RATE_MS = 600;
     public static final int MAX_PLAYERS_IN_WORLD = 20000;
+    public static final int MAX_NPCS_IN_WORLD = 20000;
 
     /**
      * Virtual world settings.

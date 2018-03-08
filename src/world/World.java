@@ -1,15 +1,16 @@
 package world;
 
-import net.impl.decoder.GamePacketDecoder;
+import net.impl.decoder.Decoders;
 import net.impl.decoder.LoginProtocolConstants;
+import net.impl.decoder.LoginSessionDecoder;
 import util.integrity.Preconditions;
 import util.time.Stopwatch;
 import world.definitions.DefinitionLoader;
 import world.definitions.npc.NpcSpawnDefinition;
+import world.entity.Entity;
 import world.entity.npc.Npc;
 import world.entity.player.Player;
 import world.entity.player.update.PlayerUpdateBlock;
-import world.region.RegionDivision;
 import world.entity.update.PlayerUpdateBlockCache;
 import world.event.Event;
 import world.event.EventBus;
@@ -17,14 +18,17 @@ import world.event.WorldEventBus;
 import world.event.impl.ClientDisconnectEvent;
 import world.event.impl.PlayerLoginEvent;
 import world.event.impl.RegionUpdateEvent;
+import world.region.RegionDivision;
 import world.storage.SimpleCache;
 import world.task.DefaultThreadFactory;
 import world.task.Task;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.function.Predicate;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -36,22 +40,10 @@ public class World {
      */
     private final ScheduledExecutorService worldExecutorService = Executors.newSingleThreadScheduledExecutor(new DefaultThreadFactory(10));
     /**
-     * The set of free slots, appended to when a player leaves the world.
-     */
-    private final HashSet<Integer> freePlayerSlots = new HashSet<>();
-    /**
      * The player update block cache. Used to cache player update blocks
      * to avoid reconstructing the block multiple times for different players.
      */
     private final SimpleCache<String, PlayerUpdateBlock> playerUpdateBlockCache = new PlayerUpdateBlockCache();
-    /**
-     * All players in the world.
-     */
-    private final HashMap<Integer, Player> players = new HashMap(WorldConfig.MAX_PLAYERS_IN_WORLD);
-    /**
-     * All npcs in the world.
-     */
-    private final HashMap<Integer, Npc> npcs = new HashMap();
     /**
      * Players divided by region.
      */
@@ -60,7 +52,6 @@ public class World {
      * Npcs divided by region.
      */
     private final RegionDivision<Npc> npcRegionDivision = new RegionDivision<>();
-
     /**
      * Tasks queued to execute on the world thread.
      */
@@ -91,14 +82,17 @@ public class World {
      */
     private final int worldId;
     /**
+     * The players in this world.
+     */
+    private EntityContainer<Player> playersInWorld = new EntityContainer<>(WorldConfig.MAX_PLAYERS_IN_WORLD);
+    /**
+     * The npcs in this world
+     */
+    private EntityContainer<Npc> npcsInWorld = new EntityContainer<>(WorldConfig.MAX_NPCS_IN_WORLD);
+    /**
      * The worlds execution task
      */
     private ScheduledFuture<?> worldExecutionTask;
-    /**
-     * The players count (not that this is not the direct players count and should never be
-     * returned directly. See @method getPlayersCount();
-     */
-    private int playersCount = 0;
 
 
     /**
@@ -112,11 +106,10 @@ public class World {
     }
 
     private void loadNpcs() {
-        Map<Integer,NpcSpawnDefinition> m = DefinitionLoader.getDefinitionMap(DefinitionLoader.NPC_SPAWNS);
+        Map<Integer, NpcSpawnDefinition> m = DefinitionLoader.getDefinitionMap(DefinitionLoader.NPC_SPAWNS);
         int[] count = {0};
         m.forEach((npcId, spawnDef) -> {
-            npcs.put(count[0], new Npc(npcId, count[0], worldId, spawnDef.getPosition()));
-            count[0]++;
+            npcsInWorld.add(new Npc(npcId, worldId, spawnDef.getPosition()));
         });
     }
 
@@ -166,65 +159,6 @@ public class World {
         worldTasks.clear();
     }
 
-    /**
-     * Gets slot.
-     *
-     * @return the slot
-     */
-    public int getSlot() {
-
-        if (!(playersCount < WorldConfig.MAX_PLAYERS_IN_WORLD)) {
-            return -1;
-        }
-
-        Optional<Integer> freeSlot = freePlayerSlots.stream().findFirst();
-        int playerIndex;
-        if (freeSlot.isPresent()) {
-            playerIndex = freeSlot.get();
-            freePlayerSlots.remove(playerIndex);
-        } else {
-            playerIndex = playersCount;
-            playersCount++;
-        }
-
-        return playerIndex;
-    }
-
-    /**
-     * Is slot empty boolean.
-     *
-     * @param slot the slot
-     * @return the boolean
-     */
-    public boolean isSlotEmpty(int slot) {
-        if (slot < 0 || slot >= WorldConfig.MAX_PLAYERS_IN_WORLD) {
-            return true;
-        }
-        return !players.containsKey(slot);
-    }
-
-    /**
-     * Add npc to world.
-     */
-    public void addNpcToWorld()
-
-    /**
-     * Add.
-     *
-     * @param slot the slot
-     * @param p    the p
-     */
-    public void addPlayerToWorld(int slot, Player p) {
-        Preconditions.notNull(p);
-        Preconditions.inRangeClosed(slot, 0, WorldConfig.MAX_PLAYERS_IN_WORLD);
-
-        if (players.containsKey(slot)) {
-            throw new IllegalArgumentException("Player slot was not null");
-        }
-
-        getPlayerRegionDivision().updateEntityRegion(p);
-        players.put(slot, p);
-    }
 
     /**
      * Gets player region division.
@@ -244,39 +178,91 @@ public class World {
         return npcRegionDivision;
     }
 
+
     /**
-     * Add player to world.
-     *
-     * @param p the p
+     * @param entity
+     * @param container
+     * @param <T>
+     * @return
      */
-    public void addPlayerToWorld(Player p) {
-        addPlayerToWorld(p.getSlotId(), p);
+    private <T extends Entity> int addEntityToWorld(T entity, EntityContainer<T> container) {
+        if (entity.getSlotId() != -1) {
+            throw new IllegalStateException("Player slot was not -1 when adding to world.");
+        }
+        int slot = container.add(entity);
+        entity.setWorldId(this.worldId);
+        return slot;
     }
 
     /**
-     * Remove player from world.
+     * @param entity
+     * @param container
+     * @param regionDivision
+     * @param <T>
+     * @return
+     */
+    private <T extends Entity> boolean removeEntityFromWorld(T entity, EntityContainer<T> container, RegionDivision<T> regionDivision) {
+        Preconditions.notNull(entity, container, regionDivision);
+        if (!container.remove(entity)) {
+            return false;
+        }
+
+
+        regionDivision.removeEntityFromRegion(entity);
+        return true;
+    }
+
+    /**
+     * Add player to world int.
+     *
+     * @param p the p
+     * @return the int
+     */
+    public int addPlayerToWorld(Player p) {
+        return addEntityToWorld(p, playersInWorld);
+    }
+
+    /**
+     * Add npc to world int.
+     *
+     * @param n the n
+     * @return the int
+     */
+    public int addNpcToWorld(Npc n) {
+        return addEntityToWorld(n, npcsInWorld);
+    }
+
+
+    /**
+     * Remove npc from world boolean.
+     *
+     * @param npc the npc
+     * @return the boolean
+     */
+    public boolean removeNpcFromWorld(Npc npc) {
+        Preconditions.notNull(npc);
+        return removeEntityFromWorld(npc, npcsInWorld, npcRegionDivision);
+    }
+
+    /**
+     * Remove npc from world boolean.
      *
      * @param slot the slot
+     * @return the boolean
      */
-    public void removePlayerFromWorld(int slot) {
-        Preconditions.inRangeClosed(slot, 0, WorldConfig.MAX_PLAYERS_IN_WORLD);
+    public boolean removeNpcFromWorld(int slot) {
+        if (!npcsInWorld.contains(slot)) return false;
+        return removeNpcFromWorld(npcsInWorld.get(slot));
+    }
 
-        if (isSlotEmpty(slot)) {
-            return;
-        }
-
-        Player p = players.get(slot);
-
-        if (p == null) {
-            System.out.println("Null playeer when removing");
-            throw new IllegalStateException("null player in players list");
-        }
-
-
-        getPlayerRegionDivision().removeEntityFromRegion(p);
-        players.remove(slot);
-        freePlayerSlots.add(slot);
-
+    /**
+     * Remove player from world boolean.
+     *
+     * @param p the p
+     * @return the boolean
+     */
+    public boolean removePlayerFromWorld(Player p) {
+        removeEntityFromWorld(p, playersInWorld, playerRegionDivision);
         /*Player.asyncPlayerStore().store(p.getUsername(), p).whenCompleteAsync((aBoolean, throwable) -> {
             if (!aBoolean || throwable != null) {
                 throwable.printStackTrace();
@@ -287,62 +273,95 @@ public class World {
             //players.put()
             freePlayerSlots.add(slot);
         }, worldExecutorService);*/
+        return true;
     }
 
     /**
-     * Remove player from world.
+     * Add entity to world int.
      *
-     * @param p the p
+     * @param e the e
+     * @return the int
      */
-    public void removePlayerFromWorld(Player p) {
-        Preconditions.notNull(p);
-        removePlayerFromWorld(p.getSlotId());
+    public int addEntityToWorld(Entity e) {
+        Preconditions.notNull(e);
+        if (e.isPlayer()) {
+            return addPlayerToWorld((Player) e);
+        } else {
+            return addNpcToWorld((Npc) e);
+        }
     }
+
+    /**
+     * Remove entity from world boolean.
+     *
+     * @param e the e
+     * @return the boolean
+     */
+    public boolean removeEntityFromWorld(Entity e) {
+        Preconditions.notNull(e);
+        if (e.isPlayer()) {
+            return removePlayerFromWorld((Player) e);
+        } else {
+            return removeNpcFromWorld((Npc) e);
+        }
+    }
+
+    /**
+     * Remove player from world boolean.
+     *
+     * @param slot the slot
+     * @return the boolean
+     */
+    public boolean removePlayerFromWorld(int slot) {
+        if (!playersInWorld.contains(slot)) {
+            return false;
+        }
+
+        Player p = playersInWorld.get(slot);
+        return removePlayerFromWorld(p);
+    }
+
 
     @Event()
     private void playerLoginEvent(PlayerLoginEvent lEvent) {
-        logger.log(Level.INFO, "NEW PLAYER LOG IN EVENT FIRING");
 
-        if (lEvent.getPlayer() == null) {
+        if (lEvent.getDecoder() == null || lEvent.getClient() == null) {
             return;
         }
 
-        int loginSlot = getSlot();
-        logger.log(Level.INFO, "Found slot for player " + loginSlot);
+        LoginSessionDecoder lDecoder = lEvent.getSender();
+        Player loginPlayer = new Player(lEvent.getUsername(), lEvent.getPassword(), lEvent.getClient(), worldId);
 
-        if (loginSlot == -1) {
-            //world full 7
-            logger.log(Level.INFO, "Sending world full response");
-            lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.WORLD_FULL, 0);
+        if (getPlayerByName(loginPlayer.getUsername()).isPresent()) {
+            lDecoder.sendResponse(lEvent.getClient(), LoginProtocolConstants.ALREADY_LOGGED_IN, 0);
             return;
         }
 
-        if (getPlayerByName(lEvent.getPlayer().getUsername()).isPresent()) {
-            logger.log(Level.INFO, "Sending player logged in response");
-            //already logged in 5
-            lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.ALREADY_LOGGED_IN, 0);
+        if (playersInWorld.getRemaining() <= 0) {
+            lDecoder.sendResponse(lEvent.getClient(), LoginProtocolConstants.WORLD_FULL, 0);
             return;
         }
 
-        lEvent.getPlayer().load().thenAcceptAsync(player -> {
-            Player deserialized;
+        loginPlayer.load().thenAcceptAsync(player -> {
+            Player loaded;
+
             boolean useDb = false;
             if (useDb && player.isPresent()) {
-                deserialized = player.get();
-                if (!deserialized.getPassword().equals(lEvent.getPassword())) {
-                    lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.INVALID_USERNAME_OR_PASSWORD, 0);
+                loaded = player.get();
+                if (!loaded.getPassword().equals(lEvent.getPassword())) {
+                    lDecoder.sendResponse(lEvent.getClient(), LoginProtocolConstants.INVALID_USERNAME_OR_PASSWORD, 0);
                     return;
                 }
 
-                if (deserialized.isDisabled()) {
-                    lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.ACCOUNT_DISABLED, 0);
+                if (loaded.isDisabled()) {
+                    lDecoder.sendResponse(lEvent.getClient(), LoginProtocolConstants.ACCOUNT_DISABLED, 0);
                     return;
                 }
             } else {
-                deserialized = lEvent.getPlayer();
-                deserialized.setPassword(lEvent.getPassword());
+                loaded = loginPlayer;
+                util.integrity.Debug.writeLine("Creating new player" + loaded.getUsername());
                 if (useDb) {
-                    Player.asyncPlayerStore().store(deserialized.getUsername(), deserialized).whenComplete((aBoolean, throwable) -> {
+                    Player.asyncPlayerStore().store(loaded.getUsername(), loaded).whenComplete((aBoolean, throwable) -> {
                         if (throwable != null) {
                             throwable.printStackTrace();
                         }
@@ -350,18 +369,20 @@ public class World {
                 }
             }
 
-            deserialized.setSlotId(loginSlot);
-            deserialized.setWorldId(worldId);
-            deserialized.getClient().setProtocolDecoder(new GamePacketDecoder());
-            lEvent.getSender().sendResponse(lEvent.getPlayer().getClient(), LoginProtocolConstants.LOGIN_SUCCESS, deserialized.getRights());
-            deserialized.init();
-            addPlayerToWorld(loginSlot, deserialized);
-        }, worldExecutorService)
-                .whenComplete((aVoid, throwable) -> {
-                    if (throwable != null) {
-                        throwable.printStackTrace();
-                    }
-                });
+            int slot = addPlayerToWorld(loaded);
+            if (slot == -1) {
+                lEvent.getSender().sendResponse(lEvent.getClient(), LoginProtocolConstants.WORLD_FULL, 0);
+                return;
+            } else {
+                loaded.getClient().setProtocolDecoder(Decoders.GAME_PACKET_DECODER);
+                lEvent.getSender().sendResponse(lEvent.getClient(), LoginProtocolConstants.LOGIN_SUCCESS, loaded.getRights());
+                loaded.init();
+            }
+        }, worldExecutorService).whenComplete((aVoid, throwable) -> {
+            if (throwable != null) {
+                throwable.printStackTrace();
+            }
+        });
     }
 
     @Event
@@ -382,7 +403,7 @@ public class World {
      * @return the player by name
      */
     public Optional<Player> getPlayerByName(String name) {
-        return players.values().stream().filter((p) -> p.getUsername().equals(name)).findFirst();
+        return playersInWorld.getItemsImmutable().stream().filter((p) -> p.getUsername().equals(name)).findFirst();
     }
 
     /**
@@ -393,7 +414,7 @@ public class World {
      */
     public Optional<Player> getPlayerByName(Predicate<Player> predicate) {
         Preconditions.notNull(predicate);
-        return players.values().stream().filter(predicate).findFirst();
+        return playersInWorld.getItemsImmutable().stream().filter(predicate).findFirst();
     }
 
 
@@ -404,25 +425,7 @@ public class World {
      * @return the player
      */
     public Player getPlayer(int index) {
-        return players.get(index);
-    }
-
-    /**
-     * Gets total players.
-     *
-     * @return the total players
-     */
-    public int getTotalPlayers() {
-        return playersCount - freePlayerSlots.size();
-    }
-
-    /**
-     * Gets free slots.
-     *
-     * @return the free slots
-     */
-    public int getFreeSlots() {
-        return players.size() - playersCount + freePlayerSlots.size();
+        return playersInWorld.get(index);
     }
 
     /**
@@ -433,7 +436,7 @@ public class World {
 
         doWorldTasks();
 
-        for (Player player : players.values()) {
+        for (Player player : playersInWorld.getItemsImmutable()) {
             if (player.getClient().isDisconnected()) {
                 removePlayerFromWorld(player);
                 continue;
@@ -467,12 +470,20 @@ public class World {
         // logger.log(Level.INFO, "Completed world poll in " + loopTimer.getTimePassed(TimeUnit.MILLISECONDS) + "ms");
     }
 
+    public int getTotalPlayers() {
+        return playersInWorld.size();
+    }
+
+    public int getTotalNpcs() {
+        return npcsInWorld.size();
+    }
+
     @Event
     private void handleRegionUpdate(RegionUpdateEvent regionUpdate) {
         Objects.requireNonNull(regionUpdate);
         Player p = regionUpdate.getPlayer();
         Objects.requireNonNull(p);
-       // updatePlayerRegion(p);
+        // updatePlayerRegion(p);
         p.getClient().getOutgoingPacketBuilder().updateRegion();
         p.setRegionChanged(true);
     }

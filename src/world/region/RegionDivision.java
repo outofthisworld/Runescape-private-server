@@ -89,6 +89,7 @@ public class RegionDivision<T extends Entity> {
         Preconditions.notNull(entitiesInRegion);
         Preconditions.areEqual(entitiesInRegion.contains(e),true);
         entitiesInRegion.remove(e);
+        e.setLastRegionPosition(null);
     }
 
     /**

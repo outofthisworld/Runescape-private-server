@@ -2,6 +2,7 @@ package net.impl.session;
 
 import net.buffers.InputBuffer;
 import net.buffers.OutputBuffer;
+import net.impl.decoder.Decoders;
 import net.impl.decoder.LoginRequestDecoder;
 import net.impl.decoder.ProtocolDecoder;
 import net.impl.enc.ISAACCipher;
@@ -54,7 +55,7 @@ public class Client implements NetworkEventExecutor {
             write(buf, false);
         }
     };
-    private ProtocolDecoder protocolDecoder = new LoginRequestDecoder();
+    private ProtocolDecoder protocolDecoder = Decoders.LOGIN_REQUEST_DECODER;
     private Future<?> outgoingBufferFuture;
 
 

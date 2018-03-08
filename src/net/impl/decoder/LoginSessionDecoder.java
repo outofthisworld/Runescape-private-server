@@ -7,6 +7,7 @@ import net.impl.enc.ISAACCipher;
 import net.impl.session.Client;
 import util.integrity.Debug;
 import util.strings.RsStringUtils;
+import world.WorldManager;
 import world.entity.player.Player;
 import world.event.impl.PlayerLoginEvent;
 
@@ -17,8 +18,6 @@ import java.util.logging.Logger;
 
 public final class LoginSessionDecoder implements ProtocolDecoder {
     private static final Logger logger = Logger.getLogger(LoginSessionDecoder.class.getName());
-    private static final Random random = new Random(System.nanoTime());
-    int count = 0;
 
     @Override
     public void decode(Client c) {
@@ -153,11 +152,7 @@ public final class LoginSessionDecoder implements ProtocolDecoder {
         c.setInCipher(decryptor);
         c.setOutCipher(encryptor);
 
-        Player p = new Player();
-        p.setUsername(username);
-        p.setClient(c);
-
-        p.send(new PlayerLoginEvent(p, username, password, this));
+        WorldManager.getWorld(0).getEventBus().fire(new PlayerLoginEvent(c, username, password, this));
     }
 
     public void sendResponse(Client c, int responseCode, int playerRights) {
