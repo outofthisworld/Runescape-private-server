@@ -1,8 +1,8 @@
 package world.definitions.npc;
 
 import world.definitions.IDefinition;
-import world.entity.area.Area;
-import world.entity.area.Vector;
+import world.area.Area;
+import world.area.Vector;
 
 
 /**

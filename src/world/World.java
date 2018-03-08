@@ -6,11 +6,10 @@ import util.integrity.Preconditions;
 import util.time.Stopwatch;
 import world.definitions.DefinitionLoader;
 import world.definitions.npc.NpcSpawnDefinition;
-import world.entity.area.Position;
 import world.entity.npc.Npc;
 import world.entity.player.Player;
 import world.entity.player.update.PlayerUpdateBlock;
-import world.entity.region.RegionDivision;
+import world.region.RegionDivision;
 import world.entity.update.PlayerUpdateBlockCache;
 import world.event.Event;
 import world.event.EventBus;
@@ -24,11 +23,9 @@ import world.task.Task;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * The type World.

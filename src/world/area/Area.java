@@ -1,4 +1,4 @@
-package world.entity.area;
+package world.area;
 
 import util.random.RandomUtils;
 

@@ -4,7 +4,7 @@ import world.World;
 import world.WorldConfig;
 import world.WorldManager;
 import world.entity.combat.CombatHandler;
-import world.entity.area.Position;
+import world.area.Position;
 import world.entity.movement.Movement;
 
 /**

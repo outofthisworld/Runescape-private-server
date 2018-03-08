@@ -1,8 +1,8 @@
-package world.entity.region;
+package world.region;
 
 import util.integrity.Preconditions;
 import world.entity.Entity;
-import world.entity.area.Position;
+import world.area.Position;
 
 import java.util.*;
 import java.util.function.Consumer;

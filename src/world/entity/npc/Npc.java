@@ -2,15 +2,14 @@ package world.entity.npc;
 
 import util.random.Chance;
 import util.random.RandomUtils;
-import world.entity.combat.CombatHandler;
 import world.definitions.DefinitionLoader;
 import world.definitions.npc.NpcDefinition;
 import world.definitions.npc.NpcDropDefinition;
 import world.definitions.npc.NpcSpawnDefinition;
 import world.entity.Entity;
-import world.entity.area.Area;
-import world.entity.area.Position;
-import world.entity.area.Vector;
+import world.area.Area;
+import world.area.Position;
+import world.area.Vector;
 import world.entity.npc.update.NpcUpdateBlock;
 import world.entity.npc.update.NpcUpdateFlags;
 import world.entity.player.Player;

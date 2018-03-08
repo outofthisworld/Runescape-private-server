@@ -2,7 +2,7 @@ package world.entity.movement;
 
 import world.WorldConfig;
 import world.entity.Entity;
-import world.entity.area.Position;
+import world.area.Position;
 import world.entity.npc.Npc;
 import world.entity.player.Player;
 import world.entity.player.Skill;

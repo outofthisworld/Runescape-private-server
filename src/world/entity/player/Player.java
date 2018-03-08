@@ -12,7 +12,7 @@ import sun.plugin.dom.exception.InvalidStateException;
 import util.integrity.Preconditions;
 import util.strings.FormatStrings;
 import world.entity.Entity;
-import world.entity.area.Position;
+import world.area.Position;
 import world.entity.combat.AttackBonusModifier;
 import world.entity.combat.AttackStyle;
 import world.entity.combat.CombatStyle;
