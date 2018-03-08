@@ -1,8 +1,9 @@
 package world.definitions.item;
 
 
-import javafx.animation.Animation;
+
 import world.definitions.IDefinition;
+import world.entity.player.WeaponAnimation;
 
 
 /**
@@ -10,7 +11,7 @@ import world.definitions.IDefinition;
  */
 public class WeaponAnimationDefinition implements IDefinition {
     private int id;
-    private Animation anim;
+    private WeaponAnimation animation;
 
 
     @Override
@@ -23,7 +24,7 @@ public class WeaponAnimationDefinition implements IDefinition {
      *
      * @return the weapon anim
      */
-    public Animation getWeaponAnim() {
-        return anim;
+    public WeaponAnimation getWeaponAnim() {
+        return animation;
     }
 }

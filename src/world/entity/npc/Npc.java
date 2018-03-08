@@ -158,15 +158,18 @@ public class Npc extends Entity {
         return updateFlags;
     }
 
+    public Set<Player> getLocalPlayers() {
+        return localPlayers;
+    }
+
     /*
-            Any updates for this entity.
-        */
+                Any updates for this entity.
+            */
     public void poll() {
         handleRespawn();
         doMovement();
         handleAggression();
         handleRetreat();
-
 
 
         //Npc updating

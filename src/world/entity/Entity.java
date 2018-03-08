@@ -32,8 +32,18 @@ public abstract class Entity {
      **/
     protected int weight;
 
+    private Position lastRegionPosition = null;
+
+
     private final CombatHandler combatHandler = new CombatHandler(this);
 
+    public Position getLastRegionPosition() {
+        return lastRegionPosition;
+    }
+
+    public void setLastRegionPosition(Position lastRegionPosition) {
+        this.lastRegionPosition = lastRegionPosition;
+    }
 
     public CombatHandler getCombatHandler(){
         return combatHandler;

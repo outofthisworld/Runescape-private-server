@@ -5,7 +5,7 @@ import net.impl.session.Client;
 import util.integrity.Debug;
 import world.definitions.DefinitionLoader;
 import world.definitions.item.WeaponInterfaceDefinition;
-import world.entity.player.combat.CombatStyle;
+import world.entity.combat.CombatStyle;
 import world.entity.player.EquipmentSlot;
 import world.interfaces.WeaponInterfaceType;
 import world.item.Item;

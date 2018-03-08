@@ -3,6 +3,7 @@ package world.entity.movement;
 import world.WorldConfig;
 import world.entity.Entity;
 import world.entity.area.Position;
+import world.entity.npc.Npc;
 import world.entity.player.Player;
 import world.entity.player.Skill;
 
@@ -76,7 +77,7 @@ public class Movement {
 
         if (e.isPlayer()) {
             Player player = (Player) e;
-
+            e.getWorld().getPlayerRegionDivision().updateEntityRegion(player);
             int deltaX = player.getPosition().getMapOffsetX();
 
             int deltaY = player.getPosition().getMapOffsetY();
@@ -95,6 +96,8 @@ public class Movement {
 
             //Send movement event
             /// player.send(new PlayerMoveEvent(player, this));
+        }else{
+            e.getWorld().getNpcRegionDivision().updateEntityRegion((Npc)e);
         }
     }
 
@@ -181,9 +184,6 @@ public class Movement {
     }
 
     public void stepTo(int x, int y) {
-        System.out.println("target x : " + x);
-        System.out.println("target y : " + y);
-
         Position entityPosition = movementQueue.peekLast();
 
         if (entityPosition == null) {

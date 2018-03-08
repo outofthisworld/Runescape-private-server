@@ -10,6 +10,7 @@ import world.definitions.item.WeaponInterfaceDefinition;
 import world.entity.player.Player;
 import world.entity.player.EquipmentSlot;
 import world.entity.player.Skill;
+import world.entity.player.update.PlayerUpdateMask;
 import world.interfaces.SidebarInterface;
 import world.interfaces.WeaponInterfaceType;
 import world.item.Item;
@@ -177,6 +178,7 @@ public class Equipment extends AbstractGameContainer<Item> {
             Debug.writeLine("Did not find item requirement for item " + inventoryItem.getItemDefinition().getName() + "(" + inventoryItem.getId() + ")");
         }
 
+        getOwner().getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
 
         if (equipped == null) {
             getOwner().getInventory().removeRef(inventoryItem);

@@ -5,6 +5,7 @@ import net.buffers.Order;
 import net.buffers.OutputBuffer;
 import util.integrity.Preconditions;
 import world.entity.npc.Npc;
+import world.entity.npc.update.impl.*;
 import world.entity.player.Player;
 import world.entity.player.update.PlayerUpdateBlock;
 import world.entity.player.update.PlayerUpdateMask;
@@ -24,9 +25,16 @@ public class NpcUpdateBlock extends UpdateBlock<IFlag<NpcUpdateMask>> {
         this.npc = npc;
     }
 
-    private static Map<NpcUpdateMask,BiConsumer<Npc, OutputBuffer>> flagMap = new HashMap<NpcUpdateMask,BiConsumer<Npc, OutputBuffer>>(){
+    private final static Map<NpcUpdateMask,BiConsumer<Npc, OutputBuffer>> flagMap = new HashMap<NpcUpdateMask,BiConsumer<Npc, OutputBuffer>>(){
         {
-
+            put(NpcUpdateMask.ENTITY_INTERACTION,new EntityInteractionUpdateBlock());
+            put(NpcUpdateMask.ANIMATION,new AnimationUpdateBlock());
+            put(NpcUpdateMask.GRAPHICS,new GraphicsUpdateBlock());
+            put(NpcUpdateMask.SINGLE_HIT,new SingleHitUpdateBlock());
+            put(NpcUpdateMask.DOUBLE_HIT, new DoubleHitUpdateBlock());
+            put(NpcUpdateMask.FACE_COORDINATE,new FaceCoordinateUpdateBlock());
+            put(NpcUpdateMask.TRANSFORM,new TransformUpdateBlock());
+            put(NpcUpdateMask.FORCED_CHAT,new ForcedChatUpdateBlock());
         }
     };
 

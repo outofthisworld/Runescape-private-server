@@ -10,6 +10,7 @@ import world.entity.area.Position;
 import world.entity.npc.Npc;
 import world.entity.player.Player;
 import world.entity.player.update.PlayerUpdateBlock;
+import world.entity.region.RegionDivision;
 import world.entity.update.PlayerUpdateBlockCache;
 import world.event.Event;
 import world.event.EventBus;
@@ -24,8 +25,10 @@ import world.task.Task;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * The type World.
@@ -53,10 +56,14 @@ public class World {
      */
     private final HashMap<Integer, Npc> npcs = new HashMap();
     /**
-     * Divides players up by region, to make processing of certain things easier. E.G
-     * AOE spells.
+     * Players divided by region.
      */
-    private final Map<Position, Set<Player>> playersByRegion = new HashMap<>();
+    private final RegionDivision<Player> playerRegionDivision = new RegionDivision<>();
+    /**
+     * Npcs divided by region.
+     */
+    private final RegionDivision<Npc> npcRegionDivision = new RegionDivision<>();
+
     /**
      * Tasks queued to execute on the world thread.
      */
@@ -200,6 +207,11 @@ public class World {
     }
 
     /**
+     * Add npc to world.
+     */
+    public void addNpcToWorld()
+
+    /**
      * Add.
      *
      * @param slot the slot
@@ -213,91 +225,26 @@ public class World {
             throw new IllegalArgumentException("Player slot was not null");
         }
 
-        addPlayerToRegion(p);
+        getPlayerRegionDivision().updateEntityRegion(p);
         players.put(slot, p);
     }
 
-    private void addPlayerToRegion(Player p) {
-        Preconditions.notNull(p);
-
-        Position currentPosition = p.getPosition();
-        addPlayerToRegion(p, currentPosition.getRegionPosition());
-    }
-
     /**
-     * Gets players by region.
-     * The set returned is unmodifiable.
-     */
-    public Optional<Set<Player>> getPlayersByRegion(Position regionPosition) {
-        Preconditions.notNull(regionPosition);
-        if (!playersByRegion.containsKey(regionPosition)) {
-            return Optional.empty();
-        }
-
-        return Optional.of(Collections.unmodifiableSet(playersByRegion.get(regionPosition)));
-    }
-
-    public Set<Player> getPlayersByQuadRegion(Position regionPosition) {
-        Set<Player> playersInQuadRegion = new HashSet<>();
-
-        Consumer<Set<Player>> addPlayersToQuadRegion = (players) -> playersInQuadRegion.addAll(players);
-
-        getPlayersByRegion(regionPosition).ifPresent(addPlayersToQuadRegion);
-
-        Position rightRegion = regionPosition.copy();
-        rightRegion.getVector().addX(1);
-        getPlayersByRegion(rightRegion).ifPresent(addPlayersToQuadRegion);
-
-        Position leftRegion = regionPosition.copy();
-        leftRegion.getVector().subtractX(1);
-        getPlayersByRegion(leftRegion).ifPresent(addPlayersToQuadRegion);
-
-        Position topRegion = regionPosition.copy();
-        topRegion.getVector().addY(1);
-        getPlayersByRegion(topRegion).ifPresent(addPlayersToQuadRegion);
-
-        Position bottomRegion = regionPosition.copy();
-        topRegion.getVector().subtractY(1);
-        getPlayersByRegion(bottomRegion).ifPresent(addPlayersToQuadRegion);
-
-        return playersInQuadRegion;
-    }
-
-    private void addPlayerToRegion(Player p, Position regionPosition) {
-        Preconditions.notNull(p, regionPosition);
-
-        if (!playersByRegion.containsKey(regionPosition)) {
-            Set<Player> set = new HashSet<>();
-            set.add(p);
-            playersByRegion.put(regionPosition, set);
-        } else {
-            playersByRegion.get(regionPosition).add(p);
-        }
-
-        p.setLastRegionPosition(regionPosition);
-    }
-
-    /**
-     * Update player region.
-     * Should be called any time a players region is updated
-     * which will in turn update the playersByRegion map.
+     * Gets player region division.
      *
-     * @param p the p
+     * @return the player region division
      */
-    public void updatePlayerRegion(Player p) {
-        Preconditions.notNull(p, p.getLastRegionPosition());
+    public RegionDivision<Player> getPlayerRegionDivision() {
+        return playerRegionDivision;
+    }
 
-        Position lastRegionPosition = p.getLastRegionPosition();
-
-        Preconditions.notNull(playersByRegion.get(lastRegionPosition));
-
-        Set<Player> playersInRegion = playersByRegion.get(lastRegionPosition);
-
-        Preconditions.areEqual(playersInRegion.contains(p), true);
-
-        playersInRegion.remove(p);
-
-        addPlayerToRegion(p);
+    /**
+     * Gets npc region division.
+     *
+     * @return the npc region division
+     */
+    public RegionDivision<Npc> getNpcRegionDivision() {
+        return npcRegionDivision;
     }
 
     /**
@@ -328,7 +275,8 @@ public class World {
             throw new IllegalStateException("null player in players list");
         }
 
-        playersByRegion.get(p.getLastRegionPosition()).remove(p);
+
+        getPlayerRegionDivision().removeEntityFromRegion(p);
         players.remove(slot);
         freePlayerSlots.add(slot);
 
@@ -441,6 +389,18 @@ public class World {
     }
 
     /**
+     * Gets player by name.
+     *
+     * @param predicate the predicate
+     * @return the player by name
+     */
+    public Optional<Player> getPlayerByName(Predicate<Player> predicate) {
+        Preconditions.notNull(predicate);
+        return players.values().stream().filter(predicate).findFirst();
+    }
+
+
+    /**
      * Gets player.
      *
      * @param index the index
@@ -489,14 +449,14 @@ public class World {
             player.poll();
         }
 
-        for (Npc npc : npcs.values()) {
+        /*for (Npc npc : npcs.values()) {
 
-            /*
+
                 Update movement
                 Send update packet
-            */
-            npc.poll();
-        }
+
+           // npc.poll();
+        }*/
 
         /*
            Clear the player update block cache.
@@ -515,7 +475,7 @@ public class World {
         Objects.requireNonNull(regionUpdate);
         Player p = regionUpdate.getPlayer();
         Objects.requireNonNull(p);
-        updatePlayerRegion(p);
+       // updatePlayerRegion(p);
         p.getClient().getOutgoingPacketBuilder().updateRegion();
         p.setRegionChanged(true);
     }

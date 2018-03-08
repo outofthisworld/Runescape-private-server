@@ -13,12 +13,10 @@ import util.integrity.Preconditions;
 import util.strings.FormatStrings;
 import world.entity.Entity;
 import world.entity.area.Position;
+import world.entity.combat.AttackBonusModifier;
+import world.entity.combat.AttackStyle;
 import world.entity.combat.CombatStyle;
-import world.entity.player.appearance.Appearance;
-import world.entity.player.appearance.AppearanceSlot;
-import world.entity.player.combat.AttackBonusModifier;
-import world.entity.player.combat.AttackStyle;
-import world.entity.player.combat.CombatStyle;
+import world.entity.npc.Npc;
 import world.entity.player.containers.Bank;
 import world.entity.player.containers.Equipment;
 import world.entity.player.containers.Inventory;
@@ -52,6 +50,11 @@ public class Player extends Entity {
      */
     private final HashSet<Player> localPlayers = new LinkedHashSet<>();
     /**
+     * Players local to this player
+     * e.g they fall within 15 x and y in the coordinate space.
+     */
+    private final HashSet<Npc> localNpcs = new LinkedHashSet<>();
+    /**
      * The players skills
      */
     private final AppearanceSlot.Skills skills = new AppearanceSlot.Skills(this);
@@ -79,7 +82,6 @@ public class Player extends Entity {
      * The players update block
      */
     private final PlayerUpdateBlock playerUpdateBlock = new PlayerUpdateBlock(this);
-    private final boolean isInitialized = false;
     /**
      * The client for the player, contains networking stuff.
      */
@@ -389,6 +391,16 @@ public class Player extends Entity {
         return localPlayers;
     }
 
+    /**
+     * Gets local players.
+     *
+     * @return the local players
+     */
+    public Set<Npc> getLocalNpcs() {
+        return localNpcs;
+    }
+
+
     @Override
     public boolean isPlayer() {
         return true;
@@ -489,6 +501,9 @@ public class Player extends Entity {
 
 
         getClient().getOutgoingPacketBuilder().playerUpdate().send();
+
+        //getClient().getOutgoingPacketBuilder().send
+        //getClient().getOutgoingPacketBuilder().npcUpdate().send();
 
         regionChanged = false;
         isTeleporting = false;

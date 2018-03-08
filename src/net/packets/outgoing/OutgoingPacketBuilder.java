@@ -21,6 +21,7 @@ import net.buffers.Order;
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
 import util.integrity.Preconditions;
+import world.entity.npc.Npc;
 import world.entity.player.Player;
 import world.entity.player.update.PlayerUpdateBlock;
 import world.entity.player.update.PlayerUpdateMask;
@@ -462,6 +463,73 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
+    public OutgoingPacketBuilder npcUpdate() {
+        Player player = c.getPlayer();
+
+
+        for (Iterator<Npc> iterator = player.getLocalNpcs().iterator(); iterator
+                .hasNext(); ) {
+
+            Npc other = iterator.next();
+
+
+            if (other.getWorld().getPlayer(other.getSlotId()) != null  &&
+                    player.getPosition().isInViewingDistance(other.getPosition())) {
+                //updatePlayerMovement(other, false);
+                //appendPlayerUpdateBlock(other, update);
+            } else {
+                other.getLocalPlayers().remove(player);
+                iterator.remove();
+                outputBuffer.writeBit(true);
+                outputBuffer.writeBits(3, 2);
+            }
+        }
+
+        //Find players in the surrounding area to this player
+        Set<Npc> npcsInRegion = player.getWorld().getNpcRegionDivision().getEntitiesByQuadRegion(player.getPosition().getRegionPosition());
+
+        Iterator<Npc> it = npcsInRegion.iterator();
+        int playersAdded = 0;
+        for (; it.hasNext(); ) {
+            Npc p = it.next();
+
+
+            if (player.getLocalNpcs().contains(p)) {
+                continue;
+            }
+
+            if (player.getLocalNpcs().size() >= 79
+                    || playersAdded >= 25) {
+                break;
+            }
+
+            if (player.getPosition().isInViewingDistance(p.getPosition())) {
+
+
+                int offsetY = p.getPosition().getVector().getY() - player.getPosition().getVector().getY();
+                int offsetX = p.getPosition().getVector().getX() - player.getPosition().getVector().getX();
+                //System.out.println(offsetX);
+                //System.out.println(offsetY);
+                //Adds a players to the local player list, and in-view of other players.
+                outputBuffer.writeBits(p.getSlotId(), 11)
+                        .writeBit(true)
+                        .writeBit(true)
+                        .writeBits(offsetY, 5)
+                        .writeBits(offsetX, 5);
+
+                player.getLocalNpcs().add(p);
+                p.getLocalPlayers().add(player);
+                //playersAdded++;
+                //p.getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
+                //appendPlayerUpdateBlock(p, update);
+            }
+
+        }
+
+
+        return this;
+    }
+
 
     /**
      * Player update outgoing packet builder.
@@ -506,7 +574,7 @@ public class OutgoingPacketBuilder {
         }
 
         //Find players in the surrounding area to this player
-        Set<Player> playersInRegion = player.getWorld().getPlayersByQuadRegion(player.getPosition().getRegionPosition());
+        Set<Player> playersInRegion = player.getWorld().getPlayerRegionDivision().getEntitiesByQuadRegion(player.getPosition().getRegionPosition());
 
         Iterator<Player> it = playersInRegion.iterator();
         int playersAdded = 0;

@@ -32,7 +32,8 @@ public class CombatHandler {
 
         if(e.isPlayer()){
             AttackType type = CombatAssistant.determinePlayerAttackType((Player) e);
-            attacked = attackHandler.handleAttack(e, entity);
+            //attacked = attackHandlerFactory.apply(type).handleAttack(e, entity);
+
             if(!attacked){
                 this.attackingEntity = null;
                 this.attackHandler = null;
@@ -44,6 +45,7 @@ public class CombatHandler {
 
         return attacked;
     }
+
 
     public boolean isAttacking() {
         return attackingEntity != null;

@@ -4,10 +4,13 @@ import net.buffers.ByteTransformationType;
 import net.buffers.IBufferReserve;
 import net.buffers.OutputBuffer;
 import util.strings.RsStringUtils;
+import world.definitions.DefinitionLoader;
+import world.definitions.item.WeaponAnimationDefinition;
 import world.entity.player.Player;
-import world.entity.player.appearance.Appearance;
-import world.entity.player.appearance.AppearanceSlot;
+import world.entity.player.Appearance;
+import world.entity.player.AppearanceSlot;
 import world.entity.player.EquipmentSlot;
+import world.item.Item;
 
 import java.util.function.BiConsumer;
 
@@ -132,12 +135,20 @@ public class AppearanceUpdateBlock implements BiConsumer<Player, OutputBuffer> {
         /* Player skin color */
         outputBuffer.writeByte(entity.getAppearance().getSkinColor());
 
+        Item weapon = entity.getEquipment().get(EquipmentSlot.WEAPON.getSlotId());
+        WeaponAnimationDefinition def = null;
+
+        if(weapon != null)
+            def =  DefinitionLoader.getDefinition(DefinitionLoader.WEAPON_ANIMATIONS,weapon.getId());
+
+
+
         /* Weapon animation standing (idle animation) */
-        outputBuffer.writeBigWord(0x328);
+        outputBuffer.writeBigWord(def == null?0x328:def.getWeaponAnim().getStanding());
         /* Stand turn anim index (standTurnAnimIndex) */
         outputBuffer.writeBigWord(0x337);
         /* Weapon animation walking (walkAnimIndex) */
-        outputBuffer.writeBigWord(0x333);
+        outputBuffer.writeBigWord(def==null?0x333:def.getWeaponAnim().getWalking());
         /*turn180AnimIndex */
         outputBuffer.writeBigWord(0x334);
         /*turn90CWAnimIndex*/
@@ -145,7 +156,7 @@ public class AppearanceUpdateBlock implements BiConsumer<Player, OutputBuffer> {
         /*turn90CCWAnimIndex*/
         outputBuffer.writeBigWord(0x336);
         /*Weapon animation running (runAnimIndex) */
-        outputBuffer.writeBigWord(0x338);
+        outputBuffer.writeBigWord(def==null?0x338:def.getWeaponAnim().getRunning());
 
         /* Player username encoded as long */
         outputBuffer.writeBigQWORD(RsStringUtils.convertStringToLong(entity.getUsername()));
