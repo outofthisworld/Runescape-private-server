@@ -20,8 +20,10 @@ import net.buffers.IBufferReserve;
 import net.buffers.Order;
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
+import util.integrity.Debug;
 import util.integrity.Preconditions;
 import world.entity.npc.Npc;
+import world.entity.npc.update.NpcUpdateMask;
 import world.entity.player.Player;
 import world.entity.player.update.PlayerUpdateBlock;
 import world.entity.player.update.PlayerUpdateMask;
@@ -452,6 +454,14 @@ public class OutgoingPacketBuilder {
         pUpdateBlock.getBlock().pipeTo(update, false);
     }
 
+    private void appendNpcUpdateBlock(Npc npc,OutputBuffer update,boolean forceUpdate){
+        if(!npc.getUpdateFlags().anySet() && !forceUpdate){
+            return;
+        }
+
+        npc.getUpdateBlock().build(npc.getUpdateFlags()).getBlock().pipeTo(update);
+    }
+
     public OutgoingPacketBuilder updateRegion() {
         createHeader(73);
         /**
@@ -466,19 +476,22 @@ public class OutgoingPacketBuilder {
     public OutgoingPacketBuilder npcUpdate() {
         Player player = c.getPlayer();
 
+        IBufferReserve<OutputBuffer> reserve = createHeader(65, 2);
 
+        outputBuffer.writeBits(player.getLocalNpcs().size(),8);
         for (Iterator<Npc> iterator = player.getLocalNpcs().iterator(); iterator
                 .hasNext(); ) {
 
-            Npc other = iterator.next();
+            Npc npc = iterator.next();
 
 
-            if (other.getWorld().getPlayer(other.getSlotId()) != null  &&
-                    player.getPosition().isInViewingDistance(other.getPosition())) {
+            if (player.getPosition().isInViewingDistance(npc.getPosition())) {
                 //updatePlayerMovement(other, false);
+                updateNpcMovement(npc);
+                appendNpcUpdateBlock(npc,update,false);
                 //appendPlayerUpdateBlock(other, update);
             } else {
-                other.getLocalPlayers().remove(player);
+                npc.getLocalPlayers().remove(player);
                 iterator.remove();
                 outputBuffer.writeBit(true);
                 outputBuffer.writeBits(3, 2);
@@ -486,47 +499,57 @@ public class OutgoingPacketBuilder {
         }
 
         //Find players in the surrounding area to this player
-        Set<Npc> npcsInRegion = player.getWorld().getNpcRegionDivision().getEntitiesByQuadRegion(player.getPosition().getRegionPosition());
-
+        Collection<Npc> npcsInRegion = player.getWorld().getNpcs();
+        Debug.writeLine("Npcs in region : " + npcsInRegion.size());
         Iterator<Npc> it = npcsInRegion.iterator();
-        int playersAdded = 0;
+        int npcsAdded = 0;
         for (; it.hasNext(); ) {
-            Npc p = it.next();
+            Npc npc = it.next();
 
 
-            if (player.getLocalNpcs().contains(p)) {
+            if (player.getLocalNpcs().contains(npc)) {
+                if(!npc.getLocalPlayers().contains(player)){
+                    npc.getLocalPlayers().add(player);
+                }
                 continue;
             }
 
-            if (player.getLocalNpcs().size() >= 79
-                    || playersAdded >= 25) {
+            if (npcsAdded == 15 || player.getLocalNpcs().size() >= 255)
                 break;
-            }
 
-            if (player.getPosition().isInViewingDistance(p.getPosition())) {
+            if (npc.getPosition().isInViewingDistance(player.getPosition())
+                    || player.getPosition().isInViewingDistance(npc.getPosition())) {
+                Debug.writeLine("adding npc");
+
+                int offsetY = npc.getPosition().getVector().getY() - player.getPosition().getVector().getY();
+                int offsetX = npc.getPosition().getVector().getX() - player.getPosition().getVector().getX();
 
 
-                int offsetY = p.getPosition().getVector().getY() - player.getPosition().getVector().getY();
-                int offsetX = p.getPosition().getVector().getX() - player.getPosition().getVector().getX();
-                //System.out.println(offsetX);
-                //System.out.println(offsetY);
-                //Adds a players to the local player list, and in-view of other players.
-                outputBuffer.writeBits(p.getSlotId(), 11)
-                        .writeBit(true)
-                        .writeBit(true)
+                outputBuffer.writeBits(npc.getSlotId(), 14)
                         .writeBits(offsetY, 5)
-                        .writeBits(offsetX, 5);
+                        .writeBits(offsetX, 5)
+                        .writeBit(true)
+                        .writeBits(npc.getId(),16)
+                        .writeBit(true);
 
-                player.getLocalNpcs().add(p);
-                p.getLocalPlayers().add(player);
-                //playersAdded++;
+                player.getLocalNpcs().add(npc);
+                npc.getLocalPlayers().add(player);
+                npcsAdded++;
+               // npc.getUpdateFlags().setFlag(NpcUpdateMask.);
+                appendNpcUpdateBlock(npc,update,true);
                 //p.getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
                 //appendPlayerUpdateBlock(p, update);
             }
-
         }
 
+        if (update.position() > 0) {
+            outputBuffer.writeBits(16383, 14);
+            update.pipeTo(outputBuffer, true);
+        }
 
+        //Write how many bytes the packet contains
+        reserve.writeValue(reserve.bytesSinceReserve());
+        update.clear();
         return this;
     }
 
@@ -633,6 +656,28 @@ public class OutgoingPacketBuilder {
         reserve.writeValue(reserve.bytesSinceReserve());
         update.clear();
         return this;
+    }
+
+    private void updateNpcMovement(Npc npc){
+        if(!npc.getMovement().isMoving()){
+            if (npc.getUpdateFlags().anySet()) {
+                outputBuffer.writeBit(true)
+                        .writeBits(1,2);
+
+            } else {
+                outputBuffer.writeBit(false);
+            }
+        } else {
+            outputBuffer.writeBit(true)
+                    .writeBits(1,2)
+                    .writeBits(npc.getMovement().getWalkDirection(),3);
+
+            if (npc.getUpdateFlags().anySet()) {
+                outputBuffer.writeBit(true);
+            } else {
+                outputBuffer.writeBit(false);
+            }
+        }
     }
 
     private void updatePlayerMovement(Player player, boolean thisPlayer) {

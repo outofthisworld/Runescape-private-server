@@ -23,10 +23,7 @@ import world.storage.SimpleCache;
 import world.task.DefaultThreadFactory;
 import world.task.Task;
 
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -159,6 +156,14 @@ public class World {
         worldTasks.clear();
     }
 
+    public Collection<Player> getPlayers(){
+        return playersInWorld.getItemsImmutable();
+    }
+
+    public Collection<Npc> getNpcs(){
+        return npcsInWorld.getItemsImmutable();
+    }
+
 
     /**
      * Gets player region division.
@@ -185,12 +190,13 @@ public class World {
      * @param <T>
      * @return
      */
-    private <T extends Entity> int addEntityToWorld(T entity, EntityContainer<T> container) {
+    private <T extends Entity> int addEntityToWorld(T entity, EntityContainer<T> container,RegionDivision<T> regionDivision) {
         if (entity.getSlotId() != -1) {
             throw new IllegalStateException("Player slot was not -1 when adding to world.");
         }
         int slot = container.add(entity);
         entity.setWorldId(this.worldId);
+        regionDivision.updateEntityRegion(entity);
         return slot;
     }
 
@@ -219,7 +225,7 @@ public class World {
      * @return the int
      */
     public int addPlayerToWorld(Player p) {
-        return addEntityToWorld(p, playersInWorld);
+        return addEntityToWorld(p, playersInWorld,playerRegionDivision);
     }
 
     /**
@@ -229,7 +235,7 @@ public class World {
      * @return the int
      */
     public int addNpcToWorld(Npc n) {
-        return addEntityToWorld(n, npcsInWorld);
+        return addEntityToWorld(n, npcsInWorld,npcRegionDivision);
     }
 
 
@@ -449,14 +455,9 @@ public class World {
             player.poll();
         }
 
-        /*for (Npc npc : npcs.values()) {
-
-
-                Update movement
-                Send update packet
-
-           // npc.poll();
-        }*/
+        for (Npc npc : npcsInWorld.getItemsImmutable()) {
+            npc.poll();
+        }
 
         /*
            Clear the player update block cache.

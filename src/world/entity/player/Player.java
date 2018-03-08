@@ -122,12 +122,39 @@ public class Player extends Entity {
 
 
     /**
-     * Instantiates a new Player.
-     *
-     * @param c the c
+     * {
+     "id": 2854,
+     "position": {
+     "x": 3096,
+     "y": 9757,
+     "z": 0
+     },
+     "randomWalk": true,
+     "walkRadius": 1
+     },
+     {
+     "id": 2854,
+     "position": {
+     "x": 3108,
+     "y": 9757,
+     "z": 0
+     },
+     "randomWalk": true,
+     "walkRadius": 2
+     },
+     {
+     "id": 2854,
+     "position": {
+     "x": 3103,
+     "y": 9762,
+     "z": 0
+     },
+     "randomWalk": true,
+     "walkRadius": 1
+     },
      */
     public Player(String username,String password,Client c, int worldId) {
-        super(worldId, new Position(WorldConfig.PLAYER_START_X,WorldConfig.PLAYER_START_Y,WorldConfig.PLAYER_START_Z));
+        super(worldId, new Position(3108,9757,0));
         this.username = username;
         this.password = password;
         /*
@@ -515,9 +542,7 @@ public class Player extends Entity {
 
 
         getClient().getOutgoingPacketBuilder().playerUpdate().send();
-
-        //getClient().getOutgoingPacketBuilder().send
-        //getClient().getOutgoingPacketBuilder().npcUpdate().send();
+        getClient().getOutgoingPacketBuilder().npcUpdate().send();
 
         regionChanged = false;
         isTeleporting = false;

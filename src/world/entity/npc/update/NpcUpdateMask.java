@@ -34,13 +34,13 @@ public enum NpcUpdateMask {
      */
     DOUBLE_HIT(0x8);
 
-    private final int mask;
+    private final long mask;
 
     NpcUpdateMask(int mask) {
         this.mask = mask;
     }
 
-    public int getMask() {
+    public long getMask() {
         return mask;
     }
 }

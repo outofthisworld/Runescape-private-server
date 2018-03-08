@@ -13,7 +13,9 @@ import world.area.Position;
 import world.area.Vector;
 import world.entity.npc.update.NpcUpdateBlock;
 import world.entity.npc.update.NpcUpdateFlags;
+import world.entity.npc.update.NpcUpdateMask;
 import world.entity.player.Player;
+import world.entity.update.IFlag;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -51,8 +53,7 @@ public class Npc extends Entity {
 
     public Npc(int npcId, int slotId, int worldId, Vector position) {
         super(worldId,position == null?null:new Position(position.copy()));
-        Preconditions.greaterThanOrEqualTo(0,npcId);
-        Preconditions.greaterThanOrEqualTo(0,slotId);
+        Preconditions.greaterThanOrEqualTo(npcId,0);
         this.id = npcId;
         this.weight = 0;
         this.slotId = slotId;
@@ -159,7 +160,7 @@ public class Npc extends Entity {
         return updateBlock;
     }
 
-    public NpcUpdateFlags getUpdateFlags() {
+    public IFlag<NpcUpdateMask> getUpdateFlags() {
         return updateFlags;
     }
 
@@ -171,10 +172,10 @@ public class Npc extends Entity {
                 Any updates for this entity.
             */
     public void poll() {
-        handleRespawn();
+        //handleRespawn();
         doMovement();
-        handleAggression();
-        handleRetreat();
+        //handleAggression();
+        //handleRetreat();
 
 
         //Npc updating

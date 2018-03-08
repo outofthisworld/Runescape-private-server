@@ -15,7 +15,6 @@ public final class Chance {
      */
     public static boolean chanceWithin(double percent) {
         double rand = RandomUtils.getRandom().nextDouble();
-        System.out.println(rand);
         return BigDecimal.valueOf(percent).divide(BigDecimal.valueOf(100d))
                 .subtract(BigDecimal.valueOf(rand))
                 .compareTo(BigDecimal.valueOf(0d)) == -1 ? false : true;

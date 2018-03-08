@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-public class NpcUpdateBlock extends UpdateBlock<IFlag<NpcUpdateMask>> {
+public class NpcUpdateBlock extends UpdateBlock<IFlag<NpcUpdateMask>>{
     private final Npc npc;
 
     public NpcUpdateBlock(Npc npc){
