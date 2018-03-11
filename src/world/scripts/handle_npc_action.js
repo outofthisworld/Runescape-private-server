@@ -13,7 +13,15 @@ var npc_dialogues = {
            {
                 type: types.player,
                 expression:1,
-                lines:[]
+                lines:[
+                    "Hello",
+                    ""
+                ]
+           },
+           {
+               type: types.npc,
+               expression:1,
+               lines:[]
            }
        ]
    }
@@ -21,21 +29,27 @@ var npc_dialogues = {
 
 var dialogueHandlers = {}
 
+/**
+* Handles sending npc dialogues.
+* */
 dialogueHandlers[types.player] = function sendNpcDialogue(player, npc, npcDialogueObject){
     if(!player || !npc || !npcDialogueObject){
         return;
     }
 
-    if(!npcDialogueObject.lines || ! Array.isArray(npcDialogueObject.lines)){
+    /*Build the npc dialogue or get the array of lines.*/
+    var lineArr = typeof npcDialogueObject.lines === 'function'?npcDialogueObject.lines(player,npc):npcDialogueObject.lines;
+
+    if(!Array.isArray(lineArr)){
         return;
     }
 
-    switch(npcDialogueObject.lines.length){
+    switch(lineArr.length){
         case 1:
-            player.client.outgoingPacketBuilder.sendInterfaceAnimation(4883, expression.getExpression());
-            player.client.outgoingPacketBuilder.sendString(NpcDefinition.DEFINITIONS[npc].getName(), 4884);
-            player.client.outgoingPacketBuilder.sendString(text[0], 4885);
-            player.client.outgoingPacketBuilder.sendNpcModelOnInterface(4883, npc);
+            player.client.outgoingPacketBuilder.sendInterfaceAnimation(4883, npcDialogueObject.expression || -1);
+            player.client.outgoingPacketBuilder.sendString(npc.getNpcDefintion().name, 4884);
+            player.client.outgoingPacketBuilder.sendString(npcDialogueObject.lines[0], 4885);
+            player.client.outgoingPacketBuilder.sendNpcModelOnInterface(4883, npc.id);
             player.client.outgoingPacketBuilder.sendChatInterface(4882);
             break;
         case 2:
