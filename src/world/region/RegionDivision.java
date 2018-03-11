@@ -101,9 +101,7 @@ public class RegionDivision<T extends Entity> {
      */
     public void updateEntityRegion(T p) {
         Preconditions.notNull(p);
-        System.out.println("updating entity " + (p.isPlayer()?"player":"npc"));
         if(p.getPosition().getRegionPosition().equals(p.getLastRegionPosition())){
-            System.out.println("Equal");
             return;
         }
 

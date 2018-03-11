@@ -174,6 +174,16 @@ public class World {
         return npcsInWorld.getItemsImmutable();
     }
 
+    /**
+     * Get npc npc.
+     *
+     * @param slotId the slot id
+     * @return the npc
+     */
+    public Npc getNpc(int slotId){
+        return npcsInWorld.get(slotId);
+    }
+
 
     /**
      * Gets player region division.

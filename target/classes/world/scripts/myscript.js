@@ -2,18 +2,24 @@
 
 
 
+var obj = {
+   "Baraek":{
+       type:"dialogue",
+       dialogue:[
+           {
+
+           }
+       ]
+   }
+}
 
 
 
 
+function handleNpcActionOne(player,npc){
+    if(typeof player != "Object" || typeof npc != "Object"){
+        throw new Error("Invalid params passed to handleNpcActionOne")
+    }
 
-
-
-function handleNpcDialogue(npcId,player){
-    player.hi = "hello";
-    print(npcId);
-    print(player);
-    print(player.name)
-    print(player.getName())
-    scriptManager.hi("yoooo");
+    npc.getNpcDefinition().getName();
 }

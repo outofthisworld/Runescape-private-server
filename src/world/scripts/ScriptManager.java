@@ -1,14 +1,10 @@
 package world.scripts;
 
-import world.entity.player.Player;
 
 import javax.script.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public final class ScriptManager {
     private static ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
@@ -38,12 +34,7 @@ public final class ScriptManager {
         }
     }
 
-
-    public Invocable getInvocable(){
+    public Invocable getInvocable() {
         return invocable;
-    }
-
-    public static void main(String[] args) {
-
     }
 }

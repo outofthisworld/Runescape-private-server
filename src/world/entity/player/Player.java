@@ -11,7 +11,6 @@ import net.packets.outgoing.OutgoingPacket;
 import sun.plugin.dom.exception.InvalidStateException;
 import util.integrity.Preconditions;
 import util.strings.FormatStrings;
-import world.WorldConfig;
 import world.entity.Entity;
 import world.area.Position;
 import world.entity.combat.AttackBonusModifier;
@@ -86,7 +85,7 @@ public class Player extends Entity {
     /**
      * The client for the player, contains networking stuff.
      */
-    private Client c;
+    private Client client;
     /**
      * The players username
      */
@@ -160,7 +159,7 @@ public class Player extends Entity {
         /*
             Set this players client
          */
-        this.c = c;
+        this.client = c;
         /*
             Set this players client
          */
@@ -379,17 +378,17 @@ public class Player extends Entity {
      * @return the client
      */
     public Client getClient() {
-        return c;
+        return client;
     }
 
     /**
      * Sets client.
      *
-     * @param c the c
+     * @param c the client
      */
     public void setClient(Client c) {
         Preconditions.notNull(c);
-        this.c = c;
+        this.client = c;
                 /*
             Set the client player to this player
         */

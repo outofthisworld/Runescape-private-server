@@ -2,7 +2,12 @@ package net.packets.incoming;
 
 import net.buffers.InputBuffer;
 import net.impl.session.Client;
+import util.integrity.Debug;
+import world.WorldManager;
+import world.entity.npc.Npc;
+import world.entity.player.Player;
 
+import javax.script.ScriptException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -36,6 +41,12 @@ public class InteractNpcPacket extends IncomingPacket {
              Little Endian Short
              */
             case Opcodes.NPC_ACTION_1:
+                int npcIndex = in.readLittleSignedWORD();
+                Npc npc = c.getPlayer().getWorld().getNpc(npcIndex);
+                if(npc == null){
+                    Debug.writeLine("Invalid npc slot " + npcIndex);
+                }
+                doNpcActionOne(c.getPlayer(),npc);
                 break;
             /**
              Description
@@ -65,6 +76,17 @@ public class InteractNpcPacket extends IncomingPacket {
                 break;
         }
 
+    }
+
+    private void doNpcActionOne(Player player, Npc npc) {
+        player.getClient().getOutgoingPacketBuilder().sendC
+        try {
+            WorldManager.getScriptManager().getInvocable().invokeFunction("handleNpcActionOne",player,npc);
+        } catch (ScriptException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
