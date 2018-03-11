@@ -6,9 +6,6 @@ import net.buffers.OutputBuffer;
 import util.integrity.Preconditions;
 import world.entity.npc.Npc;
 import world.entity.npc.update.impl.*;
-import world.entity.player.Player;
-import world.entity.player.update.PlayerUpdateBlock;
-import world.entity.player.update.PlayerUpdateMask;
 import world.entity.update.IFlag;
 import world.entity.update.UpdateBlock;
 
@@ -27,7 +24,7 @@ public class NpcUpdateBlock extends UpdateBlock<IFlag<NpcUpdateMask>>{
 
     private final static Map<NpcUpdateMask,BiConsumer<Npc, OutputBuffer>> flagMap = new HashMap<NpcUpdateMask,BiConsumer<Npc, OutputBuffer>>(){
         {
-            put(NpcUpdateMask.ENTITY_INTERACTION,new EntityInteractionUpdateBlock());
+            put(NpcUpdateMask.FACE_CHARACTER,new EntityInteractionUpdateBlock());
             put(NpcUpdateMask.ANIMATION,new AnimationUpdateBlock());
             put(NpcUpdateMask.GRAPHICS,new GraphicsUpdateBlock());
             put(NpcUpdateMask.SINGLE_HIT,new SingleHitUpdateBlock());
@@ -52,10 +49,11 @@ public class NpcUpdateBlock extends UpdateBlock<IFlag<NpcUpdateMask>>{
         */
         updateBlock.order(Order.LITTLE_ENDIAN);
 
+        long mask = updateFlags.getMask();
         if (updateFlags.getMask() >= 0x100L) {
-            updateBlock.writeBytes(updateFlags.getMask(), 2, ByteTransformationType.NONE);
+            updateBlock.writeBytes(mask, 2, ByteTransformationType.NONE);
         } else {
-            updateBlock.writeByte((int) (updateFlags.getMask()));
+            updateBlock.writeByte((int) mask);
         }
 
         updateBlock.order(Order.BIG_ENDIAN);

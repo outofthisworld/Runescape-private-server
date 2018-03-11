@@ -154,7 +154,7 @@ public class Player extends Entity {
      },
      */
     public Player(String username,String password,Client c, int worldId) {
-        super(worldId, new Position(3108,9757,0));
+        super(worldId, new Position(3210,3424,0));
         this.username = username;
         this.password = password;
         /*
@@ -540,9 +540,9 @@ public class Player extends Entity {
         */
         getMovement().poll();
 
-
-        getClient().getOutgoingPacketBuilder().playerUpdate().send();
         getClient().getOutgoingPacketBuilder().npcUpdate().send();
+        getClient().getOutgoingPacketBuilder().playerUpdate().send();
+
 
         regionChanged = false;
         isTeleporting = false;

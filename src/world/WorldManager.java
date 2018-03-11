@@ -1,6 +1,7 @@
 package world;
 
 import sun.plugin.dom.exception.InvalidStateException;
+import world.scripts.ScriptManager;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -12,6 +13,7 @@ import java.util.concurrent.Future;
  */
 public class WorldManager {
     private static final CopyOnWriteArrayList<World> WORLDS = new CopyOnWriteArrayList<>();
+    private static ScriptManager scriptManager = new ScriptManager(WorldConfig.WORLD_SCRIPTS_DIR);
 
     /**
      * Instantiates a new World manager.
@@ -53,6 +55,15 @@ public class WorldManager {
         WorldManager.WORLDS.forEach(World::stop);
     }
 
+
+    /**
+     * Gets script manager.
+     *
+     * @return the script manager
+     */
+    public static ScriptManager getScriptManager() {
+        return scriptManager;
+    }
 
     /**
      * Get world world.

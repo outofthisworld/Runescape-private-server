@@ -421,7 +421,7 @@ public class OutputBuffer extends AbstractBuffer {
 
             byte b;
             if (shiftAmount < 0) {
-                b = (byte) (current | (value << remainingBits - amount));
+                b = (byte) (current | (value  << remainingBits - amount));
             } else {
                 long temp = (value >> shiftAmount);
                 temp = (temp << clearShiftAmount);
@@ -436,13 +436,16 @@ public class OutputBuffer extends AbstractBuffer {
             return this;
         }
         bitIndex = amount & 7;
-        int newAmount = amount - bitIndex;
+        int newAmount = (amount - bitIndex) / 8;
+
+        long newVal = value >> bitIndex;
         //newValue should not equal 2047
-        for (int i = 0; i != newAmount; i += 8) {
-            writeByte((byte) ((value >> i)), false);
+        for (int i = newAmount-1; i >= 0; i--) {
+            writeByte((byte) (newVal >> i*8), false);
         }
-        if (bitIndex > 0)
+        if (bitIndex > 0) {
             writeByte((byte) (value << (8 - bitIndex)), false);
+        }
         return this;
     }
 

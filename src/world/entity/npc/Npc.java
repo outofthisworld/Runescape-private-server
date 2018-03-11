@@ -89,9 +89,9 @@ public class Npc extends Entity {
     }
 
     private void doMovement(){
-        if(!isDead() && getSpawnDefinition().shouldRandomWalk() && !getCombatHandler().isUnderAttack()){
+        if(!isDead() && !getMovement().isMoving() && !getCombatHandler().isUnderAttack()){
             //30 percent chance that a npc will move given the above conditions
-            if(Chance.chanceWithin(30)) {
+            if(Chance.chanceWithin(15)) {
                 Position p = getSpawnDefinition().getNpcCircleArea().generateRandomPosition();
                 walkTo(p.getVector().getX(), p.getVector().getY());
             }
@@ -99,9 +99,9 @@ public class Npc extends Entity {
     }
 
     private void handleRetreat(){
-        if(!isDead() && getCombatHandler().isUnderAttack() && getNpcDefinition().doesRetreat() && getHealthPercentage() <= 15){
+        if(!isDead() && getCombatHandler().isUnderAttack() && getNpcDefinition().isRetreats() && getHealthPercentage() <= 15){
             Area.TwoDimensional.Circle c = getSpawnDefinition().getNpcCircleArea();
-            c.setRadius(getSpawnDefinition().getWalkRadius() * 3);
+            c.setRadius(getSpawnDefinition().getWalkRadius());
             Position p = c.generateRandomPosition();
             walkTo(p.getVector().getX(),p.getVector().getY());
         }
@@ -132,7 +132,7 @@ public class Npc extends Entity {
     }
 
     private void handleAggression(){
-        if(!isDead() && getNpcDefinition().isAgressive() && !getCombatHandler().isAttacking()){
+        if(!isDead() && getNpcDefinition().isAggressive() && !getCombatHandler().isAttacking()){
             //Find local players and attack
             /**
              *
@@ -172,10 +172,12 @@ public class Npc extends Entity {
                 Any updates for this entity.
             */
     public void poll() {
+        getMovement().poll();
         //handleRespawn();
         doMovement();
         //handleAggression();
         //handleRetreat();
+
 
 
         //Npc updating

@@ -5,6 +5,7 @@ import net.impl.decoder.LoginProtocolConstants;
 import net.impl.decoder.LoginSessionDecoder;
 import util.integrity.Preconditions;
 import util.time.Stopwatch;
+import world.containers.EntityContainer;
 import world.definitions.DefinitionLoader;
 import world.definitions.npc.NpcSpawnDefinition;
 import world.entity.Entity;
@@ -104,9 +105,8 @@ public class World {
 
     private void loadNpcs() {
         Map<Integer, NpcSpawnDefinition> m = DefinitionLoader.getDefinitionMap(DefinitionLoader.NPC_SPAWNS);
-        int[] count = {0};
         m.forEach((npcId, spawnDef) -> {
-            npcsInWorld.add(new Npc(npcId, worldId, spawnDef.getPosition()));
+            addNpcToWorld(new Npc(npcId, worldId, spawnDef.getPosition()));
         });
     }
 
@@ -156,10 +156,20 @@ public class World {
         worldTasks.clear();
     }
 
+    /**
+     * Get players collection.
+     *
+     * @return the collection
+     */
     public Collection<Player> getPlayers(){
         return playersInWorld.getItemsImmutable();
     }
 
+    /**
+     * Get npcs collection.
+     *
+     * @return the collection
+     */
     public Collection<Npc> getNpcs(){
         return npcsInWorld.getItemsImmutable();
     }
@@ -471,10 +481,20 @@ public class World {
         // logger.log(Level.INFO, "Completed world poll in " + loopTimer.getTimePassed(TimeUnit.MILLISECONDS) + "ms");
     }
 
+    /**
+     * Gets total players.
+     *
+     * @return the total players
+     */
     public int getTotalPlayers() {
         return playersInWorld.size();
     }
 
+    /**
+     * Gets total npcs.
+     *
+     * @return the total npcs
+     */
     public int getTotalNpcs() {
         return npcsInWorld.size();
     }

@@ -11,6 +11,11 @@ public final class WorldConfig {
     public static final int MAX_NPCS_IN_WORLD = 20000;
 
     /**
+     * Script settings
+     */
+    public static final String WORLD_SCRIPTS_DIR = "src/world/scripts/";
+
+    /**
      * Virtual world settings.
      */
     public static final int MAX_VIRTUAL_WORLDS = 10;

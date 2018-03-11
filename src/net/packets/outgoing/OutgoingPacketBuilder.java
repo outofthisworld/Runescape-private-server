@@ -485,22 +485,21 @@ public class OutgoingPacketBuilder {
             Npc npc = iterator.next();
 
 
-            if (player.getPosition().isInViewingDistance(npc.getPosition())) {
+            if (npc.getPosition().isInViewingDistance(player.getPosition())) {
                 //updatePlayerMovement(other, false);
                 updateNpcMovement(npc);
                 appendNpcUpdateBlock(npc,update,false);
                 //appendPlayerUpdateBlock(other, update);
             } else {
-                npc.getLocalPlayers().remove(player);
-                iterator.remove();
                 outputBuffer.writeBit(true);
                 outputBuffer.writeBits(3, 2);
+                npc.getLocalPlayers().remove(player);
+                iterator.remove();
             }
         }
 
         //Find players in the surrounding area to this player
-        Collection<Npc> npcsInRegion = player.getWorld().getNpcs();
-        Debug.writeLine("Npcs in region : " + npcsInRegion.size());
+        Collection<Npc> npcsInRegion = player.getWorld().getNpcRegionDivision().getEntitiesByQuadRegion(player.getPosition().getRegionPosition());
         Iterator<Npc> it = npcsInRegion.iterator();
         int npcsAdded = 0;
         for (; it.hasNext(); ) {
@@ -517,8 +516,7 @@ public class OutgoingPacketBuilder {
             if (npcsAdded == 15 || player.getLocalNpcs().size() >= 255)
                 break;
 
-            if (npc.getPosition().isInViewingDistance(player.getPosition())
-                    || player.getPosition().isInViewingDistance(npc.getPosition())) {
+            if (npc.getPosition().isInViewingDistance(player.getPosition())) {
                 Debug.writeLine("adding npc");
 
                 int offsetY = npc.getPosition().getVector().getY() - player.getPosition().getVector().getY();
@@ -528,9 +526,9 @@ public class OutgoingPacketBuilder {
                 outputBuffer.writeBits(npc.getSlotId(), 14)
                         .writeBits(offsetY, 5)
                         .writeBits(offsetX, 5)
-                        .writeBit(true)
-                        .writeBits(npc.getId(),16)
-                        .writeBit(true);
+                        .writeBits(1,1)
+                        .writeBits(npc.getNpcDefinition().getId(),16)
+                        .writeBits(1,1);
 
                 player.getLocalNpcs().add(npc);
                 npc.getLocalPlayers().add(player);
@@ -539,6 +537,9 @@ public class OutgoingPacketBuilder {
                 appendNpcUpdateBlock(npc,update,true);
                 //p.getUpdateFlags().setFlag(PlayerUpdateMask.APPEARANCE);
                 //appendPlayerUpdateBlock(p, update);
+            }else{
+                //System.out.println("not in viewing distance " + npc.getPosition().getVector().getX() + ", " + npc.getPosition().getVector().getY() + "," +npc.getPosition().getVector().getZ()  );
+                //System.out.println("not in viewing distance " + player.getPosition().getVector().getX() + ", " + player.getPosition().getVector().getY());
             }
         }
 

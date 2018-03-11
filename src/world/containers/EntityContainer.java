@@ -1,4 +1,4 @@
-package world;
+package world.containers;
 
 import util.integrity.Preconditions;
 import world.entity.Entity;

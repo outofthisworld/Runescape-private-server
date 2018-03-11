@@ -11,8 +11,10 @@ import world.area.Vector;
 public class NpcSpawnDefinition implements IDefinition {
     private int id;
     private Vector position;
-    private boolean randomWalk;
-    private int walkRadius;
+    private int radius;
+    private String facing;
+
+
 
     public int getId() {
         return id;
@@ -28,25 +30,20 @@ public class NpcSpawnDefinition implements IDefinition {
     }
 
     /**
-     * Should random walk boolean.
-     *
-     * @return the boolean
-     */
-    public boolean shouldRandomWalk() {
-        return randomWalk;
-    }
-
-    /**
      * Gets walk radius.
      *
      * @return the walk radius
      */
     public int getWalkRadius() {
-        return walkRadius;
+        return radius;
+    }
+
+    public String getFacing() {
+        return facing;
     }
 
 
     public Area.TwoDimensional.Circle getNpcCircleArea(){
-        return new Area.TwoDimensional.Circle(position.getX(),position.getY(),walkRadius);
+        return new Area.TwoDimensional.Circle(position.getX(),position.getY(),radius);
     }
 }

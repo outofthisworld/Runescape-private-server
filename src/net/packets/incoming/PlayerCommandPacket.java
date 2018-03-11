@@ -4,6 +4,7 @@ import net.buffers.InputBuffer;
 import net.impl.session.Client;
 import world.definitions.DefinitionLoader;
 import world.definitions.item.ItemDefinition;
+import world.entity.npc.Npc;
 import world.entity.player.Player;
 import world.entity.player.EquipmentSlot;
 import world.entity.player.Skill;
@@ -76,9 +77,10 @@ public class PlayerCommandPacket extends IncomingPacket {
                                 .append(EquipmentSlot.fromIndex(v.getEquipmentType()) != null ? EquipmentSlot.fromIndex(v.getEquipmentType()).toString() : v.isNoted() ? "Noted" : "Cannot equip")
                                 .append(")");
                         c.getOutgoingPacketBuilder()
-                                .sendMessage(messageBuilder.toString()).send();
+                                .sendMessage(messageBuilder.toString());
                         messageBuilder.delete(0, messageBuilder.length());
                     }
+                    c.getOutgoingPacketBuilder().send();
                 });
                 break;
             case "players":
@@ -88,6 +90,21 @@ public class PlayerCommandPacket extends IncomingPacket {
             case "npcs":
                 c.getOutgoingPacketBuilder()
                         .sendMessage(String.valueOf(c.getPlayer().getWorld().getTotalNpcs()));
+                break;
+            case "localnpcs":
+                for(Npc npc:c.getPlayer().getLocalNpcs()){
+                    c.getOutgoingPacketBuilder()
+                            .sendMessage(messageBuilder
+                                    .append("Npc id: ")
+                                    .append(npc.getId())
+                                    .append(", npc name:")
+                                    .append(npc.getNpcDefinition().getName())
+                                    .append(", npc x: ").append(npc.getPosition().getVector().getX())
+                                    .append(", npc y: ").append(npc.getPosition().getVector().getY())
+                                    .toString());
+                    messageBuilder.delete(0, messageBuilder.length());
+                }
+                c.getOutgoingPacketBuilder().send();
                 break;
             case "tele":
                 int x = scanner.nextInt();
