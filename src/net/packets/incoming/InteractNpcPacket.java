@@ -82,7 +82,7 @@ public class InteractNpcPacket extends IncomingPacket {
 
     private void doNpcActionOne(Player player, Npc npc) {
         try {
-            player.setNextDialogue(((Double) ((JSObject)WorldManager.getScriptManager().getInvocable().invokeFunction("handleNpcActionOne",player.getNextDialogue(),player,npc)).getMember("nextDialogueStage")).intValue());
+            WorldManager.getScriptManager().getInvocable().invokeFunction("handleNpcActionOne",player,npc,-1);
         } catch (ScriptException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {

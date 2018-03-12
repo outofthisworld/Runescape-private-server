@@ -1,91 +1,25 @@
-
-var types = {
-    dialogue:0,
-    player:0,
-    npc:1,
-    options:2
-}
-
-var expressions = {
-    happy:588,
-    calm:589,
-    calm_continued:590,
-    default:591,
-    evil:592,
-    evil_continued:593,
-    delighted_evil:594,
-    annoyed:595,
-    distressed:596,
-    distressed_continued:597,
-    disoriented_left:600,
-    disoriented_right:601,
-    uninterested:602,
-    sleepy:603,
-    plain_evil:603,
-    laughing:605,
-    laughing_two:608,
-    longer_laughing:606,
-    longer_laughing_two:607,
-    evil_laugh_short:609,
-    slightly_sad:610,
-    sad:599,
-    very_sad:611,
-    other:612,
-    near_tears:598,
-    near_tears_two:613,
-    angry_1:614,
-    angry_2:615,
-    angry_3:616,
-    angry_3:617
-}
-
-var npc_dialogues = {
-   "Baraek":{
-       type:types.dialogue,
-       dialogue:[
-           {
-                type: types.player,
-                expression:expressions.happy,
-                lines:[
-                    "Hello",
-                    "Welcome to runescape"
-                ]
-           },
-           {
-               type: types.npc,
-               lines:[
-                   "Hey, you're the new one! How much gold do you want?"
-               ]
-           },
-           {
-               type: types.options,
-               lines:[
-                   "1M GP",
-                   "2M GP"
-               ]
-           }
-       ]
-   }
-}
+load('src/world/scripts/npc/dialogue_types.js');
+load('src/world/scripts/npc/dialogue_expressions.js');
+load('src/world/scripts/npc/npc_dialogues.js');
 
 var dialogueHandlers = {}
 
 /**
-* Handles sending npc dialogues.
-* */
-dialogueHandlers[types.npc] = function sendNpcDialogue(player, npc, npcDialogueObject){
-    if(!player || !npc || !npcDialogueObject){
+ * Handles sending npc dialogues.
+ * */
+dialogueHandlers[types.npc] = function sendNpcDialogue(player, npc, npcDialogueObject) {
+    if (!player || !npc || !npcDialogueObject) {
         return;
     }
 
     /*Build the npc dialogue or get the array of lines.*/
-    var lineArr = typeof npcDialogueObject.lines === 'function'?npcDialogueObject.lines(player,npc):npcDialogueObject.lines;
+    var lineArr = typeof npcDialogueObject.lines === 'function' ? npcDialogueObject.lines(player, npc) : npcDialogueObject.lines;
 
-    if(!Array.isArray(lineArr)){
+    if (!Array.isArray(lineArr)) {
         return;
     }
 
-    switch(lineArr.length){
+    switch (lineArr.length) {
         case 1:
             player.client.outgoingPacketBuilder.sendInterfaceAnimation(4883, npcDialogueObject.expression || expressions.calm);
             player.client.outgoingPacketBuilder.sendInterfaceText(npc.getNpcDefinition().name, 4884);
@@ -126,15 +60,15 @@ dialogueHandlers[types.npc] = function sendNpcDialogue(player, npc, npcDialogueO
 
 }
 
-dialogueHandlers[types.player] = function sendPlayerDialogue(player, npc, playerDialogueObject){
-    if(!player || !npc || !playerDialogueObject){
+dialogueHandlers[types.player] = function sendPlayerDialogue(player, npc, playerDialogueObject) {
+    if (!player || !npc || !playerDialogueObject) {
         return;
     }
 
     /*Build the npc dialogue or get the array of lines.*/
-    var lineArr = typeof playerDialogueObject.lines === 'function'?playerDialogueObject.lines(player,npc):playerDialogueObject.lines;
+    var lineArr = typeof playerDialogueObject.lines === 'function' ? playerDialogueObject.lines(player, npc) : playerDialogueObject.lines;
 
-    if(!Array.isArray(lineArr)){
+    if (!Array.isArray(lineArr)) {
         return;
     }
 
@@ -142,16 +76,16 @@ dialogueHandlers[types.player] = function sendPlayerDialogue(player, npc, player
         case 1:
             player.client.outgoingPacketBuilder.sendInterfaceAnimation(969, playerDialogueObject.expression || expressions.calm);
             player.client.outgoingPacketBuilder.sendInterfaceText(player.getUsername(), 970);
-            player.client.outgoingPacketBuilder.sendInterfaceText(lineArr[0], 971);
+            player.client.outgoingPacketBuilder.sendInterfaceText(lineArr[0], 971));
             player.client.outgoingPacketBuilder.sendPlayerModelOnInterface(969);
             player.client.outgoingPacketBuilder.sendChatInterface(968);
             break;
         case 2:
             player.client.outgoingPacketBuilder.sendInterfaceAnimation(974, playerDialogueObject.expression || expressions.calm);
             player.client.outgoingPacketBuilder.sendInterfaceText(player.getUsername(), 975);
-            player.client.outgoingPacketBuilder.sendInterfaceText(lineArr[0], 976);
+            player.client.outgoingPacketBuilder.sendInterfaceText(lineArr[0], 976));
             player.client.outgoingPacketBuilder.sendInterfaceText(lineArr[1], 977);
-            player.client.outgoingPacketBuilder.sendPlayerModelOnInterface(974);
+            player.client.outgoingPacketBuilder.sendPlayerModelOnInterface(974)
             player.client.outgoingPacketBuilder.sendChatInterface(973);
             break;
         case 3:
@@ -179,15 +113,23 @@ dialogueHandlers[types.player] = function sendPlayerDialogue(player, npc, player
 
 }
 
-dialogueHandlers[types.options] = function optionsDialogue(player, npc, optionsDialogue){
-    if(!player || !npc || !optionsDialogue){
+var options = {
+    0: [14445, 2471, 8209, 8221],
+    1: [14446, 2472, 8210, 8222],
+    2: [2473, 8211, 8223],
+    3: [8212, 8224],
+    5: [8225]
+}
+
+dialogueHandlers[types.options] = function optionsDialogue(player, npc, optionsDialogue) {
+    if (!player || !npc || !optionsDialogue) {
         return;
     }
 
     /*Build the npc dialogue or get the array of lines.*/
-    var lineArr = typeof optionsDialogue.lines === 'function'?optionsDialogue.lines(player,npc):optionsDialogue.lines;
+    var lineArr = typeof optionsDialogue.lines === 'function' ? optionsDialogue.lines(player, npc) : optionsDialogue.lines;
 
-    if(!Array.isArray(lineArr)){
+    if (!Array.isArray(lineArr)) {
         return;
     }
 
@@ -223,36 +165,104 @@ dialogueHandlers[types.options] = function optionsDialogue(player, npc, optionsD
     }
 }
 
+var playerMap = {}
 
-function handleNpcActionOne(nextDialogue,player,npc){
+function handleNpcActionOne(player, npc, optionId) {
 
-    if(npc_dialogues[npc.getNpcDefinition().getName()] == undefined){
+    if(!playerMap){
+        throw new Error("player map undefined");
+    }
+
+
+
+    if (!playerMap[player.username] || !playerMap[player.username].currentDialogue || playerMap[player.username].currentDialogueOffset == undefined) {
+        playerMap[player.username] = {};
+        playerMap[player.username].currentDialogue = npc_dialogues[npc.getNpcDefinition().getName()];
+        playerMap[player.username].currentDialogueOffset = 0;
+        playerMap[player.username].npc = npc;
+    }else{
+        print("found existing")
+    }
+
+    if(!playerMap[player.username].currentDialogue){
+        print("no dialogue")
         return;
     }
-    nextDialogue = nextDialogue < 0? 0: nextDialogue;
-
-    var dialogueObj = npc_dialogues[npc.getNpcDefinition().name];
-    var stage = {
-        nextDialogueStage:0
+    if (!Array.isArray(playerMap[player.username].currentDialogue.dialogue)) {
+        print("no aray")
+        throw new Error('Invalid dialogue');
     }
 
-    if(dialogueObj.type == types.dialogue){
+    var displayDialogue = playerMap[player.username].currentDialogue.dialogue[playerMap[player.username].currentDialogueOffset];
 
-        if(Array.isArray(dialogueObj.dialogue) && dialogueObj.dialogue[nextDialogue]) {
+    print(JSON.stringify(displayDialogue))
 
-            var nextDialogue = dialogueObj.dialogue[nextDialogue];
+    if (!displayDialogue || displayDialogue.type == undefined) {
+        print("no displayDialogue dialogue")
+        playerMap[player.username] = null;
+        return;
+    }
 
-            if (nextDialogue.type != undefined && dialogueHandlers[nextDialogue.type]) {
-                dialogueHandlers[nextDialogue.type](player, npc, nextDialogue);
+    if (displayDialogue.type == types.player || displayDialogue.type == types.npc || (displayDialogue.type == types.options && optionId < 0)) {
+        player.client.outgoingPacketBuilder.closeInterfaces();
+        dialogueHandlers[displayDialogue.type](player, npc || playerMap[player.username].npc, displayDialogue);
+        print("advancing")
+        if (displayDialogue.type == types.player || displayDialogue.type == types.npc) {
+            print("advancing 2")
+            playerMap[player.username].currentDialogueOffset += 1;
+        }
+    }else if (optionId != -1 && playerMap[player.username].currentDialogue.type == types.options && Array.isArray(displayDialogue.handlers)) {
+        print("advancing")
+        var optId = -1;
+
+        if (!options) throw new Error("Illegal state, options mapping does not exist");
+
+        for (k in options) {
+            var arr = options[k];
+            if (!Array.isArray(arr)) {
+                continue;
+            }
+            if (arr.indexOf(optionId) != -1) {
+                optId = k;
+                break;
+            }
+        }
+
+        if (optId == -1) {
+            playerMap[player.username] = null;
+            return;
+        }
+
+        var option = displayDialogue.handlers[optId];
+
+        if (!option) {
+            playerMap[player.username] = null;
+            return;
+        }
+
+        if (typeof option == 'function') {
+            option(player, npc);
+            playerMap[player.username] = null;
+            return;
+        }
+
+        if (option && Array.isArray(option.dialogue)) {
+            var currentDialogue = option.dialogue[0];
+
+            if (!currentDialogue) {
+                playerMap[player.username] = null;
+                return;
             }
 
-        }else{
-            //Close chat interface
-            stage.nextDialogueStage = -1;
-            return stage;
+            dialogueHandlers[displayDialogue.type](player, npc, currentDialogue);
+            playerMap[player.username].currentDialogue = option;
+            playerMap[player.username].currentDialogueOffset = 1;
+        } else {
+            playerMap[player.username] = null;
+            return;
         }
+    } else {
+        print("no options matched")
+        playerMap[player.username] = null;
     }
-
-    stage.nextDialogueStage+=1;
-    return stage;
 }
