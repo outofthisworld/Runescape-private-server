@@ -12,6 +12,7 @@ public class EntityContainer<T extends Entity> extends SimpleContainer<T> {
         Preconditions.notNull(entity);
 
         int slot = entity.getSlotId();
+        System.out.println("Removing entity with slot id " + slot);
         boolean removed =  remove(slot);
         if(removed) {
             entity.setSlotId(-1);

@@ -1,5 +1,7 @@
 package net.packets.incoming;
 
+import jdk.nashorn.api.scripting.JSObject;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import net.buffers.InputBuffer;
 import net.impl.session.Client;
 import util.integrity.Debug;
@@ -79,9 +81,8 @@ public class InteractNpcPacket extends IncomingPacket {
     }
 
     private void doNpcActionOne(Player player, Npc npc) {
-        player.getClient().getOutgoingPacketBuilder().sendC
         try {
-            WorldManager.getScriptManager().getInvocable().invokeFunction("handleNpcActionOne",player,npc);
+            player.setNextDialogue(((Double) ((JSObject)WorldManager.getScriptManager().getInvocable().invokeFunction("handleNpcActionOne",player.getNextDialogue(),player,npc)).getMember("nextDialogueStage")).intValue());
         } catch (ScriptException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {

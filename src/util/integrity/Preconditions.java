@@ -83,7 +83,7 @@ public final class Preconditions {
     }
 
     public static void lessThan(int amount, int check) {
-        if (check >= amount) {
+        if (amount >= check) {
             Preconditions.throwIllegalArgumentException();
         }
     }

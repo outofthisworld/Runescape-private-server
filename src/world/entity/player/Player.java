@@ -118,7 +118,15 @@ public class Player extends Entity {
      * The players combat style.
      */
     private CombatStyle combatStyle = new CombatStyle(422, 5860, AttackStyle.ACCURATE, AttackBonusModifier.ATTACK_CRUSH);
+    private int nextDialogue = -1;
 
+    public int getNextDialogue() {
+        return nextDialogue;
+    }
+
+    public void setNextDialogue(int nextDialogue) {
+        this.nextDialogue = nextDialogue;
+    }
 
     /**
      * {

@@ -1,3 +1,3 @@
 function test(h){
-    print("h " + h);
+    print("dialogueHandlers " + h);
 }

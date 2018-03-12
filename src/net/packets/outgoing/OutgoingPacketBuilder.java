@@ -20,6 +20,7 @@ import net.buffers.IBufferReserve;
 import net.buffers.Order;
 import net.buffers.OutputBuffer;
 import net.impl.session.Client;
+import net.packets.incoming.IncomingPacket;
 import util.integrity.Debug;
 import util.integrity.Preconditions;
 import world.entity.npc.Npc;
@@ -53,6 +54,11 @@ public class OutgoingPacketBuilder {
         assignOutputBuffer();
     }
 
+    /**
+     * Bytes written int.
+     *
+     * @return the int
+     */
     public int bytesWritten() {
         return outputBuffer.position();
     }
@@ -98,6 +104,12 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
+    /**
+     * Send message outgoing packet builder.
+     *
+     * @param sb the sb
+     * @return the outgoing packet builder
+     */
     public OutgoingPacketBuilder sendMessage(StringBuilder sb) {
         return sendMessage(sb.toString());
     }
@@ -126,6 +138,18 @@ public class OutgoingPacketBuilder {
     }
 
     /**
+     * Send interface animation outgoing packet builder.
+     *
+     * @param interfaceId the interface id
+     * @param animationId the animation id
+     * @return the outgoing packet builder
+     */
+    public OutgoingPacketBuilder sendInterfaceAnimation(int interfaceId,int animationId){
+        createHeader(OutgoingPacket.Opcodes.SET_INTERFACE_ANIMATION).writeBigWord(interfaceId).writeBigWord(animationId);
+        return this;
+    }
+
+    /**
      * Send interface text
      * 126: Attaches text to an interface.
      *
@@ -134,12 +158,14 @@ public class OutgoingPacketBuilder {
      * @return the packet builder
      */
     public OutgoingPacketBuilder sendInterfaceText(String s, int id) {
-        createHeader(126);
-        byte[] strBytes = s.getBytes();
-        outputBuffer.writeBigWord(strBytes.length + 1 + 2);
-        outputBuffer.writeBytes(s.getBytes());
-        outputBuffer.writeByte(10); //End string
-        outputBuffer.writeBigWordTypeA(id);
+        createHeader(126)
+                .createByteReserve(2)
+                .toBuffer()
+                .writeBytes(s.getBytes())
+                .writeByte(10)
+                .writeBigWordTypeA(id)
+                .toLastReserve()
+                .writeBytesSinceReserve();
         return this;
     }
 
@@ -206,6 +232,31 @@ public class OutgoingPacketBuilder {
         client.getOutStream().createHeader(156); // Phate: SlotItem Action: Delete
         client.getOutStream().writeByteS(0); // x(4 MSB) y(LSB) coords
         client.getOutStream().writeWord(itemID); // Phate: SlotItem ID*/
+        return this;
+    }
+
+
+    /**
+     * Send player model on interface outgoing packet builder.
+     *
+     * @param id the id
+     * @return the outgoing packet builder
+     */
+    public OutgoingPacketBuilder sendPlayerModelOnInterface(int id){
+        createHeader(OutgoingPacket.Opcodes.PLAYER_HEAD_ON_INTERFACE).writeLittleWordTypeA(id);
+        return this;
+    }
+
+    /**
+     * Send npc model on interface outgoing packet builder.
+     *
+     * @param slotId the slot id
+     * @param npcId  the npc id
+     * @return the outgoing packet builder
+     */
+    public OutgoingPacketBuilder sendNpcModelOnInterface(int slotId,int npcId){
+        createHeader(OutgoingPacket.Opcodes.NPC_HEAD_ON_INTERFACE).writeLittleWordTypeA(npcId)
+                .writeLittleWordTypeA(slotId);
         return this;
     }
 
@@ -290,6 +341,12 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
+    /**
+     * Sets run energy.
+     *
+     * @param runEnergy the run energy
+     * @return the run energy
+     */
     public OutgoingPacketBuilder setRunEnergy(int runEnergy) {
         Preconditions.inRangeClosed(runEnergy, 0, 100);
         createHeader(OutgoingPacket.Opcodes.SEND_RUN_ENERGY_LEVEL)
@@ -304,8 +361,7 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder sendInterface(int id) {
-        /*client.getOutStream().createHeader(97);
-        client.getOutStream().writeWord(id);*/
+        createHeader(OutgoingPacket.Opcodes.SEND_INTERFACE).writeBigWord(id);
         return this;
     }
 
@@ -316,8 +372,7 @@ public class OutgoingPacketBuilder {
      * @return The action.
      */
     public OutgoingPacketBuilder sendChatInterface(int id) {
-        /*client.getOutStream().createHeader(164);
-        client.getOutStream().writeWordLittleEndian(id);*/
+        createHeader(OutgoingPacket.Opcodes.SEND_CHAT_INTERFACE).writeLittleWORD(id);
         return this;
     }
 
@@ -345,28 +400,24 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
+    /**
+     * Reset destination outgoing packet builder.
+     *
+     * @return the outgoing packet builder
+     */
     public OutgoingPacketBuilder resetDestination() {
         createHeader(OutgoingPacket.Opcodes.RESET_PLAYER_DESTINATION);
         return this;
     }
 
-    /*
-            needDrawTabArea = true;
-				int i9 = inStream.readUnsignedWord(); //interface id
-				RSInterface rSInterface_2 = RSInterface.interfaceCache[i9];
-				while (inStream.currentOffset < pktSize) {
-					int j20 = inStream.method422(); //slot
-					int i23 = inStream.readUnsignedWord(); //item id
-					int l25 = inStream.readUnsignedByte();//amount
-					if (l25 == 255) {
-						l25 = inStream.readDWord();
-					}
-					if (j20 >= 0 && j20 < rSInterface_2.inv.length) {
-						rSInterface_2.inv[j20] = i23;
-						rSInterface_2.invStackSizes[j20] = l25;
-					}
-				}
-				pktType = -1;
+    /**
+     * Update item outgoing packet builder.
+     *
+     * @param interfaceId the interface id
+     * @param slot        the slot
+     * @param itemId      the item id
+     * @param amount      the amount
+     * @return the outgoing packet builder
      */
     public OutgoingPacketBuilder updateItem(int interfaceId, int slot, int itemId, int amount) {
         IBufferReserve<OutputBuffer> res = createHeader(OutgoingPacket.Opcodes.UPDATE_INVENTORY_ITEM, 2);
@@ -375,7 +426,6 @@ public class OutgoingPacketBuilder {
         res.writeBytesSinceReserve();
         return this;
     }
-
 
     private void _updateItem(int slot, int itemId, int amount) {
         if (slot < 128) {
@@ -392,6 +442,16 @@ public class OutgoingPacketBuilder {
         }
     }
 
+    /**
+     * Update items outgoing packet builder.
+     *
+     * @param interfaceId     the interface id
+     * @param slots           the slots
+     * @param itemIds         the item ids
+     * @param stackSizes      the stack sizes
+     * @param ignoreNullItems the ignore null items
+     * @return the outgoing packet builder
+     */
     public OutgoingPacketBuilder updateItems(int interfaceId, int[] slots, int[] itemIds, int[] stackSizes, boolean ignoreNullItems) {
         Preconditions.notNull(itemIds, stackSizes);
         if (itemIds.length != stackSizes.length || stackSizes.length != slots.length) {
@@ -462,6 +522,11 @@ public class OutgoingPacketBuilder {
         npc.getUpdateBlock().build(npc.getUpdateFlags()).getBlock().pipeTo(update);
     }
 
+    /**
+     * Update region outgoing packet builder.
+     *
+     * @return the outgoing packet builder
+     */
     public OutgoingPacketBuilder updateRegion() {
         createHeader(73);
         /**
@@ -473,6 +538,11 @@ public class OutgoingPacketBuilder {
         return this;
     }
 
+    /**
+     * Npc update outgoing packet builder.
+     *
+     * @return the outgoing packet builder
+     */
     public OutgoingPacketBuilder npcUpdate() {
         Player player = c.getPlayer();
 
@@ -560,7 +630,6 @@ public class OutgoingPacketBuilder {
      *
      * @return the outgoing packet builder
      */
-
     public OutgoingPacketBuilder playerUpdate() {
         Player player = c.getPlayer();
 
@@ -812,6 +881,11 @@ public class OutgoingPacketBuilder {
         c.write(build());
     }
 
+    /**
+     * Clear inventory.
+     *
+     * @param inventoryId the inventory id
+     */
     public void clearInventory(int inventoryId) {
         createHeader(72).writeLittleWORD(inventoryId);
     }
