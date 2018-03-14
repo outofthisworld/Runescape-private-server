@@ -6,9 +6,11 @@ import world.area.Position;
 import world.entity.npc.Npc;
 import world.entity.player.Player;
 import world.entity.player.Skill;
+import world.task.SingleExecutionTask;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.function.Consumer;
 
 public class Movement {
 
@@ -27,6 +29,7 @@ public class Movement {
     private int walkDirection = -1;
     private int runDirection = -1;
     private double runEnergy = 100;
+    private Consumer<Player> destinationListener = null;
 
     public Movement(Entity e) {
         this.e = e;
@@ -48,6 +51,12 @@ public class Movement {
         Position movementPosition = movementQueue.poll();
 
         if (movementPosition == null) {
+            if(e.isPlayer() && destinationListener != null){
+                e.getWorld().queueWorldTask(new SingleExecutionTask(()->{
+                    destinationListener.accept((Player) e);
+                    destinationListener = null;
+                }));
+            }
             resetMovement();
             return;
         }
@@ -99,6 +108,10 @@ public class Movement {
         }else{
             e.getWorld().getNpcRegionDivision().updateEntityRegion((Npc)e);
         }
+    }
+
+    public void setDestinationListener(Consumer<Player> destinationListener){
+        this.destinationListener = destinationListener;
     }
 
     private void decreaseRunEnergy() {

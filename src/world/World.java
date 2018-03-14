@@ -459,8 +459,11 @@ public class World {
      */
     private void poll() {
         loopTimer.restart();
-
         doWorldTasks();
+
+        for (Npc npc : npcsInWorld.getItemsImmutable()) {
+            npc.poll();
+        }
 
         for (Player player : playersInWorld.getItemsImmutable()) {
             if (player.getClient().isDisconnected()) {
@@ -475,10 +478,6 @@ public class World {
             player.poll();
         }
 
-        for (Npc npc : npcsInWorld.getItemsImmutable()) {
-            npc.poll();
-        }
-
         /*
            Clear the player update block cache.
         */
@@ -489,6 +488,7 @@ public class World {
          */
         loopTimer.stop();
         // logger.log(Level.INFO, "Completed world poll in " + loopTimer.getTimePassed(TimeUnit.MILLISECONDS) + "ms");
+
     }
 
     /**

@@ -393,6 +393,21 @@ public class Position {
         return v.getY() - other.getVector().getY();
     }
 
+
+    public int absDistanceBetweenX(Position other){
+        return Math.abs(distanceBetweenX(other));
+    }
+
+    public int absDisntanceBetweenY(Position other){
+        return Math.abs(distanceBetweenY(other));
+    }
+
+    public boolean isNextTo(Position other){
+        return absDistanceBetweenX(other) <= 1 && absDisntanceBetweenY(other) <= 1;
+    }
+
+
+
     /**
      * Distance between z int.
      *

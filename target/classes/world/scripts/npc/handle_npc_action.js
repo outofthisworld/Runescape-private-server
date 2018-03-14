@@ -180,104 +180,133 @@ dialogueHandlers[types.options] = function optionsDialogue(player, npc, optionsD
 
 var playerMap = {}
 
-function handleNpcActionOne(player, npc, optionId) {
-    print("calling again")
-    print(optionId)
 
-    if(!playerMap){
-        throw new Error("player map undefined");
+
+function interrupt(player){
+    if(!player){
+        throw new Error("Invlaid arguments passed to interrupt, expected non null player.")
     }
 
-    if (!playerMap[player.username] || !playerMap[player.username].currentDialogue || playerMap[player.username].currentDialogueOffset == undefined) {
-        print("recreating")
-        playerMap[player.username] = {};
-        playerMap[player.username].currentDialogue = npc_dialogues[npc.getNpcDefinition().getName()];
-        playerMap[player.username].currentDialogueOffset = 0;
-        playerMap[player.username].npc = npc;
-    }else{
-        print("found existing")
+    player.client.outgoingPacketBuilder.closeInterfaces();
+    playerMap[player.username] = null;
+}
+
+function forwardDialogue(player){
+
+    if(!player){
+        throw new Error("Invlaid arguments passed to forwardDialogue, expected non null player.")
     }
 
-    if(!playerMap[player.username].currentDialogue){
-        print("no dialogue")
+    if(!player || !player.username){
         return;
     }
+
+    if(!playerMap[player.username]){
+        playerMap[player.username] = null;
+        return;
+    }
+
+    playerMap[player.username].currentDialogueOffset += 1;
+
+    var displayDialogue = playerMap[player.username].currentDialogue.dialogue[playerMap[player.username].currentDialogueOffset];
+
+    if(!displayDialogue){
+        playerMap[player.username] = null;
+        return;
+    }
+
+    dialogueHandlers[displayDialogue.type](player, playerMap[player.username].npc,displayDialogue);
+}
+
+function selectOption(player,optionId){
+
+    if(!player){
+        throw new Error("Invlaid arguments passed to selectOption, expected non null player.")
+    }
+
+    var displayDialogue = playerMap[player.username].currentDialogue.dialogue[playerMap[player.username].currentDialogueOffset];
+
+    if(!displayDialogue.type == types.options){
+        playerMap[player.username] = null;
+        return;
+    }
+
+    var optId = -1;
+
+    if (!options) throw new Error("Illegal state, options mapping does not exist");
+
+    for (k in options) {
+        var arr = options[k];
+        if (!Array.isArray(arr)) {
+            continue;
+        }
+        if (arr.indexOf(optionId) != -1) {
+            optId = k;
+            break;
+        }
+    }
+
+    if (optId == -1) {
+        playerMap[player.username] = null;
+        return;
+    }
+
+    var option = displayDialogue.handlers[optId];
+
+    if (!option) {
+        playerMap[player.username] = null;
+        return;
+    }
+
+    if (typeof option == 'function') {
+        option(player, playerMap[player.username].npc);
+        interrupt(player);
+        return;
+    }else if (Array.isArray(option.dialogue)) {
+        var currentDialogue = option.dialogue[0];
+
+        if (!currentDialogue) {
+            interrupt(player);
+            return;
+        }
+
+        dialogueHandlers[displayDialogue.type](player, playerMap[player.username].npc, currentDialogue);
+        playerMap[player.username].currentDialogue = option;
+        playerMap[player.username].currentDialogueOffset = 1;
+    } else {
+        throw new Error('Type error, handler object is not array or function');
+    }
+}
+
+function handleNpcActionOne(player, npc) {
+
+    if(!player || !npc){
+        throw new Error("Invalid args passed to handleNpcActionOne, expected non null player/npc");
+    }
+
+    var dialogue = npc_dialogues[npc.getNpcDefinition().getName()];
+
+    if(!dialogue){
+        return;
+    }
+
+    playerMap[player.username] = {};
+    playerMap[player.username].currentDialogue = dialogue;
+    playerMap[player.username].currentDialogueOffset = 0;
+    playerMap[player.username].npc = npc;
+
+
     if (!Array.isArray(playerMap[player.username].currentDialogue.dialogue)) {
-        print("no aray")
         throw new Error('Invalid dialogue');
     }
 
     var displayDialogue = playerMap[player.username].currentDialogue.dialogue[playerMap[player.username].currentDialogueOffset];
 
-    print(JSON.stringify(displayDialogue))
 
-    if (!displayDialogue || displayDialogue.type == undefined) {
-        print("no displayDialogue dialogue")
-        playerMap[player.username] = null;
-        return;
+    if (!displayDialogue || displayDialogue.type == undefined || !Array.isArray(displayDialogue.lines)) {
+        interrupt(player);
+        throw new Error("Invalid dialogue 1");
     }
 
-    player.client.outgoingPacketBuilder.closeInterfaces();
-
-    if (displayDialogue.type == types.player || displayDialogue.type == types.npc || (displayDialogue.type == types.options && optionId < 0)) {
-        dialogueHandlers[displayDialogue.type](player, npc || playerMap[player.username].npc, displayDialogue);
-        print("advancing 1st")
-        if (displayDialogue.type == types.player || displayDialogue.type == types.npc) {
-            print("advancing 2")
-            playerMap[player.username].currentDialogueOffset = playerMap[player.username].currentDialogueOffset + 1;
-        }
-    }else if (optionId != -1) {
-        print("advancing 2nd")
-        var optId = -1;
-
-        if (!options) throw new Error("Illegal state, options mapping does not exist");
-
-        for (k in options) {
-            var arr = options[k];
-            if (!Array.isArray(arr)) {
-                continue;
-            }
-            if (arr.indexOf(optionId) != -1) {
-                optId = k;
-                break;
-            }
-        }
-
-        if (optId == -1) {
-            playerMap[player.username] = null;
-            return;
-        }
-
-        var option = displayDialogue.handlers[optId];
-
-        if (!option) {
-            playerMap[player.username] = null;
-            return;
-        }
-
-        if (typeof option == 'function') {
-            option(player, npc);
-            playerMap[player.username] = null;
-            return;
-        }
-
-        if (option && Array.isArray(option.dialogue)) {
-            var currentDialogue = option.dialogue[0];
-
-            if (!currentDialogue) {
-                playerMap[player.username] = null;
-                return;
-            }
-
-            dialogueHandlers[displayDialogue.type](player, npc, currentDialogue);
-            playerMap[player.username].currentDialogue = option;
-            playerMap[player.username].currentDialogueOffset = 1;
-        } else {
-            playerMap[player.username] = null;
-            return;
-        }
-    } else {
-        print("no options matched")
-        playerMap[player.username] = null;
-    }
+    dialogueHandlers[displayDialogue.type](player, npc, displayDialogue);
 }

@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 public class InteractNpcPacket extends IncomingPacket {
@@ -81,13 +82,15 @@ public class InteractNpcPacket extends IncomingPacket {
     }
 
     private void doNpcActionOne(Player player, Npc npc) {
-        try {
-            WorldManager.getScriptManager().getInvocable().invokeFunction("handleNpcActionOne",player,npc,-1);
-        } catch (ScriptException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
+        player.getMovement().setDestinationListener(player1 -> {
+            if(!player1.getPosition().isNextTo(npc.getPosition())){
+                Debug.writeLine("not next to");
+                Debug.writeLine(String.valueOf(player1.getPosition().absDistanceBetweenX(npc.getPosition())));
+                Debug.writeLine(String.valueOf(player1.getPosition().absDisntanceBetweenY(npc.getPosition())));
+                return;
+            }
+            player1.getDialogueHandler().startDialogue(npc);
+        });
     }
 
     @Override

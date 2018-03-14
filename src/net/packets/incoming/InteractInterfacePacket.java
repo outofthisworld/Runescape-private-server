@@ -93,13 +93,7 @@ public class InteractInterfacePacket extends IncomingPacket {
                     case 8223:
                     case 8224:
                     case 8225:
-                        try {
-                            WorldManager.getScriptManager().getInvocable().invokeFunction("handleNpcActionOne",c.getPlayer(),null,interfaceButtonId);
-                        } catch (ScriptException e) {
-                            e.printStackTrace();
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                        }
+                        c.getPlayer().getDialogueHandler().selectOption(interfaceButtonId);
                         break;
                 }
 

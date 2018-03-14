@@ -226,7 +226,7 @@ function selectOption(player,optionId){
 
     var displayDialogue = playerMap[player.username].currentDialogue.dialogue[playerMap[player.username].currentDialogueOffset];
 
-    if(!displayDialogue.type == type.options){
+    if(!displayDialogue.type == types.options){
         playerMap[player.username] = null;
         return;
     }
@@ -259,8 +259,8 @@ function selectOption(player,optionId){
     }
 
     if (typeof option == 'function') {
-        option(player, npc);
-        playerMap[player.username] = null;
+        option(player, playerMap[player.username].npc);
+        interrupt(player);
         return;
     }else if (Array.isArray(option.dialogue)) {
         var currentDialogue = option.dialogue[0];
@@ -270,7 +270,7 @@ function selectOption(player,optionId){
             return;
         }
 
-        dialogueHandlers[displayDialogue.type](player, npc, currentDialogue);
+        dialogueHandlers[displayDialogue.type](player, playerMap[player.username].npc, currentDialogue);
         playerMap[player.username].currentDialogue = option;
         playerMap[player.username].currentDialogueOffset = 1;
     } else {
@@ -284,8 +284,14 @@ function handleNpcActionOne(player, npc) {
         throw new Error("Invalid args passed to handleNpcActionOne, expected non null player/npc");
     }
 
+    var dialogue = npc_dialogues[npc.getNpcDefinition().getName()];
+
+    if(!dialogue){
+        return;
+    }
+
     playerMap[player.username] = {};
-    playerMap[player.username].currentDialogue = npc_dialogues[npc.getNpcDefinition().getName()];
+    playerMap[player.username].currentDialogue = dialogue;
     playerMap[player.username].currentDialogueOffset = 0;
     playerMap[player.username].npc = npc;
 

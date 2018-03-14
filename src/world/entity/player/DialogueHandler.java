@@ -48,7 +48,7 @@ public class DialogueHandler {
 
     public void selectOption(int optionId){
         try {
-            WorldManager.getScriptManager().getInvocable().invokeFunction("handleNpcActionOne",this.player,optionId);
+            WorldManager.getScriptManager().getInvocable().invokeFunction("selectOption",this.player,optionId);
         } catch (ScriptException e) {
             e.printStackTrace();
         } catch (NoSuchMethodException e) {
