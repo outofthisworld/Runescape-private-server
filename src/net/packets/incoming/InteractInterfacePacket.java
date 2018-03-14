@@ -3,6 +3,7 @@ package net.packets.incoming;
 import net.buffers.InputBuffer;
 import net.impl.session.Client;
 import util.integrity.Debug;
+import world.WorldManager;
 import world.definitions.DefinitionLoader;
 import world.definitions.item.WeaponInterfaceDefinition;
 import world.entity.combat.CombatStyle;
@@ -10,6 +11,7 @@ import world.entity.player.EquipmentSlot;
 import world.interfaces.WeaponInterfaceType;
 import world.item.Item;
 
+import javax.script.ScriptException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -76,7 +78,29 @@ public class InteractInterfacePacket extends IncomingPacket {
 
                 /* Handle area e.g anything that's not weapon,prayer and magic. */
                 switch (interfaceButtonId) {
-
+                    /*Chat option selection*/
+                    case 14445:
+                    case 14446:
+                    case 2471:
+                    case 2472:
+                    case 2473:
+                    case 8209:
+                    case 8210:
+                    case 8211:
+                    case 8212:
+                    case 8221:
+                    case 8222:
+                    case 8223:
+                    case 8224:
+                    case 8225:
+                        try {
+                            WorldManager.getScriptManager().getInvocable().invokeFunction("handleNpcActionOne",c.getPlayer(),null,interfaceButtonId);
+                        } catch (ScriptException e) {
+                            e.printStackTrace();
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        }
+                        break;
                 }
 
 

@@ -24,7 +24,7 @@ var npc_dialogues = {
                 ],
                 handlers:[
                     function(player,npc){
-
+                        print("running handler function for option 1")
                     },
                     {
                         type:types.dialogue,

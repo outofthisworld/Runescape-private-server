@@ -75,6 +75,10 @@ public class Player extends Entity {
      */
     private final Equipment equipment = new Equipment(this);
     /**
+     * The dialogue handler for this player.
+     */
+    private final DialogueHandler dialogueHandler = new DialogueHandler(this);
+    /**
      * The players update flags
      */
     private final PlayerUpdateFlags updateFlags = new PlayerUpdateFlags();
@@ -118,14 +122,10 @@ public class Player extends Entity {
      * The players combat style.
      */
     private CombatStyle combatStyle = new CombatStyle(422, 5860, AttackStyle.ACCURATE, AttackBonusModifier.ATTACK_CRUSH);
-    private int nextDialogue = -1;
 
-    public int getNextDialogue() {
-        return nextDialogue;
-    }
 
-    public void setNextDialogue(int nextDialogue) {
-        this.nextDialogue = nextDialogue;
+    public DialogueHandler getDialogueHandler() {
+        return dialogueHandler;
     }
 
     /**
