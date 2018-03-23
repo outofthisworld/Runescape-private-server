@@ -1,7 +1,7 @@
 
 
 const routes = [
-    {routePath:'',router:{}}
+    {routePath:'/store',router:require('./store')}
 ]
 
 module.exports = function(app){

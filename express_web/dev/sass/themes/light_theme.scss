@@ -1,0 +1,37 @@
+/**
+  Override variables
+*/
+
+/*
+  The default size of the sites content (container max size)
+*/
+$site-content-width:1280px;
+/*
+  The sites default font family
+*/
+$default-font-family: 'Arial';
+/*
+  The sites default font color
+*/
+$default-text-color:'#fff';
+/*
+  The sites default font weight
+*/
+$default-font-weight:'normal';
+/*
+  The sites default font size (changing this will affect headers)
+*/
+$default-font-size: 12px;
+/*
+  h1,h2,h3,h4,h5 font family.
+*/
+$header-font-family:'Arial';
+/*
+  The default header colors.
+*/
+$header-font-color:'#fff';
+
+
+@import '../_index';
+
+

@@ -1,0 +1,272 @@
+/*
+  Define default base css
+  e.g p,h1,h2,h3,h4,h5
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  font-family:$default-font-family;
+  font-size:$default-font-size;
+  color:$default-text-color;
+  position: relative;
+  animation: $body-animation;
+  animation-timing-function: $body-animation-timing-function;
+}
+
+h1,h2,h3,h4,h5{
+  font-family:$header-font-family;
+  font-weight:$default-font-weight;
+  color:$header-font-color;
+}
+
+
+small{
+  font-size:0.6em;
+}
+
+
+header{
+
+}
+
+footer{
+
+}
+
+aside{
+
+}
+
+/**
+  Style individual inputs
+ */
+input[required]{
+
+}
+input[type=text]{
+
+}
+input[type=password]{
+
+}
+
+input[minlength]{
+
+}
+
+input[maxlength]{
+
+}
+
+button[type=submit]{
+
+}
+
+nav.default {
+  height: 65px;
+  text-align: right;
+  position: relative;
+  z-index: 5000;
+  opacity: 1;
+  border: 3px solid rgb(36, 28, 28);
+  border-left: 0px;
+  border-top: 0px;
+  border-right: 0px;
+  transition: cubic-bezier(0.075, 0.82, 0.165, 1);
+  position: fixed;
+  width: 100%;
+  list-style-type: none;
+  -webkit-box-shadow: 0px 4px 5px 0px rgba(168, 18, 31, 1);
+  -moz-box-shadow: 0px 4px 5px 0px rgba(168, 18, 31, 1);
+  box-shadow: 0px 4px 5px 0px rgba(168, 18, 31, 1);
+
+  img.logo{
+    float: left;
+    width:163px;height:130px;position:relative;left:120px;
+  }
+
+  li{
+    position: relative;
+    padding: 20px 3%;
+    margin-left: 5px;
+    display: inline-block;
+    top: 5px;
+    color: white;
+    font-size: 16px;
+    color: rgb(255, 255, 255);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgb(252, 252, 252);
+    opacity: 0.9;
+
+    &:active{
+      text-decoration: underline;
+      color: orange;
+    }
+
+    &:hover{
+      transform: scale(1.1, 1.1);
+      text-decoration: underline;
+      color: orange;
+      cursor: pointer;
+    }
+  }
+}
+
+h1{
+  font-size:2em;
+  color:$h1-color;
+}
+
+h2{
+  font-size:1.8em;
+  color:$h2-color;
+}
+
+h3{
+  font-size:1.6em;
+  color:$h3-color;
+}
+
+h4{
+  font-size:1.4em;
+  color:$h4-color;
+}
+
+h5{
+  font-size:1.2em;
+  color:$h5-color;
+}
+
+.texture{
+  background-repeat: no-repeat;
+  background-size:100% 100%;
+}
+
+.repeat-x{
+  background-repeat:repeat-x;
+
+}
+.repeat-y{
+  background-repeat:repeat-y;
+}
+
+.repeat{
+  background-repeat:repeat;
+  background-size:5% 10%;
+}
+
+
+.tile_texture{
+  background-image: url('/images/tile_texture.png');
+}
+
+.lava_texture{
+  background-image: url('/images/lava_texture.png');
+}
+
+.rock_texture{
+  background-image: url('/images/rock_texture.png');
+}
+
+.donator_icon {
+  background-image: url('/images/donator_icons.png');
+  border-width: 0px;
+  width: 64px;
+  height: 64px;
+  display: inline-block;
+  transform: scale(0.5, 0.5);
+}
+
+.donator_purp {
+  background-position: 0 0;
+}
+
+.donator_orange {
+  background-position: 196px 0;
+}
+
+.donator_blue {
+  background-position: 128px 0;
+}
+
+.donator_pink {
+  background-position: 64px 0;
+}
+
+.background_texture_blue_sq {
+  background-image: url('/images/btn_bg.png');
+}
+
+.background_texture_pink_org_sq {
+  background-image: url('/images/btn_bg_1.png');
+}
+
+.background_texture_org_red_sq {
+  background-image: url('/images/btn_bg_2.png');
+}
+
+.background_texture_pink_org_di {
+  background-image: url('/images/btn_bg_3.png');
+}
+
+.header_button {
+  text-align:center;
+  font-size:20px;
+  height: 50px;
+  line-height: 50px;
+  width:100%;
+
+  &:hover{
+    transform:scale(1.1,1.1);
+  }
+}
+
+.left{
+  float:left;
+}
+
+.right{
+  float:right;
+}
+
+.no-float{
+  float:none;
+}
+
+.button-xs,.button-sm,.button-md,.button-lg,.button-xl{
+  text-align:center;
+  width:100%;
+  margin:0 auto;
+}
+
+.button-xs {
+  height: $button_xs_height;
+  line-height: $button_xs_height;
+  font-size:$button_xs_height/2;
+}
+.button-sm {
+  height: $button-sm_height;
+  line-height: $button-sm_height;
+  font-size:$button_sm_height/2;
+}
+.button-md {
+  height: $button_md_height;
+  line-height: $button_md_height;
+  font-size:$button_md_height/2;
+}
+.button-lg {
+  height: $button_lg_height;
+  line-height: $button_lg_height;
+  font-size:$button_lg_height/2;
+}
+.button-xl {
+  height: $button_xl_height;
+  line-height: $button_xl_height;
+  font-size:$button_xl_height/2;
+}
+

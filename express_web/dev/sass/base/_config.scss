@@ -1,0 +1,54 @@
+/*Define default theme configurations*/
+
+
+/*
+  The default size of the sites content (container max size)
+*/
+$site-content-width:1280px !default;
+/*
+  The sites default font family
+*/
+$default-font-family: 'Cinzel Decorative', cursive !default;
+/*
+  The sites default font color
+*/
+$default-text-color:#fff !default;
+/*
+  The sites default font weight
+*/
+$default-font-weight:normal !default;
+/*
+  The sites default font size (changing this will affect headers)
+*/
+$default-font-size: 12px !default;
+/* Body animation */
+$body-animation: 15s bg infinite alternate-reverse ease-in-out;
+/*
+   The body animation timing function
+*/
+$body-animation-timing-function: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+/*
+  h1,h2,h3,h4,h5 font family.
+*/
+$header-font-family:'Cinzel Decorative', cursive !default;
+/*
+  The default header colors.
+*/
+$header-font-color:#fff !default;
+
+/* Individual header colors, set to default */
+$h1-color:$header-font-color !default;
+$h2-color:$header-font-color !default;
+$h3-color:$header-font-color !default;
+$h4-color:$header-font-color !default;
+$h5-color:$header-font-color !default;
+
+/*
+  The height of the different sizes of buttons.
+  font size for buttons is height/2
+*/
+$button_xs_height:20px;
+$button-sm_height:30px;
+$button_md_height:40px;
+$button_lg_height:55px;
+$button_xl_height:70px;
