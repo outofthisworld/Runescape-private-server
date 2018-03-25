@@ -27,10 +27,14 @@ router.get('/all',function(req,res){
     res.render('store');
 });
 
+router.get('/confirm',function(req,res){
+    res.render('confirm-order',{});
+});
+
 router.get('/:type',function(req,res){
     const type = req.params.type;
 
-    res.render('store.html',{
+    res.render('store',{
 
     });
 });

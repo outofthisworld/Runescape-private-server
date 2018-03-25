@@ -173,18 +173,60 @@
 
 <body>
 
-<nav>
-    <img src="/images/logo.png" style="width:163px;height:auto;position:relative;left:120px;" />
-    <div class="container">
-        <li class="active">Home</li>
-        <li>Forum</li>
-        <li>Vote</li>
-        <li>Store</li>
-        <li>Store</li>
+<nav class="default texture tile_texture">
+    <img class="logo" src="/images/logo.png"/>
+    <div class="width-80 right">
+        <div class="row">
+            <div  class="col-xs-9">
+                <div class="row">
+                    <div class="col-xs-2">
+                        &nbsp
+                    </div>
+                    <div class="col-xs-10 nav_links">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#">Forum</a></li>
+                        <li><a href="#">Vote</a></li>
+                        <li><a href="#">Store</a></li>
+                        <li><a href="#">Store</a></li>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-3">
+
+                <div class="dropdown width-60">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <img src="/images/article_icon_1.png" style="width:80%;height:30px;position:relative;top:10px;left:10px;"/>
+                        </div>
+                        <div class="col-xs-9">
+                            <p  style="text-wrap:none;">Account menu</p>
+                        </div>
+                    </div>
+                    <div class="dropdown-content">
+                        <ul>
+                            <li>
+                                <a href="#">One</a>
+                            </li>
+                            <li>
+                                <a href="#">One</a>
+                            </li>
+                            <li>
+                                <a href="#">One</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </nav>
+<div class="site_overlay">
+    <div id='stars'></div>
+    <div id='stars2'></div>
+    <div id='stars3'></div></div>
+</div>
 
-<div class="container" style="position:relative;top:200px;">
+<div class="container container-restricted" style="position:relative;top:200px;">
     <div class="store clearfix" style="background:rgb(2, 2, 2);min-width:100%;width:100%;opacity:0.9;">
         <div class="store_title">
             <div class="donator_icon donator_pink"></div>
@@ -222,91 +264,11 @@
                         $20
                     </div>
 
-
-                    <div class="container ">
-                        <div class="background_texture_blue_sq button_half" style="height:40px;font-size:12px;line-height:40px;">
-                            <p>buy now</p>
-                        </div>
-                        <div class="background_texture_blue_sq button_half" style="height:40px;font-size:12px;line-height:40px;">
-                            <p>buy now</p>
-                        </div>
-                    </div>
-
+                    <form method="POST" action="/cart/add">
+                        <input type="hidden" name="item_id" value=""/>
+                        <button data-id="" class="texture background_texture_blue_sq button-md">ADD TO CART</button>
+                    </form>
                 </div>
-                <div class="store_item" style="overflow:hidden;">
-
-                    <div class="store_item_head">
-                        <img src="/images/store/ags.png" />
-                        <div class="overlay">
-                            Saradomin Godsword
-                        </div>
-                    </div>
-                    <div class=" store_item_price " style="color:white;font-size:20px;line-height:40px;margin-bottom:20px; ">
-                        $20
-                    </div>
-
-
-                    <div class="container ">
-                        <div style="width:50%;height:40px;float:left;vertical-align:center;line-height:40px; " class="background_texture_blue ">
-                            <p>buy now</p>
-                        </div>
-
-                        <div style="width:50%;height:40px;float:left;line-height:40px; " class="background_texture_blue ">
-                            <p>Purchase using RSGP</p>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="store_item" style="overflow:hidden;">
-
-                    <div class="store_item_head">
-                        <img src="/images/store/ags.png" />
-                        <div class="overlay">
-                            Saradomin Godsword
-                        </div>
-                    </div>
-                    <div class=" store_item_price " style="color:white;font-size:20px;line-height:40px;margin-bottom:20px; ">
-                        $20
-                    </div>
-
-
-                    <div class="container ">
-                        <div style="width:50%;height:40px;float:left;vertical-align:center;line-height:40px; " class="background_texture_blue ">
-                            <p>buy now</p>
-                        </div>
-
-                        <div style="width:50%;height:40px;float:left;line-height:40px; " class="background_texture_blue ">
-                            <p>Purchase using RSGP</p>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="store_item" style="overflow:hidden;">
-
-                    <div class="store_item_head">
-                        <img src="/images/store/ags.png" />
-                        <div class="overlay">
-                            Saradomin Godsword
-                        </div>
-                    </div>
-                    <div class=" store_item_price " style="color:white;font-size:20px;line-height:40px;margin-bottom:20px; ">
-                        $20
-                    </div>
-
-
-                    <div class="container ">
-                        <div style="width:50%;height:40px;float:left;vertical-align:center;line-height:40px; " class="background_texture_blue ">
-                            <p>buy now</p>
-                        </div>
-
-                        <div style="width:50%;height:40px;float:left;line-height:40px; " class="background_texture_blue ">
-                            <p>Purchase using RSGP</p>
-                        </div>
-                    </div>
-
-                </div>
-
-
             </div>
         </div>
 
@@ -420,11 +382,7 @@
         <div style="width:20%;float:right;vertical-align:center;line-height:40px;text-align:center;background-size:100% 100%; " class="background_texture_blue_sq">
             <p>Purchase</p>
         </div>
-
-
     </footer>
-
 </div>
 </body>
-
 </html>

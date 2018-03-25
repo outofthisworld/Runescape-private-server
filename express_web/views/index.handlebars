@@ -14,76 +14,102 @@
     <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
     <![endif]-->
+
 </head>
 
 <body>
 
 <nav class="default texture tile_texture">
     <img class="logo" src="images/logo.png"/>
-    <div class="container">
-        <li class="active">Home</li>
-        <li>Forum</li>
-        <li>Vote</li>
-        <li>Store</li>
-        <li>Store</li>
+    <div class="width-80 right">
+        <div class="row">
+            <div  class="col-xs-9">
+                <div class="row">
+                    <div class="col-xs-2">
+                    &nbsp
+                    </div>
+                    <div class="col-xs-10 nav_links">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#">Forum</a></li>
+                        <li><a href="#">Vote</a></li>
+                        <li><a href="#">Store</a></li>
+                        <li><a href="#">Store</a></li>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-3">
+
+                    <div class="dropdown width-60">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <img src="images/article_icon_1.png" style="width:80%;height:30px;position:relative;top:10px;left:10px;"/>
+                            </div>
+                            <div class="col-xs-9">
+                                <p  style="text-wrap:none;">Account menu</p>
+                            </div>
+                        </div>
+                        <div class="dropdown-content">
+                            <ul>
+                                <li>
+                                    <a href="#">One</a>
+                                </li>
+                                <li>
+                                    <a href="#">One</a>
+                                </li>
+                                <li>
+                                    <a href="#">One</a>
+                                </li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+        </div>
     </div>
 </nav>
-
-
+<div class="site_overlay">
+    <div id='stars'></div>
+    <div id='stars2'></div>
+    <div id='stars3'></div></div>
+</div>
     <div class="header">
-        <div id='stars'></div>
-        <div id='stars2'></div>
-        <div id='stars3'></div>
-
         <div class="container container-restricted">
 
-            <div class="col-xs-7">
-                <img src="/images/logo_text.png" style="display:block;margin:0 auto;"/>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-7">
+                <img src="/images/logo_text.png" class="col-xs-6 col-lg-12 center-block no-float"/>
 
                 <div class="row">
                     <div class="col-xs-6">
-                        <div class="repeat background_texture_org_red_sq button-lg">DOWNLOAD</div>
+                        <div class="texture background_texture_org_red_sq button-lg hover-scale-1x1">DOWNLOAD</div>
                     </div>
                     <div class="col-xs-6">
-                        <div class="texture background_texture_pink_org_sq button-lg">DOWNLOAD</div>
+                        <div class="texture background_texture_pink_org_sq button-lg hover-scale-1x1">DOWNLOAD</div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-xs-5" style="text-align:right;position:relative;left:40px;">
+            <div class="col-sm-1 col-md-5" style="text-align:right;position:relative;left:40px;">
 
                 <div class="login" style="">
                     <h1 style="color:rgb(255, 255, 255)">Login</h1>
                     <hr/>
+                    <form>
                     <label for="username">Username:</label>
                     <input type="text" id="username" class="username" required/>
 
                     <label for="password">Password:</label>
                     <input type="password" id="password" class="password" required/>
-                    <div class="button_login">LOGIN</div>
+                    <button type="submit" class="texture background_texture_pink_org_sq button-md hover-scale-1x1 width-80 center-block">LOGIN</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
 <div class="container container-restricted">
-    <div style="
-        background-color:rgb(14, 9, 9);
-        color:white;
+    <div class="row">
+        <div class="col-xs-12 col-sm-8">
 
-
-        overflow:hidden;
-        max-width:75%;
-
-        float:left;-webkit-box-shadow: -1px -5px 94px -28px rgba(245,14,53,1);
-        -moz-box-shadow: -1px -5px 94px -28px rgba(245,14,53,1);
-        box-shadow: -1px -5px 94px -28px rgba(245,14,53,1);
-        transition: cubic-bezier(0.075, 0.82, 0.165, 1);">
-
-        <div class="section_inner" style="position:relative;
-            overflow:hidden;
-            width:100%;
-            overflow:hidden;">
+        <div class="section_inner">
 
             <section class="article">
                 <header>
@@ -118,35 +144,20 @@
                     sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur?
                     Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"</p>
             </section>
-
-
-
-
-
         </div>
     </div>
+        <div class="col-xs-12 col-sm-4">
+            <section class="article">
+                <header>This is some content</header>
+                <p>"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem
+                    quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia
+                    non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis
+                    autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"</p>
 
-
-    <div style="background-color:black;
-        max-width:22%;
-        overflow:hidden;
-        float:right;
-        -webkit-box-shadow: -1px -5px 94px -28px rgba(245,14,53,1);
-        -moz-box-shadow: -1px -5px 94px -28px rgba(245,14,53,1);
-        box-shadow: -1px -5px 94px -28px rgba(245,14,53,1);
-        transition: cubic-bezier(0.075, 0.82, 0.165, 1);">
-        <section class="article">
-            <header>This is some content</header>
-            <p>"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem
-                quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia
-                non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis
-                autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"</p>
-
-        </section>
-
+            </section>
+        </div>
     </div>
-
-    <footer style="background:rgb(12, 10, 10);height:200px;width:70%;margin:0 auto;opacity:0.5;">
+    <footer style="background:rgb(12, 10, 10);height:200px;opacity:0.8;">
 
 
     </footer>
