@@ -27,11 +27,11 @@ module.exports = function(app){
         hmacSecret:'ilikepancakes',
         maxAge: 1000 * 60 * 90, // would expire after 15 minutes
         httpOnly: true, // The cookie only accessible by the web server
-        signed: true,// Indicates if the cookie should be signed
+        //signed: true,// Indicates if the cookie should be signed
         store:{
             _sessions:{},
             _temp_session_cache:{},
-            put(sessionId,obj){
+            save(sessionId,obj,callback){
                 //this._sessions[sessionId] = obj;
                 const lastSessionObj =  this._temp_session_cache[sessionId];
 
@@ -63,26 +63,25 @@ module.exports = function(app){
                 }
 
             },
-            create(sessionId){
+            create(sessionId,callback){
                 if(this._sessions[sessionId]){
-                    return false;
+                    return callback(new Error('duplicate session id'))
                 }
                 this._sessions[sessionId] = {};
-                return true;
+                return callback(null,this._sessions[sessionId]);
             },
-            get(sessionId){
+            get(sessionId,callback){
                 let session = this._sessions[sessionId]
-                if(session || create(sessionId)) {
-                    session = this._sessions[sessionId]
-                    this._temp_session_cache[sessionId] = session;
-                    return session;
-                }else{
-                    throw new Error('Error retrieving session, the specified session did not exist');
+
+
+                if(!session){
+                    return callback(new Error('Invalid id'));
                 }
-            },
-        },
-        onerror(err,id,req,res){
-            res.status(500).send(err.message);
+
+                session = this._sessions[sessionId]
+                this._temp_session_cache[sessionId] = session;
+                return callback(null,session);
+            }
         }
     }));
 }

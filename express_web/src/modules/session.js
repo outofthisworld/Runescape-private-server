@@ -13,100 +13,218 @@
 const crypto = require('crypto');
 
 
-module.exports = function(options){
+class Session{
+    constructor(options){
+        this._priv = {};
+        this._priv._sessionObj = options.sessionObj;
+        this._priv._req = options.req;
+        this._priv._res = options.res;
+        this._priv._options = options.options;
+    }
 
+    init(callback){
+
+        const sessionId = this._generateId();
+        const _this = this;
+        //Create a new session
+        Session._store.create(sessionId,function(err,createdSession) {
+            if(err) {
+                _this._priv._res.clearCookie(Session.sessionCookieName);
+                return callback(err,createdSession);
+            }else {
+                _this._priv._res.cookie(Session.sessionCookieName, sessionId, _this._priv._options);
+                _this._priv._req.sessionId = sessionId;
+                Object.assign(_this, createdSession);
+                _this._priv._req.session = _this;
+                return callback(null);
+            }
+        });
+    }
+
+    load(callback){
+        const _this = this;
+        try {
+            this._verify();
+            Session._store.get(_this._priv._req.cookies[Session.sessionCookieName], function (err, session) {
+                if (err) return callback(err);
+
+                console.dir(session);
+                Object.assign(_this, session);
+                _this._priv._req.sessionId = _this._priv._req.cookies[Session.sessionCookieName];
+                _this._priv._req.session = _this;
+                return callback(null);
+            })
+        }catch(err){
+            return callback(err);
+        }
+    }
+
+    destroy(callback){
+        const _this = this;
+       //destroy session obj
+        Session._store.destroy(this._priv._req.cookies[Session.sessionCookieName],function(err){
+            if(err){
+                return callback(err);
+            }else{
+                delete _this._priv._req.sessionId;
+                delete _this._priv._req.session;
+                res.clearCookie(Session.sessionCookieName);
+            }
+        })
+    }
+
+    save(callback){
+        const _this = this;
+        const priv = this._priv;
+        delete this._priv;
+
+        if(priv._requiresNewCookie){
+            const newSessionId = _this._generateId();
+            Session._store.save(newSessionId,_this,function(err){
+                _this._priv = priv;
+                if(err){
+                    return callback(err);
+                }else{
+                    Session._store.destroy(priv._req.cookies[Session.sessionCookieName],function(err){})
+                    res.clearCookie(Session.sessionCookieName);
+                    res.cookie(Session.sessionCookieName,newSessionId, _this._priv._options);
+                    priv__requiresNewCookie = false;
+                    return callback(null);
+                }
+            })
+
+        }else {
+            console.log('saving session')
+            Session._store.save(priv._req.cookies[Session.sessionCookieName], _this, function (err) {
+                _this._priv = priv;
+                if (err) {
+                    return callback(err);
+                }else{
+                    return callback(null);
+                }
+            })
+        }
+    }
+
+    addHeader(key,val,callback){
+        this._priv._sessionObj[key] = val;
+        this._priv._requiresNewCookie = true;
+
+    }
+
+    removeHeader(key){
+        delete this._priv._sessionObj[key];
+        this._priv._requiresNewCookie = true;
+    }
+
+    _verify(){
+        const sessId = this._priv._req.cookies[Session.sessionCookieName];
+        const session_id_parts = sessId.split(':');
+        if(session_id_parts.length == 2){
+            const sessionIdJson = Buffer.from(session_id_parts[0], 'base64').toString('ascii');
+            const hmac = session_id_parts[1];
+            const reHmac = crypto.createHmac('sha1', this._priv._options.hmacSecret).update(sessionIdJson).digest('hex');
+
+            //Verify hmac
+            if(reHmac == hmac){
+                const sessionIdObj = JSON.parse(sessionIdJson);
+                this._priv._sessionObj = sessionIdObj;
+                const {sessionIdHeader,sessionIdRandomPart} = sessionIdObj;
+
+                if(sessionIdHeader && sessionIdRandomPart != undefined){
+                    const userIp = sessionIdHeader.ip;
+                    const userAgent = sessionIdHeader.user_agent;
+
+                    if(userIp == this._priv._req.ip && (this._priv._req.headers['user-agent'] || '') == userAgent){
+                        return true;
+                    }else{
+                        throw new Error('Session key validation error');
+                    }
+                }
+            }
+        }
+    }
+
+    _generateId(){
+        const sessionId = this._priv._sessionObj;
+
+        const sessionIdJson = JSON.stringify(sessionId);
+        console.log(this._priv.options)
+        const sessionIdMac =  crypto.createHmac('sha1', this._priv._options.hmacSecret).update(sessionIdJson).digest('hex');
+        const sessionIdEncoded = Buffer.from(sessionIdJson).toString('base64');
+        const base64SessionId = `${sessionIdEncoded}:${sessionIdMac}`;
+
+        return base64SessionId;
+    }
+}
+
+module.exports = function(options){
     if(!options || !options.hmacSecret || !options.secret || !options.store){
         throw new Error('Invalid options arguments')
     }
 
+    Session._store = options.store;
+    Session.sessionCookieName = options.sessionCookieName || 'sessionId';
 
     return function(req,res,next){
         const err = new Error();
         err.type = 'session';
 
-        if(req.cookies.sessionId){
-            const sessId = req.cookies.sessionId;
-            const session_id_parts = sessId.split(':');
-            if(session_id_parts.length == 2){
-                const sessionIdJson = Buffer.from(session_id_parts[0], 'base64').toString('ascii');
-                const hmac = session_id_parts[1];
-                const reHmac = crypto.createHmac('sha1', options.hmacSecret).update(sessionIdJson).digest('hex');
+        if(req.cookies[Session.sessionCookieName]){
 
-                //Verify hmac
-                if(reHmac == hmac){
-                    console.log('hmac verified')
-                    const sessionIdObj = JSON.parse(sessionIdJson);
-                    const {sessionIdHeader,sessionIdRandomPart} = sessionIdObj;
+            const session = new Session({
+                req,
+                res,
+                options
+            });
 
-                    if(sessionIdHeader && sessionIdRandomPart != undefined){
-                        const userIp = sessionIdHeader.ip;
-                        const userAgent = sessionIdHeader.user_agent;
-
-                        if(userIp == req.ip && (req.headers['user-agent'] || '') == userAgent){
-                            console.log('Setting session')
-                            console.log(req.session)
-
-                            try {
-                                req.session = options.store.get(session_id_parts[0]);
-                                req.sessionId = session_id_parts[0];
-                                req.on('end',function(){
-                                    try {
-                                        options.store.put(req.sessionId, req.session);
-                                    }catch(error){
-                                        err.message = 'Failed to store session object using store.put() session id:' + session_id_parts[0];
-                                        err.method = 'put';
-                                        options.onerror(err,session_id_parts[0],req,res);
-                                    }
-                                })
-                                return next();
-                            }catch(error){
-                                //Error retrieving session send server error
-                                err.message = 'Failed to retrieve session using store.get() for session id: ' + session_id_parts[0];
-                                err.method = 'get';
-                                options.onerror(err,session_id_parts[0],req,res);
-
-                            }
-                        }
-                    }
+            session.load(function(err){
+                if(err){
+                    return next(err);
                 }
+                req.on('end', function () {
+                    session.save(function (err) {
+                        if (err) {
+
+                        }
+                    })
+                });
+                return next();
+            });
+
+
+        }else {
+            console.log('new sess')
+            const sessionObj = {
+                sessionIdHeader: {
+                    ip: req.ip,
+                    user_agent: req.headers['user-agent'] || '',
+                    time_issued: new Date().getTime()
+                },
+                sessionIdRandomPart: 3213123
             }
-        }
 
-        console.log('reassigning session')
-        res.clearCookie('sessionId');
-        const sessionId = {
-            sessionIdHeader:{
-                ip:req.ip,
-                user_agent:req.headers['user-agent'] || '',
-                time_issued:new Date().getTime()
-            },
-            sessionIdRandomPart:require('uuid').v4()
-        }
+           const session = new Session({
+                sessionObj,
+                req,
+                res,
+                options
+            });
 
-        const sessionIdJson = JSON.stringify(sessionId);
-        const sessionIdMac =  crypto.createHmac('sha1', options.hmacSecret).update(sessionIdJson).digest('hex');
-        const sessionIdEncoded = Buffer.from(sessionIdJson).toString('base64');
-        const base64SessionId = `${sessionIdEncoded}:${sessionIdMac}`;
+            session.init(function (err) {
+                if (err) {
+                    return next(err);
+                }
 
-        //Generate random id
-        res.cookie('sessionId',base64SessionId,options);
+                req.on('end', function () {
+                    session.save(function (err) {
+                        if (err) {
+                        }
 
-        if(options.store.create(sessionIdEncoded)){
-            try {
-                req.session = options.store.get(sessionIdEncoded);
-                req.sessionId = sessionIdEncoded;
-                next();
-            }catch(error){
-                res.clearCookie('sessionId');
-                err.method = 'get';
-                err.message = 'Failed to get session session id:' + sessionIdEncoded;
-                options.onerror(err,sessionIdEncoded,req,res);
-            }
-        }else{
-             res.clearCookie('sessionId');
-             err.method = 'create';
-             err.message = 'Failed to create session session id:' + sessionIdEncoded;
-             options.onerror(err,sessionIdEncoded,req,res);
+                    })
+                });
+                return next();
+            });
         }
     }
 }
