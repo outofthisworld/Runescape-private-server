@@ -60,6 +60,7 @@ module.exports = function(app){
                 if(update){
                     //Save to db
                     this._sessions[sessionId] = obj;
+                    callback(null);
                 }
 
             },
