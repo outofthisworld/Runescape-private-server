@@ -19,9 +19,11 @@ module.exports = function(options){
         throw new Error('Invalid options arguments')
     }
 
-    options = Object.create(options);
 
     return function(req,res,next){
+        const err = new Error();
+        err.type = 'session';
+
         if(req.cookies.sessionId){
             const sessId = req.cookies.sessionId;
             const session_id_parts = sessId.split(':');
@@ -43,9 +45,27 @@ module.exports = function(options){
                         if(userIp == req.ip && (req.headers['user-agent'] || '') == userAgent){
                             console.log('Setting session')
                             console.log(req.session)
-                            req.sessionId = session_id_parts[0];
-                            req.session = (options.store && options.store[req.sessionId]) || {};
-                            return next();
+
+                            try {
+                                req.session = options.store.get(session_id_parts[0]);
+                                req.sessionId = session_id_parts[0];
+                                req.on('end',function(){
+                                    try {
+                                        options.store.put(req.sessionId, req.session);
+                                    }catch(error){
+                                        err.message = 'Failed to store session object using store.put() session id:' + session_id_parts[0];
+                                        err.method = 'put';
+                                        options.onerror(err,session_id_parts[0],req,res);
+                                    }
+                                })
+                                return next();
+                            }catch(error){
+                                //Error retrieving session send server error
+                                err.message = 'Failed to retrieve session using store.get() for session id: ' + session_id_parts[0];
+                                err.method = 'get';
+                                options.onerror(err,session_id_parts[0],req,res);
+
+                            }
                         }
                     }
                 }
@@ -70,9 +90,23 @@ module.exports = function(options){
 
         //Generate random id
         res.cookie('sessionId',base64SessionId,options);
-        req.sessionId = sessionIdEncoded;
-        options.store[sessionId] = {}
-        req.session = options.store[sessionId];
-        next();
+
+        if(options.store.create(sessionIdEncoded)){
+            try {
+                req.session = options.store.get(sessionIdEncoded);
+                req.sessionId = sessionIdEncoded;
+                next();
+            }catch(error){
+                res.clearCookie('sessionId');
+                err.method = 'get';
+                err.message = 'Failed to get session session id:' + sessionIdEncoded;
+                options.onerror(err,sessionIdEncoded,req,res);
+            }
+        }else{
+             res.clearCookie('sessionId');
+             err.method = 'create';
+             err.message = 'Failed to create session session id:' + sessionIdEncoded;
+             options.onerror(err,sessionIdEncoded,req,res);
+        }
     }
 }
