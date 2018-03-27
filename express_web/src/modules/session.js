@@ -44,13 +44,10 @@ class Session {
             this._verify(req, res);
             Session._store.get(req.cookies[Session.sessionCookieName], function (err, session) {
                 if (err) return callback(err);
-
                 Object.assign(_this, session);
-                console.log('ttl: ')
-                console.log(_this._getTTLSeconds())
+                _this._priv.ttl = _this._getTTLSeconds();
                 if (_this._priv._options.renewSession &&
-                    _this._getTTLSeconds() <=  60 * 5) {
-                   console.log('calling renew')
+                    _this._getTTLSeconds() <= 60 * 5) {
                     _this._renew(req, res);
                 }
                 req.sessionId = req.cookies[Session.sessionCookieName] || -1;
@@ -137,7 +134,6 @@ class Session {
     }
 
     _renew(req, res) {
-        console.log('renewed')
         const _this = this;
         Session._store.destroy(req.cookies[Session.sessionCookieName], function (err) {
             if (err) {
@@ -149,16 +145,12 @@ class Session {
             const sessionId = _this._generateId();
             const priv = _this._priv;
             delete _this._priv;
-            console.log('Saving this under id ' + sessionId);
-            console.dir(_this);
             Session._store.save(sessionId, _this, priv._options.maxAge / 1000 / 60, function (err) {
                 _this._priv = priv;
                 if (err) {
                     console.log(err);
                     return;
                 }
-
-                console.log('setting new cookie');
                 res.cookie(Session.sessionCookieName, sessionId, _this._priv._options);
             });
         });
@@ -245,9 +237,6 @@ module.exports = function (options) {
                 if (err) {
                     return next(err);
                 }
-
-                console.log(req.session)
-                console.log(req.sessionId)
 
                 patchResponse(req, res, session, next);
 
