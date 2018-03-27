@@ -21,11 +21,10 @@ class Session {
     }
 
     init(req, res, callback) {
-
         const sessionId = this._generateId();
         const _this = this;
         //Create a new session
-        Session._store.create(sessionId, function (err, createdSession) {
+        Session._store.create(sessionId, _this._priv._options.maxAge, function (err, createdSession) {
             if (err) {
                 res.clearCookie(Session.sessionCookieName);
                 return callback(err, createdSession);
@@ -48,16 +47,9 @@ class Session {
 
 
                 Object.assign(_this, session);
-
-                try {
-                    req.sessionId = req.cookies[Session.sessionCookieName] || -1;
-                    req.session = _this || {};
-                    console.log('set session')
-                    console.log(req)
-                    return callback(null);
-                } catch (err) {
-                    console.log(err);
-                }
+                req.sessionId = req.cookies[Session.sessionCookieName] || -1;
+                req.session = _this || {};
+                return callback(null);
             })
         } catch (err) {
             return callback(err);
@@ -75,6 +67,7 @@ class Session {
                 delete req.sessionId;
                 delete req.session;
                 res.clearCookie(Session.sessionCookieName);
+                return callback(null);
             }
         })
     }
@@ -101,7 +94,6 @@ class Session {
             })
 
         } else {
-            console.log('saving session')
             Session._store.save(req.cookies[Session.sessionCookieName], _this, function (err) {
                 _this._priv = priv;
                 if (err) {
@@ -124,6 +116,37 @@ class Session {
         this._priv._requiresNewCookie = true;
     }
 
+    _renew(req,res){
+        const time_issued = this._priv._timeIssued;
+
+        const date_issued = new Date(time_issued);
+        const dateNow = new Date();
+
+
+        const timePassed = new Date(dateNow - date_issued);
+        const minutes = timePassed.getMinutes();
+
+        console.log('Time passed minutes: ' + minutes);
+        const ttlMinutes = this._priv._options.maxAge / 1000 / 60;
+        console.log('TTL minutes : ' + ttlMinutes);
+        const mThreshold = 5;
+        const dMinutes = (ttlMinutes - mThreshold);
+
+        if(minutes >= dMinutes && dMinutes <= ttlMinutes){
+            console.log('renewing session');
+            Session._store.renew(req.cookies[Session.sessionCookieName],this,function(err){
+                if(!err) {
+                    const sessionId = req.cookies[Session.sessionCookieName];
+                    res.clearCookie(Session.sessionCookieName);
+                    res.cookie(Session.sessionCookieName, sessionId, _this._priv._options);
+                }else{
+                    console.log('Error renewing session')
+                    console.log(err);
+                }
+            })
+        }
+    }
+
     _verify(req, res) {
         const sessId = req.cookies[Session.sessionCookieName];
         const session_id_parts = sessId.split(':');
@@ -141,6 +164,10 @@ class Session {
                 if (sessionIdHeader && sessionIdRandomPart != undefined) {
                     const userIp = sessionIdHeader.ip;
                     const userAgent = sessionIdHeader.user_agent;
+                    this._priv._timeIssued =  sessionIdHeader.time_issued;
+                    if(this._priv._options.renewSession) {
+                        this._renew(req,res);
+                    }
 
                     if (userIp == req.ip && (req.headers['user-agent'] || '') == userAgent) {
                         return true;
@@ -165,6 +192,12 @@ class Session {
     }
 }
 
+/**
+ * Potential updates:
+ *
+ * @param options
+ * @returns {Function}
+ */
 module.exports = function (options) {
     if (!options || !options.hmacSecret || !options.secret || !options.store) {
         throw new Error('Invalid options arguments')
@@ -172,6 +205,9 @@ module.exports = function (options) {
 
     Session._store = options.store;
     Session.sessionCookieName = options.sessionCookieName || 'sessionId';
+
+    //Clean the session store before we start handling sessions
+    Session._store.clearAll();
 
     function patchResponse(req, res, session, next) {
         const _send = res.send;
