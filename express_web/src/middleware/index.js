@@ -25,7 +25,7 @@ module.exports = function(app){
     app.use(session({
         secret: 'cookie_secret',
         hmacSecret: 'ilikepancakes',
-        maxAge: 1000 * 60 * 90, // would expire after 15 minutes
+        maxAge: 1000 * 60 * 6, // would expire after 15 minutes
         httpOnly: true, // The cookie only accessible by the web server
         renewSession:true,
         //signed: true,// Indicates if the cookie should be signed

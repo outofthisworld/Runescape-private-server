@@ -17,6 +17,7 @@ middleware(app);
 app.get('/',function(req,res){
     req.session.homeViews = req.session.homeViews || 0;
     req.session.homeViews++;
+    console.log('Home views:')
     console.log(req.session.homeViews);
     res.render('index');
 });

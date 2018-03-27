@@ -9,7 +9,7 @@ module.exports = function (options) {
 
     return {
         _temp_session_cache: {},
-        save(sessionId, obj, callback) {
+        save(sessionId, obj,ttl,callback) {
             //this._sessions[sessionId] = obj;
             const lastSessionObj = this._temp_session_cache[sessionId];
 
@@ -41,9 +41,10 @@ module.exports = function (options) {
                 try {
                     client.set(sessionId, JSON.stringify(obj), function (err, reply) {
                         if (err) return callback(err);
-                        console.log('reply from redis: ')
-                        console.dir(reply);
-                        return callback(null);
+                        client.expire(sessionId,ttl,function(err){
+                            if(err) return callback(err);
+                            return callback(null);
+                        })
                     });
                 } catch (err) {
                     return callback(err);
@@ -58,27 +59,6 @@ module.exports = function (options) {
                     return callback(null);
                 }
             });
-        },
-        create(sessionId, ttl, callback) {
-            const obj = {};
-            this.renew(sessionId, obj, ttl, callback);
-        },
-        renew(sessionId, obj, ttl, callback) {
-            const _this = this;
-            try {
-                client.set(sessionId, JSON.stringify(obj), function (err, reply) {
-                    if (err) {
-                        return callback(err);
-                    }
-                    client.expire(sessionId,ttl/1000,function(err){
-                        if(err) return callback(err);
-                        _this._temp_session_cache[sessionId] = obj;
-                        return callback(null, obj);
-                    })
-                });
-            } catch (err) {
-                return callback(err, null);
-            }
         },
         destroy(sessionId,callback){
             client.del(sessionId,function(err){

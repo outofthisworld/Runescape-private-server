@@ -24,9 +24,9 @@ class Session {
         const sessionId = this._generateId();
         const _this = this;
         //Create a new session
-        Session._store.create(sessionId, _this._priv._options.maxAge, function (err, createdSession) {
+        Session._store.save(sessionId, {}, _this._getTTLSeconds(), function (err, createdSession) {
+            res.clearCookie(Session.sessionCookieName);
             if (err) {
-                res.clearCookie(Session.sessionCookieName);
                 return callback(err, createdSession);
             } else {
                 res.cookie(Session.sessionCookieName, sessionId, _this._priv._options);
@@ -45,8 +45,14 @@ class Session {
             Session._store.get(req.cookies[Session.sessionCookieName], function (err, session) {
                 if (err) return callback(err);
 
-
                 Object.assign(_this, session);
+                console.log('ttl: ')
+                console.log(_this._getTTLSeconds())
+                if (_this._priv._options.renewSession &&
+                    _this._getTTLSeconds() <=  60 * 5) {
+                   console.log('calling renew')
+                    _this._renew(req, res);
+                }
                 req.sessionId = req.cookies[Session.sessionCookieName] || -1;
                 req.session = _this || {};
                 return callback(null);
@@ -54,7 +60,6 @@ class Session {
         } catch (err) {
             return callback(err);
         }
-
     }
 
     destroy(req, res, callback) {
@@ -74,18 +79,21 @@ class Session {
 
     save(req, res, callback) {
         const _this = this;
+        const ttl = _this._getTTLSeconds();
         const priv = _this._priv;
         delete _this._priv;
 
         if (priv._requiresNewCookie) {
             const newSessionId = _this._generateId();
-            Session._store.save(newSessionId, _this, function (err) {
+            Session._store.save(newSessionId, _this, ttl, function (err) {
                 _this._priv = priv;
                 if (err) {
                     return callback(err);
                 } else {
+                    //Attempt to destroy the current session, if we can't ignore the error because
+                    //it will expire automatically after ttl mins.
                     Session._store.destroy(req.cookies[Session.sessionCookieName], function (err) {
-                    })
+                    });
                     res.clearCookie(Session.sessionCookieName);
                     res.cookie(Session.sessionCookieName, newSessionId, _this._priv._options);
                     _this._priv._requiresNewCookie = false;
@@ -94,7 +102,7 @@ class Session {
             })
 
         } else {
-            Session._store.save(req.cookies[Session.sessionCookieName], _this, function (err) {
+            Session._store.save(req.cookies[Session.sessionCookieName], _this, ttl, function (err) {
                 _this._priv = priv;
                 if (err) {
                     return callback(err);
@@ -116,35 +124,44 @@ class Session {
         this._priv._requiresNewCookie = true;
     }
 
-    _renew(req,res){
-        const time_issued = this._priv._timeIssued;
-
+    _getTTLSeconds() {
+        const _this = this;
+        const time_issued = this._priv._sessionObj.sessionIdHeader.time_issued;
         const date_issued = new Date(time_issued);
         const dateNow = new Date();
-
-
         const timePassed = new Date(dateNow - date_issued);
-        const minutes = timePassed.getMinutes();
+        const minutes = timePassed.getSeconds();
+        const ttl = _this._priv._options.maxAge || (1000 * 60 * 90);
+        const ttlMinutes = ttl / 1000;
+        return ttlMinutes - minutes;
+    }
 
-        console.log('Time passed minutes: ' + minutes);
-        const ttlMinutes = this._priv._options.maxAge / 1000 / 60;
-        console.log('TTL minutes : ' + ttlMinutes);
-        const mThreshold = 5;
-        const dMinutes = (ttlMinutes - mThreshold);
-
-        if(minutes >= dMinutes && dMinutes <= ttlMinutes){
-            console.log('renewing session');
-            Session._store.renew(req.cookies[Session.sessionCookieName],this,function(err){
-                if(!err) {
-                    const sessionId = req.cookies[Session.sessionCookieName];
-                    res.clearCookie(Session.sessionCookieName);
-                    res.cookie(Session.sessionCookieName, sessionId, _this._priv._options);
-                }else{
-                    console.log('Error renewing session')
+    _renew(req, res) {
+        console.log('renewed')
+        const _this = this;
+        Session._store.destroy(req.cookies[Session.sessionCookieName], function (err) {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            res.clearCookie(Session.sessionCookieName);
+            _this._priv._sessionObj.sessionIdHeader.time_issued = new Date().getTime();
+            const sessionId = _this._generateId();
+            const priv = _this._priv;
+            delete _this._priv;
+            console.log('Saving this under id ' + sessionId);
+            console.dir(_this);
+            Session._store.save(sessionId, _this, priv._options.maxAge / 1000 / 60, function (err) {
+                _this._priv = priv;
+                if (err) {
                     console.log(err);
+                    return;
                 }
-            })
-        }
+
+                console.log('setting new cookie');
+                res.cookie(Session.sessionCookieName, sessionId, _this._priv._options);
+            });
+        });
     }
 
     _verify(req, res) {
@@ -164,10 +181,6 @@ class Session {
                 if (sessionIdHeader && sessionIdRandomPart != undefined) {
                     const userIp = sessionIdHeader.ip;
                     const userAgent = sessionIdHeader.user_agent;
-                    this._priv._timeIssued =  sessionIdHeader.time_issued;
-                    if(this._priv._options.renewSession) {
-                        this._renew(req,res);
-                    }
 
                     if (userIp == req.ip && (req.headers['user-agent'] || '') == userAgent) {
                         return true;
@@ -181,13 +194,10 @@ class Session {
 
     _generateId() {
         const sessionId = this._priv._sessionObj;
-
         const sessionIdJson = JSON.stringify(sessionId);
-        console.log(this._priv.options)
         const sessionIdMac = crypto.createHmac('sha1', this._priv._options.hmacSecret).update(sessionIdJson).digest('hex');
         const sessionIdEncoded = Buffer.from(sessionIdJson).toString('base64');
         const base64SessionId = `${sessionIdEncoded}:${sessionIdMac}`;
-
         return base64SessionId;
     }
 }
@@ -220,7 +230,6 @@ module.exports = function (options) {
                     console.log('error saving session')
                     return next(error);
                 }
-                console.log(' saved session')
                 _send.apply(_this, args);
             })
         }
@@ -228,7 +237,6 @@ module.exports = function (options) {
 
     return function (req, res, next) {
         if (req.cookies[Session.sessionCookieName]) {
-
             const session = new Session({
                 options
             });
